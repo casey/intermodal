@@ -12,4 +12,4 @@ jobs:
     - name: Test
       run: cargo test --verbose
     - name: Lint
-      run: cargo clippy
+      run: cargo clippy -- -D warnings
