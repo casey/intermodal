@@ -31,7 +31,7 @@ impl Create {
     let mut announce_list = Vec::new();
     for announce in &self.announce {
       let tier = announce
-        .split(",")
+        .split(',')
         .map(str::to_string)
         .collect::<Vec<String>>();
 
