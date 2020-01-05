@@ -1,6 +1,5 @@
 use std::{error::Error, process::Command, str};
 
-
 fn main() -> Result<(), Box<dyn Error>> {
   let stdout = Command::new("git")
     .arg("rev-parse")
