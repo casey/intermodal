@@ -4,7 +4,10 @@ on: [push]
 
 jobs:
   build:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on:
+    - macos-latest
+    - ubuntu-latest
+    - windows-latest
     steps:
     - uses: actions/checkout@v1
     - name: Update
