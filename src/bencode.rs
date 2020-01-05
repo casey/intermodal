@@ -101,7 +101,7 @@ impl<'buffer> Display for Value<'buffer> {
 
 #[derive(Debug, PartialEq)]
 pub(crate) enum Error {
-  ExtraData { start: usize },
+  TrailingData { start: usize },
   UnexpectedEndOfBuffer,
   UnexpectedByte { found: u8 },
   UnsortedKey,
@@ -127,7 +127,7 @@ impl<'buffer> Parser<'buffer> {
     let root = self.value()?;
 
     if self.index != self.buffer.len() {
-      return Err(ExtraData { start: self.index });
+      return Err(TrailingData { start: self.index });
     }
 
     Ok(root)
@@ -334,10 +334,10 @@ mod tests {
   #[test]
   fn misc() {
     err("", UnexpectedEndOfBuffer);
-    err("i20efoo", ExtraData { start: 4 });
-    err("defoo", ExtraData { start: 2 });
-    err("lefoo", ExtraData { start: 2 });
-    err("1:afoo", ExtraData { start: 3 });
+    err("i20efoo", TrailingData { start: 4 });
+    err("defoo", TrailingData { start: 2 });
+    err("lefoo", TrailingData { start: 2 });
+    err("1:afoo", TrailingData { start: 3 });
   }
 
   #[test]
