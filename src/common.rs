@@ -3,6 +3,7 @@ pub(crate) use std::{
   borrow::Cow,
   cmp::{Ordering, Reverse},
   collections::{BTreeMap, HashMap},
+  convert::TryInto,
   env,
   ffi::{OsStr, OsString},
   fmt::{self, Display, Formatter},
@@ -12,7 +13,7 @@ pub(crate) use std::{
   path::{Path, PathBuf},
   process, str,
   time::{SystemTime, SystemTimeError},
-  u64, usize,
+  usize,
 };
 
 // dependencies
@@ -21,6 +22,7 @@ pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{Deserialize, Serialize};
 pub(crate) use sha1::Sha1;
 pub(crate) use snafu::{ResultExt, Snafu};
+pub(crate) use static_assertions::const_assert;
 pub(crate) use structopt::StructOpt;
 pub(crate) use url::Url;
 pub(crate) use walkdir::WalkDir;
@@ -29,7 +31,9 @@ pub(crate) use walkdir::WalkDir;
 pub(crate) use crate::{bencode, consts, error, torrent};
 
 // traits
-pub(crate) use crate::{path_ext::PathExt, reckoner::Reckoner};
+pub(crate) use crate::{
+  into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt, reckoner::Reckoner,
+};
 
 // structs and enums
 pub(crate) use crate::{

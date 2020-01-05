@@ -7,7 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Update
+      run: rustup update stable
+    - name: Version
+      run: |
+        rustup --version
+        cargo --version
+        cargo clippy --version
     - name: Build
       run: cargo build --verbose
     - name: Test
       run: cargo test --verbose
+    - name: Lint
+      run: cargo clippy
