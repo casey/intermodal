@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Update
+      run: rustup update stable
     - name: Version
       run: |
         rustup --version
