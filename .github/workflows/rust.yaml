@@ -2,13 +2,6 @@ name: Rust
 
 on: [push]
 
-# - name: Prepare - macOS
-#   if: matrix.os == 'macos-latest'
-#   run: |
-#     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-# - name: Update
-#   run: rustup update stable
-
 jobs:
   build:
     strategy:
