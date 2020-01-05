@@ -11,7 +11,7 @@ pub(crate) trait Reckoner<K> {
   where
     I: IntoIterator<Item = K>,
   {
-    for k in i.into_iter() {
+    for k in i {
       self.increment(k);
     }
   }

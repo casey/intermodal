@@ -17,6 +17,13 @@ done BRANCH:
 	git diff --no-ext-diff --quiet --exit-code {{BRANCH}}
 	git branch -D {{BRANCH}}
 
+test:
+	cargo test
+
+# lint code
+lint:
+	cargo clippy
+
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
 	aria2c \

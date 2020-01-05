@@ -23,6 +23,7 @@ structopt     = "0.3"
 tempfile      = "3"
 url           = "2"
 walkdir       = "2"
+static_assertions = "1.1.0"
 
 [dependencies.serde]
 version = "1"

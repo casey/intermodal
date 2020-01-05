@@ -11,7 +11,7 @@ pub(crate) struct Stats {
 }
 
 impl Stats {
-  pub(crate) fn run(self, env: &Environment, unstable: bool) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Environment, unstable: bool) -> Result<(), Error> {
     if !unstable {
       return Err(Error::Unstable {
         feature: "torrent stats subcommand",
@@ -23,7 +23,7 @@ impl Stats {
     let mut extractor = Extractor::new(&self.extract_patterns);
 
     for result in WalkDir::new(path).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
-      if extractor.torrents >= self.limit.unwrap_or(u64::MAX) {
+      if extractor.torrents >= self.limit.unwrap_or(u64::max_value()) {
         break;
       }
 
@@ -32,25 +32,29 @@ impl Stats {
       extractor.process(entry.path());
     }
 
-    println!("Torrents processed: {}", extractor.torrents);
-    println!("Read failed:        {}", extractor.io_errors);
-    println!("Decode failed:      {}", extractor.bencode_decode_errors);
+    errln!(env, "Torrents processed: {}", extractor.torrents);
+    errln!(env, "Read failed:        {}", extractor.io_errors);
+    errln!(
+      env,
+      "Decode failed:      {}",
+      extractor.bencode_decode_errors
+    );
 
     let mut paths = extractor.paths.into_iter().collect::<Vec<(String, u64)>>();
     paths.sort_by_key(|(_, count)| Reverse(*count));
     let max = paths.iter().map(|(_, count)| *count).max().unwrap_or(0);
     let width = max.to_string().len();
 
-    println!("Keys:");
+    errln!(env, "Keys:");
     for (key, count) in &paths {
       if key.starts_with("info/files") {
         continue;
       }
-      println!("{:<width$} - {}", count, key, width = width);
+      errln!(env, "{:<width$} - {}", count, key, width = width);
     }
     for (key, count) in paths {
       if key.starts_with("info/files") {
-        println!("{:<width$} - {}", count, key, width = width);
+        errln!(env, "{:<width$} - {}", count, key, width = width);
       }
     }
 
@@ -60,15 +64,16 @@ impl Stats {
         .into_iter()
         .collect::<Vec<(String, Vec<String>)>>();
 
-      println!("Values:");
+      errln!(env, "Values:");
       for (pattern, values) in values {
-        println!("{}: ", pattern);
+        err!(env, "{}: ", pattern);
         for (i, value) in values.iter().enumerate() {
           if i > 0 {
-            print!(", ");
+            err!(env, ", ");
           }
-          print!("{}", value);
+          err!(env, "{}", value);
         }
+        errln!(env)
       }
     }
 
@@ -87,10 +92,11 @@ struct Extractor {
 }
 
 impl Extractor {
-  fn new(regexes: &[Regex]) -> Extractor {
-    let regex_set = RegexSet::new(regexes.iter().map(Regex::as_str)).unwrap();
+  fn new(regexes: &[Regex]) -> Self {
+    let regex_set = RegexSet::new(regexes.iter().map(Regex::as_str))
+      .expect("Validated regex pattern failed to recompile in regex set");
 
-    Extractor {
+    Self {
       bencode_decode_errors: 0,
       io_errors: 0,
       paths: HashMap::new(),
@@ -112,20 +118,18 @@ impl Extractor {
 
     self.torrents += 1;
 
-    let contents = match fs::read(&path) {
-      Ok(contents) => contents,
-      Err(_) => {
-        self.io_errors += 1;
-        return;
-      }
+    let contents = if let Ok(contents) = fs::read(&path) {
+      contents
+    } else {
+      self.io_errors += 1;
+      return;
     };
 
-    let value = match bencode::Value::decode(&contents) {
-      Ok(value) => value,
-      Err(_) => {
-        self.bencode_decode_errors += 1;
-        return;
-      }
+    let value = if let Ok(value) = bencode::Value::decode(&contents) {
+      value
+    } else {
+      self.bencode_decode_errors += 1;
+      return;
     };
 
     self.extract(&value);
