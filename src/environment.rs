@@ -3,32 +3,32 @@ use crate::common::*;
 pub(crate) struct Environment {
   args: Vec<String>,
   dir: Box<dyn AsRef<Path>>,
-  err: Box<dyn Write>,
+  pub(crate) err: Box<dyn Write>,
 }
 
 impl Environment {
-  pub(crate) fn main() -> Environment {
+  pub(crate) fn main() -> Self {
     let dir = match env::current_dir() {
       Ok(dir) => dir,
       Err(error) => panic!("Failed to get current directory: {}", error),
     };
 
-    Environment::new(dir, io::stderr(), env::args())
+    Self::new(dir, io::stderr(), env::args())
   }
 
-  pub(crate) fn run(&self) -> Result<(), Error> {
+  pub(crate) fn run(&mut self) -> Result<(), Error> {
     Opt::from_iter_safe(&self.args)?.run(self)
   }
 
-  pub(crate) fn new<D, E, S, I>(dir: D, err: E, args: I) -> Environment
+  pub(crate) fn new<D, E, S, I>(dir: D, err: E, args: I) -> Self
   where
     D: AsRef<Path> + 'static,
     E: Write + 'static,
     S: Into<String>,
     I: IntoIterator<Item = S>,
   {
-    Environment {
-      args: args.into_iter().map(|s| s.into()).collect(),
+    Self {
+      args: args.into_iter().map(Into::into).collect(),
       dir: Box::new(dir),
       err: Box::new(err),
     }

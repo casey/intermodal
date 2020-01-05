@@ -153,7 +153,7 @@ impl<'buffer> Parser<'buffer> {
     Ok(&self.buffer[start..self.index])
   }
 
-  fn parse_digits(&mut self, digits: &[u8]) -> Result<u64, Error> {
+  fn parse_digits(digits: &[u8]) -> Result<u64, Error> {
     if digits.is_empty() {
       return Err(EmptyInteger);
     }
@@ -190,7 +190,7 @@ impl<'buffer> Parser<'buffer> {
 
     self.expect(b'e')?;
 
-    let value = self.parse_digits(digits)?;
+    let value = Self::parse_digits(digits)?;
 
     if value == 0 && negative {
       return Err(NegativeZero);
@@ -250,7 +250,7 @@ impl<'buffer> Parser<'buffer> {
 
     self.expect(b':')?;
 
-    let len = self.parse_digits(digits)?;
+    let len = Self::parse_digits(digits)?;
 
     let start = self.index;
     for _ in 0..len {

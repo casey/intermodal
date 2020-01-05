@@ -5,7 +5,7 @@ pub(crate) struct Hasher {
   length: u64,
   md5sum: bool,
   piece_bytes_hashed: u64,
-  piece_length: u64,
+  piece_length: u32,
   pieces: Vec<u8>,
   sha1: Sha1,
 }
@@ -14,14 +14,14 @@ impl Hasher {
   pub(crate) fn hash(
     root: &Path,
     md5sum: bool,
-    piece_length: u64,
+    piece_length: u32,
   ) -> Result<(Mode, Vec<u8>), Error> {
-    Hasher::new(md5sum, piece_length).hash_root(root)
+    Self::new(md5sum, piece_length).hash_root(root)
   }
 
-  fn new(md5sum: bool, piece_length: u64) -> Hasher {
-    Hasher {
-      buffer: vec![0; piece_length as usize],
+  fn new(md5sum: bool, piece_length: u32) -> Self {
+    Self {
+      buffer: vec![0; piece_length.into_usize()],
       length: 0,
       piece_bytes_hashed: 0,
       pieces: Vec::new(),
@@ -100,7 +100,10 @@ impl Hasher {
     };
 
     while remaining > 0 {
-      let to_buffer = self.buffer.len().min(remaining as usize);
+      let to_buffer: usize = remaining
+        .min(self.buffer.len().into_u64())
+        .try_into()
+        .unwrap();
       let buffer = &mut self.buffer[0..to_buffer];
 
       file.read_exact(buffer)?;
@@ -110,7 +113,7 @@ impl Hasher {
 
         self.piece_bytes_hashed += 1;
 
-        if self.piece_bytes_hashed == self.piece_length {
+        if self.piece_bytes_hashed == self.piece_length.into() {
           self.pieces.extend(&self.sha1.digest().bytes());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;

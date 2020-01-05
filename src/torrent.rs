@@ -10,7 +10,7 @@ pub(crate) enum Torrent {
 }
 
 impl Torrent {
-  pub(crate) fn run(self, env: &Environment, unstable: bool) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Environment, unstable: bool) -> Result<(), Error> {
     match self {
       Self::Create(create) => create.run(env),
       Self::Stats(stats) => stats.run(env, unstable),
