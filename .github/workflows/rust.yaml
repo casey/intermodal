@@ -9,6 +9,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Version
       run: |
+        rustup --version
         cargo --version
         cargo clippy --version
     - name: Build
