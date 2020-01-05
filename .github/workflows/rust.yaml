@@ -18,7 +18,7 @@ jobs:
       with:
         toolchain: stable
         profile: minimal
-        components: clippy
+        components: clippy, rustfmt
         override: true
     - name: Version
       run: |
@@ -31,3 +31,5 @@ jobs:
       run: cargo test --verbose
     - name: Lint
       run: cargo clippy
+    - name: Format
+      run: cargo fmt -- --check
