@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Version
+      run: cargo --version
+      run: cargo clippy --version
     - name: Build
       run: cargo build --verbose
     - name: Test
