@@ -2,6 +2,13 @@ name: Rust
 
 on: [push]
 
+# - name: Prepare - macOS
+#   if: matrix.os == 'macos-latest'
+#   run: |
+#     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# - name: Update
+#   run: rustup update stable
+
 jobs:
   build:
     strategy:
@@ -13,12 +20,13 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v1
-    - name: Prepare - macOS
-      if: matrix.os == 'macos-latest'
-      run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-    - name: Update
-      run: rustup update stable
+    - name: Install
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        components: clippy
+        override: true
     - name: Version
       run: |
         rustup --version
