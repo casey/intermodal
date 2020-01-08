@@ -6,7 +6,7 @@ pub(crate) enum Subcommand {
 }
 
 impl Subcommand {
-  pub(crate) fn run(self, env: &mut Environment, unstable: bool) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Env, unstable: bool) -> Result<(), Error> {
     match self {
       Self::Torrent(torrent) => torrent.run(env, unstable),
     }

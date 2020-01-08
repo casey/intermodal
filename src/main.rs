@@ -30,7 +30,7 @@ mod testing;
 mod bencode;
 mod common;
 mod consts;
-mod environment;
+mod env;
 mod error;
 mod file_info;
 mod hasher;
@@ -46,7 +46,7 @@ mod subcommand;
 mod torrent;
 
 fn main() {
-  if let Err(code) = Environment::main().status() {
+  if let Err(code) = Env::main().status() {
     process::exit(code);
   }
 }

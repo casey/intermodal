@@ -9,7 +9,7 @@ pub(crate) struct Opt {
 }
 
 impl Opt {
-  pub(crate) fn run(self, env: &mut Environment) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     self.subcommand.run(env, self.unstable)
   }
 }
