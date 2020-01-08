@@ -1,12 +1,12 @@
 use crate::common::*;
 
-pub(crate) struct Environment {
+pub(crate) struct Env {
   args: Vec<String>,
   dir: Box<dyn AsRef<Path>>,
   pub(crate) err: Box<dyn Write>,
 }
 
-impl Environment {
+impl Env {
   pub(crate) fn main() -> Self {
     let dir = match env::current_dir() {
       Ok(dir) => dir,
