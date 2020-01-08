@@ -37,8 +37,8 @@ pub(crate) use crate::{
 
 // structs and enums
 pub(crate) use crate::{
-  environment::Environment, error::Error, file_info::FileInfo, hasher::Hasher, info::Info,
-  metainfo::Metainfo, mode::Mode, opt::Opt, subcommand::Subcommand, torrent::Torrent,
+  env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info, metainfo::Metainfo,
+  mode::Mode, opt::Opt, subcommand::Subcommand, torrent::Torrent,
 };
 
 // test modules
