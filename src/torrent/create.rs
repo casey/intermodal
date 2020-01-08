@@ -25,7 +25,7 @@ pub(crate) struct Create {
 }
 
 impl Create {
-  pub(crate) fn run(self, env: &Environment) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
 
     let mut announce_list = Vec::new();
@@ -125,8 +125,8 @@ impl Create {
 mod tests {
   use super::*;
 
-  fn environment(args: &[&str]) -> Environment {
-    testing::environment(["torrent", "create"].iter().chain(args).cloned())
+  fn environment(args: &[&str]) -> Env {
+    testing::env(["torrent", "create"].iter().chain(args).cloned())
   }
 
   #[test]

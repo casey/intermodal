@@ -11,7 +11,7 @@ pub(crate) struct Stats {
 }
 
 impl Stats {
-  pub(crate) fn run(self, env: &mut Environment, unstable: bool) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Env, unstable: bool) -> Result<(), Error> {
     if !unstable {
       return Err(Error::Unstable {
         feature: "torrent stats subcommand",
