@@ -9,7 +9,8 @@
   clippy::option_map_unwrap_or_else,
   clippy::option_unwrap_used,
   clippy::result_expect_used,
-  clippy::result_unwrap_used
+  clippy::result_unwrap_used,
+  clippy::wildcard_enum_match_arm
 )]
 
 use crate::common::*;
@@ -17,6 +18,10 @@ use crate::common::*;
 #[cfg(test)]
 #[macro_use]
 mod matches;
+
+#[cfg(test)]
+#[macro_use]
+mod assert_matches;
 
 #[macro_use]
 mod errln;
@@ -26,6 +31,12 @@ mod err;
 
 #[cfg(test)]
 mod testing;
+
+#[cfg(test)]
+mod test_env;
+
+#[cfg(test)]
+mod capture;
 
 mod bencode;
 mod common;
