@@ -3,7 +3,7 @@ pub(crate) use std::{
   borrow::Cow,
   cmp::{Ordering, Reverse},
   collections::{BTreeMap, HashMap},
-  convert::TryInto,
+  convert::{Infallible, TryInto},
   env,
   ffi::{OsStr, OsString},
   fmt::{self, Display, Formatter},

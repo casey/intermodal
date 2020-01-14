@@ -14,7 +14,8 @@ pub(crate) enum UseColor {
 }
 
 impl FromStr for UseColor {
-  type Err = Error;
+  type Err = Infallible;
+
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text.to_lowercase().as_str() {
       AUTO => Ok(UseColor::Auto),
