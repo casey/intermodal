@@ -44,3 +44,17 @@ pub(crate) use crate::{
 // test modules
 #[cfg(test)]
 pub(crate) use crate::testing;
+
+// test stdlib types
+#[cfg(test)]
+pub(crate) use std::{
+  cell::RefCell,
+  io::Cursor,
+  iter,
+  ops::{Deref, DerefMut},
+  rc::Rc,
+};
+
+// test structs and enums
+#[cfg(test)]
+pub(crate) use crate::{capture::Capture, test_env::TestEnv};
