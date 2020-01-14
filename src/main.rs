@@ -53,8 +53,10 @@ mod mode;
 mod opt;
 mod path_ext;
 mod reckoner;
+mod style;
 mod subcommand;
 mod torrent;
+mod use_color;
 
 fn main() {
   if let Err(code) = Env::main().status() {

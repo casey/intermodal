@@ -15,6 +15,7 @@ impl TestEnv {
       tempfile::tempdir().unwrap(),
       out.clone(),
       err.clone(),
+      Style::inactive(),
       iter::once(String::from("imdl")).chain(iter.into_iter().map(|item| item.into())),
     );
 

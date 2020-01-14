@@ -11,7 +11,8 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   path::{Path, PathBuf},
-  process, str,
+  process,
+  str::{self, FromStr},
   time::{SystemTime, SystemTimeError},
   usize,
 };
@@ -28,7 +29,7 @@ pub(crate) use url::Url;
 pub(crate) use walkdir::WalkDir;
 
 // modules
-pub(crate) use crate::{bencode, consts, error, torrent};
+pub(crate) use crate::{bencode, consts, error, torrent, use_color};
 
 // traits
 pub(crate) use crate::{
@@ -38,7 +39,8 @@ pub(crate) use crate::{
 // structs and enums
 pub(crate) use crate::{
   env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info, metainfo::Metainfo,
-  mode::Mode, opt::Opt, subcommand::Subcommand, torrent::Torrent,
+  mode::Mode, opt::Opt, style::Style, subcommand::Subcommand, torrent::Torrent,
+  use_color::UseColor,
 };
 
 // test modules
