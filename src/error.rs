@@ -9,8 +9,10 @@ pub(crate) enum Error {
   Clap { source: clap::Error },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },
-  #[snafu(display("Failed to write to standard error stream: {}", source))]
+  #[snafu(display("Failed to write to standard error: {}", source))]
   Stderr { source: io::Error },
+  #[snafu(display("Failed to write to standard output: {}", source))]
+  Stdout { source: io::Error },
   #[snafu(display("Serialization failed: {}", source))]
   Serialize { source: serde_bencode::Error },
   #[snafu(display("Filename was not valid unicode: {}", filename.to_string_lossy()))]

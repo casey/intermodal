@@ -125,7 +125,9 @@ impl Create {
 mod tests {
   use super::*;
 
-  fn environment(args: &[&str]) -> Env {
+  use crate::test_env::TestEnv;
+
+  fn environment(args: &[&str]) -> TestEnv {
     testing::env(["torrent", "create"].iter().chain(args).cloned())
   }
 
@@ -178,7 +180,7 @@ mod tests {
   fn tracker_flag_must_be_url() {
     let mut env = environment(&["--input", "foo", "--announce", "bar"]);
     fs::write(env.resolve("foo"), "").unwrap();
-    assert!(matches!(env.run(), Err(Error::AnnounceUrlParse { .. })));
+    assert_matches!(env.run(), Err(Error::AnnounceUrlParse { .. }));
   }
 
   #[test]

@@ -11,3 +11,13 @@ pub(crate) const CREATED_BY_DEFAULT: &str = concat!(
 
 /// Value for `encoding` torrent metainfo field.
 pub(crate) const ENCODING_UTF8: &str = "UTF-8";
+
+pub(crate) const ABOUT: &str = concat!(
+  env!("CARGO_PKG_DESCRIPTION"),
+  " - ",
+  env!("CARGO_PKG_HOMEPAGE")
+);
+
+pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
+
+pub(crate) const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
