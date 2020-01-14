@@ -10,7 +10,8 @@
   clippy::option_unwrap_used,
   clippy::result_expect_used,
   clippy::result_unwrap_used,
-  clippy::wildcard_enum_match_arm
+  clippy::wildcard_enum_match_arm,
+  clippy::unreachable
 )]
 
 use crate::common::*;

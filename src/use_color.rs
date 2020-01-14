@@ -18,9 +18,9 @@ impl FromStr for UseColor {
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text.to_lowercase().as_str() {
-      AUTO => Ok(UseColor::Auto),
-      ALWAYS => Ok(UseColor::Always),
-      NEVER => Ok(UseColor::Never),
+      AUTO => Ok(Self::Auto),
+      ALWAYS => Ok(Self::Always),
+      NEVER => Ok(Self::Never),
       _ => unreachable!(),
     }
   }
