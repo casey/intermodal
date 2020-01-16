@@ -36,5 +36,5 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
     - name: Format
-      isdff: matrix.os == 'macos-latest'
+      if: matrix.os == 'macos-latest'
       run: cargo fmt -- --check
