@@ -42,12 +42,12 @@ fn main() -> Result<()> {
 
   let width = beps.iter().map(|(_, title)| title.len()).max().unwrap_or(0);
 
-  println!("| BEP | Status | {:width$} |", "Title", width = width);
+  println!("| BEP  | Status | {:width$} |", "Title", width = width);
 
-  println!("|-----|:------:|:{:-<width$}-|", "", width = width);
+  println!("|------|:------:|:{:-<width$}-|", "", width = width);
   for (number, title) in beps {
     println!(
-      "| [{:02}](http://bittorrent.org/beps/bep_{:02}.html)  |   ??   | {:width$} |",
+      "| [{:04}](http://bittorrent.org/beps/bep_{:04}.html)  |   ??   | {:width$} |",
       number,
       number,
       title,
