@@ -20,9 +20,17 @@ done BRANCH:
 test:
 	cargo test
 
-# lint code
 lint:
 	cargo clippy
+
+preview-readme:
+	grip -b README.md
+
+dev-deps:
+	brew install grip
+
+generate-bep-table:
+	cargo run --example generate-bep-table
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
