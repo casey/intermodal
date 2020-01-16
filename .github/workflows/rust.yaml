@@ -34,5 +34,5 @@ jobs:
     - name: Format
       run: cargo fmt -- --check
     - name: Lint
-      if: matrix.os =! 'windows-latest'
+      if: matrix.os != 'windows-latest'
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
