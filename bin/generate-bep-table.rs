@@ -19,6 +19,8 @@ struct Bep {
 enum Status {
   Unknown,
   NotApplicable,
+  Supported,
+  NotSupported,
 }
 
 impl FromStr for Status {
@@ -26,8 +28,12 @@ impl FromStr for Status {
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text {
-      "???" => Ok(Self::Unknown),
+      "?" => Ok(Self::Unknown),
       "N/A" => Ok(Self::NotApplicable),
+      "-" => Ok(Self::NotSupported),
+      "✗" => Ok(Self::NotSupported),
+      "+" => Ok(Self::Supported),
+      "✓" => Ok(Self::Supported),
       _ => Err(format!("invalid status: {}", text)),
     }
   }
@@ -36,8 +42,10 @@ impl FromStr for Status {
 impl Display for Status {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match self {
-      Self::Unknown => write!(f, "???"),
+      Self::Unknown => write!(f, "?"),
       Self::NotApplicable => write!(f, "N/A"),
+      Self::Supported => write!(f, "✓"),
+      Self::NotSupported => write!(f, "✗"),
     }
   }
 }
@@ -147,13 +155,13 @@ fn main() -> Result<(), Box<dyn Error>> {
   let width = beps.iter().map(|bep| bep.title.len()).max().unwrap_or(0);
 
   lines.push(format!(
-    "| BEP                                            | Status  | {:width$} |",
+    "| BEP                                            | Status | {:width$} |",
     "Title",
     width = width
   ));
 
   lines.push(format!(
-    "|:----------------------------------------------:|:-------:|:{:-<width$}-|",
+    "|:----------------------------------------------:|:------:|:{:-<width$}-|",
     "",
     width = width
   ));
@@ -161,7 +169,7 @@ fn main() -> Result<(), Box<dyn Error>> {
   for (bep, original) in beps.into_iter().zip(originals) {
     assert_eq!(bep.number, original.number);
     lines.push(format!(
-      "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) |   {}   | {:width$} |",
+      "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) |   {:3}    | {:width$} |",
       bep.number,
       bep.number,
       original.status,
