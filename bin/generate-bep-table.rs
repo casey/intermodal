@@ -1,19 +1,48 @@
-use std::fs;
+use std::{
+  error::Error,
+  fmt::{self, Display, Formatter},
+  fs,
+  str::FromStr,
+};
 
 use glob::glob;
 use regex::Regex;
 
 const README: &str = "README.md";
 
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-
 struct Bep {
   number: usize,
   title: String,
-  status: Option<String>,
+  status: Status,
 }
 
-fn main() -> Result<()> {
+enum Status {
+  Unknown,
+  NotApplicable,
+}
+
+impl FromStr for Status {
+  type Err = String;
+
+  fn from_str(text: &str) -> Result<Self, Self::Err> {
+    match text {
+      "???" => Ok(Self::Unknown),
+      "N/A" => Ok(Self::NotApplicable),
+      _ => Err(format!("invalid status: {}", text)),
+    }
+  }
+}
+
+impl Display for Status {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    match self {
+      Self::Unknown => write!(f, "???"),
+      Self::NotApplicable => write!(f, "N/A"),
+    }
+  }
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
   let title_re = Regex::new("(?m)^:Title: (?P<title>.*)$")?;
 
   let mut beps = Vec::new();
@@ -46,7 +75,7 @@ fn main() -> Result<()> {
       .to_owned();
 
     beps.push(Bep {
-      status: None,
+      status: Status::Unknown,
       number,
       title,
     });
@@ -106,7 +135,7 @@ fn main() -> Result<()> {
     let captures = row_re.captures(row).unwrap();
     originals.push(Bep {
       number: captures.name("number").unwrap().as_str().parse()?,
-      status: Some(captures.name("status").unwrap().as_str().to_owned()),
+      status: captures.name("status").unwrap().as_str().trim().parse()?,
       title: captures.name("title").unwrap().as_str().to_owned(),
     });
   }
@@ -118,13 +147,13 @@ fn main() -> Result<()> {
   let width = beps.iter().map(|bep| bep.title.len()).max().unwrap_or(0);
 
   lines.push(format!(
-    "| BEP                                            | Status | {:width$} |",
+    "| BEP                                            | Status  | {:width$} |",
     "Title",
     width = width
   ));
 
   lines.push(format!(
-    "|:----------------------------------------------:|:------:|:{:-<width$}-|",
+    "|:----------------------------------------------:|:-------:|:{:-<width$}-|",
     "",
     width = width
   ));
@@ -135,7 +164,7 @@ fn main() -> Result<()> {
       "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) |   {}   | {:width$} |",
       bep.number,
       bep.number,
-      original.status.unwrap().trim(),
+      original.status,
       bep.title,
       width = width
     ));
