@@ -47,7 +47,8 @@ fn main() -> Result<()> {
   println!("|-----|:------:|:{:-<width$}-|", "", width = width);
   for (number, title) in beps {
     println!(
-      "| {:02}  |   ??   | {:width$} |",
+      "| [{:02}](http://bittorrent.org/beps/bep_{:02}.html)  |   ??   | {:width$} |",
+      number,
       number,
       title,
       width = width
