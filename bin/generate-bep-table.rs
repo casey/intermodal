@@ -28,12 +28,13 @@ impl FromStr for Status {
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text {
-      "?" => Ok(Self::Unknown),
-      "N/A" => Ok(Self::NotApplicable),
-      "-" => Ok(Self::NotSupported),
-      "✗" => Ok(Self::NotSupported),
+      "x" => Ok(Self::NotSupported),
       "+" => Ok(Self::Supported),
-      "✓" => Ok(Self::Supported),
+      "-" => Ok(Self::NotApplicable),
+      "❔" => Ok(Self::Unknown),
+      "➖" => Ok(Self::NotApplicable),
+      "❌" => Ok(Self::NotSupported),
+      "✅" => Ok(Self::Supported),
       _ => Err(format!("invalid status: {}", text)),
     }
   }
@@ -42,10 +43,10 @@ impl FromStr for Status {
 impl Display for Status {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match self {
-      Self::Unknown => write!(f, "?"),
-      Self::NotApplicable => write!(f, "N/A"),
-      Self::Supported => write!(f, "✓"),
-      Self::NotSupported => write!(f, "✗"),
+      Self::Unknown => write!(f, "❔"),
+      Self::NotApplicable => write!(f, "➖"),
+      Self::Supported => write!(f, "✅"),
+      Self::NotSupported => write!(f, "❌"),
     }
   }
 }
