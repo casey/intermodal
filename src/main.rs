@@ -10,8 +10,8 @@
   clippy::option_unwrap_used,
   clippy::result_expect_used,
   clippy::result_unwrap_used,
-  clippy::wildcard_enum_match_arm,
-  clippy::unreachable
+  clippy::unreachable,
+  clippy::wildcard_enum_match_arm
 )]
 
 use crate::common::*;
@@ -51,7 +51,7 @@ mod into_u64;
 mod into_usize;
 mod metainfo;
 mod mode;
-pub mod opt;
+mod opt;
 mod path_ext;
 mod reckoner;
 mod style;
