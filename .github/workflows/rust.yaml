@@ -29,7 +29,9 @@ jobs:
       run: cargo build --verbose
     - name: Test
       run: cargo test --verbose
-    - name: Lint
+    - name: Clippy
       run: cargo clippy
+    - name: Lint
+      run: ! grep --color -REn 'FIXME|TODO|XXX' src
     - name: Format
       run: cargo fmt -- --check

@@ -7,8 +7,8 @@ use structopt::clap::{AppSettings, ArgSettings};
   about(consts::ABOUT),
   version(consts::VERSION),
   author(consts::AUTHOR),
-  setting(AppSettings::ColoredHelp),
-  setting(AppSettings::ColorAuto)
+  global_setting(AppSettings::ColoredHelp),
+  global_setting(AppSettings::ColorAuto)
 )]
 pub(crate) struct Opt {
   #[structopt(long = "unstable", short = "u")]

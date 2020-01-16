@@ -51,7 +51,7 @@ mod into_u64;
 mod into_usize;
 mod metainfo;
 mod mode;
-mod opt;
+pub mod opt;
 mod path_ext;
 mod reckoner;
 mod style;
