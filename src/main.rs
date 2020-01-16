@@ -10,6 +10,7 @@
   clippy::option_unwrap_used,
   clippy::result_expect_used,
   clippy::result_unwrap_used,
+  clippy::unreachable,
   clippy::wildcard_enum_match_arm
 )]
 
@@ -53,8 +54,10 @@ mod mode;
 mod opt;
 mod path_ext;
 mod reckoner;
+mod style;
 mod subcommand;
 mod torrent;
+mod use_color;
 
 fn main() {
   if let Err(code) = Env::main().status() {

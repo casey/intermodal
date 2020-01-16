@@ -45,16 +45,18 @@ impl Stats {
     let max = paths.iter().map(|(_, count)| *count).max().unwrap_or(0);
     let width = max.to_string().len();
 
-    errln!(env, "Keys:");
-    for (key, count) in &paths {
-      if key.starts_with("info/files") {
-        continue;
-      }
-      errln!(env, "{:<width$} - {}", count, key, width = width);
-    }
-    for (key, count) in paths {
-      if key.starts_with("info/files") {
+    if !paths.is_empty() {
+      errln!(env, "Keys:");
+      for (key, count) in &paths {
+        if key.starts_with("info/files") {
+          continue;
+        }
         errln!(env, "{:<width$} - {}", count, key, width = width);
+      }
+      for (key, count) in paths {
+        if key.starts_with("info/files") {
+          errln!(env, "{:<width$} - {}", count, key, width = width);
+        }
       }
     }
 
