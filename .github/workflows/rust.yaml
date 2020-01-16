@@ -30,40 +30,11 @@ jobs:
     - name: Test
       run: cargo test --verbose
     - name: Clippy
+      if: matrix.os == macos-latest
       run: cargo clippy
     - name: Lint
+      if: matrix.os == macos-latest
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
     - name: Format
-      run: cargo fmt -- --check
-  foo:
-    strategy:
-      matrix:
-        os:
-        - macos-latest
-        - ubuntu-latest
-        - windows-latest
-    runs-on: ${{matrix.os}}
-    steps:
-    - uses: actions/checkout@v1
-    - name: Install
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        profile: minimal
-        components: clippy, rustfmt
-        override: true
-    - name: Version
-      run: |
-        rustup --version
-        cargo --version
-        cargo clippy --version
-    - name: Build
-      run: cargo build --verbose
-    - name: Test
-      run: cargo test --verbose
-    - name: Clippy
-      run: cargo clippy
-    - name: Lint
-      run: "! grep --color -REn 'FIXME|TODO|XXX' src"
-    - name: Format
+      if: matrix.os == macos-latest
       run: cargo fmt -- --check
