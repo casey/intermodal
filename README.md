@@ -6,7 +6,6 @@
 
 | Symbol             | Meaning        |
 |--------------------|----------------|
-| :grey_question:    | Unknown        |
 | :white_check_mark: | Supported      |
 | :x:                | Unsupported    |
 | :heavy_minus_sign: | Not applicable |
