@@ -56,8 +56,8 @@
 | [42](http://bittorrent.org/beps/bep_0042.html) | :heavy_minus_sign: | DHT Security extension                                           |
 | [43](http://bittorrent.org/beps/bep_0043.html) | :heavy_minus_sign: | Read-only DHT Nodes                                              |
 | [44](http://bittorrent.org/beps/bep_0044.html) | :x:                | Storing arbitrary data in the DHT                                |
-| [45](http://bittorrent.org/beps/bep_0045.html) | :grey_question:    | Multiple-address operation for the BitTorrent DHT                |
-| [46](http://bittorrent.org/beps/bep_0046.html) | :grey_question:    | Updating Torrents Via DHT Mutable Items                          |
+| [45](http://bittorrent.org/beps/bep_0045.html) | :x:                | Multiple-address operation for the BitTorrent DHT                |
+| [46](http://bittorrent.org/beps/bep_0046.html) | :x:                | Updating Torrents Via DHT Mutable Items                          |
 | [47](http://bittorrent.org/beps/bep_0047.html) | :x:                | Padding files and extended file attributes                       |
 | [48](http://bittorrent.org/beps/bep_0048.html) | :x:                | Tracker Protocol Extension: Scrape                               |
 | [49](http://bittorrent.org/beps/bep_0049.html) | :x:                | Distributed Torrent Feeds                                        |
