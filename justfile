@@ -20,9 +20,17 @@ done BRANCH:
 test:
 	cargo test
 
-# lint code
 lint:
 	cargo clippy
+
+preview-readme:
+	grip -b README.md
+
+dev-deps:
+	brew install grip
+
+generate-bep-table:
+	cargo run --example generate-bep-table
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
@@ -30,3 +38,7 @@ get-torrents:
 		-d dat \
 		-x 10 \
 		'https://ia802701.us.archive.org/21/items/2014_torrent_archive_organized/torrent_archive_organized.zip'
+
+# download bittorrent.org repository
+get-beps:
+	git clone git@github.com:bittorrent/bittorrent.org.git tmp/bittorrent.org
