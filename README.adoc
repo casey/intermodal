@@ -1,14 +1,61 @@
-# intermodal: a 40' shipping container for the Internet
+= intermodal: a 40' shipping container for the Internet
+:toc: macro
+:toc-title:
 
-## Bittorrent
+== Table of Contents
 
-### BEP Support
+toc::[]
 
+== Semantic Versioning and Unstable Features
+
+Intermodal follows [semantic versioning](https://semver.org/).
+
+In particular:
+
+- v0.0.X: Breaking changes may be introduced at any time.
+- v0.X.Y: Breaking changes may only be introduced with a minor version number
+  bump.
+- vX.Y.Z: Breaking changes may only be introduced with a major version number
+  bump
+
+To avoid premature stabilization and excessive version churn, unstable features
+are unavailable unless the `--unstable` / `-u` flag is passed. Unstable
+features may be changed or removed at any time.
+
+```
+$ imdl torrent stats --input tmp
+error: Feature `torrent stats subcommand` cannot be used without passing the `--unstable` flag
+$ imdl --unstable torrent stats tmp
+Torrents processed: 0
+Read failed:        0
+Decode failed:      0
+```
+
+== General Functionality
+
+=== Colored Output
+
+Intermodal features colored help, error, and informational output. Colored
+output is disabled if Intermodal detects that it is not printing to a TTY.
+
+To disable colored output, set the `NO_COLOR` environment variable to any
+valu or pass `--use-color never` on the command line.
+
+To force colored output, pass `--use-color always` on the command line.
+
+
+== Bittorrent
+
+=== BEP Support
+
+.BEP Support
+[options="header"]
+|======================================
 | Symbol             | Meaning        |
-|--------------------|----------------|
 | :white_check_mark: | Supported      |
 | :x:                | Unsupported    |
 | :heavy_minus_sign: | Not Applicable |
+|======================================
 
 | BEP                                            | Status             | Title                                                            |
 |:----------------------------------------------:|:------------------:|:-----------------------------------------------------------------|
@@ -67,40 +114,3 @@
 | [53](http://bittorrent.org/beps/bep_0053.html) | :x:                | Magnet URI extension - Select specific file indices for download |
 | [54](http://bittorrent.org/beps/bep_0054.html) | :heavy_minus_sign: | The lt_donthave extension                                        |
 | [55](http://bittorrent.org/beps/bep_0055.html) | :heavy_minus_sign: | Holepunch extension                                              |
-
-## General Functionality
-
-### Colored Output
-
-Intermodal features colored help, error, and informational output. Colored
-output is disabled if Intermodal detects that it is not printing to a TTY.
-
-To disable colored output, set the `NO_COLOR` environment variable to any
-valu or pass `--use-color never` on the command line.
-
-To force colored output, pass `--use-color always` on the command line.
-
-## Semantic Versioning and Unstable Features
-
-Intermodal follows [semantic versioning](https://semver.org/).
-
-In particular:
-
-- v0.0.X: Breaking changes may be introduced at any time.
-- v0.X.Y: Breaking changes may only be introduced with a minor version number
-  bump.
-- vX.Y.Z: Breaking changes may only be introduced with a major version number
-  bump
-
-To avoid premature stabilization and excessive version churn, unstable features
-are unavailable unless the `--unstable` / `-u` flag is passed. Unstable
-features may be changed or removed at any time.
-
-```
-$ imdl torrent stats --input tmp
-error: Feature `torrent stats subcommand` cannot be used without passing the `--unstable` flag
-$ imdl --unstable torrent stats tmp
-Torrents processed: 0
-Read failed:        0
-Decode failed:      0
-```

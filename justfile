@@ -26,11 +26,18 @@ lint:
 preview-readme:
 	grip -b README.md
 
+update-toc:
+	./tmp/gh-md-toc --insert README.md
+
 dev-deps:
 	brew install grip
+	curl \
+		https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc \
+		> ./tmp/gh-md-toc
+	chmod +x ./tmp/gh-md-toc
 
-generate-bep-table:
-	cargo run --example generate-bep-table
+update-readme:
+	cargo run --example update-readme
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:

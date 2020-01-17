@@ -2,6 +2,8 @@ use std::{
   error::Error,
   fmt::{self, Display, Formatter},
   fs,
+  io::{Read, Write},
+  process::{Command, Stdio},
   str::FromStr,
 };
 
@@ -9,6 +11,10 @@ use glob::glob;
 use regex::Regex;
 
 const README: &str = "README.md";
+
+const TOC_PATTERN: &str = "(?ms)<!--toc-start-->.*<!--toc-end-->";
+const TOC_START: &str = "<!--toc-start-->";
+const TOC_END: &str = "<!--toc-end-->";
 
 struct Bep {
   number: usize,
@@ -106,11 +112,49 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let readme = fs::read_to_string(README)?;
 
+  let mut child = Command::new("./tmp/gh-md-toc")
+    .arg("-")
+    .stdin(Stdio::piped())
+    .stdout(Stdio::piped())
+    .spawn()?;
+
+  child.stdin.as_mut().unwrap().write(readme.as_bytes())?;
+
+  let status = child.wait()?;
+
+  if !status.success() {
+    panic!(format!("gh-md-toc failed: {}", status));
+  }
+
+  let mut output = String::new();
+  child.stdout.as_mut().unwrap().read_to_string(&mut output)?;
+
+  let lines = output
+    .lines()
+    .skip(2)
+    .map(|line| &line[6..])
+    .collect::<Vec<&str>>();
+
+  let toc = lines.join("\n");
+
+  println!("{:?}", lines);
+
   let parts = table_re.split(&readme).into_iter().collect::<Vec<&str>>();
 
   assert_eq!(parts.len(), 2);
 
+  let toc_re = Regex::new(TOC_PATTERN)?;
+
   let before = parts[0];
+
+  println!(
+    "{}",
+    toc_re.replace(
+      parts[0],
+      format!("{}\n{}\n{}", TOC_START, toc, TOC_END).as_str(),
+    )
+  );
+
   let after = parts[1];
   let original = table_re
     .captures(&readme)
