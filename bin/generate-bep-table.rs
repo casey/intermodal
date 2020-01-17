@@ -31,10 +31,11 @@ impl FromStr for Status {
       "x" => Ok(Self::NotSupported),
       "+" => Ok(Self::Supported),
       "-" => Ok(Self::NotApplicable),
-      "❔" => Ok(Self::Unknown),
-      "➖" => Ok(Self::NotApplicable),
-      "❌" => Ok(Self::NotSupported),
-      "✅" => Ok(Self::Supported),
+      "?" => Ok(Self::Unknown),
+      ":x:" => Ok(Self::NotSupported),
+      ":white_check_mark:" => Ok(Self::Supported),
+      ":heavy_minus_sign:" => Ok(Self::NotApplicable),
+      ":grey_question:" => Ok(Self::Unknown),
       _ => Err(format!("invalid status: {}", text)),
     }
   }
@@ -43,10 +44,10 @@ impl FromStr for Status {
 impl Display for Status {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match self {
-      Self::Unknown => write!(f, "❔"),
-      Self::NotApplicable => write!(f, "➖"),
-      Self::Supported => write!(f, "✅"),
-      Self::NotSupported => write!(f, "❌"),
+      Self::Unknown => write!(f, ":grey_question:"),
+      Self::NotApplicable => write!(f, ":heavy_minus_sign:"),
+      Self::Supported => write!(f, ":white_check_mark:"),
+      Self::NotSupported => write!(f, ":x:"),
     }
   }
 }
@@ -68,7 +69,7 @@ fn main() -> Result<(), Box<dyn Error>> {
       .unwrap()
       .parse::<usize>()?;
 
-    if number == 1000 || number == 0 || number == 1 || number == 2 {
+    if number == 1000 {
       continue;
     }
 
@@ -156,13 +157,13 @@ fn main() -> Result<(), Box<dyn Error>> {
   let width = beps.iter().map(|bep| bep.title.len()).max().unwrap_or(0);
 
   lines.push(format!(
-    "| BEP                                            | Status | {:width$} |",
+    "| BEP                                            | Status             | {:width$} |",
     "Title",
     width = width
   ));
 
   lines.push(format!(
-    "|:----------------------------------------------:|:------:|:{:-<width$}-|",
+    "|:----------------------------------------------:|:------------------:|:{:-<width$}-|",
     "",
     width = width
   ));
@@ -170,10 +171,10 @@ fn main() -> Result<(), Box<dyn Error>> {
   for (bep, original) in beps.into_iter().zip(originals) {
     assert_eq!(bep.number, original.number);
     lines.push(format!(
-      "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) |   {:3}    | {:width$} |",
+      "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) | {:18} | {:width$} |",
       bep.number,
       bep.number,
-      original.status,
+      original.status.to_string(),
       bep.title,
       width = width
     ));
