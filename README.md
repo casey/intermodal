@@ -8,7 +8,7 @@
 |--------------------|----------------|
 | :white_check_mark: | Supported      |
 | :x:                | Unsupported    |
-| :heavy_minus_sign: | Not applicable |
+| :heavy_minus_sign: | Not Applicable |
 
 | BEP                                            | Status             | Title                                                            |
 |:----------------------------------------------:|:------------------:|:-----------------------------------------------------------------|
