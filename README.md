@@ -37,7 +37,7 @@ Intermodal features colored help, error, and informational output. Colored
 output is disabled if Intermodal detects that it is not printing to a TTY.
 
 To disable colored output, set the `NO_COLOR` environment variable to any
-valu or pass `--use-color never` on the command line.
+value or pass `--use-color never` on the command line.
 
 To force colored output, pass `--use-color always` on the command line.
 
@@ -109,5 +109,3 @@ Bittorrent
 | [53](http://bittorrent.org/beps/bep_0053.html) | :x:                | Magnet URI extension - Select specific file indices for download |
 | [54](http://bittorrent.org/beps/bep_0054.html) | :heavy_minus_sign: | The lt_donthave extension                                        |
 | [55](http://bittorrent.org/beps/bep_0055.html) | :heavy_minus_sign: | Holepunch extension                                              |
-
-
