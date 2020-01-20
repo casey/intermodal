@@ -41,5 +41,5 @@ regex  = "1.3.3"
 # not an example, but included as an example and not
 # a binary because examples can use dev dependencies
 [[example]]
-name = "generate-bep-table"
-path = "bin/generate-bep-table.rs"
+name = "update-readme"
+path = "bin/update-readme.rs"
