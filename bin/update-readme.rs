@@ -1,14 +1,19 @@
 use std::{
   error::Error,
   fmt::{self, Display, Formatter},
-  fs,
+  fs::{self, File},
   str::FromStr,
 };
 
+use comrak::{Arena, ComrakOptions};
 use glob::glob;
 use regex::Regex;
 
 const README: &str = "README.md";
+
+const HEADING_PATTERN: &str = "(?m)^(?P<MARKER>#+) (?P<TEXT>.*)$";
+
+const TOC_PATTERN: &str = "(?ms)## Manual.*## General";
 
 struct Bep {
   number: usize,
@@ -27,7 +32,7 @@ impl FromStr for Status {
   type Err = String;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
-    match text {
+    match text.replace('\\', "").as_str() {
       "x" => Ok(Self::NotSupported),
       "+" => Ok(Self::Supported),
       "-" => Ok(Self::NotApplicable),
@@ -183,6 +188,27 @@ fn main() -> Result<(), Box<dyn Error>> {
   let table = lines.join("\n");
 
   let readme = &[before.trim(), "", &table, "", after.trim(), ""].join("\n");
+
+  let header_re = Regex::new(HEADING_PATTERN)?;
+
+  let mut toc = Vec::new();
+  for captures in header_re.captures_iter(&readme).skip(2) {
+    let marker = captures.name("MARKER").unwrap().as_str();
+    let text = captures.name("TEXT").unwrap().as_str();
+    let level = marker.len();
+    let indentation = " ".repeat((level - 2) * 2);
+    let slug = text.to_lowercase().replace(' ', "-");
+    toc.push(format!("{}- [{}](#{})", indentation, text, slug));
+  }
+
+  let toc = toc.join("\n");
+
+  let toc_re = Regex::new(TOC_PATTERN)?;
+
+  let readme = toc_re.replace(
+    readme,
+    format!("## Manual\n\n{}\n\n## General", toc).as_str(),
+  );
 
   fs::write(README, readme)?;
 

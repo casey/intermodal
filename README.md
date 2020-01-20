@@ -1,8 +1,8 @@
-intermodal: a 40' shipping container for the Internet
-=====================================================
+# intermodal: a 40' shipping container for the Internet
 
-General
--------
+## Manual
+
+## General
 
 ### Semantic Versioning
 
@@ -41,8 +41,7 @@ value or pass `--use-color never` on the command line.
 
 To force colored output, pass `--use-color always` on the command line.
 
-Bittorrent
-----------
+## Bittorrent
 
 ### BEP Support
 
