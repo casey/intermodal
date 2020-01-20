@@ -2,13 +2,14 @@
 :toc: macro
 :toc-title:
 
-== Table of Contents
+[discrete]
+== Manual
 
 toc::[]
 
 == Semantic Versioning and Unstable Features
 
-Intermodal follows [semantic versioning](https://semver.org/).
+Intermodal follows semantic versioning[https://semver.org/].
 
 In particular:
 
@@ -48,14 +49,14 @@ To force colored output, pass `--use-color always` on the command line.
 
 === BEP Support
 
-.BEP Support
 [options="header"]
-|======================================
-| Symbol             | Meaning        |
-| :white_check_mark: | Supported      |
-| :x:                | Unsupported    |
-| :heavy_minus_sign: | Not Applicable |
-|======================================
+|====================================
+| Symbol             | Meaning
+|====================================
+| :white_check_mark: | Supported
+| :x:                | Unsupported
+| :heavy_minus_sign: | Not Applicable
+|====================================
 
 | BEP                                            | Status             | Title                                                            |
 |:----------------------------------------------:|:------------------:|:-----------------------------------------------------------------|

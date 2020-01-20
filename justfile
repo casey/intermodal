@@ -23,12 +23,6 @@ test:
 lint:
 	cargo clippy
 
-preview-readme:
-	grip -b README.md
-
-update-toc:
-	./tmp/gh-md-toc --insert README.md
-
 dev-deps:
 	brew install grip
 	curl \
