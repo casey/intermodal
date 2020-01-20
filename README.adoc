@@ -49,9 +49,9 @@ To force colored output, pass `--use-color always` on the command line.
 
 === BEP Support
 
-[options="header"]
+[cols="2<.^",options="header"]
 |====================================
-^| Symbol             ^| Meaning
+| Symbol             | Meaning
 | :white_check_mark: | Supported
 | :x:                | Unsupported
 | :heavy_minus_sign: | Not Applicable
