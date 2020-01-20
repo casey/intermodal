@@ -49,7 +49,7 @@ To force colored output, pass `--use-color always` on the command line.
 
 === BEP Support
 
-[cols="2*<.^",options="header"]
+[cols="2*^.^",options="header"]
 |====================================
 | Symbol             | Meaning
 | :white_check_mark: | Supported
