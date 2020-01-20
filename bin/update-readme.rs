@@ -1,11 +1,10 @@
 use std::{
   error::Error,
   fmt::{self, Display, Formatter},
-  fs::{self, File},
+  fs,
   str::FromStr,
 };
 
-use comrak::{Arena, ComrakOptions};
 use glob::glob;
 use regex::Regex;
 
