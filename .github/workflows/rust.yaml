@@ -36,3 +36,7 @@ jobs:
     - name: Lint
       if: matrix.os != 'windows-latest'
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
+    - name: Readme
+      run: |
+	      cargo run --example update-readme
+	      git diff --no-ext-diff --quiet --exit-code
