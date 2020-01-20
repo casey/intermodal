@@ -187,7 +187,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
   let table = lines.join("\n");
 
-  let readme = &[before.trim(), "", &table, "", after.trim(), ""].join("\n");
+  let readme = &[before.trim(), "", &table, "", after.trim()].join("\n");
 
   let header_re = Regex::new(HEADING_PATTERN)?;
 
@@ -210,7 +210,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     format!("## Manual\n\n{}\n\n## General", toc).as_str(),
   );
 
-  fs::write(README, readme)?;
+  fs::write(README, readme.as_bytes())?;
 
   Ok(())
 }
