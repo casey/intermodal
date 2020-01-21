@@ -37,6 +37,14 @@ update-toc:
 update-supported-beps:
 	cargo run --package update-readme supported-beps
 
+check:
+	cargo test --all --verbose
+	cargo clippy --all
+	cargo fmt --all -- --check
+	! grep --color -REn 'FIXME|TODO|XXX' src
+	cargo run --package update-readme toc
+	git diff --no-ext-diff --quiet --exit-code
+
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
 	aria2c \

@@ -103,7 +103,7 @@ impl Opt {
 
     let readme = fs::read_to_string(README)?;
 
-    let parts = table_re.split(&readme).into_iter().collect::<Vec<&str>>();
+    let parts = table_re.split(&readme).collect::<Vec<&str>>();
 
     assert_eq!(parts.len(), 2);
 
