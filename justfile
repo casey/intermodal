@@ -38,7 +38,7 @@ update-supported-beps:
 	cargo run --package update-readme supported-beps
 
 check:
-	cargo test --all --verbose
+	cargo test --all
 	cargo clippy --all
 	cargo fmt --all -- --check
 	! grep --color -REn 'FIXME|TODO|XXX' src
