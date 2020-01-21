@@ -63,7 +63,7 @@ To force colored output, pass `--use-color always` on the command line.
 | [00](http://bittorrent.org/beps/bep_0000.html) | :heavy_minus_sign: | Index of BitTorrent Enhancement Proposals                        |
 | [01](http://bittorrent.org/beps/bep_0001.html) | :heavy_minus_sign: | The BitTorrent Enhancement Proposal Process                      |
 | [02](http://bittorrent.org/beps/bep_0002.html) | :heavy_minus_sign: | Sample reStructured Text BEP Template                            |
-| [03](http://bittorrent.org/beps/bep_0003.html) | :x:                | The BitTorrent Protocol Specification                            |
+| [03](http://bittorrent.org/beps/bep_0003.html) | :white_check_mark: | The BitTorrent Protocol Specification                            |
 | [04](http://bittorrent.org/beps/bep_0004.html) | :heavy_minus_sign: | Assigned Numbers                                                 |
 | [05](http://bittorrent.org/beps/bep_0005.html) | :x:                | DHT Protocol                                                     |
 | [06](http://bittorrent.org/beps/bep_0006.html) | :heavy_minus_sign: | Fast Extension                                                   |
