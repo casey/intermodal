@@ -115,4 +115,3 @@ To force colored output, pass `--use-color always` on the command line.
 | [53](http://bittorrent.org/beps/bep_0053.html) | :x:                | Magnet URI extension - Select specific file indices for download |
 | [54](http://bittorrent.org/beps/bep_0054.html) | :heavy_minus_sign: | The lt_donthave extension                                        |
 | [55](http://bittorrent.org/beps/bep_0055.html) | :heavy_minus_sign: | Holepunch extension                                              |
-

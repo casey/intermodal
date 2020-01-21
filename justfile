@@ -30,7 +30,7 @@ dev-deps:
 	brew install grip
 
 update-readme:
-	cargo run --example update-readme
+	cargo run --package update-readme
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
