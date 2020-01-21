@@ -32,12 +32,9 @@ impl Hasher {
   }
 
   fn hash_root(mut self, root: &Path) -> Result<(Mode, Vec<u8>), Error> {
-    let single = root
-      .metadata()
-      .context(error::Filesystem { path: root })?
-      .is_file();
+    let metadata = root.metadata().context(error::Filesystem { path: root })?;
 
-    if single {
+    if metadata.is_file() {
       let (md5sum, length) = self.hash_file(&root)?;
 
       if self.piece_bytes_hashed > 0 {
