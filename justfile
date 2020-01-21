@@ -29,8 +29,13 @@ preview-readme:
 dev-deps:
 	brew install grip
 
-update-readme:
-	cargo run --package update-readme
+# update readme table of contents
+update-toc:
+	cargo run --package update-readme toc
+
+# update readme table of supported BEPs
+update-supported-beps:
+	cargo run --package update-readme supported-beps
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
