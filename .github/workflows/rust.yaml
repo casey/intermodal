@@ -26,13 +26,18 @@ jobs:
         cargo --version
         cargo clippy --version
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --all --verbose
     - name: Test
-      run: cargo test --verbose
+      run: cargo test --all --verbose
     - name: Clippy
-      run: cargo clippy
+      run: cargo clippy --all
     - name: Format
-      run: cargo fmt -- --check
+      run: cargo fmt --all -- --check
     - name: Lint
       if: matrix.os != 'windows-latest'
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
+    - name: Readme
+      if: matrix.os != 'windows-latest'
+      run: |
+        cargo run --package update-readme toc
+        git diff --no-ext-diff --quiet --exit-code

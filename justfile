@@ -29,8 +29,21 @@ preview-readme:
 dev-deps:
 	brew install grip
 
-generate-bep-table:
-	cargo run --example generate-bep-table
+# update readme table of contents
+update-toc:
+	cargo run --package update-readme toc
+
+# update readme table of supported BEPs
+update-supported-beps:
+	cargo run --package update-readme supported-beps
+
+check:
+	cargo test --all
+	cargo clippy --all
+	cargo fmt --all -- --check
+	! grep --color -REn 'FIXME|TODO|XXX' src
+	cargo run --package update-readme toc
+	git diff --no-ext-diff --quiet --exit-code
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
