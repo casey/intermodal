@@ -37,6 +37,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: "! grep --color -REn 'FIXME|TODO|XXX' src"
     - name: Readme
+      if: matrix.os != 'windows-latest'
       run: |
         cargo run --package update-readme toc
         git diff --no-ext-diff --quiet --exit-code
