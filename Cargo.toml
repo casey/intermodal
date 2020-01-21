@@ -29,11 +29,11 @@ url               = "2"
 walkdir           = "2"
 
 [dependencies.serde]
-version = "1"
+version  = "1"
 features = ["derive"]
 
 [dependencies.structopt]
-version = "0.3"
+version  = "0.3"
 features = ["default", "wrap_help"]
 
 [workspace]
