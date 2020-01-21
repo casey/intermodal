@@ -2,26 +2,26 @@ use crate::common::*;
 
 #[derive(StructOpt)]
 pub(crate) struct Create {
-  #[structopt(name = "INPUT", long = "input")]
-  input: PathBuf,
-  #[structopt(name = "OUTPUT", long = "output")]
-  output: Option<PathBuf>,
-  #[structopt(name = "PRIVATE", long = "private")]
-  private: bool,
-  #[structopt(name = "NO-CREATION-DATE", long = "no-creation-date")]
-  no_creation_date: bool,
-  #[structopt(name = "NO-CREATED-BY", long = "no-created-by")]
-  no_created_by: bool,
-  #[structopt(name = "COMMENT", long = "comment")]
-  comment: Option<String>,
-  #[structopt(name = "PIECE-LENGTH", long = "piece-length", default_value = "524288")]
-  piece_length: u32,
   #[structopt(name = "ANNOUNCE", long = "announce", required(true))]
   announce: Vec<String>,
+  #[structopt(name = "COMMENT", long = "comment")]
+  comment: Option<String>,
+  #[structopt(name = "INPUT", long = "input")]
+  input: PathBuf,
   #[structopt(name = "MD5SUM", long = "md5sum")]
   md5sum: bool,
   #[structopt(name = "NAME", long = "name")]
   name: Option<String>,
+  #[structopt(name = "NO-CREATED-BY", long = "no-created-by")]
+  no_created_by: bool,
+  #[structopt(name = "NO-CREATION-DATE", long = "no-creation-date")]
+  no_creation_date: bool,
+  #[structopt(name = "OUTPUT", long = "output")]
+  output: Option<PathBuf>,
+  #[structopt(name = "PIECE-LENGTH", long = "piece-length", default_value = "524288")]
+  piece_length: u32,
+  #[structopt(name = "PRIVATE", long = "private")]
+  private: bool,
 }
 
 impl Create {
