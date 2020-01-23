@@ -21,3 +21,7 @@ pub(crate) const ABOUT: &str = concat!(
 pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
 
 pub(crate) const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
+
+pub(crate) const HELP_MESSAGE: &str = "Print help message";
+
+pub(crate) const VERSION_MESSAGE: &str = "Print version number";

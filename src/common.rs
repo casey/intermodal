@@ -24,7 +24,10 @@ pub(crate) use serde::{Deserialize, Serialize};
 pub(crate) use sha1::Sha1;
 pub(crate) use snafu::{ResultExt, Snafu};
 pub(crate) use static_assertions::const_assert;
-pub(crate) use structopt::StructOpt;
+pub(crate) use structopt::{
+  clap::{AppSettings, ArgSettings},
+  StructOpt,
+};
 pub(crate) use url::Url;
 pub(crate) use walkdir::WalkDir;
 

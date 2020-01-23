@@ -1,6 +1,11 @@
 use crate::common::*;
 
 #[derive(StructOpt)]
+#[structopt(
+  help_message(consts::HELP_MESSAGE),
+  version_message(consts::VERSION_MESSAGE),
+  about("Show statistics about collection of `.torrent` files")
+)]
 pub(crate) struct Stats {
   #[structopt(long = "limit", short = "l")]
   limit: Option<u64>,

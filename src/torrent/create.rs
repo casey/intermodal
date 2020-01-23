@@ -1,6 +1,11 @@
 use crate::common::*;
 
 #[derive(StructOpt)]
+#[structopt(
+  help_message(consts::HELP_MESSAGE),
+  version_message(consts::VERSION_MESSAGE),
+  about("Create `.torrent` file")
+)]
 pub(crate) struct Create {
   #[structopt(name = "ANNOUNCE", long = "announce", required(true))]
   announce: Vec<String>,
