@@ -139,7 +139,7 @@ impl Extractor {
     };
 
     if self.print {
-      println!("{}: {}", path.display(), value);
+      eprintln!("{}: {}", path.display(), value);
     }
 
     self.extract(&value);
