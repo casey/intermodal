@@ -4,23 +4,23 @@ use crate::common::*;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Create a `.torrent` file")
+  about("Create a `.torrent` file.")
 )]
 pub(crate) struct Create {
   #[structopt(
     name = "ANNOUNCE",
     long = "announce",
     required(true),
-    help = "Use `ANNOUNCE` as the primary tracker announce URL",
+    help = "Use `ANNOUNCE` as the primary tracker announce URL.",
     long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
   )]
   announce: Url,
   #[structopt(
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
-    help = "Add `ANNOUNCE-TIER` to the list of tracker announce tiers",
+    help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
     long_help = "\
-Add `ANNOUNCE-TIER` to the list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
+Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
 
 `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
 
@@ -29,23 +29,64 @@ Announce tiers are stored in the `announce-list` key of the top-level metainfo d
 Note: Many BitTorrent clients do not implement the behavior described in BEP 12. See the discussion here for more details: https://github.com/bittorrent/bittorrent.org/issues/82"
   )]
   announce_tiers: Vec<String>,
-  #[structopt(name = "COMMENT", long = "comment")]
+  #[structopt(
+    name = "COMMENT",
+    long = "comment",
+    help = "Include `COMMENT` in generated `.torrent` file.",
+    long_help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of top-level metainfo dictionary."
+  )]
   comment: Option<String>,
-  #[structopt(name = "INPUT", long = "input")]
+  #[structopt(
+    name = "INPUT",
+    long = "input",
+    help = "Read torrent contents from `INPUT`.",
+    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a single-file torrent, otherwise if `INPUT` is a directory, torrent will be a multi-file torrent."
+  )]
   input: PathBuf,
-  #[structopt(name = "MD5SUM", long = "md5sum")]
+  #[structopt(
+    name = "MD5SUM",
+    long = "md5sum",
+    help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for safeguarding against accidental corruption.",
+    long_help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for checking for accidental corruption."
+  )]
   md5sum: bool,
-  #[structopt(name = "NAME", long = "name")]
+  #[structopt(
+    name = "NAME",
+    long = "name",
+    help = "Set name of torrent to `NAME`. Defaults to the filename of `--input`."
+  )]
   name: Option<String>,
-  #[structopt(name = "NO-CREATED-BY", long = "no-created-by")]
+  #[structopt(
+    name = "NO-CREATED-BY",
+    long = "no-created-by",
+    help = "Do not populate `created by` key of generated torrent with imdl version information."
+  )]
   no_created_by: bool,
-  #[structopt(name = "NO-CREATION-DATE", long = "no-creation-date")]
+  #[structopt(
+    name = "NO-CREATION-DATE",
+    long = "no-creation-date",
+    help = "Do not populate `creation date` key of generated torrent with current time."
+  )]
   no_creation_date: bool,
-  #[structopt(name = "OUTPUT", long = "output")]
+  #[structopt(
+    name = "OUTPUT",
+    long = "output",
+    help = "Save `.torrent` file to `OUTPUT`. Defaults to `$INPUT.torrent`."
+  )]
   output: Option<PathBuf>,
-  #[structopt(name = "PIECE-LENGTH", long = "piece-length", default_value = "524288")]
+  #[structopt(
+    name = "PIECE-LENGTH",
+    long = "piece-length",
+    default_value = "524288",
+    help = "Set piece length to `PIECE-LENGTH` bytes."
+  )]
   piece_length: u32,
-  #[structopt(name = "PRIVATE", long = "private")]
+  #[structopt(
+    name = "PRIVATE",
+    long = "private",
+    help = "Set the `private` flag.",
+    long_help = "Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information."
+  )]
   private: bool,
 }
 
