@@ -8,6 +8,8 @@ pub(crate) struct Stats {
   extract_patterns: Vec<Regex>,
   #[structopt(name = "INPUT", long = "input", short = "i")]
   input: PathBuf,
+  #[structopt(long = "print", short = "p")]
+  print: bool,
 }
 
 impl Stats {
@@ -20,7 +22,7 @@ impl Stats {
 
     let path = env.resolve(self.input);
 
-    let mut extractor = Extractor::new(&self.extract_patterns);
+    let mut extractor = Extractor::new(self.print, &self.extract_patterns);
 
     for result in WalkDir::new(path).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
       if extractor.torrents >= self.limit.unwrap_or(u64::max_value()) {
@@ -85,16 +87,17 @@ impl Stats {
 
 struct Extractor {
   bencode_decode_errors: u64,
+  current_path: String,
   io_errors: u64,
   paths: HashMap<String, u64>,
+  print: bool,
   regex_set: RegexSet,
   torrents: u64,
   values: HashMap<String, Vec<String>>,
-  current_path: String,
 }
 
 impl Extractor {
-  fn new(regexes: &[Regex]) -> Self {
+  fn new(print: bool, regexes: &[Regex]) -> Self {
     let regex_set = RegexSet::new(regexes.iter().map(Regex::as_str))
       .expect("Validated regex pattern failed to recompile in regex set");
 
@@ -105,6 +108,7 @@ impl Extractor {
       torrents: 0,
       values: HashMap::new(),
       current_path: String::new(),
+      print,
       regex_set,
     }
   }
@@ -133,6 +137,10 @@ impl Extractor {
       self.bencode_decode_errors += 1;
       return;
     };
+
+    if self.print {
+      println!("{}: {}", path.display(), value);
+    }
 
     self.extract(&value);
   }
