@@ -110,9 +110,18 @@ mod tests {
   #[test]
   fn error_message_on_stdout() {
     let mut env = testing::env(
-      ["torrent", "create", "--input", "foo", "--announce", "bar"]
-        .iter()
-        .cloned(),
+      [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "udp:bar.com",
+        "--announce-tier",
+        "foo",
+      ]
+      .iter()
+      .cloned(),
     );
     fs::write(env.resolve("foo"), "").unwrap();
     env.status().ok();

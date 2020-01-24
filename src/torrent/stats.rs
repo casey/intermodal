@@ -1,14 +1,42 @@
 use crate::common::*;
 
 #[derive(StructOpt)]
+#[structopt(
+  help_message(consts::HELP_MESSAGE),
+  version_message(consts::VERSION_MESSAGE),
+  about("Show statistics about a collection of `.torrent` files.")
+)]
 pub(crate) struct Stats {
-  #[structopt(long = "limit", short = "l")]
+  #[structopt(
+    name = "COUNT",
+    long = "limit",
+    short = "l",
+    help = "Stop after processing the first `COUNT` torrents.",
+    long_help = "Stop after processing the first `COUNT` torrents. Useful when processing large collections of `.torrent` files."
+  )]
   limit: Option<u64>,
-  #[structopt(long = "extract-pattern", short = "e")]
+  #[structopt(
+    name = "REGEX",
+    long = "extract-pattern",
+    short = "e",
+    help = "Extract and display values from key paths that match `REGEX`.",
+    long_help = "\
+Extract and display values under key paths that match `REGEX`. Subkeys of a bencodeded dictionary are delimited by `/`, and values of a bencoded list are delmited by `*`. For example, given the following bencoded dictionary `{\"foo\": [{\"bar\": {\"baz\": 2}}]}`, the value `2`'s key path will be `foo*bar/baz`. The value `2` would be displayed if any of `bar`, `foo[*]bar/baz`, or `foo.*baz` were passed to `--extract-pattern."
+  )]
   extract_patterns: Vec<Regex>,
-  #[structopt(name = "INPUT", long = "input", short = "i")]
+  #[structopt(
+    name = "INPUT",
+    long = "input",
+    short = "i",
+    help = "Search `INPUT` for torrents.",
+    long_help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file."
+  )]
   input: PathBuf,
-  #[structopt(long = "print", short = "p")]
+  #[structopt(
+    long = "print",
+    short = "p",
+    help = "Pretty print the contents of each torrent as it is processed."
+  )]
   print: bool,
 }
 
@@ -139,7 +167,7 @@ impl Extractor {
     };
 
     if self.print {
-      eprintln!("{}: {}", path.display(), value);
+      eprintln!("{}:\n{}", path.display(), value);
     }
 
     self.extract(&value);
