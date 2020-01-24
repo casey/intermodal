@@ -1,26 +1,92 @@
 use crate::common::*;
 
 #[derive(StructOpt)]
+#[structopt(
+  help_message(consts::HELP_MESSAGE),
+  version_message(consts::VERSION_MESSAGE),
+  about("Create a `.torrent` file.")
+)]
 pub(crate) struct Create {
-  #[structopt(name = "ANNOUNCE", long = "announce", required(true))]
-  announce: Vec<String>,
-  #[structopt(name = "COMMENT", long = "comment")]
+  #[structopt(
+    name = "ANNOUNCE",
+    long = "announce",
+    required(true),
+    help = "Use `ANNOUNCE` as the primary tracker announce URL.",
+    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
+  )]
+  announce: Url,
+  #[structopt(
+    long = "announce-tier",
+    name = "ANNOUNCE-TIER",
+    help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
+    long_help = "\
+Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
+
+`--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
+
+Announce tiers are stored in the `announce-list` key of the top-level metainfo dictionary as a list of lists of strings, as defined by BEP 12: Multitracker Metadata Extension.
+
+Note: Many BitTorrent clients do not implement the behavior described in BEP 12. See the discussion here for more details: https://github.com/bittorrent/bittorrent.org/issues/82"
+  )]
+  announce_tiers: Vec<String>,
+  #[structopt(
+    name = "COMMENT",
+    long = "comment",
+    help = "Include `COMMENT` in generated `.torrent` file.",
+    long_help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of top-level metainfo dictionary."
+  )]
   comment: Option<String>,
-  #[structopt(name = "INPUT", long = "input")]
+  #[structopt(
+    name = "INPUT",
+    long = "input",
+    help = "Read torrent contents from `INPUT`.",
+    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a single-file torrent, otherwise if `INPUT` is a directory, torrent will be a multi-file torrent."
+  )]
   input: PathBuf,
-  #[structopt(name = "MD5SUM", long = "md5sum")]
+  #[structopt(
+    name = "MD5SUM",
+    long = "md5sum",
+    help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for safeguarding against accidental corruption.",
+    long_help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for checking for accidental corruption."
+  )]
   md5sum: bool,
-  #[structopt(name = "NAME", long = "name")]
+  #[structopt(
+    name = "NAME",
+    long = "name",
+    help = "Set name of torrent to `NAME`. Defaults to the filename of `--input`."
+  )]
   name: Option<String>,
-  #[structopt(name = "NO-CREATED-BY", long = "no-created-by")]
+  #[structopt(
+    name = "NO-CREATED-BY",
+    long = "no-created-by",
+    help = "Do not populate `created by` key of generated torrent with imdl version information."
+  )]
   no_created_by: bool,
-  #[structopt(name = "NO-CREATION-DATE", long = "no-creation-date")]
+  #[structopt(
+    name = "NO-CREATION-DATE",
+    long = "no-creation-date",
+    help = "Do not populate `creation date` key of generated torrent with current time."
+  )]
   no_creation_date: bool,
-  #[structopt(name = "OUTPUT", long = "output")]
+  #[structopt(
+    name = "OUTPUT",
+    long = "output",
+    help = "Save `.torrent` file to `OUTPUT`. Defaults to `$INPUT.torrent`."
+  )]
   output: Option<PathBuf>,
-  #[structopt(name = "PIECE-LENGTH", long = "piece-length", default_value = "524288")]
+  #[structopt(
+    name = "PIECE-LENGTH",
+    long = "piece-length",
+    default_value = "524288",
+    help = "Set piece length to `PIECE-LENGTH` bytes."
+  )]
   piece_length: u32,
-  #[structopt(name = "PRIVATE", long = "private")]
+  #[structopt(
+    name = "PRIVATE",
+    long = "private",
+    help = "Set the `private` flag.",
+    long_help = "Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information."
+  )]
   private: bool,
 }
 
@@ -29,11 +95,8 @@ impl Create {
     let input = env.resolve(&self.input);
 
     let mut announce_list = Vec::new();
-    for announce in &self.announce {
-      let tier = announce
-        .split(',')
-        .map(str::to_string)
-        .collect::<Vec<String>>();
+    for tier in &self.announce_tiers {
+      let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
 
       tier
         .iter()
@@ -43,12 +106,6 @@ impl Create {
 
       announce_list.push(tier);
     }
-
-    let announce = if let Some(primary) = announce_list.first().and_then(|tier| tier.first()) {
-      primary.clone()
-    } else {
-      return Err(Error::AnnounceEmpty);
-    };
 
     let filename = input.file_name().ok_or_else(|| Error::FilenameExtract {
       path: input.clone(),
@@ -106,8 +163,12 @@ impl Create {
     let metainfo = Metainfo {
       comment: self.comment,
       encoding: consts::ENCODING_UTF8.to_string(),
-      announce,
-      announce_list,
+      announce: self.announce.to_string(),
+      announce_list: if announce_list.is_empty() {
+        None
+      } else {
+        Some(announce_list)
+      },
       creation_date,
       created_by,
       info,
@@ -180,7 +241,7 @@ mod tests {
   fn tracker_flag_must_be_url() {
     let mut env = environment(&["--input", "foo", "--announce", "bar"]);
     fs::write(env.resolve("foo"), "").unwrap();
-    assert_matches!(env.run(), Err(Error::AnnounceUrlParse { .. }));
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]
@@ -191,22 +252,29 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
-    assert_eq!(metainfo.announce_list, vec![vec!["http://bar"]]);
+    assert_eq!(metainfo.announce, "http://bar/");
+    assert!(metainfo.announce_list.is_none());
   }
 
   #[test]
   fn announce_single_tier() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar,http://baz"]);
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--announce-tier",
+      "http://bar,http://baz",
+    ]);
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
+    assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
-      vec![vec!["http://bar", "http://baz"]]
+      Some(vec![vec!["http://bar".into(), "http://baz".into()]]),
     );
   }
 
@@ -216,8 +284,10 @@ mod tests {
       "--input",
       "foo",
       "--announce",
+      "http://bar",
+      "--announce-tier",
       "http://bar,http://baz",
-      "--announce",
+      "--announce-tier",
       "http://abc,http://xyz",
     ]);
     fs::write(env.resolve("foo"), "").unwrap();
@@ -225,13 +295,13 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
+    assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
-      vec![
-        vec!["http://bar", "http://baz"],
-        vec!["http://abc", "http://xyz"],
-      ]
+      Some(vec![
+        vec!["http://bar".into(), "http://baz".into()],
+        vec!["http://abc".into(), "http://xyz".into()],
+      ])
     );
   }
 
