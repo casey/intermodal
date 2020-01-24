@@ -4,11 +4,31 @@ use crate::common::*;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Create `.torrent` file")
+  about("Create a `.torrent` file")
 )]
 pub(crate) struct Create {
-  #[structopt(name = "ANNOUNCE", long = "announce", required(true))]
-  announce: Vec<String>,
+  #[structopt(
+    name = "ANNOUNCE",
+    long = "announce",
+    required(true),
+    help = "Use `ANNOUNCE` as the primary tracker announce URL",
+    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
+  )]
+  announce: Url,
+  #[structopt(
+    long = "announce-tier",
+    name = "ANNOUNCE-TIER",
+    help = "Add `ANNOUNCE-TIER` to the list of tracker announce tiers",
+    long_help = "\
+Add `ANNOUNCE-TIER` to the list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
+
+`--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
+
+Announce tiers are stored in the `announce-list` key of the top-level metainfo dictionary as a list of lists of strings, as defined by BEP 12: Multitracker Metadata Extension.
+
+Note: Many BitTorrent clients do not implement the behavior described in BEP 12. See the discussion here for more details: https://github.com/bittorrent/bittorrent.org/issues/82"
+  )]
+  announce_tiers: Vec<String>,
   #[structopt(name = "COMMENT", long = "comment")]
   comment: Option<String>,
   #[structopt(name = "INPUT", long = "input")]
@@ -34,11 +54,8 @@ impl Create {
     let input = env.resolve(&self.input);
 
     let mut announce_list = Vec::new();
-    for announce in &self.announce {
-      let tier = announce
-        .split(',')
-        .map(str::to_string)
-        .collect::<Vec<String>>();
+    for tier in &self.announce_tiers {
+      let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
 
       tier
         .iter()
@@ -48,12 +65,6 @@ impl Create {
 
       announce_list.push(tier);
     }
-
-    let announce = if let Some(primary) = announce_list.first().and_then(|tier| tier.first()) {
-      primary.clone()
-    } else {
-      return Err(Error::AnnounceEmpty);
-    };
 
     let filename = input.file_name().ok_or_else(|| Error::FilenameExtract {
       path: input.clone(),
@@ -111,8 +122,12 @@ impl Create {
     let metainfo = Metainfo {
       comment: self.comment,
       encoding: consts::ENCODING_UTF8.to_string(),
-      announce,
-      announce_list,
+      announce: self.announce.to_string(),
+      announce_list: if announce_list.is_empty() {
+        None
+      } else {
+        Some(announce_list)
+      },
       creation_date,
       created_by,
       info,
@@ -185,7 +200,7 @@ mod tests {
   fn tracker_flag_must_be_url() {
     let mut env = environment(&["--input", "foo", "--announce", "bar"]);
     fs::write(env.resolve("foo"), "").unwrap();
-    assert_matches!(env.run(), Err(Error::AnnounceUrlParse { .. }));
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]
@@ -196,22 +211,29 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
-    assert_eq!(metainfo.announce_list, vec![vec!["http://bar"]]);
+    assert_eq!(metainfo.announce, "http://bar/");
+    assert!(metainfo.announce_list.is_none());
   }
 
   #[test]
   fn announce_single_tier() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar,http://baz"]);
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--announce-tier",
+      "http://bar,http://baz",
+    ]);
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
+    assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
-      vec![vec!["http://bar", "http://baz"]]
+      Some(vec![vec!["http://bar".into(), "http://baz".into()]]),
     );
   }
 
@@ -221,8 +243,10 @@ mod tests {
       "--input",
       "foo",
       "--announce",
+      "http://bar",
+      "--announce-tier",
       "http://bar,http://baz",
-      "--announce",
+      "--announce-tier",
       "http://abc,http://xyz",
     ]);
     fs::write(env.resolve("foo"), "").unwrap();
@@ -230,13 +254,13 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.announce, "http://bar");
+    assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
-      vec![
-        vec!["http://bar", "http://baz"],
-        vec!["http://abc", "http://xyz"],
-      ]
+      Some(vec![
+        vec!["http://bar".into(), "http://baz".into()],
+        vec!["http://abc".into(), "http://xyz".into()],
+      ])
     );
   }
 
