@@ -7,6 +7,8 @@
   - [Unstable Features](#unstable-features)
 - [Bittorrent](#bittorrent)
   - [BEP Support](#bep-support)
+- [References](#references)
+  - [BitTorrent](#bittorrent)
 
 ## General
 
@@ -96,3 +98,15 @@ at any time.
 | [53](http://bittorrent.org/beps/bep_0053.html) | :heavy_minus_sign:                                    | Magnet URI extension - Select specific file indices for download |
 | [54](http://bittorrent.org/beps/bep_0054.html) | :heavy_minus_sign:                                    | The lt_donthave extension                                        |
 | [55](http://bittorrent.org/beps/bep_0055.html) | :heavy_minus_sign:                                    | Holepunch extension                                              |
+
+## References
+
+### BitTorrent
+
+| URL                                                         | Description                                                                                       |
+|:------------------------------------------------------------|:--------------------------------------------------------------------------------------------------|
+| https://github.com/bittorrent/bittorrent.org                | GitHub repository hosting protocol development discussion and contents of bittorrent.org.         |
+| https://www.bittorrent.org                                  | Official web site site hosting BEPs and other information about the protocol.                     |
+| https://wiki.theory.org/index.php/Main_Page                 | Wiki with lots of information about all aspects of the BitTorrent protocol and implementations.   |
+| https://archive.org/details/2014_torrent_archive_organized) | Massive 158 GiB archive containing Y.Y million torrents, assembled in 2014.                       |
+| https://github.com/internetarchive/dweb-transport           | Github repository hosting The Internet Archive's distributed web and BitTorrent-related software. |
