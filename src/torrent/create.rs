@@ -69,6 +69,13 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   )]
   no_creation_date: bool,
   #[structopt(
+    name = "OPEN",
+    long = "open",
+    help = "Open `.torrent` file after creation",
+    long_help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start on Windows"
+  )]
+  open: bool,
+  #[structopt(
     name = "OUTPUT",
     long = "output",
     help = "Save `.torrent` file to `OUTPUT`. Defaults to `$INPUT.torrent`."
@@ -177,6 +184,10 @@ impl Create {
     let bytes = serde_bencode::ser::to_bytes(&metainfo)?;
 
     fs::write(&output, bytes).context(error::Filesystem { path: &output })?;
+
+    if self.open {
+      Platform::open(&output)?;
+    }
 
     Ok(())
   }
@@ -629,5 +640,57 @@ mod tests {
       Sha1::from("abchijxyz").digest().bytes()
     );
     assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
+  }
+
+  #[test]
+  fn open() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--open"]);
+
+    let opened = env.resolve("opened.txt");
+    let torrent = env.resolve("foo.torrent");
+
+    let expected = if cfg!(target_os = "windows") {
+      let script = env.resolve("open.bat");
+      fs::write(&script, format!("echo %3 > {}", opened.display())).unwrap();
+      format!("{} \r\n", torrent.display())
+    } else {
+      let script = env.resolve(&Platform::opener().unwrap()[0]);
+      fs::write(
+        &script,
+        format!("#!/usr/bin/env sh\necho $1 > {}", opened.display()),
+      )
+      .unwrap();
+
+      Command::new("chmod")
+        .arg("+x")
+        .arg(&script)
+        .status()
+        .unwrap();
+
+      format!("{}\n", torrent.display())
+    };
+
+    const KEY: &str = "PATH";
+    let path = env::var_os(KEY).unwrap();
+    let mut split = env::split_paths(&path)
+      .into_iter()
+      .collect::<Vec<PathBuf>>();
+    split.insert(0, env.dir().to_owned());
+    let new = env::join_paths(split).unwrap();
+    env::set_var(KEY, new);
+
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+
+    let start = Instant::now();
+
+    while start.elapsed() < Duration::new(2, 0) {
+      if let Ok(text) = fs::read_to_string(&opened) {
+        assert_eq!(text, expected);
+        return;
+      }
+    }
+
+    panic!("Failed to read `opened.txt`.");
   }
 }

@@ -11,7 +11,7 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   path::{Path, PathBuf},
-  process,
+  process::{self, Command, ExitStatus},
   str::{self, FromStr},
   time::{SystemTime, SystemTimeError},
   usize,
@@ -36,13 +36,14 @@ pub(crate) use crate::{bencode, consts, error, torrent, use_color};
 
 // traits
 pub(crate) use crate::{
-  into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt, reckoner::Reckoner,
+  into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
+  platform_interface::PlatformInterface, reckoner::Reckoner,
 };
 
 // structs and enums
 pub(crate) use crate::{
   env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info, metainfo::Metainfo,
-  mode::Mode, opt::Opt, style::Style, subcommand::Subcommand, torrent::Torrent,
+  mode::Mode, opt::Opt, platform::Platform, style::Style, subcommand::Subcommand, torrent::Torrent,
   use_color::UseColor,
 };
 
@@ -58,6 +59,7 @@ pub(crate) use std::{
   iter,
   ops::{Deref, DerefMut},
   rc::Rc,
+  time::{Duration, Instant},
 };
 
 // test structs and enums
