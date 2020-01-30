@@ -649,9 +649,10 @@ mod tests {
     let opened = env.resolve("opened.txt");
     let torrent = env.resolve("foo.torrent");
 
-    if cfg!(target_os = "windows") {
+    let expected = if cfg!(target_os = "windows") {
       let script = env.resolve("open.bat");
       fs::write(&script, format!("echo %3 > {}", opened.display())).unwrap();
+      format!("{} \r\n", torrent.display())
     } else {
       let script = env.resolve(&Platform::opener().unwrap()[0]);
       fs::write(
@@ -665,7 +666,9 @@ mod tests {
         .arg(&script)
         .status()
         .unwrap();
-    }
+
+      format!("{}\n", torrent.display())
+    };
 
     const KEY: &str = "PATH";
     let path = env::var_os(KEY).unwrap();
@@ -683,7 +686,7 @@ mod tests {
 
     while start.elapsed() < Duration::new(2, 0) {
       if let Ok(text) = fs::read_to_string(&opened) {
-        assert_eq!(text, format!("{}\n", torrent.display()));
+        assert_eq!(text, expected);
         return;
       }
     }
