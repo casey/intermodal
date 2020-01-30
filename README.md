@@ -83,7 +83,7 @@ at any time.
 | [38](http://bittorrent.org/beps/bep_0038.html) | :heavy_minus_sign:                                    | Finding Local Data Via Torrent File Hints                        |
 | [39](http://bittorrent.org/beps/bep_0039.html) | [:x:](https://github.com/casey/intermodal/issues/98)  | Updating Torrents Via Feed URL                                   |
 | [40](http://bittorrent.org/beps/bep_0040.html) | :heavy_minus_sign:                                    | Canonical Peer Priority                                          |
-| [41](http://bittorrent.org/beps/bep_0041.html) | [:x:](https://github.com/casey/intermodal/issues/97)  | UDP Tracker Protocol Extensions                                  |
+| [41](http://bittorrent.org/beps/bep_0041.html) | :heavy_minus_sign:  | UDP Tracker Protocol Extensions                                  |
 | [42](http://bittorrent.org/beps/bep_0042.html) | :heavy_minus_sign:                                    | DHT Security extension                                           |
 | [43](http://bittorrent.org/beps/bep_0043.html) | :heavy_minus_sign:                                    | Read-only DHT Nodes                                              |
 | [44](http://bittorrent.org/beps/bep_0044.html) | :heavy_minus_sign:                                    | Storing arbitrary data in the DHT                                |
