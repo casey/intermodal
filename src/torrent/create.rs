@@ -646,21 +646,26 @@ mod tests {
   fn open() {
     let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--open"]);
 
-    let script = env.resolve(&Platform::opener().unwrap()[0]);
     let opened = env.resolve("opened.txt");
     let torrent = env.resolve("foo.torrent");
 
-    fs::write(
-      &script,
-      format!("#!/usr/bin/env sh\necho $1 > {}", opened.display()),
-    )
-    .unwrap();
-
-    Command::new("chmod")
-      .arg("+x")
-      .arg(&script)
-      .status()
+    if cfg!(target_os = "windows") {
+      let script = env.resolve("cmd.bat");
+      fs::write(&script, format!("echo %3 > {}", opened.display())).unwrap();
+    } else {
+      let script = env.resolve(&Platform::opener().unwrap()[0]);
+      fs::write(
+        &script,
+        format!("#!/usr/bin/env sh\necho $1 > {}", opened.display()),
+      )
       .unwrap();
+
+      Command::new("chmod")
+        .arg("+x")
+        .arg(&script)
+        .status()
+        .unwrap();
+    }
 
     const KEY: &str = "PATH";
     let path = env::var_os(KEY).unwrap();
