@@ -5,12 +5,9 @@ pub(crate) struct Platform;
 #[cfg(target_os = "windows")]
 impl PlatformInterface for Platform {
   fn opener() -> Result<Vec<OsString>, Error> {
+    let exe = if cfg!(test) { "open.bat" } else { "cmd" };
     Ok(vec![
-      if cfg!(test) {
-        OsString::from("open.bat"),
-      } else {
-        OsString::from("cmd"),
-      }
+      OsString::from(exe),
       OsString::from("/C"),
       OsString::from("start"),
     ])
