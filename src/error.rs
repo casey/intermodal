@@ -5,28 +5,34 @@ use structopt::clap;
 #[derive(Debug, Snafu)]
 #[snafu(visibility(pub(crate)))]
 pub(crate) enum Error {
+  #[snafu(display("Must provide at least one announce URL"))]
+  AnnounceEmpty,
+  #[snafu(display("Failed to parse announce URL: {}", source))]
+  AnnounceUrlParse { source: url::ParseError },
+  #[snafu(display("Failed to decode bencode: {}", source))]
+  BencodeDecode { source: serde_bencode::Error },
   #[snafu(display("{}", source))]
   Clap { source: clap::Error },
-  #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
-  Filesystem { source: io::Error, path: PathBuf },
-  #[snafu(display("Failed to write to standard error: {}", source))]
-  Stderr { source: io::Error },
-  #[snafu(display("Failed to write to standard output: {}", source))]
-  Stdout { source: io::Error },
-  #[snafu(display("Serialization failed: {}", source))]
-  Serialize { source: serde_bencode::Error },
+  #[snafu(display("Failed to invoke command `{}`: {}", command, source,))]
+  CommandInvoke { command: String, source: io::Error },
+  #[snafu(display("Command `{}` returned bad exit status: {}", command, status))]
+  CommandStatus { command: String, status: ExitStatus },
   #[snafu(display("Filename was not valid unicode: {}", filename.to_string_lossy()))]
   FilenameDecode { filename: OsString },
   #[snafu(display("Path had no file name: {}", path.display()))]
   FilenameExtract { path: PathBuf },
+  #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
+  Filesystem { source: io::Error, path: PathBuf },
+  #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
+  OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display("Serialization failed: {}", source))]
+  Serialize { source: serde_bencode::Error },
+  #[snafu(display("Failed to write to standard error: {}", source))]
+  Stderr { source: io::Error },
+  #[snafu(display("Failed to write to standard output: {}", source))]
+  Stdout { source: io::Error },
   #[snafu(display("Failed to retrieve system time: {}", source))]
   SystemTime { source: SystemTimeError },
-  #[snafu(display("Failed to parse announce URL: {}", source))]
-  AnnounceUrlParse { source: url::ParseError },
-  #[snafu(display("Must provide at least one announce URL"))]
-  AnnounceEmpty,
-  #[snafu(display("Failed to decode bencode: {}", source))]
-  BencodeDecode { source: serde_bencode::Error },
   #[snafu(display(
     "Feature `{}` cannot be used without passing the `--unstable` flag",
     feature
