@@ -149,31 +149,62 @@ impl Opt {
 
     assert_eq!(originals.len(), beps.len());
 
+    let mut width = (0, 0, 0);
+
+    let rows = beps
+      .into_iter()
+      .zip(originals)
+      .map(|(bep, original)| {
+        assert_eq!(bep.number, original.number);
+
+        let row = (
+          format!(
+            "[{:02}](http://bittorrent.org/beps/bep_{:04}.html)",
+            bep.number, bep.number
+          ),
+          original.status.to_string(),
+          bep.title,
+        );
+
+        width.0 = width.0.max(row.0.len());
+        width.1 = width.1.max(row.1.len());
+        width.2 = width.2.max(row.2.len());
+
+        row
+      })
+      .collect::<Vec<(String, String, String)>>();
+
     let mut lines = Vec::new();
 
-    let width = beps.iter().map(|bep| bep.title.len()).max().unwrap_or(0);
-
     lines.push(format!(
-      "| BEP                                            | Status             | {:width$} |",
+      "| {:w0$} | {:w1$} | {:w2$} |",
+      "BEP",
+      "Status",
       "Title",
-      width = width
+      w0 = width.0,
+      w1 = width.1,
+      w2 = width.2,
     ));
 
     lines.push(format!(
-      "|:----------------------------------------------:|:------------------:|:{:-<width$}-|",
+      "|:{:-<w0$}:|:{:-<w1$}:|:{:-<w2$}-|",
       "",
-      width = width
+      "",
+      "",
+      w0 = width.0,
+      w1 = width.1,
+      w2 = width.2,
     ));
 
-    for (bep, original) in beps.into_iter().zip(originals) {
-      assert_eq!(bep.number, original.number);
+    for (bep, status, title) in rows {
       lines.push(format!(
-        "| [{:02}](http://bittorrent.org/beps/bep_{:04}.html) | {:18} | {:width$} |",
-        bep.number,
-        bep.number,
-        original.status.to_string(),
-        bep.title,
-        width = width
+        "| {:w0$} | {:w1$} | {:w2$} |",
+        bep,
+        status,
+        title,
+        w0 = width.0,
+        w1 = width.1,
+        w2 = width.2,
       ));
     }
 
