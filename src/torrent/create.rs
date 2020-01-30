@@ -650,7 +650,7 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
 
     if cfg!(target_os = "windows") {
-      let script = env.resolve("cmd.bat");
+      let script = env.resolve("open");
       fs::write(&script, format!("echo %3 > {}", opened.display())).unwrap();
     } else {
       let script = env.resolve(&Platform::opener().unwrap()[0]);

@@ -6,7 +6,11 @@ pub(crate) struct Platform;
 impl PlatformInterface for Platform {
   fn opener() -> Result<Vec<OsString>, Error> {
     Ok(vec![
-      OsString::from("cmd"),
+      if cfg!(test) {
+        OsString::from("open"),
+      } else {
+        OsString::from("cmd"),
+      }
       OsString::from("/C"),
       OsString::from("start"),
     ])
