@@ -53,6 +53,8 @@ mod metainfo;
 mod mode;
 mod opt;
 mod path_ext;
+mod platform;
+mod platform_interface;
 mod reckoner;
 mod style;
 mod subcommand;
