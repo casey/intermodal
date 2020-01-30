@@ -22,13 +22,13 @@ impl PlatformInterface for Platform {
 
 #[cfg(not(any(target_os = "windows", target_os = "macos")))]
 impl PlatformInterface for Platform {
-  fn opener() -> Result<(), Error> {
+  fn opener() -> Result<Vec<OsString>, Error> {
     const OPENERS: &[&str] = &["xdg-open", "gnome-open", "kde-open"];
 
     for opener in OPENERS {
       if let Ok(output) = Command::new(opener).arg("--version").output() {
         if output.status.success() {
-          return Ok(vec![opener]);
+          return Ok(vec![OsString::from(opener)]);
         }
       }
     }
