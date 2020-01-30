@@ -69,6 +69,13 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   )]
   no_creation_date: bool,
   #[structopt(
+    name = "OPEN",
+    long = "open",
+    help = "Open `.torrent` file after creation",
+    long_help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start on Windows"
+  )]
+  open: bool,
+  #[structopt(
     name = "OUTPUT",
     long = "output",
     help = "Save `.torrent` file to `OUTPUT`. Defaults to `$INPUT.torrent`."
@@ -178,7 +185,82 @@ impl Create {
 
     fs::write(&output, bytes).context(error::Filesystem { path: &output })?;
 
+    if self.open {
+      Platform::open(&output)?;
+    }
+
     Ok(())
+  }
+}
+
+trait PlatformInterface {
+  fn open(path: &Path) -> Result<(), Error> {
+    let mut command = Self::opener()?;
+    command.push(OsString::from(path));
+
+    let command_string = || {
+      command
+        .iter()
+        .map(|arg| arg.to_string_lossy().into_owned())
+        .collect::<Vec<String>>()
+        .join(",")
+    };
+
+    let status = Command::new(&command[0])
+      .args(&command[1..])
+      .status()
+      .map_err(|source| Error::CommandInvoke {
+        source,
+        command: command_string(),
+      })?;
+
+    if !status.success() {
+      Err(Error::CommandStatus {
+        command: command_string(),
+        status,
+      })
+    } else {
+      Ok(())
+    }
+  }
+
+  fn opener() -> Result<Vec<OsString>, Error>;
+}
+
+struct Platform;
+
+#[cfg(target_os = "windows")]
+impl PlatformInterface for Platform {
+  fn opener() -> Result<Vec<OsString>, Error> {
+    Ok(vec![
+      OsString::from("cmd"),
+      OsString::from("/C"),
+      OsString::from("start"),
+    ])
+  }
+}
+
+#[cfg(target_os = "macos")]
+impl PlatformInterface for Platform {
+  fn opener() -> Result<Vec<OsString>, Error> {
+    Ok(vec![OsString::from("open")])
+  }
+}
+
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
+impl PlatformInterface for Platform {
+  fn opener() -> Result<(), Error> {
+    const OPENERS: &[&str] = &["xdg-open", "gnome-open", "kde-open"];
+
+    for opener in OPENERS {
+      if let Ok(output) = Command::new(opener).arg("--version").output() {
+        if output.status.success() {
+          return Ok(vec![opener]);
+        }
+      }
+    }
+
+    Err(Error::OpenerMissing { tried: OPENERS })
   }
 }
 
@@ -629,5 +711,49 @@ mod tests {
       Sha1::from("abchijxyz").digest().bytes()
     );
     assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
+  }
+
+  #[test]
+  fn open() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--open"]);
+
+    let script = env.resolve(&Platform::opener().unwrap()[0]);
+    let opened = env.resolve("opened.txt");
+    let torrent = env.resolve("foo.torrent");
+
+    fs::write(
+      &script,
+      format!("#!/usr/bin/env sh\necho $1 > {}", opened.display()),
+    )
+    .unwrap();
+
+    Command::new("chmod")
+      .arg("+x")
+      .arg(&script)
+      .status()
+      .unwrap();
+
+    const KEY: &str = "PATH";
+    let path = env::var_os(KEY).unwrap();
+    let mut split = env::split_paths(&path)
+      .into_iter()
+      .collect::<Vec<PathBuf>>();
+    split.insert(0, env.dir().to_owned());
+    let new = env::join_paths(split).unwrap();
+    env::set_var(KEY, new);
+
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+
+    let start = Instant::now();
+
+    while start.elapsed() < Duration::new(2, 0) {
+      if let Ok(text) = fs::read_to_string(&opened) {
+        assert_eq!(text, format!("{}\n", torrent.display()));
+        return;
+      }
+    }
+
+    panic!("Failed to read `opened.txt`.");
   }
 }

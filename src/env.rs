@@ -98,8 +98,12 @@ impl Env {
     }
   }
 
+  pub(crate) fn dir(&self) -> &Path {
+    self.dir.as_ref().as_ref()
+  }
+
   pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
-    self.dir.as_ref().as_ref().join(path).clean()
+    self.dir().join(path).clean()
   }
 }
 

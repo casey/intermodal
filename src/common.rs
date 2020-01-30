@@ -11,9 +11,9 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   path::{Path, PathBuf},
-  process,
+  process::{self, Command, ExitStatus},
   str::{self, FromStr},
-  time::{SystemTime, SystemTimeError},
+  time::{Duration, Instant, SystemTime, SystemTimeError},
   usize,
 };
 
