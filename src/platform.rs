@@ -7,7 +7,7 @@ impl PlatformInterface for Platform {
   fn opener() -> Result<Vec<OsString>, Error> {
     Ok(vec![
       if cfg!(test) {
-        OsString::from("open"),
+        OsString::from("open.bat"),
       } else {
         OsString::from("cmd"),
       }
