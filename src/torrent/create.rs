@@ -257,6 +257,26 @@ mod tests {
   }
 
   #[test]
+  fn announce_udp() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "udp://tracker.opentrackr.org:1337/announce",
+    ]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_eq!(
+      metainfo.announce,
+      "udp://tracker.opentrackr.org:1337/announce"
+    );
+    assert!(metainfo.announce_list.is_none());
+  }
+
+  #[test]
   fn announce_single_tier() {
     let mut env = environment(&[
       "--input",
