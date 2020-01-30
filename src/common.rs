@@ -13,7 +13,7 @@ pub(crate) use std::{
   path::{Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
-  time::{Duration, Instant, SystemTime, SystemTimeError},
+  time::{SystemTime, SystemTimeError},
   usize,
 };
 
@@ -59,6 +59,7 @@ pub(crate) use std::{
   iter,
   ops::{Deref, DerefMut},
   rc::Rc,
+  time::{Duration, Instant},
 };
 
 // test structs and enums

@@ -21,13 +21,13 @@ pub(crate) trait PlatformInterface {
         command: command_string(),
       })?;
 
-    if !status.success() {
+    if status.success() {
+      Ok(())
+    } else {
       Err(Error::CommandStatus {
         command: command_string(),
         status,
       })
-    } else {
-      Ok(())
     }
   }
 
