@@ -68,7 +68,7 @@ at any time.
 ### BEP Support
 
 | Symbol             | Meaning                               |
-|--------------------|---------------------------------------|
+|:------------------:|---------------------------------------|
 | :white_check_mark: | Supported                             |
 | :x:                | Unsupported (links to tracking issue) |
 | :heavy_minus_sign: | Not Applicable                        |
