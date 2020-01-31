@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+
+! grep --color -REn 'FIXME|TODO|XXX' src

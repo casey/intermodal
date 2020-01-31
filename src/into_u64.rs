@@ -11,6 +11,7 @@ pub(crate) trait IntoU64 {
 
 impl IntoU64 for usize {
   fn into_u64(self) -> u64 {
+    #![allow(clippy::as_conversions)]
     self as u64
   }
 }

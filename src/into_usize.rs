@@ -11,6 +11,7 @@ pub(crate) trait IntoUsize {
 
 impl IntoUsize for u32 {
   fn into_usize(self) -> usize {
+    #![allow(clippy::as_conversions)]
     self as usize
   }
 }
