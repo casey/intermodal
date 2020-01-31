@@ -26,39 +26,38 @@ a {
   text-decoration: none;
 }
 
-table {
-  border-collapse: collapse;
-  margin-bottom:   var(--margin-vertical);
-  margin-left:     var(--margin-horizontal);
-  margin-right:    var(--margin-horizontal);
-  margin-top:      var(--margin-vertical);
+#intermodal {
+  display:               grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-bottom:         var(--margin-vertical);
+  margin-left:           var(--margin-horizontal);
+  margin-right:          var(--margin-horizontal);
+  margin-top:            var(--margin-vertical);
 }
 
-td {
-  border-style: dashed;
-  border-width: 1px;
-  height: var(--size);
-  width:  var(--size);
+#intermodal > * {
+  height:       var(--size);
+  width:        var(--size);
 }
 
 /* intermodal is an isogram */
-#i:after        { content:'I'; }
-#i:hover:after  { content:'私'; }
-#n:after        { content:'N'; }
-#n:hover:after  { content:'∅'; }
-#t:after        { content:'T'; }
-#t:hover:after  { content:'࿈'; }
-#e:after        { content:'E'; }
-#e:hover:after  { content:'Ə'; }
-#r:after        { content:'R'; }
-#r:hover:after  { content:'ℜ'; }
-#m:after        { content:'M'; }
-#m:hover:after  { content:'☾'; }
-#o:after        { content:'O'; }
-#o:hover:after  { content:'ꙮ'; }
-#d:after        { content:'D'; }
-#d:hover:after  { content:'↓'; }
-#a:after        { content:'A'; }
-#a:hover:after  { content:'א'; }
-#l:after        { content:'L'; }
-#l:hover:after  { content:'し'; }
+#i:after        { content: 'I';  }
+#i:hover:after  { content: '私'; }
+#n:after        { content: 'N';  }
+#n:hover:after  { content: '∅';  }
+#t:after        { content: 'T';  }
+#t:hover:after  { content: '࿈';  }
+#e:after        { content: 'E';  }
+#e:hover:after  { content: 'Ə';  }
+#r:after        { content: 'R';  }
+#r:hover:after  { content: 'ℜ';  }
+#m:after        { content: 'M';  }
+#m:hover:after  { content: '☾';  }
+#o:after        { content: 'O';  }
+#o:hover:after  { content: 'ꙮ';  }
+#d:after        { content: 'D';  }
+#d:hover:after  { content: '↓';  }
+#a:after        { content: 'A';  }
+#a:hover:after  { content: 'א';  }
+#l:after        { content: 'L';  }
+#l:hover:after  { content: 'し'; }
