@@ -12,6 +12,7 @@
 - [Bittorrent](#bittorrent)
   - [BEP Support](#bep-support)
 - [References](#references)
+  - [Alternatives & Prior Art](#alternatives--prior-art)
   - [BitTorrent](#bittorrent)
 
 ## General

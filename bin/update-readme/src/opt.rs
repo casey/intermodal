@@ -31,7 +31,11 @@ impl Opt {
       let text = captures.name("TEXT").unwrap().as_str();
       let level = marker.len();
       let indentation = " ".repeat((level - 2) * 2);
-      let slug = text.to_lowercase().replace(' ', "-").replace('.', "");
+      let slug = text
+        .to_lowercase()
+        .replace(' ', "-")
+        .replace('.', "")
+        .replace('&', "");
       toc.push(format!("{}- [{}](#{})", indentation, text, slug));
     }
 
