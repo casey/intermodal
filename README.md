@@ -12,6 +12,34 @@
 
 ## General
 
+### Installation
+
+#### Supported Operating Systems
+
+`imdl` supports both unix and Windows. It is tested on Linux, MacOS, and
+Windows, but should work on other unix OSs. If it does not, please open an
+issue!
+
+#### Pre-built binaries
+
+Pre-built binaries for Linux, macOS, and Windows can be found on
+[the releases page](https://github.com/casey/intermodal/releases).
+
+You can use the following command to download the latest binary for Linux,
+MacOS or Windows, just replace `DEST` with the directory where you'd like to
+install the `imdl` binary:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf \
+  https://raw.githubusercontent.com/casey/intermodal/master/bin/install \
+  | bash -s -- --to DEST
+```
+
+#### crates.io
+
+`imdl` is published to [crates.io](https://crates.io), and can be installed
+using cargo with `cargo install imdl`.
+
 ### Semantic Versioning
 
 Intermodal follows [semantic versioning](https://semver.org/).
