@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   all:
+    name: All
     strategy:
       matrix:
         os:
