@@ -1,2 +1,4 @@
-status           = ["all"]
-use_squash_merge = true
+delete-merged-branches = true
+status                 = ["All (%-latest)"]
+use-squash-merge       = true
+cut-body-after         = "---"
