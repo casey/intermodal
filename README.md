@@ -34,9 +34,7 @@ MacOS or Windows, just replace `DEST` with the directory where you'd like to
 install the `imdl` binary:
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf \
-  https://raw.githubusercontent.com/casey/intermodal/master/bin/install \
-  | bash -s -- --to DEST
+curl --proto '=https' --tlsv1.2 -sSf https://imdl.io/install.sh | bash -s -- --to DEST
 ```
 
 #### Cargo
