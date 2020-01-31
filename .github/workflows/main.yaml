@@ -3,7 +3,7 @@ name: Main
 on: [push]
 
 jobs:
-  build:
+  all:
     strategy:
       matrix:
         os:
