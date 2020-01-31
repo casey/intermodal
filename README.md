@@ -6,7 +6,7 @@
   - [Installation](#installation)
     - [Supported Operating Systems](#supported-operating-systems)
     - [Pre-built binaries](#pre-built-binaries)
-    - [crates.io](#crates.io)
+    - [Cargo](#cargo)
   - [Semantic Versioning](#semantic-versioning)
   - [Unstable Features](#unstable-features)
 - [Bittorrent](#bittorrent)
@@ -39,10 +39,11 @@ curl --proto '=https' --tlsv1.2 -sSf \
   | bash -s -- --to DEST
 ```
 
-#### crates.io
+#### Cargo
 
-`imdl` is published to [crates.io](https://crates.io), and can be installed
-using cargo with `cargo install imdl`.
+`imdl` is written in [Rust](https://www.rust-lang.org/) and can be built from
+source and installed with `cargo install imdl`. To get Rust, use the
+[rustup installer](https://rustup.rs/).
 
 ### Semantic Versioning
 
