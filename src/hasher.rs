@@ -121,7 +121,7 @@ impl Hasher {
         md5.consume(&buffer);
       }
 
-      remaining -= buffer.len() as u64;
+      remaining -= buffer.len().into_u64();
     }
 
     self.length += length;

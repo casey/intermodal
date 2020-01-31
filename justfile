@@ -1,5 +1,7 @@
 default: watch
 
+version := `sed -En 's/version[[:space:]]*=[[:space:]]*"([^"]+)"/v\1/p' Cargo.toml | head -1`
+
 # watch filesystem for changes and rerun tests
 watch:
 	cargo watch --exec test
@@ -18,13 +20,20 @@ done BRANCH:
 	git branch -D {{BRANCH}}
 
 test:
-	cargo test
+	cargo test --all
+
+clippy:
+	cargo clippy --all
 
 lint:
-	cargo clippy
+	./bin/lint
 
 preview-readme:
 	grip -b README.md
+
+# add git log messages to changelog
+changes:
+	git log --pretty=format:%s >> CHANGELOG.md
 
 dev-deps:
 	brew install grip
@@ -37,13 +46,23 @@ update-toc:
 update-supported-beps:
 	cargo run --package update-readme supported-beps
 
-check:
-	cargo test --all
-	cargo clippy --all
+check-minimal-versions:
+	./bin/check-minimal-versions
+
+check: test clippy lint check-minimal-versions
+	git diff --no-ext-diff --quiet --exit-code
 	cargo fmt --all -- --check
-	! grep --color -REn 'FIXME|TODO|XXX' src
 	cargo run --package update-readme toc
 	git diff --no-ext-diff --quiet --exit-code
+
+publish-check: check
+	git branch | grep '* master'
+	grep {{version}} CHANGELOG.md
+
+publish: publish-check
+	cargo publish
+	git tag -a {{version}} -m 'Release {{version}}'
+	git push github {{version}}
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:

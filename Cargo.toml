@@ -1,6 +1,6 @@
 [package]
 name        = "imdl"
-version     = "0.0.0"
+version     = "0.0.1"
 description = "📦 A 40' shipping container for the internet"
 authors     = ["Casey Rodarmor <casey@rodarmor.com>"]
 license     = "CC0-1.0"
@@ -26,10 +26,10 @@ snafu             = "0.6"
 static_assertions = "1"
 tempfile          = "3"
 url               = "2"
-walkdir           = "2"
+walkdir           = "2.1"
 
 [dependencies.serde]
-version  = "1"
+version  = "1.0.103"
 features = ["derive"]
 
 [dependencies.structopt]
