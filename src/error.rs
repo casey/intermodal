@@ -11,6 +11,13 @@ pub(crate) enum Error {
   AnnounceUrlParse { source: url::ParseError },
   #[snafu(display("Failed to decode bencode: {}", source))]
   BencodeDecode { source: serde_bencode::Error },
+  #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]
+  ByteParse {
+    text: String,
+    source: ParseFloatError,
+  },
+  #[snafu(display("Failed to parse byte count `{}`: Invalid suffix: `{}`", text, suffix))]
+  ByteSuffix { text: String, suffix: String },
   #[snafu(display("{}", source))]
   Clap { source: clap::Error },
   #[snafu(display("Failed to invoke command `{}`: {}", command, source,))]
@@ -25,6 +32,12 @@ pub(crate) enum Error {
   Filesystem { source: io::Error, path: PathBuf },
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display(
+    "Piece length `{}` too large. The maximum supported piece length is {}.",
+    bytes,
+    Bytes(u32::max_value() as u128)
+  ))]
+  PieceLength { bytes: Bytes },
   #[snafu(display("Serialization failed: {}", source))]
   Serialize { source: serde_bencode::Error },
   #[snafu(display("Failed to write to standard error: {}", source))]

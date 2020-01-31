@@ -40,6 +40,7 @@ mod test_env;
 mod capture;
 
 mod bencode;
+mod bytes;
 mod common;
 mod consts;
 mod env;
