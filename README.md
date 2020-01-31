@@ -3,6 +3,10 @@
 ## Manual
 
 - [General](#general)
+  - [Installation](#installation)
+    - [Supported Operating Systems](#supported-operating-systems)
+    - [Pre-built binaries](#pre-built-binaries)
+    - [crates.io](#crates.io)
   - [Semantic Versioning](#semantic-versioning)
   - [Unstable Features](#unstable-features)
 - [Bittorrent](#bittorrent)
