@@ -64,6 +64,10 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 
+# open github pages index
+open-pages:
+	open docs/index.html
+
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
 	aria2c \
