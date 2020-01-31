@@ -3,6 +3,10 @@
 ## Manual
 
 - [General](#general)
+  - [Installation](#installation)
+    - [Supported Operating Systems](#supported-operating-systems)
+    - [Pre-built binaries](#pre-built-binaries)
+    - [Cargo](#cargo)
   - [Semantic Versioning](#semantic-versioning)
   - [Unstable Features](#unstable-features)
 - [Bittorrent](#bittorrent)
@@ -11,6 +15,35 @@
   - [BitTorrent](#bittorrent)
 
 ## General
+
+### Installation
+
+#### Supported Operating Systems
+
+`imdl` supports both unix and Windows. It is tested on Linux, MacOS, and
+Windows, but should work on other unix OSs. If it does not, please open an
+issue!
+
+#### Pre-built binaries
+
+Pre-built binaries for Linux, macOS, and Windows can be found on
+[the releases page](https://github.com/casey/intermodal/releases).
+
+You can use the following command to download the latest binary for Linux,
+MacOS or Windows, just replace `DEST` with the directory where you'd like to
+install the `imdl` binary:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf \
+  https://raw.githubusercontent.com/casey/intermodal/master/bin/install \
+  | bash -s -- --to DEST
+```
+
+#### Cargo
+
+`imdl` is written in [Rust](https://www.rust-lang.org/) and can be built from
+source and installed with `cargo install imdl`. To get Rust, use the
+[rustup installer](https://rustup.rs/).
 
 ### Semantic Versioning
 
