@@ -3,7 +3,7 @@ name: Main
 on: [push]
 
 jobs:
-  build:
+  all:
     strategy:
       matrix:
         os:
@@ -19,7 +19,7 @@ jobs:
           target: x86_64-pc-windows-msvc
     runs-on: ${{matrix.os}}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Install
       uses: actions-rs/toolchain@v1
       with:
