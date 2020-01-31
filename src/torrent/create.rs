@@ -288,6 +288,18 @@ mod tests {
   }
 
   #[test]
+  fn announce_wss_tracker() {
+    let mut env = environment(&["--input", "foo", "--announce", "wss://tracker.btorrent.xyz"]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_eq!(metainfo.announce, "wss://tracker.btorrent.xyz/");
+    assert!(metainfo.announce_list.is_none());
+  }
+
+  #[test]
   fn announce_single_tier() {
     let mut env = environment(&[
       "--input",
