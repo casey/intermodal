@@ -132,6 +132,24 @@ at any time.
 
 ## References
 
+### Alternatives & Prior Art
+
+| Name                                                                              | UI            | Language                | Notes                                                             |
+|:----------------------------------------------------------------------------------|---------------|:-----------------------:|:------------------------------------------------------------------|
+| [torf-cli](https://github.com/rndusr/torf-cli)                                    | Command-line           | Python                  | Highly recommended utility for creating torrents and magnet links, as well as displaying information about and editing existing torrents. |
+| [mktorrent](https://github.com/Rudde/mktorrent)                                   | Command-line           | C                       | Popular but unmaintained torrent file creator.
+| [pmktorrent](https://github.com/xxkfqz/pmktorrent)                                | Command-line           | C                       | Maintained fork of mktorrent.                                                                                                            |
+| [mktorrent](https://github.com/mukaibot/mktorrent)                                | Library                | Ruby                    | for creating torrent files.                                                                                                              |
+| [py3createtorrent](https://github.com/rsnitsch/py3createtorrent/)                 | Command-line           | Python                  | Torrent file creator.                                                                                                                    |
+| [create-torrent](https://github.com/webtorrent/create-torrent)                    | Library & Command-line | JavaScript              | creates torrents                                                                                                                         |
+| [whatmp3](https://github.com/RecursiveForest/whatmp3)                             | Command-line           | Python                  | transcodes audio files and creates torrents                                                                                              |
+| [torrent file editor](https://github.com/torrent-file-editor/torrent-file-editor) | GUI                    | C++                     | torrent editor                                                                                                                           |
+| [torrent2magnet](https://github.com/repolho/torrent2magnet)                       | Command-line           | Python                  | creates magnet links from torrent files                                                                                                  |
+| [h2torrent](https://github.com/elektito/ih2torrent)                               | Command-line           | Python                  | create torrent from infohash or magnet uri                                                                                               |
+| [dottorrent](https://github.com/kz26/dottorrent)                                  | Library                | Python                  | creates torrent files                                                                                                                    |
+| [dottorrent-cli](https://github.com/kz26/dottorrent-cli)                          | Command-line           | Pyton                   | creates torrent files                                                                                                                    |
+| [online torrent file creator](https://github.com/kimbatt/torrent-creator/)        | Web page               | Typescript & C++ (WASM) | creates.torrent files                                                                                                                    |
+
 ### BitTorrent
 
 | URL                                                         | Description                                                                                       |
