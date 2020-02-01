@@ -16,7 +16,7 @@ pub(crate) enum Error {
     text: String,
     source: ParseFloatError,
   },
-  #[snafu(display("Failed to parse byte count `{}`: Invalid suffix: `{}`", text, suffix))]
+  #[snafu(display("Failed to parse byte count `{}`, invalid suffix: `{}`", text, suffix))]
   ByteSuffix { text: String, suffix: String },
   #[snafu(display("{}", source))]
   Clap { source: clap::Error },
