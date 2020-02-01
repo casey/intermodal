@@ -150,6 +150,7 @@ at any time.
 | [dottorrent](https://github.com/kz26/dottorrent)                                  | Library                 | Python     | Library for creating torrent files                                                                                                        |
 | [dottorrent-cli](https://github.com/kz26/dottorrent-cli)                          | CLI                     | Python     | Torrent file creator.                                                                                                                     |
 | [torrent-creator](https://github.com/kimbatt/torrent-creator/)                    | Web page                | Typescript | Single-page web app torrent file creator.                                                                                                 |
+| [pyrocore](https://github.com/pyroscope/pyrocore)                                 | CLI                     | PYthon     | Utilities for creating, modifying, and displaying torrent files.                                                                          |
 
 ### BitTorrent
 
