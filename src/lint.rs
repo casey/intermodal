@@ -26,6 +26,14 @@ impl FromStr for Lint {
   }
 }
 
+impl Display for Lint {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    match self {
+      Self::UnevenPieceLength => write!(f, "
+    }
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
