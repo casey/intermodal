@@ -732,4 +732,34 @@ mod tests {
 
     panic!("Failed to read `opened.txt`.");
   }
+
+  #[test]
+  fn uneven_piece_length() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "16.1KiB",
+    ]);
+    assert!(matches!(
+      env.run(),
+      Err(Error::LintFailed {
+        lint: Lint::UnevenPieceLength
+      })
+    ));
+  }
+
+  #[test]
+  #[ignore]
+  fn zero_piece_length() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn small_piece_length() {
+    todo!()
+  }
 }

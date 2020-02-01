@@ -51,6 +51,10 @@ pub(crate) enum Error {
     feature
   ))]
   Unstable { feature: &'static str },
+  #[snafu(display("Unknown lint: {}", text))]
+  LintUnknown { text: String },
+  #[snafu(display("{}", lint))]
+  LintFailed { lint: Lint },
 }
 
 impl From<clap::Error> for Error {
