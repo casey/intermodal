@@ -35,7 +35,7 @@ pub(crate) enum Error {
   #[snafu(display(
     "Piece length `{}` too large. The maximum supported piece length is {}.",
     bytes,
-    Bytes(u32::max_value() as u128)
+    Bytes(u32::max_value().into())
   ))]
   PieceLength { bytes: Bytes },
   #[snafu(display("Serialization failed: {}", source))]

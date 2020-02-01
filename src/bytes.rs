@@ -12,10 +12,25 @@ const YI: u128 = ZI << 10;
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct Bytes(pub(crate) u128);
 
+fn float_to_int(x: f64) -> u128 {
+  #![allow(
+    clippy::as_conversions,
+    clippy::cast_sign_loss,
+    clippy::cast_possible_truncation
+  )]
+  x as u128
+}
+
+fn int_to_float(x: u128) -> f64 {
+  #![allow(clippy::as_conversions, clippy::cast_precision_loss)]
+  x as f64
+}
+
 impl FromStr for Bytes {
   type Err = Error;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
+    #[allow(clippy::trivially_copy_pass_by_ref)]
     fn is_digit(c: &char) -> bool {
       match c {
         '0'..='9' | '.' => true,
@@ -50,7 +65,7 @@ impl FromStr for Bytes {
       }
     };
 
-    Ok(Bytes((value * multiple as f64) as u128))
+    Ok(Bytes(float_to_int(value * int_to_float(multiple))))
   }
 }
 
@@ -58,7 +73,7 @@ impl Display for Bytes {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     const DISPLAY_SUFFIXES: &[&str] = &["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 
-    let mut value = self.0 as f64;
+    let mut value = int_to_float(self.0);
 
     let mut i = 0;
 
