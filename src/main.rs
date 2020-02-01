@@ -2,6 +2,8 @@
 #![allow(
   clippy::else_if_without_else,
   clippy::enum_glob_use,
+  clippy::float_arithmetic,
+  clippy::float_cmp,
   clippy::implicit_return,
   clippy::indexing_slicing,
   clippy::integer_arithmetic,
@@ -40,6 +42,7 @@ mod test_env;
 mod capture;
 
 mod bencode;
+mod bytes;
 mod common;
 mod consts;
 mod env;
