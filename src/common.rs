@@ -10,6 +10,7 @@ pub(crate) use std::{
   fs::{self, File},
   hash::Hash,
   io::{self, Read, Write},
+  num::ParseFloatError,
   path::{Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
@@ -42,9 +43,9 @@ pub(crate) use crate::{
 
 // structs and enums
 pub(crate) use crate::{
-  env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info, metainfo::Metainfo,
-  mode::Mode, opt::Opt, platform::Platform, style::Style, subcommand::Subcommand, torrent::Torrent,
-  use_color::UseColor,
+  bytes::Bytes, env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info,
+  metainfo::Metainfo, mode::Mode, opt::Opt, platform::Platform, style::Style,
+  subcommand::Subcommand, torrent::Torrent, use_color::UseColor,
 };
 
 // test modules
