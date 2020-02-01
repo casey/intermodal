@@ -84,10 +84,11 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   #[structopt(
     name = "PIECE-LENGTH",
     long = "piece-length",
-    default_value = "524288",
-    help = "Set piece length to `PIECE-LENGTH` bytes."
+    default_value = "512KiB",
+    help = "Set piece length to `PIECE-LENGTH` bytes.",
+    long_help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
   )]
-  piece_length: u32,
+  piece_length: Bytes,
   #[structopt(
     name = "PRIVATE",
     long = "private",
@@ -99,6 +100,14 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
 
 impl Create {
   pub(crate) fn run(self, env: &Env) -> Result<(), Error> {
+    let piece_length: u32 = self
+      .piece_length
+      .0
+      .try_into()
+      .map_err(|_| Error::PieceLength {
+        bytes: self.piece_length,
+      })?;
+
     let input = env.resolve(&self.input);
 
     let mut announce_list = Vec::new();
@@ -157,10 +166,10 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    let (mode, pieces) = Hasher::hash(&input, self.md5sum, self.piece_length)?;
+    let (mode, pieces) = Hasher::hash(&input, self.md5sum, piece_length)?;
 
     let info = Info {
-      piece_length: self.piece_length,
+      piece_length,
       mode,
       pieces,
       name,
@@ -404,6 +413,24 @@ mod tests {
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
     assert_eq!(metainfo.info.piece_length, 1);
+  }
+
+  #[test]
+  fn si_piece_size() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "0.5MiB",
+    ]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_eq!(metainfo.info.piece_length, 512 * 1024);
   }
 
   #[test]
