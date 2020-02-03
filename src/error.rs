@@ -37,7 +37,13 @@ pub(crate) enum Error {
     bytes,
     Bytes(u32::max_value().into())
   ))]
-  PieceLength { bytes: Bytes },
+  PieceLengthTooLarge { bytes: Bytes },
+  #[snafu(display("Piece length `{}` is not an even power of two", bytes))]
+  PieceLengthUneven { bytes: Bytes },
+  #[snafu(display("Piece length must be at least 16 KiB"))]
+  PieceLengthSmall,
+  #[snafu(display("Piece length cannot be zero"))]
+  PieceLengthZero,
   #[snafu(display("Serialization failed: {}", source))]
   Serialize { source: serde_bencode::Error },
   #[snafu(display("Failed to write to standard error: {}", source))]
@@ -51,6 +57,18 @@ pub(crate) enum Error {
     feature
   ))]
   Unstable { feature: &'static str },
+  #[snafu(display("Unknown lint: {}", text))]
+  LintUnknown { text: String },
+}
+
+impl Error {
+  pub(crate) fn lint(&self) -> Option<Lint> {
+    match self {
+      Self::PieceLengthUneven { .. } => Some(Lint::UnevenPieceLength),
+      Self::PieceLengthSmall { .. } => Some(Lint::SmallPieceLength),
+      _ => None,
+    }
+  }
 }
 
 impl From<clap::Error> for Error {

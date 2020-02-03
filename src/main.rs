@@ -52,6 +52,7 @@ mod hasher;
 mod info;
 mod into_u64;
 mod into_usize;
+mod lint;
 mod metainfo;
 mod mode;
 mod opt;
