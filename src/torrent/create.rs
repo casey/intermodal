@@ -16,6 +16,13 @@ pub(crate) struct Create {
   )]
   announce: Url,
   #[structopt(
+    name = "ALLOW",
+    long = "allow",
+    help = "Use `ANNOUNCE` as the primary tracker announce URL.",
+    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
+  )]
+  allowed_lints: Vec<Lint>,
+  #[structopt(
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
     help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
@@ -98,15 +105,57 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   private: bool,
 }
 
+struct Linter {
+  allowed: BTreeSet<Lint>,
+}
+
+impl Linter {
+  fn new() -> Linter {
+    Linter {
+      allowed: BTreeSet::new(),
+    }
+  }
+
+  fn allow(&mut self, allowed: impl IntoIterator<Item = Lint>) {
+    self.allowed.extend(allowed)
+  }
+
+  fn is_allowed(&self, lint: Lint) -> bool {
+    self.allowed.contains(&lint)
+  }
+
+  fn is_denied(&self, lint: Lint) -> bool {
+    !self.is_allowed(lint)
+  }
+}
+
 impl Create {
   pub(crate) fn run(self, env: &Env) -> Result<(), Error> {
-    let piece_length: u32 = self
-      .piece_length
-      .0
-      .try_into()
-      .map_err(|_| Error::PieceLength {
+    let mut linter = Linter::new();
+    linter.allow(self.allowed_lints.iter().cloned());
+
+    if linter.is_denied(Lint::UnevenPieceLength) && !self.piece_length.is_power_of_two() {
+      return Err(Error::PieceLengthUneven {
         bytes: self.piece_length,
-      })?;
+      });
+    }
+
+    let piece_length: u32 =
+      self
+        .piece_length
+        .0
+        .try_into()
+        .map_err(|_| Error::PieceLengthTooLarge {
+          bytes: self.piece_length,
+        })?;
+
+    if piece_length == 0 {
+      return Err(Error::PieceLengthZero);
+    }
+
+    if linter.is_denied(Lint::SmallPieceLength) && piece_length < 16 * 1024 {
+      return Err(Error::PieceLengthSmall);
+    }
 
     let input = env.resolve(&self.input);
 
@@ -405,14 +454,14 @@ mod tests {
       "--announce",
       "http://bar",
       "--piece-length",
-      "1",
+      "64KiB",
     ]);
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.info.piece_length, 1);
+    assert_eq!(metainfo.info.piece_length, 64 * 1024);
   }
 
   #[test]
@@ -441,7 +490,7 @@ mod tests {
       "--announce",
       "http://bar",
       "--piece-length",
-      "1",
+      "16KiB",
     ]);
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
@@ -459,7 +508,7 @@ mod tests {
       "--announce",
       "http://bar",
       "--piece-length",
-      "1",
+      "32KiB",
     ]);
     let dir = env.resolve("foo");
     fs::create_dir(&dir).unwrap();
@@ -588,6 +637,8 @@ mod tests {
       "http://bar",
       "--piece-length",
       "1",
+      "--allow",
+      "small-piece-length",
     ]);
     let contents = "bar";
     fs::write(env.resolve("foo"), contents).unwrap();
@@ -741,25 +792,71 @@ mod tests {
       "--announce",
       "http://bar",
       "--piece-length",
-      "16.1KiB",
+      "17KiB",
     ]);
-    assert!(matches!(
+    assert_matches!(
       env.run(),
-      Err(Error::LintFailed {
-        lint: Lint::UnevenPieceLength
-      })
-    ));
+      Err(Error::PieceLengthUneven { bytes }) if bytes.0 == 17 * 1024
+    );
   }
 
   #[test]
-  #[ignore]
+  fn uneven_piece_length_allow() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "17KiB",
+      "--allow",
+      "uneven-piece-length",
+    ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    env.run().unwrap();
+  }
+
+  #[test]
   fn zero_piece_length() {
-    todo!()
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "0",
+    ]);
+    assert_matches!(env.run(), Err(Error::PieceLengthZero));
   }
 
   #[test]
-  #[ignore]
   fn small_piece_length() {
-    todo!()
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "8KiB",
+    ]);
+    assert_matches!(env.run(), Err(Error::PieceLengthSmall));
+  }
+
+  #[test]
+  fn small_piece_length_allow() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--piece-length",
+      "8KiB",
+      "--allow",
+      "small-piece-length",
+    ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    env.run().unwrap();
   }
 }

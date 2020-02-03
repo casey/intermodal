@@ -1,24 +1,30 @@
 use crate::common::*;
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Ord, PartialOrd)]
 pub(crate) enum Lint {
   UnevenPieceLength,
   SmallPieceLength,
 }
 
-// impl Lint {
-//   fn all() -> &'static [Lint] {
-//     &[Self::UnevenPieceLength]
-//   }
-// }
+const UNEVEN_PIECE_LENGTH: &str = "uneven-piece-length";
+const SMALL_PIECE_LENGTH: &str = "small-piece-length";
+
+impl Lint {
+  pub(crate) fn name(self) -> &'static str {
+    match self {
+      Self::UnevenPieceLength => UNEVEN_PIECE_LENGTH,
+      Self::SmallPieceLength => SMALL_PIECE_LENGTH,
+    }
+  }
+}
 
 impl FromStr for Lint {
   type Err = Error;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text.replace('_', "-").to_lowercase().as_str() {
-      "uneven-piece-length" => Ok(Self::UnevenPieceLength),
-      "small-piece-length" => Ok(Self::SmallPieceLength),
+      UNEVEN_PIECE_LENGTH => Ok(Self::UnevenPieceLength),
+      SMALL_PIECE_LENGTH => Ok(Self::SmallPieceLength),
       _ => Err(Error::LintUnknown {
         text: text.to_string(),
       }),
@@ -28,9 +34,7 @@ impl FromStr for Lint {
 
 impl Display for Lint {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    match self {
-      Self::UnevenPieceLength => write!(f, "
-    }
+    write!(f, "{}", self.name())
   }
 }
 
