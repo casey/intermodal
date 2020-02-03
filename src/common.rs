@@ -2,7 +2,7 @@
 pub(crate) use std::{
   borrow::Cow,
   cmp::{Ordering, Reverse},
-  collections::{BTreeMap, HashMap},
+  collections::{BTreeMap, BTreeSet, HashMap},
   convert::{Infallible, TryInto},
   env,
   ffi::{OsStr, OsString},
@@ -44,7 +44,7 @@ pub(crate) use crate::{
 // structs and enums
 pub(crate) use crate::{
   bytes::Bytes, env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info,
-  metainfo::Metainfo, mode::Mode, opt::Opt, platform::Platform, style::Style,
+  lint::Lint, metainfo::Metainfo, mode::Mode, opt::Opt, platform::Platform, style::Style,
   subcommand::Subcommand, torrent::Torrent, use_color::UseColor,
 };
 

@@ -91,6 +91,17 @@ impl Env {
           self.err_style.message().suffix(),
         )
         .ok();
+
+        if let Some(lint) = error.lint() {
+          writeln!(
+            &mut self.err,
+            "{}: This check can be disabled with `--allow {}`.",
+            self.err_style.message().paint("note"),
+            lint.name()
+          )
+          .ok();
+        }
+
         Err(EXIT_FAILURE)
       }
     } else {
