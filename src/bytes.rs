@@ -12,6 +12,12 @@ const YI: u128 = ZI << 10;
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub(crate) struct Bytes(pub(crate) u128);
 
+impl Bytes {
+  pub(crate) fn is_power_of_two(self) -> bool {
+    self.0 == 0 || self.0 & (self.0 - 1) == 0
+  }
+}
+
 fn float_to_int(x: f64) -> u128 {
   #![allow(
     clippy::as_conversions,
