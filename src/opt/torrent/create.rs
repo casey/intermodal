@@ -91,11 +91,10 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   #[structopt(
     name = "PIECE-LENGTH",
     long = "piece-length",
-    default_value = "512KiB",
     help = "Set piece length to `PIECE-LENGTH` bytes.",
     long_help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
   )]
-  piece_length: Bytes,
+  piece_length: Option<Bytes>,
   #[structopt(
     name = "PRIVATE",
     long = "private",
@@ -112,49 +111,31 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   source: Option<String>,
 }
 
-struct Linter {
-  allowed: BTreeSet<Lint>,
-}
-
-impl Linter {
-  fn new() -> Linter {
-    Linter {
-      allowed: BTreeSet::new(),
-    }
-  }
-
-  fn allow(&mut self, allowed: impl IntoIterator<Item = Lint>) {
-    self.allowed.extend(allowed)
-  }
-
-  fn is_allowed(&self, lint: Lint) -> bool {
-    self.allowed.contains(&lint)
-  }
-
-  fn is_denied(&self, lint: Lint) -> bool {
-    !self.is_allowed(lint)
-  }
-}
-
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
+    let input = env.resolve(&self.input);
+
+    let files = Files::from_root(&input)?;
+
+    let piece_length = self
+      .piece_length
+      .unwrap_or_else(|| PieceLengthPicker::from_content_size(files.total_size()));
+
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
-    if linter.is_denied(Lint::UnevenPieceLength) && !self.piece_length.is_power_of_two() {
+    if linter.is_denied(Lint::UnevenPieceLength) && !piece_length.is_power_of_two() {
       return Err(Error::PieceLengthUneven {
-        bytes: self.piece_length,
+        bytes: piece_length,
       });
     }
 
-    let piece_length: u32 =
-      self
-        .piece_length
-        .0
-        .try_into()
-        .map_err(|_| Error::PieceLengthTooLarge {
-          bytes: self.piece_length,
-        })?;
+    let piece_length: u32 = piece_length
+      .0
+      .try_into()
+      .map_err(|_| Error::PieceLengthTooLarge {
+        bytes: piece_length,
+      })?;
 
     if piece_length == 0 {
       return Err(Error::PieceLengthZero);
@@ -163,8 +144,6 @@ impl Create {
     if linter.is_denied(Lint::SmallPieceLength) && piece_length < 16 * 1024 {
       return Err(Error::PieceLengthSmall);
     }
-
-    let input = env.resolve(&self.input);
 
     let mut announce_list = Vec::new();
     for tier in &self.announce_tiers {
@@ -453,7 +432,7 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.info.piece_length, 512 * 2u32.pow(10));
+    assert_eq!(metainfo.info.piece_length, 16 * 2u32.pow(10));
   }
 
   #[test]
@@ -804,6 +783,8 @@ mod tests {
       "--piece-length",
       "17KiB",
     ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
     assert_matches!(
       env.run(),
       Err(Error::PieceLengthUneven { bytes }) if bytes.0 == 17 * 1024
@@ -837,6 +818,8 @@ mod tests {
       "--piece-length",
       "0",
     ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
     assert_matches!(env.run(), Err(Error::PieceLengthZero));
   }
 
@@ -850,6 +833,8 @@ mod tests {
       "--piece-length",
       "8KiB",
     ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
     assert_matches!(env.run(), Err(Error::PieceLengthSmall));
   }
 
@@ -894,12 +879,12 @@ mod tests {
     env.run().unwrap();
     let have = env.out();
     let want = "        Name  foo
-   Info Hash  8197efe97f10f50f249e8d5c63eb5c0d4e1d9b49
-Torrent Size  166 bytes
+   Info Hash  2637812436658f855e99f07c40fe7da5832a7b6d
+Torrent Size  165 bytes
 Content Size  0 bytes
      Private  no
      Tracker  http://bar/
-  Piece Size  512 KiB
+  Piece Size  16 KiB
  Piece Count  1
   File Count  0
 ";
