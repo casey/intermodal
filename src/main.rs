@@ -62,7 +62,9 @@ mod platform_interface;
 mod reckoner;
 mod style;
 mod subcommand;
+mod table;
 mod torrent;
+mod torrent_summary;
 mod use_color;
 
 fn main() {

@@ -197,7 +197,7 @@ impl Create {
         input.parent().unwrap().join(torrent_name)
       });
 
-    let private = if self.private { 1 } else { 0 };
+    let private = if self.private { Some(1) } else { None };
 
     let creation_date = if self.no_creation_date {
       None
@@ -227,7 +227,7 @@ impl Create {
 
     let metainfo = Metainfo {
       comment: self.comment,
-      encoding: consts::ENCODING_UTF8.to_string(),
+      encoding: Some(consts::ENCODING_UTF8.to_string()),
       announce: self.announce.to_string(),
       announce_list: if announce_list.is_empty() {
         None
@@ -239,9 +239,7 @@ impl Create {
       info,
     };
 
-    let bytes = serde_bencode::ser::to_bytes(&metainfo)?;
-
-    fs::write(&output, bytes).context(error::Filesystem { path: &output })?;
+    metainfo.dump(&output)?;
 
     if self.open {
       Platform::open(&output)?;
@@ -254,8 +252,6 @@ impl Create {
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  use crate::test_env::TestEnv;
 
   fn environment(args: &[&str]) -> TestEnv {
     testing::env(["torrent", "create"].iter().chain(args).cloned())
@@ -292,7 +288,7 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.info.private, 0);
+    assert_eq!(metainfo.info.private, None);
   }
 
   #[test]
@@ -303,7 +299,7 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.info.private, 1);
+    assert_eq!(metainfo.info.private, Some(1));
   }
 
   #[test]
@@ -573,7 +569,7 @@ mod tests {
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
-    assert_eq!(metainfo.encoding, "UTF-8");
+    assert_eq!(metainfo.encoding, Some("UTF-8".into()));
   }
 
   #[test]
