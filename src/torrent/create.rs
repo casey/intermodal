@@ -130,7 +130,7 @@ impl Linter {
 }
 
 impl Create {
-  pub(crate) fn run(self, env: &Env) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
@@ -239,7 +239,11 @@ impl Create {
       info,
     };
 
-    metainfo.dump(&output)?;
+    let bytes = metainfo.serialize()?;
+
+    fs::write(&output, &bytes).context(error::Filesystem { path: &output })?;
+
+    TorrentSummary::from_metainfo(metainfo)?.write(env)?;
 
     if self.open {
       Platform::open(&output)?;
@@ -252,6 +256,8 @@ impl Create {
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  use pretty_assertions::assert_eq;
 
   fn environment(args: &[&str]) -> TestEnv {
     testing::env(["torrent", "create"].iter().chain(args).cloned())
@@ -854,5 +860,34 @@ mod tests {
     let dir = env.resolve("foo");
     fs::create_dir(&dir).unwrap();
     env.run().unwrap();
+  }
+
+  #[test]
+  fn output() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--no-creation-date",
+    ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join("a"), "abc").unwrap();
+    fs::write(dir.join("x"), "xyz").unwrap();
+    fs::write(dir.join("h"), "hij").unwrap();
+    env.run().unwrap();
+    let have = env.out();
+    let want = "        Name  foo
+   Info Hash  8197efe97f10f50f249e8d5c63eb5c0d4e1d9b49
+Torrent Size  166 bytes
+Content Size  0 bytes
+     Private  no
+     Tracker  http://bar/
+  Piece Size  512 KiB
+ Piece Count  1
+  File Count  0
+";
+    assert_eq!(have, want);
   }
 }

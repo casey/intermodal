@@ -19,11 +19,7 @@ impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let summary = TorrentSummary::load(&env.resolve(self.input))?;
 
-    let table = summary.table();
-
-    table
-      .write_human_readable(&mut env.out)
-      .context(error::Stdout)?;
+    summary.write(env)?;
 
     Ok(())
   }

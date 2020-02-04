@@ -7,11 +7,7 @@ pub(crate) struct TorrentSummary {
 }
 
 impl TorrentSummary {
-  pub(crate) fn load(path: &Path) -> Result<Self, Error> {
-    let bytes = fs::read(path).context(error::Filesystem { path })?;
-
-    let metainfo = Metainfo::deserialize(path, &bytes)?;
-
+  fn new(bytes: &[u8], metainfo: Metainfo) -> Result<Self, Error> {
     let value = bencode::Value::decode(&bytes).unwrap();
 
     let infohash = if let bencode::Value::Dict(items) = value {
@@ -26,16 +22,37 @@ impl TorrentSummary {
       unreachable!()
     };
 
-    let metadata = path.metadata().context(error::Filesystem { path })?;
-
     Ok(Self {
-      size: Bytes(metadata.len().into()),
+      size: Bytes::from(bytes.len().into_u64()),
       infohash,
       metainfo,
     })
   }
 
-  pub(crate) fn table(&self) -> Table {
+  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self, Error> {
+    let bytes = metainfo.serialize()?;
+    Self::new(&bytes, metainfo)
+  }
+
+  pub(crate) fn load(path: &Path) -> Result<Self, Error> {
+    let bytes = fs::read(path).context(error::Filesystem { path })?;
+
+    let metainfo = Metainfo::deserialize(path, &bytes)?;
+
+    Self::new(&bytes, metainfo)
+  }
+
+  pub(crate) fn write(&self, env: &mut Env) -> Result<(), Error> {
+    let table = self.table();
+
+    table
+      .write_human_readable(&mut env.out)
+      .context(error::Stdout)?;
+
+    Ok(())
+  }
+
+  fn table(&self) -> Table {
     let mut table = Table::new();
 
     table.row("Name", &self.metainfo.info.name);
