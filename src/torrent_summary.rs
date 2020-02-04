@@ -75,6 +75,10 @@ impl TorrentSummary {
       );
     }
 
+    if let Some(source) = &self.metainfo.info.source {
+      table.row("Source", source);
+    }
+
     table.row("Info Hash", self.infohash);
 
     table.row("Torrent Size", self.size);

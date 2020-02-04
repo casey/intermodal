@@ -29,6 +29,8 @@ impl Show {
 mod tests {
   use super::*;
 
+  use pretty_assertions::assert_eq;
+
   #[test]
   fn output() {
     let mut env = testing::env(
@@ -47,6 +49,7 @@ mod tests {
       info: Info {
         private: Some(1),
         piece_length: 16 * 1024,
+        source: Some("source".into()),
         name: "foo".into(),
         pieces: vec![
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -68,8 +71,9 @@ mod tests {
     let want = "        Name  foo
      Comment  comment
      Created  1970-01-01 00:00:01 UTC
-   Info Hash  bd68a8a5ab377e37e8cdbfd37b670408c59a009f
-Torrent Size  236 bytes
+      Source  source
+   Info Hash  b7595205a46491b3e8686e10b28efe7144d066cc
+Torrent Size  252 bytes
 Content Size  20 bytes
      Private  yes
     Trackers  Main:   announce
