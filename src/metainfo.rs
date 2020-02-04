@@ -32,4 +32,8 @@ impl Metainfo {
     let path = path.as_ref();
     serde_bencode::de::from_bytes(&bytes).context(error::MetainfoLoad { path })
   }
+
+  pub(crate) fn serialize(&self) -> Result<Vec<u8>, Error> {
+    serde_bencode::ser::to_bytes(&self).context(error::MetainfoSerialize)
+  }
 }
