@@ -56,6 +56,7 @@ check: test clippy lint check-minimal-versions
 	git diff --no-ext-diff --quiet --exit-code
 
 publish-check: check
+	cargo outdated --exit-code 1
 	git branch | grep '* master'
 	grep {{version}} CHANGELOG.md
 
