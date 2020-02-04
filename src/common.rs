@@ -56,7 +56,6 @@ pub(crate) use crate::{
 pub(crate) use std::{
   cell::RefCell,
   io::Cursor,
-  iter,
   ops::{Deref, DerefMut},
   rc::Rc,
   time::{Duration, Instant},
@@ -68,4 +67,4 @@ pub(crate) use crate::testing;
 
 // test structs and enums
 #[cfg(test)]
-pub(crate) use crate::{capture::Capture, test_env::TestEnv};
+pub(crate) use crate::{capture::Capture, test_env::TestEnv, test_env_builder::TestEnvBuilder};
