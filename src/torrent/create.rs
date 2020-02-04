@@ -103,6 +103,13 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     long_help = "Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information."
   )]
   private: bool,
+  #[structopt(
+    name = "SOURCE",
+    long = "source",
+    help = "Include `SOURCE` in generated `.torrent` file.",
+    long_help = "Include `SOURCe` in generated `.torrent` file. Stored under `info.source` key of metainfo dictionary."
+  )]
+  source: Option<String>,
 }
 
 struct Linter {
@@ -218,6 +225,7 @@ impl Create {
     let (mode, pieces) = Hasher::hash(&input, self.md5sum, piece_length)?;
 
     let info = Info {
+      source: self.source,
       piece_length,
       mode,
       pieces,
