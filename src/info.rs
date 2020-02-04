@@ -2,7 +2,7 @@ use crate::common::*;
 
 #[derive(Deserialize, Serialize)]
 pub struct Info {
-  pub private: u8,
+  pub private: Option<u8>,
   #[serde(rename = "piece length")]
   pub piece_length: u32,
   pub name: String,

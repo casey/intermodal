@@ -19,6 +19,7 @@ pub(crate) use std::{
 };
 
 // dependencies
+pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{Deserialize, Serialize};
@@ -29,6 +30,7 @@ pub(crate) use structopt::{
   clap::{AppSettings, ArgSettings},
   StructOpt,
 };
+pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::Url;
 pub(crate) use walkdir::WalkDir;
 
@@ -45,12 +47,9 @@ pub(crate) use crate::{
 pub(crate) use crate::{
   bytes::Bytes, env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info,
   lint::Lint, metainfo::Metainfo, mode::Mode, opt::Opt, platform::Platform, style::Style,
-  subcommand::Subcommand, torrent::Torrent, use_color::UseColor,
+  subcommand::Subcommand, table::Table, torrent::Torrent, torrent_summary::TorrentSummary,
+  use_color::UseColor,
 };
-
-// test modules
-#[cfg(test)]
-pub(crate) use crate::testing;
 
 // test stdlib types
 #[cfg(test)]
@@ -62,6 +61,10 @@ pub(crate) use std::{
   rc::Rc,
   time::{Duration, Instant},
 };
+
+// test modules
+#[cfg(test)]
+pub(crate) use crate::testing;
 
 // test structs and enums
 #[cfg(test)]

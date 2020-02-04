@@ -13,6 +13,10 @@ const YI: u128 = ZI << 10;
 pub(crate) struct Bytes(pub(crate) u128);
 
 impl Bytes {
+  pub(crate) fn from(bytes: impl Into<u128>) -> Bytes {
+    Bytes(bytes.into())
+  }
+
   pub(crate) fn is_power_of_two(self) -> bool {
     self.0 == 0 || self.0 & (self.0 - 1) == 0
   }

@@ -14,6 +14,7 @@
 - [References](#references)
   - [Alternatives & Prior Art](#alternatives--prior-art)
   - [BitTorrent](#bittorrent)
+- [Acknowledgments](#acknowledgments)
 
 ## General
 
@@ -161,3 +162,9 @@ at any time.
 | https://wiki.theory.org/index.php/Main_Page                 | Wiki with lots of information about all aspects of the BitTorrent protocol and implementations.   |
 | https://archive.org/details/2014_torrent_archive_organized) | Massive 158 GiB archive containing 5.5 million torrents, assembled in 2014.                       |
 | https://github.com/internetarchive/dweb-transport           | Github repository hosting The Internet Archive's distributed web and BitTorrent-related software. |
+
+## Acknowledgments
+
+The formatting of `imdl torrent show` is entirely copied from
+[torf](https://github.com/rndusr/torf-cli), an excellent command-line torrent
+creator, editor, and viewer.
