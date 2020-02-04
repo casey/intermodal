@@ -1,6 +1,7 @@
 use crate::common::*;
 
 mod create;
+mod show;
 mod stats;
 
 #[derive(StructOpt)]
@@ -12,6 +13,7 @@ mod stats;
 pub(crate) enum Torrent {
   Create(torrent::create::Create),
   Stats(torrent::stats::Stats),
+  Show(torrent::show::Show),
 }
 
 impl Torrent {
@@ -19,6 +21,7 @@ impl Torrent {
     match self {
       Self::Create(create) => create.run(env),
       Self::Stats(stats) => stats.run(env, unstable),
+      Self::Show(show) => show.run(env),
     }
   }
 }

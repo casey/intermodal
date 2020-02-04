@@ -15,15 +15,13 @@ impl<'buffer> Value<'buffer> {
     Parser::parse(buffer)
   }
 
-  #[cfg(test)]
-  fn encode(&self) -> Vec<u8> {
+  pub(crate) fn encode(&self) -> Vec<u8> {
     let mut buffer = Vec::new();
     self.encode_into(&mut buffer);
     buffer
   }
 
-  #[cfg(test)]
-  fn encode_into(&self, buffer: &mut Vec<u8>) {
+  pub(crate) fn encode_into(&self, buffer: &mut Vec<u8>) {
     match self {
       Self::Int(value) => {
         buffer.push(b'i');
@@ -49,7 +47,6 @@ impl<'buffer> Value<'buffer> {
     }
   }
 
-  #[cfg(test)]
   fn encode_str(buffer: &mut Vec<u8>, contents: &[u8]) {
     buffer.extend_from_slice(contents.len().to_string().as_bytes());
     buffer.push(b':');

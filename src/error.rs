@@ -9,8 +9,13 @@ pub(crate) enum Error {
   AnnounceEmpty,
   #[snafu(display("Failed to parse announce URL: {}", source))]
   AnnounceUrlParse { source: url::ParseError },
-  #[snafu(display("Failed to decode bencode: {}", source))]
-  BencodeDecode { source: serde_bencode::Error },
+  #[snafu(display("Failed to deserialize torrent metainfo from `{}`: {}", path.display(), source))]
+  MetainfoLoad {
+    source: serde_bencode::Error,
+    path: PathBuf,
+  },
+  #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
+  MetainfoSerialize { source: serde_bencode::Error },
   #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]
   ByteParse {
     text: String,
@@ -44,8 +49,6 @@ pub(crate) enum Error {
   PieceLengthSmall,
   #[snafu(display("Piece length cannot be zero"))]
   PieceLengthZero,
-  #[snafu(display("Serialization failed: {}", source))]
-  Serialize { source: serde_bencode::Error },
   #[snafu(display("Failed to write to standard error: {}", source))]
   Stderr { source: io::Error },
   #[snafu(display("Failed to write to standard output: {}", source))]
@@ -74,12 +77,6 @@ impl Error {
 impl From<clap::Error> for Error {
   fn from(source: clap::Error) -> Self {
     Self::Clap { source }
-  }
-}
-
-impl From<serde_bencode::Error> for Error {
-  fn from(source: serde_bencode::Error) -> Self {
-    Self::Serialize { source }
   }
 }
 
