@@ -1,17 +1,17 @@
 use crate::common::*;
 
 #[derive(Deserialize, Serialize)]
-pub struct Metainfo {
-  pub announce: String,
+pub(crate) struct Metainfo {
+  pub(crate) announce: String,
   #[serde(rename = "announce-list")]
-  pub announce_list: Option<Vec<Vec<String>>>,
-  pub comment: Option<String>,
+  pub(crate) announce_list: Option<Vec<Vec<String>>>,
+  pub(crate) comment: Option<String>,
   #[serde(rename = "created by")]
-  pub created_by: Option<String>,
+  pub(crate) created_by: Option<String>,
   #[serde(rename = "creation date")]
-  pub creation_date: Option<u64>,
-  pub encoding: Option<String>,
-  pub info: Info,
+  pub(crate) creation_date: Option<u64>,
+  pub(crate) encoding: Option<String>,
+  pub(crate) info: Info,
 }
 
 impl Metainfo {
