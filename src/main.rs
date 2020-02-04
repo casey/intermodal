@@ -7,11 +7,15 @@
   clippy::implicit_return,
   clippy::indexing_slicing,
   clippy::integer_arithmetic,
+  clippy::integer_division,
+  clippy::large_enum_variant,
   clippy::missing_docs_in_private_items,
+  clippy::needless_pass_by_value,
   clippy::option_map_unwrap_or_else,
   clippy::option_unwrap_used,
   clippy::result_expect_used,
   clippy::result_unwrap_used,
+  clippy::shadow_reuse,
   clippy::unreachable,
   clippy::wildcard_enum_match_arm
 )]

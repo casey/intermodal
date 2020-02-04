@@ -23,7 +23,7 @@ impl TorrentSummary {
         .encode();
       Sha1::from(info).digest()
     } else {
-      panic!()
+      unreachable!()
     };
 
     let metadata = path.metadata().context(error::Filesystem { path })?;
@@ -45,6 +45,7 @@ impl TorrentSummary {
     }
 
     if let Some(creation_date) = self.metainfo.creation_date {
+      #[allow(clippy::as_conversions)]
       table.row(
         "Created",
         Utc.timestamp(
