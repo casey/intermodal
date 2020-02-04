@@ -6,6 +6,8 @@ pub(crate) struct Env {
   pub(crate) err: Box<dyn Write>,
   pub(crate) out: Box<dyn Write>,
   err_style: Style,
+  out_style: Style,
+  out_is_term: bool,
 }
 
 impl Env {
@@ -15,16 +17,32 @@ impl Env {
       Err(error) => panic!("Failed to get current directory: {}", error),
     };
 
-    let err_style = if env::var_os("NO_COLOR").is_some()
-      || env::var_os("TERM").as_deref() == Some(OsStr::new("dumb"))
-      || !atty::is(atty::Stream::Stderr)
-    {
+    let no_color = env::var_os("NO_COLOR").is_some()
+      || env::var_os("TERM").as_deref() == Some(OsStr::new("dumb"));
+
+    let err_style = if no_color || !atty::is(atty::Stream::Stderr) {
       Style::inactive()
     } else {
       Style::active()
     };
 
-    Self::new(dir, io::stdout(), io::stderr(), err_style, env::args())
+    let out_style = if no_color || !atty::is(atty::Stream::Stdout) {
+      Style::inactive()
+    } else {
+      Style::active()
+    };
+
+    let out_is_term = atty::is(atty::Stream::Stdout);
+
+    Self::new(
+      dir,
+      io::stdout(),
+      out_style,
+      out_is_term,
+      io::stderr(),
+      err_style,
+      env::args(),
+    )
   }
 
   pub(crate) fn run(&mut self) -> Result<(), Error> {
@@ -50,7 +68,15 @@ impl Env {
     opt.run(self)
   }
 
-  pub(crate) fn new<D, O, E, S, I>(dir: D, out: O, err: E, err_style: Style, args: I) -> Self
+  pub(crate) fn new<D, O, E, S, I>(
+    dir: D,
+    out: O,
+    out_style: Style,
+    out_is_term: bool,
+    err: E,
+    err_style: Style,
+    args: I,
+  ) -> Self
   where
     D: AsRef<Path> + 'static,
     O: Write + 'static,
@@ -63,6 +89,8 @@ impl Env {
       dir: Box::new(dir),
       err: Box::new(err),
       out: Box::new(out),
+      out_style,
+      out_is_term,
       err_style,
     }
   }
@@ -115,6 +143,14 @@ impl Env {
 
   pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
     self.dir().join(path).clean()
+  }
+
+  pub(crate) fn out_is_term(&self) -> bool {
+    self.out_is_term
+  }
+
+  pub(crate) fn out_style(&self) -> Style {
+    self.out_style
   }
 }
 
