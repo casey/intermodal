@@ -21,6 +21,7 @@ impl Metainfo {
     Self::deserialize(path, &bytes)
   }
 
+  #[cfg(test)]
   pub(crate) fn dump(&self, path: impl AsRef<Path>) -> Result<(), Error> {
     let path = path.as_ref();
     let bytes = serde_bencode::ser::to_bytes(&self).context(error::MetainfoSerialize)?;

@@ -45,9 +45,16 @@ impl TorrentSummary {
   pub(crate) fn write(&self, env: &mut Env) -> Result<(), Error> {
     let table = self.table();
 
-    table
-      .write_human_readable(&mut env.out)
-      .context(error::Stdout)?;
+    if env.out_is_term() {
+      let out_style = env.out_style();
+      table
+        .write_human_readable(&mut env.out, out_style)
+        .context(error::Stdout)?;
+    } else {
+      table
+        .write_tab_delimited(&mut env.out)
+        .context(error::Stdout)?;
+    }
 
     Ok(())
   }
@@ -81,9 +88,9 @@ impl TorrentSummary {
 
     table.row("Info Hash", self.infohash);
 
-    table.row("Torrent Size", self.size);
+    table.size("Torrent Size", self.size);
 
-    table.row("Content Size", self.metainfo.info.mode.total_size());
+    table.size("Content Size", self.metainfo.info.mode.total_size());
 
     table.row(
       "Private",
@@ -97,7 +104,13 @@ impl TorrentSummary {
     match &self.metainfo.announce_list {
       Some(tiers) => {
         let mut value = Vec::new();
-        value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
+
+        if !tiers
+          .iter()
+          .any(|tier| tier.contains(&self.metainfo.announce))
+        {
+          value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
+        }
 
         for (i, tier) in tiers.iter().enumerate() {
           value.push((format!("Tier {}", i + 1), tier.clone()));
@@ -108,7 +121,7 @@ impl TorrentSummary {
       None => table.row("Tracker", &self.metainfo.announce),
     }
 
-    table.row("Piece Size", Bytes::from(self.metainfo.info.piece_length));
+    table.size("Piece Size", Bytes::from(self.metainfo.info.piece_length));
 
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
 

@@ -43,6 +43,9 @@ mod testing;
 mod test_env;
 
 #[cfg(test)]
+mod test_env_builder;
+
+#[cfg(test)]
 mod capture;
 
 mod bencode;
