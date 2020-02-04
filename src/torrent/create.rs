@@ -872,13 +872,20 @@ mod tests {
 
   #[test]
   fn output() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--no-creation-date",
-    ]);
+    let mut env = TestEnvBuilder::new()
+      .arg_slice(&[
+        "imdl",
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--no-creation-date",
+      ])
+      .out_is_term()
+      .build();
+
     let dir = env.resolve("foo");
     fs::create_dir(&dir).unwrap();
     fs::write(dir.join("a"), "abc").unwrap();

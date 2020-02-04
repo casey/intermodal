@@ -33,12 +33,6 @@ mod tests {
 
   #[test]
   fn output() {
-    let mut env = testing::env(
-      ["torrent", "show", "--input", "foo.torrent"]
-        .iter()
-        .cloned(),
-    );
-
     let metainfo = Metainfo {
       announce: "announce".into(),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
@@ -61,14 +55,20 @@ mod tests {
       },
     };
 
-    let path = env.resolve("foo.torrent");
+    {
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
+        .out_is_term()
+        .build();
 
-    metainfo.dump(path).unwrap();
+      let path = env.resolve("foo.torrent");
 
-    env.run().unwrap();
+      metainfo.dump(path).unwrap();
 
-    let have = env.out();
-    let want = "        Name  foo
+      env.run().unwrap();
+
+      let have = env.out();
+      let want = "        Name  foo
      Comment  comment
      Created  1970-01-01 00:00:01 UTC
       Source  source
@@ -76,8 +76,7 @@ mod tests {
 Torrent Size  252 bytes
 Content Size  20 bytes
      Private  yes
-    Trackers  Main:   announce
-              Tier 1: announce
+    Trackers  Tier 1: announce
                       b
               Tier 2: c
   Piece Size  16 KiB
@@ -85,6 +84,37 @@ Content Size  20 bytes
   File Count  1
 ";
 
-    assert_eq!(have, want);
+      assert_eq!(have, want);
+    }
+
+    {
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
+        .build();
+
+      let path = env.resolve("foo.torrent");
+
+      metainfo.dump(path).unwrap();
+
+      env.run().unwrap();
+
+      let have = env.out();
+      let want = "\
+Name\tfoo
+Comment\tcomment
+Created\t1970-01-01 00:00:01 UTC
+Source\tsource
+Info Hash\tb7595205a46491b3e8686e10b28efe7144d066cc
+Torrent Size\t252
+Content Size\t20
+Private\tyes
+Trackers\tannounce\tb\tc
+Piece Size\t16384
+Piece Count\t1
+File Count\t1
+";
+
+      assert_eq!(have, want);
+    }
   }
 }

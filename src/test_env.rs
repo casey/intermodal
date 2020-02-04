@@ -7,18 +7,7 @@ pub(crate) struct TestEnv {
 }
 
 impl TestEnv {
-  pub(crate) fn new(iter: impl IntoIterator<Item = impl Into<String>>) -> Self {
-    let err = Capture::new();
-    let out = Capture::new();
-
-    let env = Env::new(
-      tempfile::tempdir().unwrap(),
-      out.clone(),
-      err.clone(),
-      Style::inactive(),
-      iter::once(String::from("imdl")).chain(iter.into_iter().map(|item| item.into())),
-    );
-
+  pub(crate) fn new(env: Env, err: Capture, out: Capture) -> TestEnv {
     Self { err, env, out }
   }
 

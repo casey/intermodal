@@ -27,4 +27,12 @@ impl Style {
       ansi_term::Style::new()
     }
   }
+
+  pub(crate) fn blue(self) -> ansi_term::Style {
+    if self.active {
+      ansi_term::Style::new().fg(ansi_term::Color::Blue)
+    } else {
+      ansi_term::Style::new()
+    }
+  }
 }
