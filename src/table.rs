@@ -111,12 +111,7 @@ impl Table {
         Value::Scalar(scalar) => writeln!(out, "{}", scalar)?,
         Value::Size(Bytes(value)) => writeln!(out, "{}", value)?,
         Value::Tiers(tiers) => {
-          for (i, value) in tiers
-            .iter()
-            .map(|(_name, values)| values)
-            .flatten()
-            .enumerate()
-          {
+          for (i, value) in tiers.iter().flat_map(|(_name, values)| values).enumerate() {
             if i > 0 {
               write!(out, "\t")?;
             }
