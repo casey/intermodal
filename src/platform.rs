@@ -32,7 +32,7 @@ impl PlatformInterface for Platform {
 
     let mut stat: libc::stat = unsafe { mem::zeroed() };
 
-    let cpath = CString::new(path.as_os_str().as_bytes()).expect("TODO");
+    let cpath = CString::new(path.as_os_str().as_bytes()).expect("Path contained null character.");
 
     let error_code = unsafe { libc::stat(cpath.as_ptr(), &mut stat) };
 
