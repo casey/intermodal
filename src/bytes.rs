@@ -9,16 +9,24 @@ const EI: u128 = PI << 10;
 const ZI: u128 = EI << 10;
 const YI: u128 = ZI << 10;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq)]
 pub(crate) struct Bytes(pub(crate) u128);
 
 impl Bytes {
-  pub(crate) fn from(bytes: impl Into<u128>) -> Bytes {
-    Bytes(bytes.into())
-  }
-
   pub(crate) fn is_power_of_two(self) -> bool {
     self.0 == 0 || self.0 & (self.0 - 1) == 0
+  }
+
+  pub(crate) fn kib() -> Self {
+    Bytes::from(KI)
+  }
+
+  pub(crate) fn mib() -> Self {
+    Bytes::from(MI)
+  }
+
+  pub(crate) fn count(self) -> u128 {
+    self.0
   }
 }
 
@@ -34,6 +42,48 @@ fn float_to_int(x: f64) -> u128 {
 fn int_to_float(x: u128) -> f64 {
   #![allow(clippy::as_conversions, clippy::cast_precision_loss)]
   x as f64
+}
+
+impl<I: Into<u128>> From<I> for Bytes {
+  fn from(n: I) -> Bytes {
+    Bytes(n.into())
+  }
+}
+
+impl Div<Bytes> for Bytes {
+  type Output = u128;
+
+  fn div(self, rhs: Bytes) -> u128 {
+    self.0 / rhs.0
+  }
+}
+
+impl Div<u128> for Bytes {
+  type Output = Bytes;
+
+  fn div(self, rhs: u128) -> Bytes {
+    Bytes::from(self.0 / rhs)
+  }
+}
+
+impl DivAssign<u128> for Bytes {
+  fn div_assign(&mut self, rhs: u128) {
+    self.0 /= rhs;
+  }
+}
+
+impl Mul<u128> for Bytes {
+  type Output = Bytes;
+
+  fn mul(self, rhs: u128) -> Self {
+    Bytes::from(self.0 * rhs)
+  }
+}
+
+impl MulAssign<u128> for Bytes {
+  fn mul_assign(&mut self, rhs: u128) {
+    self.0 *= rhs;
+  }
 }
 
 impl FromStr for Bytes {
