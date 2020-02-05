@@ -45,6 +45,7 @@ impl FilePath {
     Ok(FilePath { components })
   }
 
+  #[cfg(test)]
   pub(crate) fn from_components(components: &[&str]) -> FilePath {
     let components: Vec<String> = components
       .iter()
