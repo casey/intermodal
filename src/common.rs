@@ -11,6 +11,7 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   num::ParseFloatError,
+  ops::{Div, DivAssign, Mul, MulAssign},
   path::{Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
@@ -35,7 +36,7 @@ pub(crate) use url::Url;
 pub(crate) use walkdir::WalkDir;
 
 // modules
-pub(crate) use crate::{bencode, consts, error, torrent, use_color};
+pub(crate) use crate::{bencode, consts, error, use_color};
 
 // traits
 pub(crate) use crate::{
@@ -45,10 +46,10 @@ pub(crate) use crate::{
 
 // structs and enums
 pub(crate) use crate::{
-  bytes::Bytes, env::Env, error::Error, file_info::FileInfo, hasher::Hasher, info::Info,
-  lint::Lint, metainfo::Metainfo, mode::Mode, opt::Opt, platform::Platform, style::Style,
-  subcommand::Subcommand, table::Table, torrent::Torrent, torrent_summary::TorrentSummary,
-  use_color::UseColor,
+  bytes::Bytes, env::Env, error::Error, file_info::FileInfo, files::Files, hasher::Hasher,
+  info::Info, lint::Lint, linter::Linter, metainfo::Metainfo, mode::Mode, opt::Opt,
+  piece_length_picker::PieceLengthPicker, platform::Platform, style::Style, table::Table,
+  torrent_summary::TorrentSummary, use_color::UseColor,
 };
 
 // test stdlib types

@@ -1,6 +1,7 @@
 use crate::common::*;
 
 mod create;
+mod piece_length;
 mod show;
 mod stats;
 
@@ -11,17 +12,20 @@ mod stats;
   about("Subcommands related to the BitTorrent protocol.")
 )]
 pub(crate) enum Torrent {
-  Create(torrent::create::Create),
-  Stats(torrent::stats::Stats),
-  Show(torrent::show::Show),
+  Create(create::Create),
+  #[structopt(alias = "piece-size")]
+  PieceLength(piece_length::PieceLength),
+  Show(show::Show),
+  Stats(stats::Stats),
 }
 
 impl Torrent {
   pub(crate) fn run(self, env: &mut Env, unstable: bool) -> Result<(), Error> {
     match self {
       Self::Create(create) => create.run(env),
-      Self::Stats(stats) => stats.run(env, unstable),
+      Self::PieceLength(piece_length) => piece_length.run(env),
       Self::Show(show) => show.run(env),
+      Self::Stats(stats) => stats.run(env, unstable),
     }
   }
 }

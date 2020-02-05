@@ -42,5 +42,5 @@ features = ["default", "wrap_help"]
 [workspace]
 members = [
   # generate table of contents and table of supported BEPs in README.md
-  "bin/update-readme"
+  "bin/update-readme",
 ]
