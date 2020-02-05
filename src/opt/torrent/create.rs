@@ -44,6 +44,12 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   )]
   comment: Option<String>,
   #[structopt(
+    name = "FORCE",
+    long = "force",
+    help = "Overwrite the destination `.torrent` file, if it exists."
+  )]
+  force: bool,
+  #[structopt(
     name = "INPUT",
     long = "input",
     help = "Read torrent contents from `INPUT`.",
@@ -232,7 +238,19 @@ impl Create {
 
     match &output {
       Target::File(path) => {
-        fs::write(path, &bytes).context(error::Filesystem { path })?;
+        let mut open_options = fs::OpenOptions::new();
+
+        if self.force {
+          open_options.write(true).create(true).truncate(true);
+        } else {
+          open_options.write(true).create_new(true);
+        }
+
+        open_options
+          .open(path)
+          .and_then(|mut file| file.write_all(&bytes))
+          .context(error::Filesystem { path })?;
+
         TorrentSummary::from_metainfo(metainfo)?.write(env)?;
         if self.open {
           Platform::open(&path)?;
@@ -909,6 +927,30 @@ Content Size  0 bytes
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let bytes = env.out_bytes();
+    let value = bencode::Value::decode(&bytes).unwrap();
+    assert!(matches!(value, bencode::Value::Dict(_)));
+  }
+
+  #[test]
+  fn force_default() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    fs::write(env.resolve("foo.torrent"), "").unwrap();
+    assert_matches!(
+      env.run().unwrap_err(),
+      Error::Filesystem {source, path}
+      if path == env.resolve("foo.torrent") && source.kind() == io::ErrorKind::AlreadyExists
+    )
+  }
+
+  #[test]
+  fn force_true() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--force"]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    fs::write(env.resolve("foo.torrent"), "foo").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
     let value = bencode::Value::decode(&bytes).unwrap();
     assert!(matches!(value, bencode::Value::Dict(_)));
   }
