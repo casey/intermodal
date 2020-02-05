@@ -18,6 +18,10 @@ impl TestEnv {
   pub(crate) fn out(&self) -> String {
     self.out.string()
   }
+
+  pub(crate) fn out_bytes(&self) -> Vec<u8> {
+    self.out.bytes()
+  }
 }
 
 impl Deref for TestEnv {

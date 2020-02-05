@@ -17,6 +17,10 @@ impl Capture {
       .unwrap()
       .to_owned()
   }
+
+  pub(crate) fn bytes(&self) -> Vec<u8> {
+    self.cursor.borrow().get_ref().clone()
+  }
 }
 
 impl Write for Capture {
