@@ -49,7 +49,7 @@ pub(crate) use crate::{
   bytes::Bytes, env::Env, error::Error, file_info::FileInfo, files::Files, hasher::Hasher,
   info::Info, lint::Lint, linter::Linter, metainfo::Metainfo, mode::Mode, opt::Opt,
   piece_length_picker::PieceLengthPicker, platform::Platform, style::Style, table::Table,
-  torrent_summary::TorrentSummary, use_color::UseColor,
+  target::Target, torrent_summary::TorrentSummary, use_color::UseColor,
 };
 
 // test stdlib types

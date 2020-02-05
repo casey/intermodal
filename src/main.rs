@@ -16,6 +16,7 @@
   clippy::result_expect_used,
   clippy::result_unwrap_used,
   clippy::shadow_reuse,
+  clippy::too_many_lines,
   clippy::unreachable,
   clippy::unseparated_literal_suffix,
   clippy::wildcard_enum_match_arm
@@ -76,6 +77,7 @@ mod platform_interface;
 mod reckoner;
 mod style;
 mod table;
+mod target;
 mod torrent_summary;
 mod use_color;
 

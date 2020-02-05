@@ -47,7 +47,8 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     name = "INPUT",
     long = "input",
     help = "Read torrent contents from `INPUT`.",
-    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a single-file torrent, otherwise if `INPUT` is a directory, torrent will be a multi-file torrent."
+    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a single-file torrent, otherwise if `INPUT` is a directory, torrent will be a multi-file torrent.",
+    parse(from_os_str)
   )]
   input: PathBuf,
   #[structopt(
@@ -85,9 +86,10 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   #[structopt(
     name = "OUTPUT",
     long = "output",
-    help = "Save `.torrent` file to `OUTPUT`. Defaults to `$INPUT.torrent`."
+    help = "Save `.torrent` file to `OUTPUT`, or `-` for standard output. Defaults to `$INPUT.torrent`.",
+    parse(from_os_str)
   )]
-  output: Option<PathBuf>,
+  output: Option<Target>,
   #[structopt(
     name = "PIECE-LENGTH",
     long = "piece-length",
@@ -175,12 +177,12 @@ impl Create {
     let output = self
       .output
       .as_ref()
-      .map(|output| env.resolve(&output))
+      .map(|output| output.resolve(env))
       .unwrap_or_else(|| {
         let mut torrent_name = name.to_owned();
         torrent_name.push_str(".torrent");
 
-        input.parent().unwrap().join(torrent_name)
+        Target::File(input.parent().unwrap().join(torrent_name))
       });
 
     let private = if self.private { Some(1) } else { None };
@@ -228,12 +230,15 @@ impl Create {
 
     let bytes = metainfo.serialize()?;
 
-    fs::write(&output, &bytes).context(error::Filesystem { path: &output })?;
-
-    TorrentSummary::from_metainfo(metainfo)?.write(env)?;
-
-    if self.open {
-      Platform::open(&output)?;
+    match &output {
+      Target::File(path) => {
+        fs::write(path, &bytes).context(error::Filesystem { path })?;
+        TorrentSummary::from_metainfo(metainfo)?.write(env)?;
+        if self.open {
+          Platform::open(&path)?;
+        }
+      }
+      Target::Stdio => env.out.write_all(&bytes).context(error::Stdout)?,
     }
 
     Ok(())
@@ -889,5 +894,22 @@ Content Size  0 bytes
   File Count  0
 ";
     assert_eq!(have, want);
+  }
+
+  #[test]
+  fn write_to_stdout() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--output",
+      "-",
+    ]);
+    fs::write(env.resolve("foo"), "").unwrap();
+    env.run().unwrap();
+    let bytes = env.out_bytes();
+    let value = bencode::Value::decode(&bytes).unwrap();
+    assert!(matches!(value, bencode::Value::Dict(_)));
   }
 }
