@@ -17,6 +17,7 @@
   clippy::result_unwrap_used,
   clippy::shadow_reuse,
   clippy::unreachable,
+  clippy::unseparated_literal_suffix,
   clippy::wildcard_enum_match_arm
 )]
 
@@ -35,6 +36,9 @@ mod errln;
 
 #[macro_use]
 mod err;
+
+#[macro_use]
+mod outln;
 
 #[cfg(test)]
 mod testing;
@@ -55,22 +59,23 @@ mod consts;
 mod env;
 mod error;
 mod file_info;
+mod files;
 mod hasher;
 mod info;
 mod into_u64;
 mod into_usize;
 mod lint;
+mod linter;
 mod metainfo;
 mod mode;
 mod opt;
 mod path_ext;
+mod piece_length_picker;
 mod platform;
 mod platform_interface;
 mod reckoner;
 mod style;
-mod subcommand;
 mod table;
-mod torrent;
 mod torrent_summary;
 mod use_color;
 
