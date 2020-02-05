@@ -1,41 +1,72 @@
 use crate::common::*;
 
+const JUNK: &[&str] = &["Thumbs.db", "Desktop.ini"];
+
 pub(crate) struct Walker {
-  include_junk: bool,
+  follow_symlinks: bool,
   include_hidden: bool,
+  include_junk: bool,
   root: PathBuf,
 }
 
 impl Walker {
   pub(crate) fn new(root: &Path) -> Walker {
     Walker {
-      include_junk: false,
+      follow_symlinks: false,
       include_hidden: false,
+      include_junk: false,
       root: root.to_owned(),
     }
   }
 
-  pub(crate) fn _include_junk(self) -> Self {
+  pub(crate) fn include_junk(self, include_junk: bool) -> Self {
     Walker {
-      include_junk: true,
+      include_junk,
       ..self
     }
   }
 
-  pub(crate) fn _include_hidden(self) -> Self {
+  pub(crate) fn include_hidden(self, include_hidden: bool) -> Self {
     Walker {
-      include_hidden: true,
+      include_hidden,
+      ..self
+    }
+  }
+
+  pub(crate) fn follow_symlinks(self, follow_symlinks: bool) -> Self {
+    Walker {
+      follow_symlinks,
       ..self
     }
   }
 
   pub(crate) fn files(self) -> Result<Files, Error> {
+    if !self.follow_symlinks
+      && self
+        .root
+        .symlink_metadata()
+        .context(error::Filesystem { path: &self.root })?
+        .file_type()
+        .is_symlink()
+    {
+      return Err(Error::SymlinkRoot { root: self.root });
+    }
+
+    let root_metadata = self
+      .root
+      .metadata()
+      .context(error::Filesystem { path: &self.root })?;
+
+    if root_metadata.is_file() {
+      return Ok(Files::file(self.root, Bytes::from(root_metadata.len())));
+    }
+
     let mut paths = Vec::new();
     let mut total_size = 0;
-
-    let junk: &[&OsStr] = &[OsStr::new("Thumbs.db"), OsStr::new("Desktop.ini")];
-
-    for result in WalkDir::new(&self.root).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
+    for result in WalkDir::new(&self.root)
+      .follow_links(self.follow_symlinks)
+      .sort_by(|a, b| a.file_name().cmp(b.file_name()))
+    {
       let entry = result?;
 
       let path = entry.path();
@@ -56,14 +87,17 @@ impl Walker {
         continue;
       }
 
-      if !self.include_junk && junk.contains(&file_name) {
+      let file_path = FilePath::from_prefix_and_path(&self.root, &path)?;
+
+      if !self.include_junk && JUNK.contains(&file_path.name()) {
         continue;
       }
 
       total_size += metadata.len();
-      paths.push(entry.path().to_owned());
+
+      paths.push(file_path);
     }
 
-    Ok(Files::new(self.root, Bytes::from(total_size)))
+    Ok(Files::dir(self.root, Bytes::from(total_size), paths))
   }
 }

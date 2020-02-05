@@ -44,11 +44,29 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   )]
   comment: Option<String>,
   #[structopt(
+    name = "FOLLOW-SYMLINKS",
+    long = "follow-symlinks",
+    help = "Follow symlinks in torrent input. By default, symlinks to files and directories are not included in torrent contents."
+  )]
+  follow_symlinks: bool,
+  #[structopt(
     name = "FORCE",
     long = "force",
     help = "Overwrite the destination `.torrent` file, if it exists."
   )]
   force: bool,
+  #[structopt(
+    name = "INCLUDE-HIDDEN",
+    long = "include-hidden",
+    help = "Include hidden files that would otherwise be skipped, such as files that start with a `.`, and files hidden by file attributes on macOS and Windows."
+  )]
+  include_hidden: bool,
+  #[structopt(
+    name = "INCLUDE-JUNK",
+    long = "include-junk",
+    help = "Include junk files that would otherwise be skipped."
+  )]
+  include_junk: bool,
   #[structopt(
     name = "INPUT",
     long = "input",
@@ -123,7 +141,11 @@ impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
 
-    let files = Walker::new(&input).files()?;
+    let files = Walker::new(&input)
+      .include_junk(self.include_junk)
+      .include_hidden(self.include_hidden)
+      .follow_symlinks(self.follow_symlinks)
+      .files()?;
 
     let piece_length = self
       .piece_length
@@ -1017,5 +1039,207 @@ Content Size  9 bytes
     let bytes = fs::read(torrent).unwrap();
     let value = bencode::Value::decode(&bytes).unwrap();
     assert!(matches!(value, bencode::Value::Dict(_)));
+  }
+
+  #[test]
+  fn exclude_junk() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join("Thumbs.db"), "abc").unwrap();
+    fs::write(dir.join("Desktop.ini"), "abc").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.is_empty()
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn include_junk() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--include-junk",
+    ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join("Thumbs.db"), "abc").unwrap();
+    fs::write(dir.join("Desktop.ini"), "abc").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 2
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("abcabc").digest().bytes());
+  }
+
+  #[test]
+  fn skip_hidden() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join(".hidden"), "abc").unwrap();
+    #[cfg(target_os = "windows")]
+    {
+      let path = dir.join("hidden");
+      fs::write(&path, "abc").unwrap();
+      Command::new("attrib")
+        .arg("+h")
+        .arg(&path)
+        .status()
+        .unwrap();
+    }
+    #[cfg(target_os = "macos")]
+    {
+      let path = dir.join("hidden");
+      fs::write(&path, "abc").unwrap();
+      Command::new("chflags")
+        .arg("hidden")
+        .arg(&path)
+        .status()
+        .unwrap();
+    }
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 0
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn include_hidden() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--include-hidden",
+    ]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join(".hidden"), "abc").unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("abc").digest().bytes());
+  }
+
+  fn populate_symlinks(env: &Env) {
+    let dir = env.resolve("foo");
+    let file_src = env.resolve("bar");
+    let file_link = env.resolve("foo/bar");
+    let dir_src = env.resolve("dir-src");
+    let dir_contents = dir_src.join("baz");
+    let dir_link = env.resolve("foo/dir");
+    fs::create_dir(&dir_src).unwrap();
+    fs::write(dir_contents, "baz").unwrap();
+
+    fs::create_dir(&dir).unwrap();
+    fs::write(file_src, "bar").unwrap();
+    #[cfg(unix)]
+    {
+      Command::new("ln")
+        .arg("-s")
+        .arg("../bar")
+        .arg(file_link)
+        .status()
+        .unwrap();
+
+      Command::new("ln")
+        .arg("-s")
+        .arg("../dir-src")
+        .arg(dir_link)
+        .status()
+        .unwrap();
+    }
+  }
+
+  #[test]
+  fn skip_symlinks() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    populate_symlinks(&env);
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.is_empty()
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn follow_symlinks() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--follow-symlinks",
+      "--md5sum",
+    ]);
+    populate_symlinks(&env);
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_eq!(metainfo.info.pieces, Sha1::from("barbaz").digest().bytes());
+    match metainfo.info.mode {
+      Mode::Multiple { files } => {
+        assert_eq!(
+          files,
+          &[
+            FileInfo {
+              length: 3,
+              md5sum: Some("37b51d194a7513e45b56f6524f2d51f2".to_owned()),
+              path: FilePath::from_components(&["bar"]),
+            },
+            FileInfo {
+              length: 3,
+              md5sum: Some("73feffa4b7f6bb68e44cf984c85f6e88".to_owned()),
+              path: FilePath::from_components(&["dir", "baz"]),
+            },
+          ]
+        );
+      }
+      _ => panic!("Expected multi-file torrent"),
+    }
+  }
+
+  #[test]
+  #[cfg(unix)]
+  fn symlink_root() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    let file_src = env.resolve("bar");
+    let file_link = env.resolve("foo");
+
+    Command::new("ln")
+      .arg("-s")
+      .arg(&file_src)
+      .arg(&file_link)
+      .status()
+      .unwrap();
+
+    assert_matches!(env.run().unwrap_err(), Error::SymlinkRoot { root } if root == file_link);
   }
 }
