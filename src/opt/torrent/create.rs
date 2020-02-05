@@ -123,7 +123,7 @@ impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
 
-    let files = Files::from_root(&input)?;
+    let files = Walker::new(&input).files()?;
 
     let piece_length = self
       .piece_length
@@ -209,7 +209,7 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    let (mode, pieces) = Hasher::hash(&input, self.md5sum, piece_length)?;
+    let (mode, pieces) = Hasher::hash(&files, self.md5sum, piece_length)?;
 
     let info = Info {
       source: self.source,
@@ -710,7 +710,35 @@ mod tests {
   }
 
   #[test]
-  fn multiple_one_file() {
+  fn multiple_one_file_md5() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    let file = dir.join("bar");
+    let contents = "bar";
+    fs::write(file, contents).unwrap();
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
+    match metainfo.info.mode {
+      Mode::Multiple { files } => {
+        assert_eq!(
+          files,
+          &[FileInfo {
+            length: 3,
+            md5sum: Some("37b51d194a7513e45b56f6524f2d51f2".to_owned()),
+            path: FilePath::from_components(&["bar"]),
+          },]
+        );
+      }
+      _ => panic!("Expected multi-file torrent"),
+    }
+  }
+
+  #[test]
+  fn multiple_one_file_md5_off() {
     let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
     let dir = env.resolve("foo");
     fs::create_dir(&dir).unwrap();
@@ -722,12 +750,24 @@ mod tests {
     let bytes = fs::read(torrent).unwrap();
     let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
     assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
-    assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
+    match metainfo.info.mode {
+      Mode::Multiple { files } => {
+        assert_eq!(
+          files,
+          &[FileInfo {
+            length: 3,
+            md5sum: None,
+            path: FilePath::from_components(&["bar"]),
+          },]
+        );
+      }
+      _ => panic!("Expected multi-file torrent"),
+    }
   }
 
   #[test]
   fn multiple_three_files() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
     let dir = env.resolve("foo");
     fs::create_dir(&dir).unwrap();
     fs::write(dir.join("a"), "abc").unwrap();
@@ -741,7 +781,31 @@ mod tests {
       metainfo.info.pieces,
       Sha1::from("abchijxyz").digest().bytes()
     );
-    assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
+    match metainfo.info.mode {
+      Mode::Multiple { files } => {
+        assert_eq!(
+          files,
+          &[
+            FileInfo {
+              length: 3,
+              md5sum: Some("900150983cd24fb0d6963f7d28e17f72".to_owned()),
+              path: FilePath::from_components(&["a"]),
+            },
+            FileInfo {
+              length: 3,
+              md5sum: Some("857c4402ad934005eae4638a93812bf7".to_owned()),
+              path: FilePath::from_components(&["h"]),
+            },
+            FileInfo {
+              length: 3,
+              md5sum: Some("d16fb36f0911f878998c136191af705e".to_owned()),
+              path: FilePath::from_components(&["x"]),
+            },
+          ]
+        );
+      }
+      _ => panic!("Expected multi-file torrent"),
+    }
   }
 
   #[test]
@@ -902,14 +966,14 @@ mod tests {
     env.run().unwrap();
     let have = env.out();
     let want = "        Name  foo
-   Info Hash  2637812436658f855e99f07c40fe7da5832a7b6d
-Torrent Size  165 bytes
-Content Size  0 bytes
+   Info Hash  d3432a4b9d18baa413095a70f1e417021ceaca5b
+Torrent Size  237 bytes
+Content Size  9 bytes
      Private  no
      Tracker  http://bar/
   Piece Size  16 KiB
  Piece Count  1
-  File Count  0
+  File Count  3
 ";
     assert_eq!(have, want);
   }
@@ -953,5 +1017,63 @@ Content Size  0 bytes
     let bytes = fs::read(torrent).unwrap();
     let value = bencode::Value::decode(&bytes).unwrap();
     assert!(matches!(value, bencode::Value::Dict(_)));
+  }
+
+  #[test]
+  #[ignore]
+  fn skip_thumbs_db() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn skip_desktop_ini() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn include_junk() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn skip_hidden() {
+    // dot
+    // and attribute for win/mac
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn include_hidden() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn skip_symlinks() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn include_symlinks() {
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn include_root() {
+    // root should always be included no matter what
+    todo!()
+  }
+
+  #[test]
+  #[ignore]
+  fn single_file_in_dir() {
+    // test that foo/bar --input foo leads to a multi-file torrent
+    todo!()
   }
 }

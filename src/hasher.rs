@@ -12,11 +12,11 @@ pub(crate) struct Hasher {
 
 impl Hasher {
   pub(crate) fn hash(
-    root: &Path,
+    files: &Files,
     md5sum: bool,
     piece_length: u32,
   ) -> Result<(Mode, Vec<u8>), Error> {
-    Self::new(md5sum, piece_length).hash_root(root)
+    Self::new(md5sum, piece_length).hash_root(files.root())
   }
 
   fn new(md5sum: bool, piece_length: u32) -> Self {
@@ -64,17 +64,28 @@ impl Hasher {
   }
 
   fn hash_dir(&mut self, dir: &Path) -> Result<Vec<FileInfo>, Error> {
+    let mut files = Vec::new();
     for result in WalkDir::new(dir).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
       let entry = result?;
 
       let path = entry.path();
 
-      if entry.metadata()?.is_file() {
-        let (_md5sum, _length) = self.hash_file(path)?;
+      if !entry.metadata()?.is_file() {
+        continue;
       }
+
+      let (md5sum, length) = self.hash_file(path)?;
+
+      let file_path = FilePath::from_prefix_and_path(dir, path)?;
+
+      files.push(FileInfo {
+        md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
+        path: file_path,
+        length,
+      });
     }
 
-    Ok(Vec::new())
+    Ok(files)
   }
 
   fn hash_file(&mut self, file: &Path) -> Result<(Option<md5::Digest>, u64), Error> {

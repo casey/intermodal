@@ -5,14 +5,15 @@ pub(crate) use std::{
   collections::{BTreeMap, BTreeSet, HashMap},
   convert::{Infallible, TryInto},
   env,
-  ffi::{OsStr, OsString},
+  ffi::{CString, OsStr, OsString},
   fmt::{self, Display, Formatter},
   fs::{self, File},
   hash::Hash,
   io::{self, Read, Write},
+  mem,
   num::ParseFloatError,
   ops::{Div, DivAssign, Mul, MulAssign},
-  path::{Path, PathBuf},
+  path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
   time::{SystemTime, SystemTimeError},
@@ -46,10 +47,10 @@ pub(crate) use crate::{
 
 // structs and enums
 pub(crate) use crate::{
-  bytes::Bytes, env::Env, error::Error, file_info::FileInfo, files::Files, hasher::Hasher,
-  info::Info, lint::Lint, linter::Linter, metainfo::Metainfo, mode::Mode, opt::Opt,
+  bytes::Bytes, env::Env, error::Error, file_info::FileInfo, file_path::FilePath, files::Files,
+  hasher::Hasher, info::Info, lint::Lint, linter::Linter, metainfo::Metainfo, mode::Mode, opt::Opt,
   piece_length_picker::PieceLengthPicker, platform::Platform, style::Style, table::Table,
-  target::Target, torrent_summary::TorrentSummary, use_color::UseColor,
+  target::Target, torrent_summary::TorrentSummary, use_color::UseColor, walker::Walker,
 };
 
 // test stdlib types
