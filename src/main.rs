@@ -76,6 +76,7 @@ mod platform_interface;
 mod reckoner;
 mod style;
 mod table;
+mod target;
 mod torrent_summary;
 mod use_color;
 

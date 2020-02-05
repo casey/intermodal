@@ -29,7 +29,8 @@ Extract and display values under key paths that match `REGEX`. Subkeys of a benc
     long = "input",
     short = "i",
     help = "Search `INPUT` for torrents.",
-    long_help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file."
+    long_help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file.",
+    parse(from_os_str)
   )]
   input: PathBuf,
   #[structopt(
