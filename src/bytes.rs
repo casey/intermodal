@@ -9,7 +9,7 @@ const EI: u128 = PI << 10;
 const ZI: u128 = EI << 10;
 const YI: u128 = ZI << 10;
 
-#[derive(Debug, PartialEq, Copy, Clone, PartialOrd)]
+#[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq)]
 pub(crate) struct Bytes(pub(crate) u128);
 
 impl Bytes {
@@ -17,12 +17,10 @@ impl Bytes {
     self.0 == 0 || self.0 & (self.0 - 1) == 0
   }
 
-  #[cfg(test)]
   pub(crate) fn kib() -> Self {
     Bytes::from(KI)
   }
 
-  #[cfg(test)]
   pub(crate) fn mib() -> Self {
     Bytes::from(MI)
   }

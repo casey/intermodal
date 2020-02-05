@@ -30,7 +30,9 @@ impl PieceLengthPicker {
       clippy::cast_possible_truncation
     )]
     let exponent = (content_size.count() as f64).log2().ceil() as u128;
-    Bytes::from(1u128 << (exponent.max(20) / 2 + 4))
+    Bytes::from(1u128 << (exponent / 2 + 4))
+      .max(Bytes::kib() * 16)
+      .min(Bytes::mib() * 16)
   }
 
   pub(crate) fn piece_count(content_size: Bytes, piece_length: Bytes) -> u128 {
