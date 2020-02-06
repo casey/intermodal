@@ -7,40 +7,31 @@ pub(crate) struct FilePath {
 }
 
 impl FilePath {
-  pub(crate) fn from_prefix_and_path(prefix: &Path, path: &Path) -> Result<FilePath, Error> {
-    let relative = path
-      .strip_prefix(prefix)
-      .context(error::PathStripPrefix { prefix, path })?;
-
+  pub(crate) fn from_relative_path(path: &Path) -> Result<FilePath, Error> {
     let mut components = Vec::new();
 
-    for component in relative.components() {
+    for component in path.components() {
       match component {
         path::Component::Normal(os) => {
           if let Some(unicode) = os.to_str() {
             components.push(unicode.to_owned());
           } else {
             return Err(Error::PathDecode {
-              path: relative.to_owned(),
+              path: path.to_owned(),
               component: PathBuf::from(component.as_os_str()),
             });
           }
         }
         _ => {
           return Err(Error::PathComponent {
-            path: relative.to_owned(),
+            path: path.to_owned(),
             component: PathBuf::from(component.as_os_str()),
           })
         }
       }
     }
 
-    if components.is_empty() {
-      return Err(Error::PathStripEmpty {
-        prefix: prefix.to_owned(),
-        path: path.to_owned(),
-      });
-    }
+    assert!(!components.is_empty());
 
     Ok(FilePath { components })
   }
