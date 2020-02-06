@@ -82,6 +82,10 @@ impl TorrentSummary {
       );
     }
 
+    if let Some(created_by) = &self.metainfo.created_by {
+      table.row("Created By", created_by);
+    }
+
     if let Some(source) = &self.metainfo.info.source {
       table.row("Source", source);
     }
@@ -125,13 +129,20 @@ impl TorrentSummary {
 
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
 
-    table.row(
-      "File Count",
-      match &self.metainfo.info.mode {
-        Mode::Single { .. } => 1,
-        Mode::Multiple { files } => files.len(),
-      },
-    );
+    match &self.metainfo.info.mode {
+      Mode::Single { .. } => table.row("File Count", 1),
+      Mode::Multiple { files } => {
+        table.row("File Count", files.len());
+        table.directory(
+          "Files",
+          &self.metainfo.info.name,
+          files
+            .iter()
+            .map(|file_info| file_info.path.clone())
+            .collect(),
+        );
+      }
+    };
 
     table
   }
