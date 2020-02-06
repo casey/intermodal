@@ -1189,6 +1189,7 @@ Content Size  9 bytes
   }
 
   #[test]
+  #[cfg(unix)]
   fn follow_symlinks() {
     let mut env = environment(&[
       "--input",
