@@ -82,6 +82,11 @@ pub(crate) enum Error {
   Stderr { source: io::Error },
   #[snafu(display("Failed to write to standard output: {}", source))]
   Stdout { source: io::Error },
+  #[snafu(display(
+      "Attempted to create torrent from symlink `{}`. To override, pass the `--follow-symlinks` flag.",
+      root.display()
+  ))]
+  SymlinkRoot { root: PathBuf },
   #[snafu(display("Failed to retrieve system time: {}", source))]
   SystemTime { source: SystemTimeError },
   #[snafu(display(
