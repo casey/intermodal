@@ -40,6 +40,11 @@ pub(crate) enum Error {
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
   #[snafu(display(
+    "Interal error, this may indicate a bug in intermodal: {}\nConsider filing an issue: https://github.com/casey/imdl/issues/new",
+    message,
+  ))]
+  Internal { message: String },
+  #[snafu(display(
     "Path `{}` contains non-normal component: {}",
     path.display(),
     component.display(),
@@ -106,6 +111,12 @@ impl Error {
       Self::PieceLengthUneven { .. } => Some(Lint::UnevenPieceLength),
       Self::PieceLengthSmall { .. } => Some(Lint::SmallPieceLength),
       _ => None,
+    }
+  }
+
+  pub(crate) fn internal(message: impl Into<String>) -> Error {
+    Error::Internal {
+      message: message.into(),
     }
   }
 }

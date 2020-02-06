@@ -31,7 +31,9 @@ impl FilePath {
       }
     }
 
-    assert!(!components.is_empty());
+    if components.is_empty() {
+      return Err(Error::internal("FilePath::from_relative_path: empty path"));
+    }
 
     Ok(FilePath { components })
   }
