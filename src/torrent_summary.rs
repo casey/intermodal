@@ -130,7 +130,10 @@ impl TorrentSummary {
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
 
     match &self.metainfo.info.mode {
-      Mode::Single { .. } => table.row("File Count", 1),
+      Mode::Single { .. } => {
+        table.row("File Count", 1);
+        table.row("Files", &self.metainfo.info.name);
+      }
       Mode::Multiple { files } => {
         table.row("File Count", files.len());
         table.directory(
