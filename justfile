@@ -11,6 +11,10 @@ stats PATH:
 	cargo build --release
 	time ./target/release/imdl --unstable torrent stats --input {{PATH}}
 
+push: check
+	! git branch | grep '* master'
+	git push github
+
 # clean up feature branch BRANCH
 done BRANCH:
 	git checkout master
