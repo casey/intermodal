@@ -1380,4 +1380,33 @@ Content Size  9 bytes
     );
     assert_eq!(metainfo.info.pieces, &[]);
   }
+
+  #[test]
+  fn glob_precedence() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--glob",
+      "!*",
+      "--glob",
+      "[ab]",
+      "--glob",
+      "!b",
+    ]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("a").digest().bytes());
+  }
 }
