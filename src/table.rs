@@ -17,6 +17,10 @@ impl Table {
     self.rows.push((name, Value::Size(bytes)));
   }
 
+  pub(crate) fn list(&mut self, name: &'static str, list: Vec<String>) {
+    self.rows.push((name, Value::List(list)));
+  }
+
   pub(crate) fn tiers(
     &mut self,
     name: &'static str,
@@ -79,6 +83,16 @@ impl Table {
       )?;
 
       match value {
+        Value::List(list) => {
+          for (i, value) in list.iter().enumerate() {
+            if i == 0 {
+              padding(out, 2)?;
+            } else {
+              padding(out, name_width + 2)?;
+            }
+            writeln!(out, "{}", value)?;
+          }
+        }
         Value::Directory { root, files } => {
           let mut tree = Tree::new(&root);
           for file in files {
@@ -151,6 +165,15 @@ impl Table {
     for (name, value) in self.rows() {
       write!(out, "{}\t", name)?;
       match value {
+        Value::List(list) => {
+          for (i, value) in list.iter().enumerate() {
+            if i > 0 {
+              write!(out, "\t")?;
+            }
+            write!(out, "{}", value)?;
+          }
+          writeln!(out)?;
+        }
         Value::Directory { root, files } => {
           for (i, file) in files.iter().enumerate() {
             if i > 0 {
@@ -182,6 +205,7 @@ enum Value {
   Scalar(String),
   Tiers(Vec<(String, Vec<String>)>),
   Size(Bytes),
+  List(Vec<String>),
   Directory { root: String, files: Vec<FilePath> },
 }
 
@@ -319,6 +343,31 @@ Files  Foo
     table.row("X", "y");
     human_readable(&table, "Foo  bar\n  X  y\n");
     tab_delimited(&table, "Foo\tbar\nX\ty\n");
+  }
+
+  #[test]
+  fn list() {
+    let mut table = Table::new();
+    table.list("Something", vec!["a".into(), "b".into(), "c".into()]);
+    table.list("Other", vec!["x".into(), "y".into(), "z".into()]);
+    human_readable(
+      &table,
+      "\
+Something  a
+           b
+           c
+    Other  x
+           y
+           z
+",
+    );
+    tab_delimited(
+      &table,
+      "\
+Something\ta\tb\tc
+Other\tx\ty\tz
+",
+    );
   }
 
   #[test]
