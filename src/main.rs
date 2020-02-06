@@ -60,6 +60,7 @@ mod consts;
 mod env;
 mod error;
 mod file_info;
+mod file_path;
 mod files;
 mod hasher;
 mod info;
@@ -80,6 +81,7 @@ mod table;
 mod target;
 mod torrent_summary;
 mod use_color;
+mod walker;
 
 fn main() {
   if let Err(code) = Env::main().status() {
