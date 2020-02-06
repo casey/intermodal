@@ -22,6 +22,14 @@ impl TestEnv {
   pub(crate) fn out_bytes(&self) -> Vec<u8> {
     self.out.bytes()
   }
+
+  pub(crate) fn create_dir(&self, path: impl AsRef<Path>) {
+    fs::create_dir_all(self.env.resolve(path.as_ref())).unwrap();
+  }
+
+  pub(crate) fn create_file(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
+    fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
+  }
 }
 
 impl Deref for TestEnv {
