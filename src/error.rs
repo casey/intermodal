@@ -103,6 +103,8 @@ pub(crate) enum Error {
   Unstable { feature: &'static str },
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
+  #[snafu(display("Torrent verification failed: {}", status))]
+  Verify { status: Status },
 }
 
 impl Error {

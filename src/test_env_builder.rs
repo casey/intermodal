@@ -4,6 +4,7 @@ pub(crate) struct TestEnvBuilder {
   args: Vec<String>,
   out_is_term: bool,
   use_color: bool,
+  tempdir: Option<TempDir>,
 }
 
 impl TestEnvBuilder {
@@ -12,6 +13,7 @@ impl TestEnvBuilder {
       args: Vec::new(),
       out_is_term: false,
       use_color: false,
+      tempdir: None,
     }
   }
 
@@ -39,12 +41,17 @@ impl TestEnvBuilder {
     self
   }
 
+  pub(crate) fn tempdir(mut self, tempdir: TempDir) -> Self {
+    self.tempdir = Some(tempdir);
+    self
+  }
+
   pub(crate) fn build(self) -> TestEnv {
     let err = Capture::new();
     let out = Capture::new();
 
     let env = Env::new(
-      tempfile::tempdir().unwrap(),
+      self.tempdir.unwrap_or_else(|| tempfile::tempdir().unwrap()),
       out.clone(),
       if self.use_color && self.out_is_term {
         Style::active()

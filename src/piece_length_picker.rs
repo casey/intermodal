@@ -29,14 +29,14 @@ impl PieceLengthPicker {
       clippy::cast_precision_loss,
       clippy::cast_possible_truncation
     )]
-    let exponent = (content_size.count() as f64).log2().ceil() as u128;
-    Bytes::from(1u128 << (exponent / 2 + 4))
+    let exponent = (content_size.count().max(1) as f64).log2().ceil() as u64;
+    Bytes::from(1u64 << (exponent / 2 + 4))
       .max(Bytes::kib() * 16)
       .min(Bytes::mib() * 16)
   }
 
-  pub(crate) fn piece_count(content_size: Bytes, piece_length: Bytes) -> u128 {
-    if content_size == Bytes::from(0u128) {
+  pub(crate) fn piece_count(content_size: Bytes, piece_length: Bytes) -> u64 {
+    if content_size == Bytes::from(0u64) {
       0
     } else {
       (content_size / piece_length).max(1)
@@ -44,7 +44,7 @@ impl PieceLengthPicker {
   }
 
   pub(crate) fn metainfo_size(content_size: Bytes, piece_length: Bytes) -> Bytes {
-    let digest_length: u128 = sha1::DIGEST_LENGTH.into_u64().into();
+    let digest_length: u64 = sha1::DIGEST_LENGTH.into_u64().into();
     Bytes::from(Self::piece_count(content_size, piece_length) * digest_length)
   }
 }

@@ -5,7 +5,7 @@ pub(crate) struct Hasher {
   length: u64,
   md5sum: bool,
   piece_bytes_hashed: u64,
-  piece_length: u32,
+  piece_length: Bytes,
   pieces: Vec<u8>,
   sha1: Sha1,
 }
@@ -14,22 +14,24 @@ impl Hasher {
   pub(crate) fn hash(
     files: &Files,
     md5sum: bool,
-    piece_length: u32,
+    piece_length: usize,
   ) -> Result<(Mode, Vec<u8>), Error> {
     Self::new(md5sum, piece_length).hash_files(files)
   }
 
-  fn new(md5sum: bool, piece_length: u32) -> Self {
+  fn new(md5sum: bool, piece_length: usize) -> Self {
     Self {
-      buffer: vec![0; piece_length.into_usize()],
+      buffer: vec![0; piece_length],
       length: 0,
       piece_bytes_hashed: 0,
       pieces: Vec::new(),
       sha1: Sha1::new(),
+      piece_length: Bytes::from(piece_length.into_u64()),
       md5sum,
-      piece_length,
     }
   }
+
+  fn hash_piece(&mut self) {}
 
   fn hash_files(mut self, files: &Files) -> Result<(Mode, Vec<u8>), Error> {
     let mode = if let Some(contents) = files.contents() {
@@ -40,7 +42,7 @@ impl Hasher {
       let (md5sum, length) = self.hash_file(files.root())?;
 
       Mode::Single {
-        md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
+        md5sum: md5sum.map(|md5sum| md5sum.into()),
         length,
       }
     };
@@ -67,7 +69,7 @@ impl Hasher {
       let (md5sum, length) = self.hash_file(&path)?;
 
       files.push(FileInfo {
-        md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
+        md5sum: md5sum.map(|md5sum| md5sum.into()),
         path: file_path.clone(),
         length,
       });
@@ -76,13 +78,13 @@ impl Hasher {
     Ok(files)
   }
 
-  fn hash_file(&mut self, file: &Path) -> Result<(Option<md5::Digest>, u64), Error> {
+  fn hash_file(&mut self, file: &Path) -> Result<(Option<md5::Digest>, Bytes), Error> {
     self
       .hash_file_io(file)
       .context(error::Filesystem { path: file })
   }
 
-  fn hash_file_io(&mut self, file: &Path) -> io::Result<(Option<md5::Digest>, u64)> {
+  fn hash_file_io(&mut self, file: &Path) -> io::Result<(Option<md5::Digest>, Bytes)> {
     let length = file.metadata()?.len();
 
     let mut remaining = length;
@@ -100,6 +102,7 @@ impl Hasher {
         .min(self.buffer.len().into_u64())
         .try_into()
         .unwrap();
+
       let buffer = &mut self.buffer[0..to_buffer];
 
       file.read_exact(buffer)?;
@@ -109,7 +112,7 @@ impl Hasher {
 
         self.piece_bytes_hashed += 1;
 
-        if self.piece_bytes_hashed == self.piece_length.into() {
+        if Bytes::from(self.piece_bytes_hashed) == self.piece_length {
           self.pieces.extend(&self.sha1.digest().bytes());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;
@@ -125,6 +128,6 @@ impl Hasher {
 
     self.length += length;
 
-    Ok((md5.map(md5::Context::compute), length))
+    Ok((md5.map(md5::Context::compute), Bytes::from(length)))
   }
 }

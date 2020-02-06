@@ -30,6 +30,10 @@ impl TestEnv {
   pub(crate) fn create_file(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
     fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
   }
+
+  pub(crate) fn load_torrent(&self, filename: impl AsRef<Path>) -> Metainfo {
+    Metainfo::load(self.env.resolve(filename.as_ref())).unwrap()
+  }
 }
 
 impl Deref for TestEnv {

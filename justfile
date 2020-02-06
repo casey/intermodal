@@ -2,6 +2,10 @@ default: watch
 
 version := `sed -En 's/version[[:space:]]*=[[:space:]]*"([^"]+)"/v\1/p' Cargo.toml | head -1`
 
+bt := "0"
+
+export RUST_BACKTRACE := bt
+
 # watch filesystem for changes and rerun tests
 watch:
 	cargo watch --exec test
