@@ -107,20 +107,36 @@ impl TorrentSummary {
 
     match &self.metainfo.announce_list {
       Some(tiers) => {
-        let mut value = Vec::new();
+        if tiers.iter().all(|tier| tier.len() == 1) {
+          let mut list = Vec::new();
+          if !tiers
+            .iter()
+            .any(|tier| tier.contains(&self.metainfo.announce))
+          {
+            list.push(self.metainfo.announce.clone());
+          }
 
-        if !tiers
-          .iter()
-          .any(|tier| tier.contains(&self.metainfo.announce))
-        {
-          value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
+          for tier in tiers {
+            list.push(tier[0].clone());
+          }
+
+          table.list("Trackers", list);
+        } else {
+          let mut value = Vec::new();
+
+          if !tiers
+            .iter()
+            .any(|tier| tier.contains(&self.metainfo.announce))
+          {
+            value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
+          }
+
+          for (i, tier) in tiers.iter().enumerate() {
+            value.push((format!("Tier {}", i + 1), tier.clone()));
+          }
+
+          table.tiers("Trackers", value);
         }
-
-        for (i, tier) in tiers.iter().enumerate() {
-          value.push((format!("Tier {}", i + 1), tier.clone()));
-        }
-
-        table.tiers("Trackers", value);
       }
       None => table.row("Tracker", &self.metainfo.announce),
     }
