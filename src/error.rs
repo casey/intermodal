@@ -35,8 +35,15 @@ pub(crate) enum Error {
   FilenameExtract { path: PathBuf },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },
+  #[snafu(display("Invalid glob: {}", source))]
+  GlobParse { source: globset::Error },
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display(
+    "Interal error, this may indicate a bug in intermodal: {}\nConsider filing an issue: https://github.com/casey/imdl/issues/new",
+    message,
+  ))]
+  Internal { message: String },
   #[snafu(display(
     "Path `{}` contains non-normal component: {}",
     path.display(),
@@ -106,11 +113,23 @@ impl Error {
       _ => None,
     }
   }
+
+  pub(crate) fn internal(message: impl Into<String>) -> Error {
+    Error::Internal {
+      message: message.into(),
+    }
+  }
 }
 
 impl From<clap::Error> for Error {
   fn from(source: clap::Error) -> Self {
     Self::Clap { source }
+  }
+}
+
+impl From<globset::Error> for Error {
+  fn from(source: globset::Error) -> Self {
+    Self::GlobParse { source }
   }
 }
 

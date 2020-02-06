@@ -21,6 +21,7 @@ pub(crate) use std::{
 
 // dependencies
 pub(crate) use chrono::{TimeZone, Utc};
+pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{Deserialize, Serialize};
