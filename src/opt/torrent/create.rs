@@ -994,7 +994,9 @@ mod tests {
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     let have = env.out();
-    let want = "        Name  foo
+    let want = format!(
+      "        Name  foo
+  Created By  {}
    Info Hash  d3432a4b9d18baa413095a70f1e417021ceaca5b
 Torrent Size  237 bytes
 Content Size  9 bytes
@@ -1003,7 +1005,13 @@ Content Size  9 bytes
   Piece Size  16 KiB
  Piece Count  1
   File Count  3
-";
+       Files  foo
+              ├─a
+              ├─h
+              └─x
+",
+      consts::CREATED_BY_DEFAULT
+    );
     assert_eq!(have, want);
   }
 

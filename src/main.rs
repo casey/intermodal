@@ -11,6 +11,7 @@
   clippy::large_enum_variant,
   clippy::missing_docs_in_private_items,
   clippy::needless_pass_by_value,
+  clippy::non_ascii_literal,
   clippy::option_map_unwrap_or_else,
   clippy::option_unwrap_used,
   clippy::result_expect_used,

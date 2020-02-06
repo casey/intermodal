@@ -38,6 +38,17 @@ impl Table {
     ));
   }
 
+  pub(crate) fn directory(&mut self, name: &'static str, root: &str, mut files: Vec<FilePath>) {
+    files.sort();
+    self.rows.push((
+      name,
+      Value::Directory {
+        root: root.to_owned(),
+        files,
+      },
+    ));
+  }
+
   fn rows(&self) -> &[(&'static str, Value)] {
     &self.rows
   }
@@ -68,6 +79,38 @@ impl Table {
       )?;
 
       match value {
+        Value::Directory { root, files } => {
+          let mut tree = Tree::new(&root);
+          for file in files {
+            tree.insert(file.components());
+          }
+          let lines = tree.lines();
+
+          for (i, (last, name)) in lines.iter().enumerate() {
+            if i == 0 {
+              write!(out, "  ")?;
+            } else {
+              write!(out, "{:indent$}  ", "", indent = name_width)?;
+            }
+
+            if !last.is_empty() {
+              for last in &last[..last.len() - 1] {
+                if *last {
+                  write!(out, "  ")?;
+                } else {
+                  write!(out, "│ ")?;
+                }
+              }
+              if last[last.len() - 1] {
+                write!(out, "└─")?;
+              } else {
+                write!(out, "├─")?;
+              }
+            }
+
+            writeln!(out, "{}", name)?;
+          }
+        }
         Value::Scalar(scalar) => writeln!(out, "  {}", scalar)?,
         Value::Size(bytes) => writeln!(out, "  {}", bytes)?,
         Value::Tiers(tiers) => {
@@ -108,6 +151,15 @@ impl Table {
     for (name, value) in self.rows() {
       write!(out, "{}\t", name)?;
       match value {
+        Value::Directory { root, files } => {
+          for (i, file) in files.iter().enumerate() {
+            if i > 0 {
+              write!(out, "\t")?;
+            }
+            write!(out, "{}/{}", root, file)?;
+          }
+          writeln!(out)?;
+        }
         Value::Scalar(scalar) => writeln!(out, "{}", scalar)?,
         Value::Size(Bytes(value)) => writeln!(out, "{}", value)?,
         Value::Tiers(tiers) => {
@@ -130,6 +182,61 @@ enum Value {
   Scalar(String),
   Tiers(Vec<(String, Vec<String>)>),
   Size(Bytes),
+  Directory { root: String, files: Vec<FilePath> },
+}
+
+struct Tree<'name> {
+  name: &'name str,
+  children: Vec<Tree<'name>>,
+}
+
+impl<'name> Tree<'name> {
+  fn new(name: &'name str) -> Tree<'name> {
+    Self {
+      name,
+      children: Vec::new(),
+    }
+  }
+
+  fn insert(&mut self, file: &'name [String]) {
+    if file.is_empty() {
+      return;
+    }
+
+    let head = &file[0];
+
+    for child in &mut self.children {
+      if child.name == head {
+        child.insert(&file[1..]);
+        return;
+      }
+    }
+
+    let mut child = Self::new(head);
+    child.insert(&file[1..]);
+
+    self.children.push(child);
+  }
+
+  fn lines(&self) -> Vec<(Vec<bool>, &'name str)> {
+    let mut lines = Vec::new();
+    let mut last = Vec::new();
+    self.lines_inner(&mut last, &mut lines);
+    lines
+  }
+
+  fn lines_inner(&self, last: &mut Vec<bool>, lines: &mut Vec<(Vec<bool>, &'name str)>) {
+    lines.push((last.clone(), self.name));
+    last.push(false);
+    for (i, child) in self.children.iter().enumerate() {
+      if i == self.children.len() - 1 {
+        last.pop();
+        last.push(true);
+      }
+      child.lines_inner(last, lines);
+    }
+    last.pop();
+  }
 }
 
 #[cfg(test)]
@@ -169,6 +276,31 @@ mod tests {
     assert_eq!(
       have,
       " \u{1b}[34mHere\u{1b}[0m  bar\n\u{1b}[34mThere\u{1b}[0m  baz\n"
+    );
+  }
+
+  #[test]
+  fn directory() {
+    let mut table = Table::new();
+    table.directory(
+      "Files",
+      "Foo",
+      vec![
+        FilePath::from_components(&["a", "b"]),
+        FilePath::from_components(&["a", "c"]),
+        FilePath::from_components(&["d"]),
+      ],
+    );
+    tab_delimited(&table, "Files\tFoo/a/b\tFoo/a/c\tFoo/d\n");
+    human_readable(
+      &table,
+      "\
+Files  Foo
+       ├─a
+       │ ├─b
+       │ └─c
+       └─d
+",
     );
   }
 
