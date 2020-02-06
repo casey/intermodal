@@ -1242,4 +1242,55 @@ Content Size  9 bytes
 
     assert_matches!(env.run().unwrap_err(), Error::SymlinkRoot { root } if root == file_link);
   }
+
+  #[test]
+  fn skip_dot_dir_contents() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    env.create_dir("foo/.bar");
+    env.create_file("foo/.bar/baz", "baz");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.is_empty()
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn skip_hidden_attribute_dir_contents() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    env.create_dir("foo/bar");
+    #[cfg(target_os = "windows")]
+    {
+      env.create_file("foo/bar/baz", "baz");
+      let path = env.resolve("foo/bar");
+      Command::new("attrib")
+        .arg("+h")
+        .arg(&path)
+        .status()
+        .unwrap();
+    }
+    #[cfg(target_os = "macos")]
+    {
+      env.create_file("foo/bar/baz", "baz");
+      let path = env.resolve("foo/bar");
+      Command::new("chflags")
+        .arg("hidden")
+        .arg(&path)
+        .status()
+        .unwrap();
+    }
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.is_empty()
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
 }

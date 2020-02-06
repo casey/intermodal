@@ -61,29 +61,39 @@ impl Walker {
       return Ok(Files::file(self.root, Bytes::from(root_metadata.len())));
     }
 
+    let filter = |entry: &walkdir::DirEntry| {
+      let path = entry.path();
+
+      let file_name = entry.file_name();
+
+      if !self.include_hidden && file_name.to_string_lossy().starts_with('.') {
+        return false;
+      }
+
+      let hidden = Platform::hidden(path).unwrap_or(true);
+
+      if !self.include_hidden && hidden {
+        return false;
+      }
+
+      true
+    };
+
     let mut paths = Vec::new();
     let mut total_size = 0;
     for result in WalkDir::new(&self.root)
       .follow_links(self.follow_symlinks)
       .sort_by(|a, b| a.file_name().cmp(b.file_name()))
+      .into_iter()
+      .filter_entry(filter)
     {
       let entry = result?;
 
       let path = entry.path();
 
-      let file_name = entry.file_name();
-
       let metadata = entry.metadata()?;
 
       if !metadata.is_file() {
-        continue;
-      }
-
-      if !self.include_hidden && file_name.to_string_lossy().starts_with('.') {
-        continue;
-      }
-
-      if !self.include_hidden && Platform::hidden(path)? {
         continue;
       }
 
