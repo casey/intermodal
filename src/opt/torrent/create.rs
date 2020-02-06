@@ -56,6 +56,12 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   )]
   force: bool,
   #[structopt(
+    name = "GLOB",
+    long = "glob",
+    help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the last one taking precedence. Precede a glob with a ! to exclude it."
+  )]
+  globs: Vec<String>,
+  #[structopt(
     name = "INCLUDE-HIDDEN",
     long = "include-hidden",
     help = "Include hidden files that would otherwise be skipped, such as files that start with a `.`, and files hidden by file attributes on macOS and Windows."
@@ -145,6 +151,7 @@ impl Create {
       .include_junk(self.include_junk)
       .include_hidden(self.include_hidden)
       .follow_symlinks(self.follow_symlinks)
+      .globs(&self.globs)?
       .files()?;
 
     let piece_length = self
@@ -1293,5 +1300,113 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.is_empty()
     );
     assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn glob_exclude() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "!a"]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 2
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("bc").digest().bytes());
+  }
+
+  #[test]
+  fn glob_exclude_nomatch() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "!x"]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 3
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("abc").digest().bytes());
+  }
+
+  #[test]
+  fn glob_include() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--glob",
+      "[bc]",
+    ]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 2
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("bc").digest().bytes());
+  }
+
+  #[test]
+  fn glob_include_nomatch() {
+    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "x"]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.is_empty()
+    );
+    assert_eq!(metainfo.info.pieces, &[]);
+  }
+
+  #[test]
+  fn glob_precedence() {
+    let mut env = environment(&[
+      "--input",
+      "foo",
+      "--announce",
+      "http://bar",
+      "--glob",
+      "!*",
+      "--glob",
+      "[ab]",
+      "--glob",
+      "!b",
+    ]);
+    env.create_dir("foo");
+    env.create_file("foo/a", "a");
+    env.create_file("foo/b", "b");
+    env.create_file("foo/c", "c");
+    env.run().unwrap();
+    let torrent = env.resolve("foo.torrent");
+    let bytes = fs::read(torrent).unwrap();
+    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+    assert_eq!(metainfo.info.pieces, Sha1::from("a").digest().bytes());
   }
 }

@@ -1,5 +1,6 @@
 use crate::common::*;
 
+#[derive(Debug)]
 pub(crate) struct Files {
   root: PathBuf,
   total_size: Bytes,
