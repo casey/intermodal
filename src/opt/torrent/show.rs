@@ -72,6 +72,7 @@ mod tests {
       let want = "        Name  foo
      Comment  comment
      Created  1970-01-01 00:00:01 UTC
+  Created By  created by
       Source  source
    Info Hash  b7595205a46491b3e8686e10b28efe7144d066cc
 Torrent Size  252 bytes
@@ -104,6 +105,7 @@ Content Size  20 bytes
 Name\tfoo
 Comment\tcomment
 Created\t1970-01-01 00:00:01 UTC
+Created By\tcreated by
 Source\tsource
 Info Hash\tb7595205a46491b3e8686e10b28efe7144d066cc
 Torrent Size\t252

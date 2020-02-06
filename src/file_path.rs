@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[serde(transparent)]
-#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone, Ord, PartialOrd, Eq)]
 pub(crate) struct FilePath {
   components: Vec<String>,
 }
@@ -39,7 +39,11 @@ impl FilePath {
   }
 
   pub(crate) fn name(&self) -> &str {
-    &self.components[0]
+    &self.components[self.components.len() - 1]
+  }
+
+  pub(crate) fn components(&self) -> &[String] {
+    &self.components
   }
 
   pub(crate) fn absolute(&self, root: &Path) -> PathBuf {
@@ -59,5 +63,17 @@ impl FilePath {
       .collect();
     assert!(!components.is_empty());
     FilePath { components }
+  }
+}
+
+impl Display for FilePath {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    for (i, component) in self.components.iter().enumerate() {
+      if i > 0 {
+        write!(f, "/")?;
+      }
+      write!(f, "{}", component)?;
+    }
+    Ok(())
   }
 }
