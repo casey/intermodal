@@ -84,6 +84,7 @@ Content Size  20 bytes
   Piece Size  16 KiB
  Piece Count  1
   File Count  1
+       Files  foo
 ";
 
       assert_eq!(have, want);
@@ -115,6 +116,7 @@ Trackers\tannounce\tb\tc
 Piece Size\t16384
 Piece Count\t1
 File Count\t1
+Files\tfoo
 ";
 
       assert_eq!(have, want);
