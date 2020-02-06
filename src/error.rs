@@ -38,6 +38,35 @@ pub(crate) enum Error {
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
   #[snafu(display(
+    "Path `{}` contains non-normal component: {}",
+    path.display(),
+    component.display(),
+  ))]
+  PathComponent { component: PathBuf, path: PathBuf },
+  #[snafu(display(
+    "Path `{}` contains non-unicode component: {}",
+    path.display(),
+    component.display(),
+  ))]
+  PathDecode { path: PathBuf, component: PathBuf },
+  #[snafu(display(
+    "Path `{}` empty after stripping prefix `{}`",
+    path.display(),
+    prefix.display(),
+  ))]
+  PathStripEmpty { path: PathBuf, prefix: PathBuf },
+  #[snafu(display(
+    "Failed to strip prefix `{}` from path `{}`: {}",
+    prefix.display(),
+    path.display(),
+    source
+  ))]
+  PathStripPrefix {
+    path: PathBuf,
+    prefix: PathBuf,
+    source: path::StripPrefixError,
+  },
+  #[snafu(display(
     "Piece length `{}` too large. The maximum supported piece length is {}.",
     bytes,
     Bytes(u32::max_value().into())

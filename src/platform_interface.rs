@@ -32,4 +32,6 @@ pub(crate) trait PlatformInterface {
   }
 
   fn opener() -> Result<Vec<OsString>, Error>;
+
+  fn hidden(path: &Path) -> Result<bool, Error>;
 }
