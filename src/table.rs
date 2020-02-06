@@ -93,7 +93,7 @@ impl Table {
               write!(out, "{:indent$}  ", "", indent = name_width)?;
             }
 
-            if last.len() > 0 {
+            if !last.is_empty() {
               for last in &last[..last.len() - 1] {
                 if *last {
                   write!(out, "  ")?;
