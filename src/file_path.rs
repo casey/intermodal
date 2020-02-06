@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[serde(transparent)]
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub(crate) struct FilePath {
   components: Vec<String>,
 }
@@ -43,6 +43,18 @@ impl FilePath {
     }
 
     Ok(FilePath { components })
+  }
+
+  pub(crate) fn name(&self) -> &str {
+    &self.components[0]
+  }
+
+  pub(crate) fn absolute(&self, root: &Path) -> PathBuf {
+    let mut absolute = root.to_owned();
+    for component in &self.components {
+      absolute.push(component);
+    }
+    absolute
   }
 
   #[cfg(test)]

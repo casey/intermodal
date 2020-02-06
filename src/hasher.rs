@@ -16,7 +16,7 @@ impl Hasher {
     md5sum: bool,
     piece_length: u32,
   ) -> Result<(Mode, Vec<u8>), Error> {
-    Self::new(md5sum, piece_length).hash_root(files.root())
+    Self::new(md5sum, piece_length).hash_files(files)
   }
 
   fn new(md5sum: bool, piece_length: u32) -> Self {
@@ -31,56 +31,44 @@ impl Hasher {
     }
   }
 
-  fn hash_root(mut self, root: &Path) -> Result<(Mode, Vec<u8>), Error> {
-    let metadata = root.metadata().context(error::Filesystem { path: root })?;
+  fn hash_files(mut self, files: &Files) -> Result<(Mode, Vec<u8>), Error> {
+    let mode = if let Some(contents) = files.contents() {
+      let files = self.hash_contents(&files.root(), contents)?;
 
-    if metadata.is_file() {
-      let (md5sum, length) = self.hash_file(&root)?;
-
-      if self.piece_bytes_hashed > 0 {
-        self.pieces.extend(&self.sha1.digest().bytes());
-        self.sha1.reset();
-        self.piece_bytes_hashed = 0;
-      }
-
-      Ok((
-        Mode::Single {
-          md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
-          length,
-        },
-        self.pieces,
-      ))
+      Mode::Multiple { files }
     } else {
-      let files = self.hash_dir(root)?;
+      let (md5sum, length) = self.hash_file(files.root())?;
 
-      if self.piece_bytes_hashed > 0 {
-        self.pieces.extend(&self.sha1.digest().bytes());
-        self.sha1.reset();
-        self.piece_bytes_hashed = 0;
+      Mode::Single {
+        md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
+        length,
       }
+    };
 
-      Ok((Mode::Multiple { files }, self.pieces))
+    if self.piece_bytes_hashed > 0 {
+      self.pieces.extend(&self.sha1.digest().bytes());
+      self.sha1.reset();
+      self.piece_bytes_hashed = 0;
     }
+
+    Ok((mode, self.pieces))
   }
 
-  fn hash_dir(&mut self, dir: &Path) -> Result<Vec<FileInfo>, Error> {
+  fn hash_contents(
+    &mut self,
+    root: &Path,
+    file_paths: &[FilePath],
+  ) -> Result<Vec<FileInfo>, Error> {
     let mut files = Vec::new();
-    for result in WalkDir::new(dir).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
-      let entry = result?;
 
-      let path = entry.path();
+    for file_path in file_paths {
+      let path = file_path.absolute(root);
 
-      if !entry.metadata()?.is_file() {
-        continue;
-      }
-
-      let (md5sum, length) = self.hash_file(path)?;
-
-      let file_path = FilePath::from_prefix_and_path(dir, path)?;
+      let (md5sum, length) = self.hash_file(&path)?;
 
       files.push(FileInfo {
         md5sum: md5sum.map(|md5sum| format!("{:x}", md5sum)),
-        path: file_path,
+        path: file_path.clone(),
         length,
       });
     }
