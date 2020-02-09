@@ -8,15 +8,16 @@ pub(crate) struct TorrentSummary {
 
 impl TorrentSummary {
   fn new(bytes: &[u8], metainfo: Metainfo) -> Result<Self, Error> {
-    let value = bencode::Value::decode(&bytes).unwrap();
+    let value = Value::from_bencode(&bytes).unwrap();
 
-    let infohash = if let bencode::Value::Dict(items) = value {
+    let infohash = if let Value::Dict(items) = value {
       let info = items
         .iter()
-        .find(|(key, _value)| key == b"info")
+        .find(|pair: &(&Vec<u8>, &Value)| pair.0 == b"info")
         .unwrap()
         .1
-        .encode();
+        .to_bencode()
+        .unwrap();
       Sha1::from(info).digest()
     } else {
       unreachable!()

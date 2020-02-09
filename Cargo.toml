@@ -22,8 +22,8 @@ libc              = "0.2"
 md5               = "0.7"
 pretty_assertions = "0.6"
 regex             = "1"
-serde_bencode     = "0.2"
 serde_bytes       = "0.11"
+serde_bencode     = "0.2"
 sha1              = "0.6"
 snafu             = "0.6"
 static_assertions = "1"
@@ -31,6 +31,13 @@ tempfile          = "3"
 unicode-width     = "0.1"
 url               = "2"
 walkdir           = "2.1"
+serde_with        = "1.4"
+
+[dependencies.bendy]
+version  = "0.2.2"
+git      = "https://github.com/casey/bendy.git"
+branch   = "value"
+features = ["serde"]
 
 [dependencies.serde]
 version  = "1.0.103"
