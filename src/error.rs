@@ -11,11 +11,11 @@ pub(crate) enum Error {
   AnnounceUrlParse { source: url::ParseError },
   #[snafu(display("Failed to deserialize torrent metainfo from `{}`: {}", path.display(), source))]
   MetainfoLoad {
-    source: serde_bencode::Error,
+    source: bendy::serde::Error,
     path: PathBuf,
   },
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
-  MetainfoSerialize { source: serde_bencode::Error },
+  MetainfoSerialize { source: bendy::serde::Error },
   #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]
   ByteParse {
     text: String,
