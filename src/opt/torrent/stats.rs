@@ -160,55 +160,106 @@ impl Extractor {
       return;
     };
 
-    let value = if let Ok(value) = bencode::Value::decode(&contents) {
-      value
+    if let Ok(value) = Value::from_bencode(&contents) {
+      self.extract(&value);
+      if self.print {
+        eprintln!("{}:\n{}", path.display(), Self::pretty_print(&value));
+      }
     } else {
       self.bencode_decode_errors += 1;
-      return;
-    };
-
-    if self.print {
-      eprintln!("{}:\n{}", path.display(), value);
     }
-
-    self.extract(&value);
   }
 
-  fn extract(&mut self, value: &bencode::Value) {
-    use bencode::Value::*;
-
+  fn extract(&mut self, value: &Value) {
     let matches = self.regex_set.matches(&self.current_path);
 
     for i in matches.iter() {
       let pattern = &self.regex_set.patterns()[i];
       if let Some(values) = self.values.get_mut(pattern) {
-        values.push(value.to_string());
+        values.push(Self::pretty_print(value));
       } else {
-        self.values.insert(pattern.clone(), vec![value.to_string()]);
+        self
+          .values
+          .insert(pattern.clone(), vec![Self::pretty_print(value)]);
       }
     }
 
     let starting_length = self.current_path.len();
 
-    if let Dict(items) = value {
-      for (key, value) in items {
-        match String::from_utf8_lossy(key) {
-          Cow::Borrowed(s) => self.current_path.push_str(s),
-          Cow::Owned(s) => self.current_path.push_str(&s),
+    match value {
+      Value::List(list) => {
+        if self.current_path.pop().is_some() {
+          self.current_path.push('*');
         }
-        self.paths.increment_ref(&self.current_path);
-        self.current_path.push('/');
-        self.extract(value);
+        for value in list {
+          self.extract(value);
+        }
         self.current_path.truncate(starting_length);
       }
-    } else if let List(values) = value {
-      if self.current_path.pop().is_some() {
-        self.current_path.push('*');
+      Value::Dict(dict) => {
+        for (key, value) in dict {
+          match String::from_utf8_lossy(key) {
+            Cow::Borrowed(s) => self.current_path.push_str(s),
+            Cow::Owned(s) => self.current_path.push_str(&s),
+          }
+          self.paths.increment_ref(&self.current_path);
+          self.current_path.push('/');
+          self.extract(value);
+          self.current_path.truncate(starting_length);
+        }
       }
-      for value in values {
-        self.extract(value);
+      Value::Integer(_) | Value::Bytes(_) => {}
+    }
+  }
+
+  fn pretty_print(value: &Value) -> String {
+    let mut buffer = String::new();
+    Self::pretty_print_inner(value, &mut buffer);
+    buffer
+  }
+
+  fn pretty_print_inner(value: &Value, buffer: &mut String) {
+    match value {
+      Value::List(list) => {
+        buffer.push('[');
+        for (i, value) in list.iter().enumerate() {
+          if i > 0 {
+            buffer.push_str(", ");
+          }
+          Self::pretty_print_inner(value, buffer);
+        }
+        buffer.push(']');
       }
-      self.current_path.truncate(starting_length);
+      Value::Dict(dict) => {
+        buffer.push('{');
+        for (i, (key, value)) in dict.iter().enumerate() {
+          if i > 0 {
+            buffer.push_str(", ");
+          }
+          Self::pretty_print_string(key, buffer);
+          buffer.push_str(": ");
+          Self::pretty_print_inner(value, buffer);
+        }
+        buffer.push('}');
+      }
+      Value::Integer(integer) => buffer.push_str(&integer.to_string()),
+      Value::Bytes(bytes) => {
+        Self::pretty_print_string(bytes, buffer);
+      }
+    }
+  }
+
+  fn pretty_print_string(string: &[u8], buffer: &mut String) {
+    if let Ok(text) = str::from_utf8(string) {
+      buffer.push('\"');
+      buffer.push_str(text);
+      buffer.push('\"');
+    } else {
+      buffer.push('<');
+      for byte in string {
+        buffer.push_str(&format!("{:X}", byte));
+      }
+      buffer.push('>');
     }
   }
 }
