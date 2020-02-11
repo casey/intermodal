@@ -54,7 +54,6 @@ mod test_env_builder;
 #[cfg(test)]
 mod capture;
 
-mod bencode;
 mod bytes;
 mod common;
 mod consts;
@@ -65,6 +64,7 @@ mod file_path;
 mod files;
 mod hasher;
 mod info;
+mod inner;
 mod into_u64;
 mod into_usize;
 mod lint;

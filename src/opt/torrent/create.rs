@@ -321,8 +321,8 @@ mod tests {
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
-    let value = bencode::Value::decode(&bytes).unwrap();
-    assert!(matches!(value, bencode::Value::Dict(_)));
+    let value = Value::from_bencode(&bytes).unwrap();
+    assert!(matches!(value, Value::Dict(_)));
   }
 
   #[test]
@@ -331,8 +331,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.private, None);
   }
 
@@ -342,8 +341,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.private, Some(1));
   }
 
@@ -360,8 +358,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.announce, "http://bar/");
     assert!(metainfo.announce_list.is_none());
   }
@@ -377,8 +374,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(
       metainfo.announce,
       "udp://tracker.opentrackr.org:1337/announce"
@@ -392,8 +388,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.announce, "wss://tracker.btorrent.xyz/");
     assert!(metainfo.announce_list.is_none());
   }
@@ -411,8 +406,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
@@ -435,8 +429,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.announce, "http://bar/");
     assert_eq!(
       metainfo.announce_list,
@@ -453,8 +446,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.comment, None);
   }
 
@@ -471,8 +463,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.comment.unwrap(), "Hello, world!");
   }
 
@@ -482,8 +473,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.piece_length, 16 * 2u32.pow(10));
   }
 
@@ -500,8 +490,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.piece_length, 64 * 1024);
   }
 
@@ -518,8 +507,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.piece_length, 512 * 1024);
   }
 
@@ -536,8 +524,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.name, "foo");
   }
 
@@ -556,8 +543,7 @@ mod tests {
     fs::write(dir.join("bar"), "").unwrap();
     env.run().unwrap();
     let torrent = dir.join("bar.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.name, "bar");
   }
 
@@ -574,8 +560,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("x.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    Metainfo::load(torrent).unwrap();
   }
 
   #[test]
@@ -584,8 +569,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.created_by.unwrap(), consts::CREATED_BY_DEFAULT);
   }
 
@@ -601,8 +585,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.created_by, None);
   }
 
@@ -612,8 +595,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.encoding, Some("UTF-8".into()));
   }
 
@@ -627,8 +609,7 @@ mod tests {
       .as_secs();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert!(metainfo.creation_date.unwrap() < now + 10);
     assert!(metainfo.creation_date.unwrap() > now - 10);
   }
@@ -645,8 +626,7 @@ mod tests {
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.creation_date, None);
   }
 
@@ -657,8 +637,7 @@ mod tests {
     fs::write(env.resolve("foo"), contents).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
     assert_eq!(
       metainfo.info.mode,
@@ -685,8 +664,7 @@ mod tests {
     fs::write(env.resolve("foo"), contents).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     let pieces = Sha1::from("b")
       .digest()
       .bytes()
@@ -713,8 +691,7 @@ mod tests {
     fs::write(env.resolve("foo"), contents).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces.len(), 0);
     assert_eq!(
       metainfo.info.mode,
@@ -732,8 +709,7 @@ mod tests {
     fs::create_dir(&dir).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces.len(), 0);
     assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
   }
@@ -748,8 +724,7 @@ mod tests {
     fs::write(file, contents).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
     match metainfo.info.mode {
       Mode::Multiple { files } => {
@@ -776,8 +751,7 @@ mod tests {
     fs::write(file, contents).unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
     match metainfo.info.mode {
       Mode::Multiple { files } => {
@@ -804,8 +778,7 @@ mod tests {
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(
       metainfo.info.pieces,
       Sha1::from("abchijxyz").digest().bytes()
@@ -1028,8 +1001,7 @@ Content Size  9 bytes
     fs::write(env.resolve("foo"), "").unwrap();
     env.run().unwrap();
     let bytes = env.out_bytes();
-    let value = bencode::Value::decode(&bytes).unwrap();
-    assert!(matches!(value, bencode::Value::Dict(_)));
+    Metainfo::from_bytes(&bytes);
   }
 
   #[test]
@@ -1052,8 +1024,8 @@ Content Size  9 bytes
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
     let bytes = fs::read(torrent).unwrap();
-    let value = bencode::Value::decode(&bytes).unwrap();
-    assert!(matches!(value, bencode::Value::Dict(_)));
+    let value = Value::from_bencode(&bytes).unwrap();
+    assert!(matches!(value, Value::Dict(_)));
   }
 
   #[test]
@@ -1065,8 +1037,7 @@ Content Size  9 bytes
     fs::write(dir.join("Desktop.ini"), "abc").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
@@ -1089,8 +1060,7 @@ Content Size  9 bytes
     fs::write(dir.join("Desktop.ini"), "abc").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
@@ -1126,8 +1096,7 @@ Content Size  9 bytes
     }
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 0
@@ -1149,8 +1118,7 @@ Content Size  9 bytes
     fs::write(dir.join(".hidden"), "abc").unwrap();
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
@@ -1194,8 +1162,7 @@ Content Size  9 bytes
     populate_symlinks(&env);
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
@@ -1217,8 +1184,7 @@ Content Size  9 bytes
     populate_symlinks(&env);
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_eq!(metainfo.info.pieces, Sha1::from("barbaz").digest().bytes());
     match metainfo.info.mode {
       Mode::Multiple { files } => {
@@ -1266,8 +1232,7 @@ Content Size  9 bytes
     env.create_file("foo/.bar/baz", "baz");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
@@ -1301,8 +1266,7 @@ Content Size  9 bytes
     }
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
@@ -1319,8 +1283,7 @@ Content Size  9 bytes
     env.create_file("foo/c", "c");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
@@ -1337,8 +1300,7 @@ Content Size  9 bytes
     env.create_file("foo/c", "c");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 3
@@ -1362,8 +1324,7 @@ Content Size  9 bytes
     env.create_file("foo/c", "c");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
@@ -1380,8 +1341,7 @@ Content Size  9 bytes
     env.create_file("foo/c", "c");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
@@ -1409,8 +1369,7 @@ Content Size  9 bytes
     env.create_file("foo/c", "c");
     env.run().unwrap();
     let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = Metainfo::load(torrent).unwrap();
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1

@@ -1,10 +1,17 @@
 use crate::common::*;
 
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[skip_serializing_none]
 #[serde(untagged)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub(crate) enum Mode {
-  Single { length: u64, md5sum: Option<String> },
-  Multiple { files: Vec<FileInfo> },
+  Single {
+    length: u64,
+    #[serde(skip_serializing_if = "Option::is_none", default, with = "inner")]
+    md5sum: Option<String>,
+  },
+  Multiple {
+    files: Vec<FileInfo>,
+  },
 }
 
 impl Mode {
