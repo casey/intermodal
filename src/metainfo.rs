@@ -73,23 +73,3 @@ impl Metainfo {
     bendy
   }
 }
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[serde(untagged)]
-  #[derive(Deserialize, Serialize, Debug, PartialEq)]
-  pub(crate) enum Foo {
-    A { x: u64 },
-    B { y: String },
-  }
-
-  #[test]
-  fn serde() {
-    let value = Foo::A { x: 1 };
-    let bytes = bendy::serde::ser::to_bytes(&value).unwrap();
-    let deserialized = bendy::serde::de::from_bytes(&bytes).unwrap();
-    assert_eq!(value, deserialized);
-  }
-}
