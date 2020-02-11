@@ -160,16 +160,13 @@ impl Extractor {
       return;
     };
 
-    match Value::from_bencode(&contents) {
-      Ok(value) => {
-        self.extract(&value);
-        if self.print {
-          eprintln!("{}:\n{}", path.display(), Self::pretty_print(&value));
-        }
+    if let Ok(value) = Value::from_bencode(&contents) {
+      self.extract(&value);
+      if self.print {
+        eprintln!("{}:\n{}", path.display(), Self::pretty_print(&value));
       }
-      Err(_) => {
-        self.bencode_decode_errors += 1;
-      }
+    } else {
+      self.bencode_decode_errors += 1;
     }
   }
 
