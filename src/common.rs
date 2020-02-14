@@ -11,7 +11,6 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   iter::{self, Sum},
-  net::Ipv6Addr,
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign},
   path::{self, Path, PathBuf},

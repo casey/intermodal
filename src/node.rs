@@ -6,12 +6,6 @@ pub(crate) struct Node {
   port: u16,
 }
 
-impl Node {
-  fn new(host: Host, port: u16) -> Node {
-    Node { host, port }
-  }
-}
-
 impl FromStr for Node {
   type Err = Error;
 
@@ -102,9 +96,10 @@ impl<'de> Deserialize<'de> for Node {
 mod tests {
   use super::*;
 
-  use std::net::Ipv4Addr;
+  use std::net::{Ipv4Addr, Ipv6Addr};
 
-  fn case(node: Node, text: &str, bencode: &str) {
+  fn case(host: Host, port: u16, text: &str, bencode: &str) {
+    let node = Node { host, port };
     let parsed: Node = text.parse().expect(&format!("Failed to parse {}", text));
     assert_eq!(parsed, node);
     let ser = bendy::serde::to_bytes(&node).unwrap();
@@ -122,7 +117,8 @@ mod tests {
   #[test]
   fn test_domain() {
     case(
-      Node::new(Host::Domain("imdl.com".to_owned()), 12),
+      Host::Domain("imdl.com".to_owned()),
+      12,
       "imdl.com:12",
       "l8:imdl.comi12ee",
     );
@@ -131,7 +127,8 @@ mod tests {
   #[test]
   fn test_ipv4() {
     case(
-      Node::new(Host::Ipv4(Ipv4Addr::new(1, 2, 3, 4)), 100),
+      Host::Ipv4(Ipv4Addr::new(1, 2, 3, 4)),
+      100,
       "1.2.3.4:100",
       "l7:1.2.3.4i100ee",
     );
@@ -140,12 +137,10 @@ mod tests {
   #[test]
   fn test_ipv6() {
     case(
-      Node::new(
-        Host::Ipv6(Ipv6Addr::new(
-          0x1234, 0x5678, 0x9ABC, 0xDEF0, 0x1234, 0x5678, 0x9ABC, 0xDEF0,
-        )),
-        65000,
-      ),
+      Host::Ipv6(Ipv6Addr::new(
+        0x1234, 0x5678, 0x9ABC, 0xDEF0, 0x1234, 0x5678, 0x9ABC, 0xDEF0,
+      )),
+      65000,
       "[1234:5678:9abc:def0:1234:5678:9abc:def0]:65000",
       "l39:1234:5678:9abc:def0:1234:5678:9abc:def0i65000ee",
     );
