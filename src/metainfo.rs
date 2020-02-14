@@ -3,8 +3,8 @@ use crate::common::*;
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub(crate) struct Metainfo {
   pub(crate) announce: String,
-  #[serde(rename = "announce-list")]
   #[serde(
+    rename = "announce-list",
     skip_serializing_if = "Option::is_none",
     default,
     with = "unwrap_or_skip"
@@ -16,15 +16,15 @@ pub(crate) struct Metainfo {
     with = "unwrap_or_skip"
   )]
   pub(crate) comment: Option<String>,
-  #[serde(rename = "created by")]
   #[serde(
+    rename = "created by",
     skip_serializing_if = "Option::is_none",
     default,
     with = "unwrap_or_skip"
   )]
   pub(crate) created_by: Option<String>,
-  #[serde(rename = "creation date")]
   #[serde(
+    rename = "creation date",
     skip_serializing_if = "Option::is_none",
     default,
     with = "unwrap_or_skip"
@@ -37,6 +37,12 @@ pub(crate) struct Metainfo {
   )]
   pub(crate) encoding: Option<String>,
   pub(crate) info: Info,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip"
+  )]
+  pub(crate) nodes: Option<Vec<Node>>,
 }
 
 impl Metainfo {
@@ -103,6 +109,7 @@ mod tests {
       created_by: Some("created by".into()),
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
+      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       info: Info {
         private: Some(true),
         piece_length: Bytes(16 * 1024),
@@ -130,6 +137,7 @@ mod tests {
     let value = Metainfo {
       announce: "announce".into(),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
+      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
       creation_date: Some(1),

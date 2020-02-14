@@ -31,7 +31,7 @@ impl TestEnv {
     fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
   }
 
-  pub(crate) fn load_torrent(&self, filename: impl AsRef<Path>) -> Metainfo {
+  pub(crate) fn load_metainfo(&self, filename: impl AsRef<Path>) -> Metainfo {
     Metainfo::load(self.env.resolve(filename.as_ref())).unwrap()
   }
 }
