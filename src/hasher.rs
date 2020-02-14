@@ -4,8 +4,8 @@ pub(crate) struct Hasher {
   buffer: Vec<u8>,
   length: u64,
   md5sum: bool,
-  piece_bytes_hashed: u64,
-  piece_length: Bytes,
+  piece_bytes_hashed: usize,
+  piece_length: usize,
   pieces: Vec<u8>,
   sha1: Sha1,
 }
@@ -26,7 +26,7 @@ impl Hasher {
       piece_bytes_hashed: 0,
       pieces: Vec::new(),
       sha1: Sha1::new(),
-      piece_length: Bytes::from(piece_length.into_u64()),
+      piece_length,
       md5sum,
     }
   }
@@ -110,7 +110,7 @@ impl Hasher {
 
         self.piece_bytes_hashed += 1;
 
-        if Bytes::from(self.piece_bytes_hashed) == self.piece_length {
+        if self.piece_bytes_hashed == self.piece_length {
           self.pieces.extend(&self.sha1.digest().bytes());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;

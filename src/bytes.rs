@@ -12,10 +12,6 @@ const EI: u64 = PI << 10;
 pub(crate) struct Bytes(pub(crate) u64);
 
 impl Bytes {
-  pub(crate) fn is_power_of_two(self) -> bool {
-    self.0 == 0 || self.0 & (self.0 - 1) == 0
-  }
-
   pub(crate) fn kib() -> Self {
     Bytes::from(KI)
   }
@@ -26,6 +22,13 @@ impl Bytes {
 
   pub(crate) fn count(self) -> u64 {
     self.0
+  }
+
+  pub(crate) fn as_piece_length(self) -> Result<u32> {
+    self
+      .count()
+      .try_into()
+      .context(error::PieceLengthTooLarge { bytes: self })
   }
 }
 

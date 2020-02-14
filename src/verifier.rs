@@ -20,15 +20,7 @@ impl Verifier {
   }
 
   pub(crate) fn verify(metainfo: &Metainfo, base: &Path) -> Result<Status> {
-    let piece_length: u32 =
-      metainfo
-        .info
-        .piece_length
-        .count()
-        .try_into()
-        .context(error::PieceLengthTooLarge {
-          bytes: metainfo.info.piece_length,
-        })?;
+    let piece_length = metainfo.info.piece_length.as_piece_length()?;
 
     let piece_length = piece_length.into_usize();
 

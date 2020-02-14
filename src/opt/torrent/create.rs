@@ -161,24 +161,17 @@ impl Create {
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
-    if linter.is_denied(Lint::UnevenPieceLength) && !piece_length.is_power_of_two() {
+    if piece_length.count() == 0 {
+      return Err(Error::PieceLengthZero);
+    }
+
+    if linter.is_denied(Lint::UnevenPieceLength) && !piece_length.count().is_power_of_two() {
       return Err(Error::PieceLengthUneven {
         bytes: piece_length,
       });
     }
 
-    let piece_length_u32: u32 = piece_length
-      .0
-      .try_into()
-      .context(error::PieceLengthTooLarge {
-        bytes: piece_length,
-      })?;
-
-    if piece_length == Bytes(0) {
-      return Err(Error::PieceLengthZero);
-    }
-
-    if linter.is_denied(Lint::SmallPieceLength) && piece_length < Bytes(16 * 1024) {
+    if linter.is_denied(Lint::SmallPieceLength) && piece_length.count() < 16 * 1024 {
       return Err(Error::PieceLengthSmall);
     }
 
@@ -238,7 +231,11 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    let (mode, pieces) = Hasher::hash(&files, self.md5sum, piece_length_u32.into_usize())?;
+    let (mode, pieces) = Hasher::hash(
+      &files,
+      self.md5sum,
+      piece_length.as_piece_length()?.into_usize(),
+    )?;
 
     let info = Info {
       source: self.source,
