@@ -36,6 +36,11 @@ mod tests {
     let metainfo = Metainfo {
       announce: "announce".into(),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
+      nodes: Some(vec![
+        "x:12".parse().unwrap(),
+        "1.1.1.1:16".parse().unwrap(),
+        "[2001:0db8:85a3:0000:0000:8a2e:0370]:7334".parse().unwrap(),
+      ]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
       creation_date: Some(1),
@@ -129,6 +134,11 @@ Files\tfoo
       announce_list: Some(vec![vec!["x".into()], vec!["y".into()], vec!["z".into()]]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
+      nodes: Some(vec![
+        "x:12".parse().unwrap(),
+        "1.1.1.1:16".parse().unwrap(),
+        "[2001:0db8:85a3:0000:0000:8a2e:0370]:7334".parse().unwrap(),
+      ]),
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
       info: Info {
@@ -172,6 +182,9 @@ Content Size  20 bytes
               x
               y
               z
+   DHT Nodes  x:12
+              1.1.1.1:16
+              [2001:0db8:85a3:0000:0000:8a2e:0370]:7334
   Piece Size  16 KiB
  Piece Count  1
   File Count  1
@@ -220,6 +233,11 @@ Files\tfoo
       announce: "a".into(),
       announce_list: Some(vec![vec!["b".into()], vec!["c".into()], vec!["a".into()]]),
       comment: Some("comment".into()),
+      nodes: Some(vec![
+        "x:12".parse().unwrap(),
+        "1.1.1.1:16".parse().unwrap(),
+        "[2001:0db8:85a3:0000:0000:8a2e:0370]:7334".parse().unwrap(),
+      ]),
       created_by: Some("created by".into()),
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),

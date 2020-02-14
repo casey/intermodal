@@ -42,7 +42,7 @@ pub(crate) struct Metainfo {
     default,
     with = "unwrap_or_skip"
   )]
-  pub(crate) nodes: Option<Vec<HostPort>>,
+  pub(crate) nodes: Option<Vec<Node>>,
 }
 
 impl Metainfo {
@@ -109,6 +109,7 @@ mod tests {
       created_by: Some("created by".into()),
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
+      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       info: Info {
         private: Some(true),
         piece_length: Bytes(16 * 1024),
@@ -136,6 +137,7 @@ mod tests {
     let value = Metainfo {
       announce: "announce".into(),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
+      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
       creation_date: Some(1),

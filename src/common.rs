@@ -11,6 +11,7 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   iter::{self, Sum},
+  net::Ipv6Addr,
   num::{ParseFloatError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign},
   path::{self, Path, PathBuf},
@@ -26,7 +27,7 @@ pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
-pub(crate) use serde::{Deserialize, Serialize};
+pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
 pub(crate) use serde_hex::SerHex;
 pub(crate) use serde_with::rust::unwrap_or_skip;
 pub(crate) use sha1::Sha1;
@@ -53,7 +54,7 @@ pub(crate) use crate::{
 pub(crate) use crate::{
   bytes::Bytes, env::Env, error::Error, file_info::FileInfo, file_path::FilePath,
   file_status::FileStatus, files::Files, hasher::Hasher, info::Info, lint::Lint, linter::Linter,
-  md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, opt::Opt,
+  md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, node::Node, opt::Opt,
   piece_length_picker::PieceLengthPicker, platform::Platform, status::Status, style::Style,
   table::Table, target::Target, torrent_summary::TorrentSummary, use_color::UseColor,
   verifier::Verifier, walker::Walker,

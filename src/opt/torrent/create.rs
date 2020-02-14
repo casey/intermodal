@@ -52,7 +52,7 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     `--dht-node 203.0.113.0:2290`
     `--dht-node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
   )]
-  dht_nodes: Vec<HostPort>,
+  dht_nodes: Vec<Node>,
   #[structopt(
     name = "FOLLOW-SYMLINKS",
     long = "follow-symlinks",
@@ -207,7 +207,7 @@ impl Create {
       None => filename
         .to_str()
         .ok_or_else(|| Error::FilenameDecode {
-          filename: filename.to_os_string(),
+          filename: PathBuf::from(filename),
         })?
         .to_owned(),
     };
@@ -1409,19 +1409,21 @@ Content Size  9 bytes
 
   #[test]
   fn nodes_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = env! {
+      args: ["--input", "foo", "--announce", "http://bar"],
+      tree: {
+        foo: "",
+      }
+    };
     env.run().unwrap();
-    let torrent = env.resolve("foo.torrent");
-    let bytes = fs::read(torrent).unwrap();
-    let metainfo = serde_bencode::de::from_bytes::<Metainfo>(&bytes).unwrap();
+    let metainfo = env.load_metainfo("foo.torrent");
     assert!(metainfo.nodes.is_none());
   }
 
   #[test]
   fn nodes_invalid() {
     let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar", "--node", "blah"],
+      args: ["--input", "foo", "--announce", "http://bar", "--dht-node", "blah"],
       tree: {
         foo: "",
       },
@@ -1437,24 +1439,27 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--node",
+        "--dht-node",
         "router.example.com:1337",
-        "--node",
+        "--dht-node",
         "203.0.113.0:2290",
-        "--node",
+        "--dht-node",
         "[2001:db8:4275:7920:6269:7463:6f69:6e21]:8832",
       ],
       tree: {
         foo: "",
       },
     };
+    env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.nodes,
       Some(vec![
-        ("router.example.com".to_owned(), 1337),
-        ("203.0.113.0".to_owned(), 2290),
-        ("2001:db8:4275:7920:6269:7463:6f69:6e21".to_owned(), 8832),
+        "router.example.com:1337".parse().unwrap(),
+        "203.0.113.0:2290".parse().unwrap(),
+        "[2001:db8:4275:7920:6269:7463:6f69:6e21]:8832"
+          .parse()
+          .unwrap(),
       ]),
     );
   }

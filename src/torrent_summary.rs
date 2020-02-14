@@ -142,6 +142,16 @@ impl TorrentSummary {
       None => table.row("Tracker", &self.metainfo.announce),
     }
 
+    if let Some(nodes) = &self.metainfo.nodes {
+      table.list(
+        "DHT Nodes",
+        nodes
+          .iter()
+          .map(ToString::to_string)
+          .collect::<Vec<String>>(),
+      );
+    }
+
     table.size("Piece Size", self.metainfo.info.piece_length);
 
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
