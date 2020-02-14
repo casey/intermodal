@@ -78,7 +78,10 @@ pub(crate) enum Error {
     bytes,
     Bytes(u32::max_value().into())
   ))]
-  PieceLengthTooLarge { bytes: Bytes },
+  PieceLengthTooLarge {
+    bytes: Bytes,
+    source: TryFromIntError,
+  },
   #[snafu(display("Piece length `{}` is not an even power of two", bytes))]
   PieceLengthUneven { bytes: Bytes },
   #[snafu(display("Piece length must be at least 16 KiB"))]
@@ -103,6 +106,8 @@ pub(crate) enum Error {
   Unstable { feature: &'static str },
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
+  #[snafu(display("Torrent verification failed: {}", status))]
+  Verify { status: Status },
 }
 
 impl Error {

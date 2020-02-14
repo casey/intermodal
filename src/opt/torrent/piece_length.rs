@@ -21,7 +21,7 @@ impl PieceLength {
     ));
 
     for i in 14..51 {
-      let content_size = Bytes::from(1u128 << i);
+      let content_size = Bytes::from(1u64 << i);
 
       let piece_length = PieceLengthPicker::from_content_size(content_size);
 

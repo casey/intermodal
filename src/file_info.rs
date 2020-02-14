@@ -1,10 +1,13 @@
 use crate::common::*;
 
-#[skip_serializing_none]
-#[derive(Deserialize, Serialize, Debug, PartialEq)]
+#[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub(crate) struct FileInfo {
-  pub(crate) length: u64,
+  pub(crate) length: Bytes,
   pub(crate) path: FilePath,
-  #[serde(skip_serializing_if = "Option::is_none", default, with = "inner")]
-  pub(crate) md5sum: Option<String>,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip"
+  )]
+  pub(crate) md5sum: Option<Md5Digest>,
 }

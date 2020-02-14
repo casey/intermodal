@@ -50,12 +50,7 @@ impl Env {
     ansi_term::enable_ansi_support().ok();
 
     #[cfg(not(test))]
-    env_logger::Builder::from_env(
-      env_logger::Env::new()
-        .filter("JUST_LOG")
-        .write_style("JUST_LOG_STYLE"),
-    )
-    .init();
+    pretty_env_logger::init();
 
     let opt = Opt::from_iter_safe(&self.args)?;
 
