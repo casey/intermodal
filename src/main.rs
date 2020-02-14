@@ -72,6 +72,7 @@ mod linter;
 mod md5_digest;
 mod metainfo;
 mod mode;
+mod node;
 mod opt;
 mod path_ext;
 mod piece_length_picker;
