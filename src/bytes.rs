@@ -1,22 +1,17 @@
 use crate::common::*;
 
-const KI: u128 = 1 << 10;
-const MI: u128 = KI << 10;
-const GI: u128 = MI << 10;
-const TI: u128 = GI << 10;
-const PI: u128 = TI << 10;
-const EI: u128 = PI << 10;
-const ZI: u128 = EI << 10;
-const YI: u128 = ZI << 10;
+const KI: u64 = 1 << 10;
+const MI: u64 = KI << 10;
+const GI: u64 = MI << 10;
+const TI: u64 = GI << 10;
+const PI: u64 = TI << 10;
+const EI: u64 = PI << 10;
 
-#[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq)]
-pub(crate) struct Bytes(pub(crate) u128);
+#[serde(transparent)]
+#[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq, Serialize, Deserialize, Default)]
+pub(crate) struct Bytes(pub(crate) u64);
 
 impl Bytes {
-  pub(crate) fn is_power_of_two(self) -> bool {
-    self.0 == 0 || self.0 & (self.0 - 1) == 0
-  }
-
   pub(crate) fn kib() -> Self {
     Bytes::from(KI)
   }
@@ -25,64 +20,83 @@ impl Bytes {
     Bytes::from(MI)
   }
 
-  pub(crate) fn count(self) -> u128 {
+  pub(crate) fn count(self) -> u64 {
     self.0
+  }
+
+  pub(crate) fn as_piece_length(self) -> Result<u32> {
+    self
+      .count()
+      .try_into()
+      .context(error::PieceLengthTooLarge { bytes: self })
   }
 }
 
-fn float_to_int(x: f64) -> u128 {
+fn float_to_int(x: f64) -> u64 {
   #![allow(
     clippy::as_conversions,
     clippy::cast_sign_loss,
     clippy::cast_possible_truncation
   )]
-  x as u128
+  x as u64
 }
 
-fn int_to_float(x: u128) -> f64 {
+fn int_to_float(x: u64) -> f64 {
   #![allow(clippy::as_conversions, clippy::cast_precision_loss)]
   x as f64
 }
 
-impl<I: Into<u128>> From<I> for Bytes {
+impl<I: Into<u64>> From<I> for Bytes {
   fn from(n: I) -> Bytes {
     Bytes(n.into())
   }
 }
 
 impl Div<Bytes> for Bytes {
-  type Output = u128;
+  type Output = u64;
 
-  fn div(self, rhs: Bytes) -> u128 {
+  fn div(self, rhs: Bytes) -> u64 {
     self.0 / rhs.0
   }
 }
 
-impl Div<u128> for Bytes {
+impl Div<u64> for Bytes {
   type Output = Bytes;
 
-  fn div(self, rhs: u128) -> Bytes {
+  fn div(self, rhs: u64) -> Bytes {
     Bytes::from(self.0 / rhs)
   }
 }
 
-impl DivAssign<u128> for Bytes {
-  fn div_assign(&mut self, rhs: u128) {
+impl DivAssign<u64> for Bytes {
+  fn div_assign(&mut self, rhs: u64) {
     self.0 /= rhs;
   }
 }
 
-impl Mul<u128> for Bytes {
+impl Mul<u64> for Bytes {
   type Output = Bytes;
 
-  fn mul(self, rhs: u128) -> Self {
+  fn mul(self, rhs: u64) -> Self {
     Bytes::from(self.0 * rhs)
   }
 }
 
-impl MulAssign<u128> for Bytes {
-  fn mul_assign(&mut self, rhs: u128) {
+impl MulAssign<u64> for Bytes {
+  fn mul_assign(&mut self, rhs: u64) {
     self.0 *= rhs;
+  }
+}
+
+impl AddAssign<Bytes> for Bytes {
+  fn add_assign(&mut self, rhs: Bytes) {
+    self.0 += rhs.0;
+  }
+}
+
+impl SubAssign<u64> for Bytes {
+  fn sub_assign(&mut self, rhs: u64) {
+    self.0 -= rhs;
   }
 }
 
@@ -115,8 +129,6 @@ impl FromStr for Bytes {
       "tib" => TI,
       "pib" => PI,
       "eib" => EI,
-      "zib" => ZI,
-      "yib" => YI,
       _ => {
         return Err(Error::ByteSuffix {
           text: text.to_owned(),
@@ -129,9 +141,24 @@ impl FromStr for Bytes {
   }
 }
 
+impl Sum for Bytes {
+  fn sum<I>(iter: I) -> Self
+  where
+    I: Iterator<Item = Self>,
+  {
+    let mut sum = Bytes(0);
+
+    for item in iter {
+      sum += item;
+    }
+
+    sum
+  }
+}
+
 impl Display for Bytes {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    const DISPLAY_SUFFIXES: &[&str] = &["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+    const DISPLAY_SUFFIXES: &[&str] = &["KiB", "MiB", "GiB", "TiB", "PiB", "EiB"];
 
     let mut value = int_to_float(self.0);
 
@@ -164,7 +191,7 @@ mod tests {
 
   #[test]
   fn ok() {
-    const CASES: &[(&str, u128)] = &[
+    const CASES: &[(&str, u64)] = &[
       ("0", 0),
       ("0kib", 0),
       ("1", 1),
@@ -175,7 +202,6 @@ mod tests {
       ("1KiB", KI),
       ("12kib", 12 * KI),
       ("1.5mib", 1 * MI + 512 * KI),
-      ("1yib", 1 * YI),
     ];
 
     for (text, value) in CASES {
@@ -216,7 +242,17 @@ mod tests {
     assert_eq!(Bytes(TI).to_string(), "1 TiB");
     assert_eq!(Bytes(PI).to_string(), "1 PiB");
     assert_eq!(Bytes(EI).to_string(), "1 EiB");
-    assert_eq!(Bytes(ZI).to_string(), "1 ZiB");
-    assert_eq!(Bytes(YI).to_string(), "1 YiB");
+  }
+
+  #[test]
+  fn bencode() {
+    assert_eq!(
+      bendy::serde::ser::to_bytes(&Bytes::kib()).unwrap(),
+      b"i1024e"
+    );
+    assert_eq!(
+      Bytes::kib(),
+      bendy::serde::de::from_bytes(b"i1024e").unwrap(),
+    );
   }
 }

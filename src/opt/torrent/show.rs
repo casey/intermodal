@@ -18,10 +18,9 @@ pub(crate) struct Show {
 
 impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let summary = TorrentSummary::load(&env.resolve(self.input))?;
-
+    let input = env.resolve(&self.input);
+    let summary = TorrentSummary::load(&input)?;
     summary.write(env)?;
-
     Ok(())
   }
 }
@@ -42,15 +41,15 @@ mod tests {
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
       info: Info {
-        private: Some(1),
-        piece_length: 16 * 1024,
+        private: Some(true),
+        piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
         pieces: vec![
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         ],
         mode: Mode::Single {
-          length: 20,
+          length: Bytes(20),
           md5sum: None,
         },
       },
@@ -133,15 +132,15 @@ Files\tfoo
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
       info: Info {
-        private: Some(1),
-        piece_length: 16 * 1024,
+        private: Some(true),
+        piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
         pieces: vec![
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         ],
         mode: Mode::Single {
-          length: 20,
+          length: Bytes(20),
           md5sum: None,
         },
       },
@@ -225,15 +224,15 @@ Files\tfoo
       creation_date: Some(1),
       encoding: Some("UTF-8".into()),
       info: Info {
-        private: Some(1),
-        piece_length: 16 * 1024,
+        private: Some(true),
+        piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
         pieces: vec![
           0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         ],
         mode: Mode::Single {
-          length: 20,
+          length: Bytes(20),
           md5sum: None,
         },
       },

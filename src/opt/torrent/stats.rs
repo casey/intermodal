@@ -160,7 +160,7 @@ impl Extractor {
       return;
     };
 
-    if let Ok(value) = Value::from_bencode(&contents) {
+    if let Ok(value) = bendy::serde::de::from_bytes::<Value>(&contents) {
       self.extract(&value);
       if self.print {
         eprintln!("{}:\n{}", path.display(), Self::pretty_print(&value));

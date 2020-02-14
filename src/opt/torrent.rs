@@ -4,6 +4,7 @@ mod create;
 mod piece_length;
 mod show;
 mod stats;
+mod verify;
 
 #[derive(StructOpt)]
 #[structopt(
@@ -17,6 +18,7 @@ pub(crate) enum Torrent {
   PieceLength(piece_length::PieceLength),
   Show(show::Show),
   Stats(stats::Stats),
+  Verify(verify::Verify),
 }
 
 impl Torrent {
@@ -26,6 +28,7 @@ impl Torrent {
       Self::PieceLength(piece_length) => piece_length.run(env),
       Self::Show(show) => show.run(env),
       Self::Stats(stats) => stats.run(env, unstable),
+      Self::Verify(verify) => verify.run(env),
     }
   }
 }
