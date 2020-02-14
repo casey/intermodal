@@ -25,7 +25,6 @@ pub(crate) use bendy::{decoding::FromBencode, encoding::ToBencode, value::Value}
 pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use libc::EXIT_FAILURE;
-pub(crate) use log::{debug, info, trace, warn};
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{Deserialize, Deserializer, Serialize, Serializer};
 pub(crate) use serde_hex::SerHex;
