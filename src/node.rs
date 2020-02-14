@@ -31,16 +31,17 @@ impl FromStr for Node {
       let host_text = captures.name("host").unwrap().as_str();
       let port_text = captures.name("port").unwrap().as_str();
 
-      let host = Host::parse(host_text).map_err(|_| Error::NodeParse {
+      let host = Host::parse(&host_text).context(error::NodeParseHost {
         text: text.to_owned(),
       })?;
-      let port = port_text.parse::<u16>().map_err(|_| Error::NodeParse {
+
+      let port = port_text.parse::<u16>().context(error::NodeParsePort {
         text: text.to_owned(),
       })?;
 
       Ok(Self { host, port })
     } else {
-      Err(Error::NodeParse {
+      Err(Error::NodeParsePortMissing {
         text: text.to_owned(),
       })
     }
@@ -83,15 +84,15 @@ impl<'de> Deserialize<'de> for Node {
   {
     let tuple = Tuple::deserialize(deserializer)?;
 
-    let host = if Ipv6Addr::from_str(&tuple.0).is_ok() {
-      format!("[{}]", tuple.0)
+    let host = if tuple.0.contains(':') {
+      Host::parse(&format!("[{}]", tuple.0))
     } else {
-      tuple.0
-    };
+      Host::parse(&tuple.0)
+    }
+    .map_err(|error| D::Error::custom(format!("Failed to parse node host: {}", error)))?;
 
     Ok(Node {
-      host: Host::parse(&host)
-        .map_err(|error| D::Error::custom(format!("Failed to parse node host: {}", error)))?,
+      host,
       port: tuple.1,
     })
   }
@@ -119,17 +120,25 @@ mod tests {
   }
 
   #[test]
-  fn serde() {
+  fn test_domain() {
     case(
       Node::new(Host::Domain("imdl.com".to_owned()), 12),
       "imdl.com:12",
       "l8:imdl.comi12ee",
     );
+  }
+
+  #[test]
+  fn test_ipv4() {
     case(
       Node::new(Host::Ipv4(Ipv4Addr::new(1, 2, 3, 4)), 100),
       "1.2.3.4:100",
       "l7:1.2.3.4i100ee",
     );
+  }
+
+  #[test]
+  fn test_ipv6() {
     case(
       Node::new(
         Host::Ipv6(Ipv6Addr::new(

@@ -12,7 +12,7 @@ pub(crate) use std::{
   io::{self, Read, Write},
   iter::{self, Sum},
   net::Ipv6Addr,
-  num::{ParseFloatError, TryFromIntError},
+  num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign},
   path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
