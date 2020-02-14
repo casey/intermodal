@@ -4,14 +4,7 @@ use crate::common::*;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about(
-    "Verify files against a `.torrent` file.
-    files present
-    md5sum matches
-    piece hashes match
-    lengths are correct
-    "
-  )
+  about("Verify files against a `.torrent` file.")
 )]
 pub(crate) struct Verify {
   #[structopt(
