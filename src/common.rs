@@ -37,7 +37,7 @@ pub(crate) use structopt::{
   StructOpt,
 };
 pub(crate) use unicode_width::UnicodeWidthStr;
-pub(crate) use url::Url;
+pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
 
 // modules
