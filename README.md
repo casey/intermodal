@@ -81,7 +81,7 @@ at any time.
 | [02](http://bittorrent.org/beps/bep_0002.html) | :heavy_minus_sign:                                    | Sample reStructured Text BEP Template                            |
 | [03](http://bittorrent.org/beps/bep_0003.html) | :white_check_mark:                                    | The BitTorrent Protocol Specification                            |
 | [04](http://bittorrent.org/beps/bep_0004.html) | :heavy_minus_sign:                                    | Assigned Numbers                                                 |
-| [05](http://bittorrent.org/beps/bep_0005.html) | [:x:](https://github.com/casey/intermodal/issues/90)  | DHT Protocol                                                     |
+| [05](http://bittorrent.org/beps/bep_0005.html) | :white_check_mark:                                    | DHT Protocol                                                     |
 | [06](http://bittorrent.org/beps/bep_0006.html) | :heavy_minus_sign:                                    | Fast Extension                                                   |
 | [07](http://bittorrent.org/beps/bep_0007.html) | :heavy_minus_sign:                                    | IPv6 Tracker Extension                                           |
 | [08](http://bittorrent.org/beps/bep_0008.html) | :heavy_minus_sign:                                    | Tracker Peer Obfuscation                                         |

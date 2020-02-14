@@ -29,14 +29,25 @@ pub(crate) enum Error {
   CommandInvoke { command: String, source: io::Error },
   #[snafu(display("Command `{}` returned bad exit status: {}", command, status))]
   CommandStatus { command: String, status: ExitStatus },
-  #[snafu(display("Filename was not valid unicode: {}", filename.to_string_lossy()))]
-  FilenameDecode { filename: OsString },
+  #[snafu(display("Filename was not valid unicode: {}", filename.display()))]
+  FilenameDecode { filename: PathBuf },
   #[snafu(display("Path had no file name: {}", path.display()))]
   FilenameExtract { path: PathBuf },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },
   #[snafu(display("Invalid glob: {}", source))]
   GlobParse { source: globset::Error },
+  #[snafu(display("Unknown lint: {}", text))]
+  LintUnknown { text: String },
+  #[snafu(display("DHT node port missing: {}", text))]
+  NodeParsePortMissing { text: String },
+  #[snafu(display("Failed to parse DHT node host `{}`: {}", text, source))]
+  NodeParseHost {
+    text: String,
+    source: url::ParseError,
+  },
+  #[snafu(display("Failed to parse DHT node port `{}`: {}", text, source))]
+  NodeParsePort { text: String, source: ParseIntError },
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
   #[snafu(display(
@@ -104,8 +115,6 @@ pub(crate) enum Error {
     feature
   ))]
   Unstable { feature: &'static str },
-  #[snafu(display("Unknown lint: {}", text))]
-  LintUnknown { text: String },
   #[snafu(display("Torrent verification failed: {}", status))]
   Verify { status: Status },
 }
