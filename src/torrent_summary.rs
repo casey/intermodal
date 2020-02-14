@@ -13,7 +13,7 @@ impl TorrentSummary {
     let infohash = if let Value::Dict(items) = value {
       let info = items
         .iter()
-        .find(|pair: &(&Vec<u8>, &Value)| pair.0 == b"info")
+        .find(|pair: &(&Cow<[u8]>, &Value)| pair.0.as_ref() == b"info")
         .unwrap()
         .1
         .to_bencode()
@@ -99,7 +99,7 @@ impl TorrentSummary {
 
     table.row(
       "Private",
-      if self.metainfo.info.private.unwrap_or(0) == 1 {
+      if self.metainfo.info.private.unwrap_or(false) {
         "yes"
       } else {
         "no"
@@ -142,7 +142,7 @@ impl TorrentSummary {
       None => table.row("Tracker", &self.metainfo.announce),
     }
 
-    table.size("Piece Size", Bytes::from(self.metainfo.info.piece_length));
+    table.size("Piece Size", self.metainfo.info.piece_length);
 
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
 
