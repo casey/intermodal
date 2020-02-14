@@ -57,12 +57,6 @@ impl Verify {
 mod tests {
   use super::*;
 
-  // use pretty_assertions::assert_eq;
-  //
-  // TODO:
-  // - add failure tests
-  // - use a pretty tree output and test
-
   fn environment(args: &[&str]) -> TestEnv {
     testing::env(["torrent", "create"].iter().chain(args).cloned())
   }

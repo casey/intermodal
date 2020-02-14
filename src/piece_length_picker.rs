@@ -44,7 +44,7 @@ impl PieceLengthPicker {
   }
 
   pub(crate) fn metainfo_size(content_size: Bytes, piece_length: Bytes) -> Bytes {
-    let digest_length: u64 = sha1::DIGEST_LENGTH.into_u64().into();
+    let digest_length: u64 = sha1::DIGEST_LENGTH.into_u64();
     Bytes::from(Self::piece_count(content_size, piece_length) * digest_length)
   }
 }

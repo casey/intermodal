@@ -142,7 +142,7 @@ impl TorrentSummary {
       None => table.row("Tracker", &self.metainfo.announce),
     }
 
-    table.size("Piece Size", Bytes::from(self.metainfo.info.piece_length));
+    table.size("Piece Size", self.metainfo.info.piece_length);
 
     table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
 
