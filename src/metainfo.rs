@@ -85,7 +85,7 @@ impl Metainfo {
     }
   }
 
-  pub(crate) fn verify(&self, base: &Path) -> Status {
+  pub(crate) fn verify(&self, base: &Path) -> Result<Status> {
     Verifier::verify(self, base)
   }
 }

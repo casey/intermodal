@@ -41,7 +41,7 @@ impl Verify {
       metainfo_path.parent().unwrap().join(&metainfo.info.name)
     };
 
-    let status = metainfo.verify(&base);
+    let status = metainfo.verify(&base)?;
 
     status.write(env)?;
 

@@ -167,13 +167,12 @@ impl Create {
       });
     }
 
-    let piece_length_u32: u32 =
-      piece_length
-        .0
-        .try_into()
-        .map_err(|_| Error::PieceLengthTooLarge {
-          bytes: piece_length,
-        })?;
+    let piece_length_u32: u32 = piece_length
+      .0
+      .try_into()
+      .context(error::PieceLengthTooLarge {
+        bytes: piece_length,
+      })?;
 
     if piece_length == Bytes(0) {
       return Err(Error::PieceLengthZero);
@@ -296,7 +295,7 @@ impl Create {
 
     #[cfg(test)]
     {
-      let status = metainfo.verify(&input);
+      let status = metainfo.verify(&input)?;
 
       if !status.good() {
         return Err(Error::Verify { status });

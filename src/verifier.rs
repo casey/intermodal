@@ -2,33 +2,43 @@ use crate::common::*;
 
 pub(crate) struct Verifier {
   buffer: Vec<u8>,
-  piece_length: Bytes,
+  piece_length: usize,
   pieces: Vec<u8>,
-  poisoned: bool,
   sha1: Sha1,
   piece_bytes_hashed: usize,
 }
 
 impl Verifier {
-  pub(crate) fn new(piece_length: Bytes) -> Verifier {
+  pub(crate) fn new(piece_length: usize) -> Verifier {
     Verifier {
-      buffer: vec![0; piece_length.count() as usize],
+      buffer: vec![0; piece_length],
       piece_bytes_hashed: 0,
       sha1: Sha1::new(),
-      poisoned: false,
       pieces: Vec::new(),
       piece_length,
     }
   }
 
-  pub(crate) fn verify(metainfo: &Metainfo, base: &Path) -> Status {
+  pub(crate) fn verify(metainfo: &Metainfo, base: &Path) -> Result<Status> {
+    let piece_length: u32 =
+      metainfo
+        .info
+        .piece_length
+        .count()
+        .try_into()
+        .context(error::PieceLengthTooLarge {
+          bytes: metainfo.info.piece_length,
+        })?;
+
+    let piece_length = piece_length.into_usize();
+
     let mut status = Vec::new();
 
-    let mut hasher = Self::new(metainfo.info.piece_length);
+    let mut hasher = Self::new(piece_length);
 
     for (path, len, md5sum) in metainfo.files(&base) {
       status.push(FileStatus::status(&path, len, md5sum));
-      hasher.hash(&path, len);
+      hasher.hash(&path).ok();
     }
 
     if hasher.piece_bytes_hashed > 0 {
@@ -39,10 +49,10 @@ impl Verifier {
 
     let pieces = hasher.pieces == metainfo.info.pieces;
 
-    Status::new(pieces, status)
+    Ok(Status::new(pieces, status))
   }
 
-  pub(crate) fn hash(&mut self, path: &Path, expected_len: Bytes) -> io::Result<()> {
+  pub(crate) fn hash(&mut self, path: &Path) -> io::Result<()> {
     let mut file = File::open(path)?;
 
     let mut remaining = path.metadata()?.len();
@@ -62,7 +72,7 @@ impl Verifier {
 
         self.piece_bytes_hashed += 1;
 
-        if Bytes::from(self.piece_bytes_hashed.into_u64()) == self.piece_length {
+        if self.piece_bytes_hashed == self.piece_length {
           self.pieces.extend(&self.sha1.digest().bytes());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;

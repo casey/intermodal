@@ -11,7 +11,7 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, Read, Write},
   iter::{self, Sum},
-  num::ParseFloatError,
+  num::{ParseFloatError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign},
   path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
@@ -26,7 +26,7 @@ pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
-pub(crate) use serde::{Deserialize, Deserializer, Serialize, Serializer};
+pub(crate) use serde::{Deserialize, Serialize};
 pub(crate) use serde_hex::SerHex;
 pub(crate) use serde_with::rust::unwrap_or_skip;
 pub(crate) use sha1::Sha1;

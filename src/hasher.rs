@@ -31,8 +31,6 @@ impl Hasher {
     }
   }
 
-  fn hash_piece(&mut self) {}
-
   fn hash_files(mut self, files: &Files) -> Result<(Mode, Vec<u8>), Error> {
     let mode = if let Some(contents) = files.contents() {
       let files = self.hash_contents(&files.root(), contents)?;
