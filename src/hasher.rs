@@ -6,7 +6,7 @@ pub(crate) struct Hasher {
   md5sum: bool,
   piece_bytes_hashed: usize,
   piece_length: usize,
-  pieces: Vec<u8>,
+  pieces: PieceList,
   sha1: Sha1,
 }
 
@@ -15,7 +15,7 @@ impl Hasher {
     files: &Files,
     md5sum: bool,
     piece_length: usize,
-  ) -> Result<(Mode, Vec<u8>), Error> {
+  ) -> Result<(Mode, PieceList), Error> {
     Self::new(md5sum, piece_length).hash_files(files)
   }
 
@@ -24,14 +24,14 @@ impl Hasher {
       buffer: vec![0; piece_length],
       length: 0,
       piece_bytes_hashed: 0,
-      pieces: Vec::new(),
+      pieces: PieceList::new(),
       sha1: Sha1::new(),
       piece_length,
       md5sum,
     }
   }
 
-  fn hash_files(mut self, files: &Files) -> Result<(Mode, Vec<u8>), Error> {
+  fn hash_files(mut self, files: &Files) -> Result<(Mode, PieceList), Error> {
     let mode = if let Some(contents) = files.contents() {
       let files = self.hash_contents(&files.root(), contents)?;
 
@@ -46,7 +46,7 @@ impl Hasher {
     };
 
     if self.piece_bytes_hashed > 0 {
-      self.pieces.extend(&self.sha1.digest().bytes());
+      self.pieces.push(self.sha1.digest().into());
       self.sha1.reset();
       self.piece_bytes_hashed = 0;
     }
@@ -111,7 +111,7 @@ impl Hasher {
         self.piece_bytes_hashed += 1;
 
         if self.piece_bytes_hashed == self.piece_length {
-          self.pieces.extend(&self.sha1.digest().bytes());
+          self.pieces.push(self.sha1.digest().into());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;
         }

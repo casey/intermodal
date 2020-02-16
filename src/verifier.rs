@@ -3,7 +3,7 @@ use crate::common::*;
 pub(crate) struct Verifier {
   buffer: Vec<u8>,
   piece_length: usize,
-  pieces: Vec<u8>,
+  pieces: PieceList,
   sha1: Sha1,
   piece_bytes_hashed: usize,
 }
@@ -14,7 +14,7 @@ impl Verifier {
       buffer: vec![0; piece_length],
       piece_bytes_hashed: 0,
       sha1: Sha1::new(),
-      pieces: Vec::new(),
+      pieces: PieceList::new(),
       piece_length,
     }
   }
@@ -34,7 +34,7 @@ impl Verifier {
     }
 
     if hasher.piece_bytes_hashed > 0 {
-      hasher.pieces.extend(&hasher.sha1.digest().bytes());
+      hasher.pieces.push(hasher.sha1.digest().into());
       hasher.sha1.reset();
       hasher.piece_bytes_hashed = 0;
     }
@@ -65,7 +65,7 @@ impl Verifier {
         self.piece_bytes_hashed += 1;
 
         if self.piece_bytes_hashed == self.piece_length {
-          self.pieces.extend(&self.sha1.digest().bytes());
+          self.pieces.push(self.sha1.digest().into());
           self.sha1.reset();
           self.piece_bytes_hashed = 0;
         }
