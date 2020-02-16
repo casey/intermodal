@@ -9,7 +9,7 @@ pub(crate) struct Md5Digest {
 
 impl Md5Digest {
   #[cfg(test)]
-  pub(crate) fn from_hex(hex: &str) -> Md5Digest {
+  pub(crate) fn from_hex(hex: &str) -> Self {
     assert_eq!(hex.len(), 32);
 
     let mut bytes: [u8; 16] = [0; 16];
@@ -19,13 +19,13 @@ impl Md5Digest {
       bytes[n] = u8::from_str_radix(&hex[i..i + 2], 16).unwrap();
     }
 
-    Md5Digest { bytes }
+    Self { bytes }
   }
 }
 
 impl From<md5::Digest> for Md5Digest {
   fn from(digest: md5::Digest) -> Self {
-    Md5Digest { bytes: digest.0 }
+    Self { bytes: digest.0 }
   }
 }
 

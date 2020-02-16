@@ -50,9 +50,7 @@ mod tests {
         piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
-        pieces: vec![
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        ],
+        pieces: PieceList::from_pieces(&["xyz", "abc"]),
         mode: Mode::Single {
           length: Bytes(20),
           md5sum: None,
@@ -78,8 +76,8 @@ mod tests {
      Created  1970-01-01 00:00:01 UTC
   Created By  created by
       Source  source
-   Info Hash  b7595205a46491b3e8686e10b28efe7144d066cc
-Torrent Size  319 bytes
+   Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
+Torrent Size  339 bytes
 Content Size  20 bytes
      Private  yes
     Trackers  Tier 1: announce
@@ -89,7 +87,7 @@ Content Size  20 bytes
               1.1.1.1:16
               [2001:db8:85a3::8a2e:370]:7334
   Piece Size  16 KiB
- Piece Count  1
+ Piece Count  2
   File Count  1
        Files  foo
 ";
@@ -115,14 +113,14 @@ Comment\tcomment
 Created\t1970-01-01 00:00:01 UTC
 Created By\tcreated by
 Source\tsource
-Info Hash\tb7595205a46491b3e8686e10b28efe7144d066cc
-Torrent Size\t319
+Info Hash\te12253978dc6d50db11d05747abcea1ad03b51c5
+Torrent Size\t339
 Content Size\t20
 Private\tyes
 Trackers\tannounce\tb\tc
 DHT Nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 Piece Size\t16384
-Piece Count\t1
+Piece Count\t2
 File Count\t1
 Files\tfoo
 ";
@@ -150,9 +148,7 @@ Files\tfoo
         piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
-        pieces: vec![
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        ],
+        pieces: PieceList::from_pieces(&["xyz", "abc"]),
         mode: Mode::Single {
           length: Bytes(20),
           md5sum: None,
@@ -178,8 +174,8 @@ Files\tfoo
      Created  1970-01-01 00:00:01 UTC
   Created By  created by
       Source  source
-   Info Hash  b7595205a46491b3e8686e10b28efe7144d066cc
-Torrent Size  307 bytes
+   Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
+Torrent Size  327 bytes
 Content Size  20 bytes
      Private  yes
     Trackers  a
@@ -190,7 +186,7 @@ Content Size  20 bytes
               1.1.1.1:16
               [2001:db8:85a3::8a2e:370]:7334
   Piece Size  16 KiB
- Piece Count  1
+ Piece Count  2
   File Count  1
        Files  foo
 ";
@@ -216,14 +212,14 @@ Comment\tcomment
 Created\t1970-01-01 00:00:01 UTC
 Created By\tcreated by
 Source\tsource
-Info Hash\tb7595205a46491b3e8686e10b28efe7144d066cc
-Torrent Size\t307
+Info Hash\te12253978dc6d50db11d05747abcea1ad03b51c5
+Torrent Size\t327
 Content Size\t20
 Private\tyes
 Trackers\ta\tx\ty\tz
 DHT Nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 Piece Size\t16384
-Piece Count\t1
+Piece Count\t2
 File Count\t1
 Files\tfoo
 ";
@@ -251,9 +247,7 @@ Files\tfoo
         piece_length: Bytes(16 * 1024),
         source: Some("source".into()),
         name: "foo".into(),
-        pieces: vec![
-          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        ],
+        pieces: PieceList::from_pieces(&["abc"]),
         mode: Mode::Single {
           length: Bytes(20),
           md5sum: None,
@@ -279,7 +273,7 @@ Files\tfoo
      Created  1970-01-01 00:00:01 UTC
   Created By  created by
       Source  source
-   Info Hash  b7595205a46491b3e8686e10b28efe7144d066cc
+   Info Hash  b9cd9cae5748518c99d00d8ae86c0162510be4d9
 Torrent Size  307 bytes
 Content Size  20 bytes
      Private  yes
@@ -316,7 +310,7 @@ Comment\tcomment
 Created\t1970-01-01 00:00:01 UTC
 Created By\tcreated by
 Source\tsource
-Info Hash\tb7595205a46491b3e8686e10b28efe7144d066cc
+Info Hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
 Torrent Size\t307
 Content Size\t20
 Private\tyes

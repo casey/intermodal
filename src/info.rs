@@ -17,8 +17,7 @@ pub(crate) struct Info {
     with = "unwrap_or_skip"
   )]
   pub(crate) source: Option<String>,
-  #[serde(with = "serde_bytes")]
-  pub(crate) pieces: Vec<u8>,
+  pub(crate) pieces: PieceList,
   #[serde(flatten)]
   pub(crate) mode: Mode,
 }
