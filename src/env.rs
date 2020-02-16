@@ -1,7 +1,7 @@
 use crate::common::*;
 
 pub(crate) struct Env {
-  args: Vec<String>,
+  args: Vec<OsString>,
   dir: Box<dyn AsRef<Path>>,
   pub(crate) err: Box<dyn Write>,
   pub(crate) out: Box<dyn Write>,
@@ -76,7 +76,7 @@ impl Env {
     D: AsRef<Path> + 'static,
     O: Write + 'static,
     E: Write + 'static,
-    S: Into<String>,
+    S: Into<OsString>,
     I: IntoIterator<Item = S>,
   {
     Self {
@@ -155,8 +155,8 @@ mod tests {
 
   #[test]
   fn error_message_on_stdout() {
-    let mut env = testing::env(
-      [
+    let mut env = test_env! {
+      args: [
         "torrent",
         "create",
         "--input",
@@ -165,11 +165,11 @@ mod tests {
         "udp:bar.com",
         "--announce-tier",
         "foo",
-      ]
-      .iter()
-      .cloned(),
-    );
-    fs::write(env.resolve("foo"), "").unwrap();
+      ],
+      tree: {
+        foo: "",
+      }
+    };
     env.status().ok();
     let err = env.err();
     if !err.starts_with("error: Failed to parse announce URL:") {

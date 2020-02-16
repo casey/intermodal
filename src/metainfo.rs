@@ -52,6 +52,17 @@ impl Metainfo {
     Self::deserialize(path, &bytes)
   }
 
+  pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
+    let path = path.as_ref();
+    let metainfo = bendy::serde::de::from_bytes(&bytes).context(error::MetainfoLoad { path })?;
+    // TODO: verify that piece size matches
+    Ok(metainfo)
+  }
+
+  pub(crate) fn serialize(&self) -> Result<Vec<u8>, Error> {
+    bendy::serde::ser::to_bytes(&self).context(error::MetainfoSerialize)
+  }
+
   #[cfg(test)]
   pub(crate) fn dump(&self, path: impl AsRef<Path>) -> Result<(), Error> {
     let path = path.as_ref();
@@ -60,18 +71,9 @@ impl Metainfo {
     Ok(())
   }
 
-  pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
-    let path = path.as_ref();
-    bendy::serde::de::from_bytes(&bytes).context(error::MetainfoLoad { path })
-  }
-
-  pub(crate) fn serialize(&self) -> Result<Vec<u8>, Error> {
-    bendy::serde::ser::to_bytes(&self).context(error::MetainfoSerialize)
-  }
-
   #[cfg(test)]
   pub(crate) fn from_bytes(bytes: &[u8]) -> Metainfo {
-    bendy::serde::de::from_bytes(bytes).unwrap()
+    Self::deserialize("<TEST>", bytes).unwrap()
   }
 
   pub(crate) fn files<'a>(
@@ -90,6 +92,13 @@ impl Metainfo {
       }
     }
   }
+
+  // pub(crate) fn content_size(&self) -> Bytes {
+  //   match &self.info.mode {
+  //     Mode::Single { length, .. } => *length,
+  //     Mode::Multiple { files } => files.iter().map(|file| file.length).sum(),
+  //   }
+  // }
 
   pub(crate) fn verify(&self, base: &Path) -> Result<Status> {
     Verifier::verify(self, base)

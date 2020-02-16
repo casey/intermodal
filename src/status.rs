@@ -15,21 +15,26 @@ impl Status {
     self.pieces
   }
 
+  pub(crate) fn files(&self) -> &[FileStatus] {
+    &self.files
+  }
+
   pub(crate) fn good(&self) -> bool {
     self.pieces && self.files.iter().all(FileStatus::good)
   }
 
-  pub(crate) fn write(&self, out: &mut Env) -> Result<()> {
-    for file in &self.files {
-      errln!(out, "{} {}", file.icon(), file.path().display());
-    }
+  // pub(crate) fn write(&self, out: &mut Env) -> Result<()> {
+  //   for file in &self.files {
+  //     errln!(out, "{} {}", file.icon(), file.path().display());
+  //   }
 
-    if !self.pieces() {
-      errln!(out, "Piece hashes incorrect");
-    }
+  //   if !self.pieces() {
+  //     errln!(out, "Piece hashes incorrect");
+  //   }
 
-    Ok(())
-  }
+  //   Ok(())
+  // }
+  //
 }
 
 impl Display for Status {

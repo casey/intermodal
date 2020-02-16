@@ -77,9 +77,6 @@ mod test {
   pub(crate) use tempfile::TempDir;
   pub(crate) use temptree::temptree;
 
-  // test modules
-  pub(crate) use crate::testing;
-
   // test structs and enums
   pub(crate) use crate::{capture::Capture, test_env::TestEnv, test_env_builder::TestEnvBuilder};
 }
