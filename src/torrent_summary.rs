@@ -154,7 +154,7 @@ impl TorrentSummary {
 
     table.size("Piece Size", self.metainfo.info.piece_length);
 
-    table.row("Piece Count", self.metainfo.info.pieces.len() / 20);
+    table.row("Piece Count", self.metainfo.info.pieces.count());
 
     match &self.metainfo.info.mode {
       Mode::Single { .. } => {
