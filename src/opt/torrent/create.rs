@@ -307,6 +307,10 @@ impl Create {
 
     #[cfg(test)]
     {
+      let deserialized = bendy::serde::de::from_bytes::<Metainfo>(&bytes).unwrap();
+
+      assert_eq!(deserialized, metainfo);
+
       let status = metainfo.verify(&input)?;
 
       if !status.good() {
@@ -683,16 +687,19 @@ mod tests {
 
   #[test]
   fn single_small() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let contents = "bar";
-    fs::write(env.resolve("foo"), contents).unwrap();
+    let mut env = env! {
+      args: ["--input", "foo", "--announce", "http://bar"],
+      tree: {
+        foo: "bar",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
-        length: Bytes(contents.len() as u64),
+        length: Bytes(3),
         md5sum: None,
       }
     )
@@ -714,16 +721,10 @@ mod tests {
     fs::write(env.resolve("foo"), contents).unwrap();
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    let pieces = Sha1::from("b")
-      .digest()
-      .bytes()
-      .iter()
-      .chain(Sha1::from("a").digest().bytes().iter())
-      .chain(Sha1::from("r").digest().bytes().iter())
-      .cloned()
-      .collect::<Vec<u8>>();
-
-    assert_eq!(metainfo.info.pieces, pieces);
+    assert_eq!(
+      metainfo.info.pieces,
+      PieceList::from_pieces(&["b", "a", "r"])
+    );
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -740,7 +741,7 @@ mod tests {
     fs::write(env.resolve("foo"), contents).unwrap();
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces.len(), 0);
+    assert_eq!(metainfo.info.pieces.count(), 0);
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -757,21 +758,23 @@ mod tests {
     fs::create_dir(&dir).unwrap();
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces.len(), 0);
+    assert_eq!(metainfo.info.pieces.count(), 0);
     assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
   }
 
   #[test]
   fn multiple_one_file_md5() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    let file = dir.join("bar");
-    let contents = "bar";
-    fs::write(file, contents).unwrap();
+    let mut env = env! {
+      args: ["--input", "foo", "--announce", "http://bar", "--md5sum"],
+      tree: {
+        foo: {
+          bar: "bar",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -789,15 +792,17 @@ mod tests {
 
   #[test]
   fn multiple_one_file_md5_off() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    let file = dir.join("bar");
-    let contents = "bar";
-    fs::write(file, contents).unwrap();
+    let mut env = env! {
+      args: ["--input", "foo", "--announce", "http://bar"],
+      tree: {
+        foo: {
+          bar: "bar",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, Sha1::from(contents).digest().bytes());
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -823,10 +828,7 @@ mod tests {
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(
-      metainfo.info.pieces,
-      Sha1::from("abchijxyz").digest().bytes()
-    );
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abchijxyz"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -1084,7 +1086,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1106,7 +1108,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("abcabc").digest().bytes());
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
   }
 
   #[test]
@@ -1141,7 +1143,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 0
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1162,7 +1164,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("abc").digest().bytes());
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abc"]));
   }
 
   fn populate_symlinks(env: &Env) {
@@ -1205,7 +1207,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1222,7 +1224,9 @@ Content Size  9 bytes
     populate_symlinks(&env);
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, Sha1::from("barbaz").digest().bytes());
+    let mut pieces = PieceList::new();
+    pieces.push(Sha1::from("barbaz").digest().into());
+    assert_eq!(metainfo.info.pieces, pieces);
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -1273,7 +1277,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1306,7 +1310,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1322,7 +1326,9 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("bc").digest().bytes());
+    let mut pieces = PieceList::new();
+    pieces.push(Sha1::from("bc").digest().into());
+    assert_eq!(metainfo.info.pieces, pieces);
   }
 
   #[test]
@@ -1338,7 +1344,9 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 3
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("abc").digest().bytes());
+    let mut pieces = PieceList::new();
+    pieces.push(Sha1::from("abc").digest().into());
+    assert_eq!(metainfo.info.pieces, pieces);
   }
 
   #[test]
@@ -1361,7 +1369,9 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("bc").digest().bytes());
+    let mut pieces = PieceList::new();
+    pieces.push(Sha1::from("bc").digest().into());
+    assert_eq!(metainfo.info.pieces, pieces);
   }
 
   #[test]
@@ -1377,7 +1387,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.is_empty()
     );
-    assert_eq!(metainfo.info.pieces, &[]);
+    assert_eq!(metainfo.info.pieces, PieceList::new());
   }
 
   #[test]
@@ -1404,7 +1414,9 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    assert_eq!(metainfo.info.pieces, Sha1::from("a").digest().bytes());
+    let mut pieces = PieceList::new();
+    pieces.push(Sha1::from("a").digest().into());
+    assert_eq!(metainfo.info.pieces, pieces);
   }
 
   #[test]
