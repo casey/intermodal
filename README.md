@@ -2,7 +2,7 @@
 
 [![Crate](https://img.shields.io/crates/v/imdl.svg)](https://crates.io/crates/imdl)
 [![Build](https://github.com/casey/intermodal/workflows/Build/badge.svg)](https://github.com/casey/intermodal/actions)
-[![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord)](https://discord.gg/6AjFbq)
+[![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord)](https://discord.gg/HaaT5Qz)
 
 ## Manual
 
