@@ -1,5 +1,7 @@
 # intermodal: a 40' shipping container for the Internet
 
+![](https://github.com/casey/intermodal/workflows/Build/badge.svg)
+
 ## Manual
 
 - [General](#general)
