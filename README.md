@@ -1,6 +1,7 @@
 # intermodal: a 40' shipping container for the Internet
 
-![](https://github.com/casey/intermodal/workflows/Build/badge.svg)
+[![Build](https://github.com/casey/intermodal/workflows/Build/badge.svg)](https://github.com/casey/intermodal/actions)
+[![Crate](https://img.shields.io/crates/v/imdl.svg)](https://crates.io/crates/imdl)
 
 ## Manual
 
