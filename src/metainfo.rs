@@ -162,4 +162,251 @@ mod tests {
 
     assert_eq!(value, deserialized);
   }
+
+  fn representation(value: Metainfo, want: &str) {
+    let have = value.serialize().unwrap();
+
+    if have != want.as_bytes() {
+      eprintln!("have:");
+      eprintln!("{}", String::from_utf8_lossy(&have));
+      eprintln!("want:");
+      eprintln!("{}", want);
+      panic!("Unexpected representation...");
+    }
+  }
+
+  #[test]
+  fn bencode_representation_single_some() {
+    let value = Metainfo {
+      announce: "ANNOUNCE".into(),
+      announce_list: Some(vec![vec!["A".into(), "B".into()], vec!["C".into()]]),
+      nodes: Some(vec![
+        "domain:1".parse().unwrap(),
+        "1.1.1.1:16".parse().unwrap(),
+        "[1234:5678:9abc:def0:1234:5678:9abc:def0]:65000"
+          .parse()
+          .unwrap(),
+      ]),
+      comment: Some("COMMENT".into()),
+      created_by: Some("CREATED BY".into()),
+      creation_date: Some(0),
+      encoding: Some("UTF-8".into()),
+      info: Info {
+        private: Some(true),
+        piece_length: Bytes(1024),
+        source: Some("SOURCE".into()),
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Single {
+          length: Bytes(5),
+          md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
+        },
+      },
+    };
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "8:ANNOUNCE",
+        "13:announce-list", "l", 
+          "l", "1:A", "1:B", "e",
+          "l", "1:C", "e",
+        "e",
+        "7:comment", "7:COMMENT",
+        "10:created by", "10:CREATED BY",
+        "13:creation date", "i0e",
+        "8:encoding", "5:UTF-8",
+        "4:info", "d",
+          "6:length", "i5e",
+          "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+          "7:private", "i1e",
+          "6:source", "6:SOURCE",
+        "e",
+        "5:nodes", "l",
+          "l", "6:domain", "i1e", "e",
+          "l", "7:1.1.1.1", "i16e", "e",
+          "l", "39:1234:5678:9abc:def0:1234:5678:9abc:def0", "i65000e", "e",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_single_none() {
+    let value = Metainfo {
+      announce: "ANNOUNCE".into(),
+      announce_list: None,
+      nodes: None,
+      comment: None,
+      created_by: None,
+      creation_date: None,
+      encoding: None,
+      info: Info {
+        private: None,
+        piece_length: Bytes(1024),
+        source: None,
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Single {
+          length: Bytes(5),
+          md5sum: None,
+        },
+      },
+    };
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "8:ANNOUNCE",
+        "4:info", "d",
+          "6:length", "i5e",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_multiple_some() {
+    let value = Metainfo {
+      announce: "ANNOUNCE".into(),
+      announce_list: None,
+      nodes: None,
+      comment: None,
+      created_by: None,
+      creation_date: None,
+      encoding: None,
+      info: Info {
+        private: None,
+        piece_length: Bytes(1024),
+        source: None,
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Multiple {
+          files: vec![FileInfo {
+            length: Bytes(1024),
+            md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
+            path: FilePath::from_components(&["a", "b"]),
+          }],
+        },
+      },
+    };
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "8:ANNOUNCE",
+        "4:info", "d",
+          "5:files", "l",
+            "d",
+              "6:length", "i1024e",
+              "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
+              "4:path", "l", "1:a", "1:b", "e",
+            "e",
+          "e",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_multiple_none() {
+    let value = Metainfo {
+      announce: "ANNOUNCE".into(),
+      announce_list: None,
+      nodes: None,
+      comment: None,
+      created_by: None,
+      creation_date: None,
+      encoding: None,
+      info: Info {
+        private: None,
+        piece_length: Bytes(1024),
+        source: None,
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Multiple {
+          files: vec![FileInfo {
+            length: Bytes(1024),
+            md5sum: None,
+            path: FilePath::from_components(&["a", "b"]),
+          }],
+        },
+      },
+    };
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "8:ANNOUNCE",
+        "4:info", "d",
+          "5:files", "l",
+            "d",
+              "6:length", "i1024e",
+              "4:path", "l", "1:a", "1:b", "e",
+            "e",
+          "e",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn private_false() {
+    let value = Metainfo {
+      announce: "ANNOUNCE".into(),
+      announce_list: None,
+      nodes: None,
+      comment: None,
+      created_by: None,
+      creation_date: None,
+      encoding: None,
+      info: Info {
+        private: Some(false),
+        piece_length: Bytes(1024),
+        source: None,
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Single {
+          length: Bytes(5),
+          md5sum: None,
+        },
+      },
+    };
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "8:ANNOUNCE",
+        "4:info", "d",
+          "6:length", "i5e",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+          "7:private", "i0e",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
 }
