@@ -167,10 +167,10 @@ mod tests {
     let have = value.serialize().unwrap();
 
     if have != want.as_bytes() {
-      println!("have:");
-      println!("{}", String::from_utf8_lossy(&have));
-      println!("want:");
-      println!("{}", want);
+      eprintln!("have:");
+      eprintln!("{}", String::from_utf8_lossy(&have));
+      eprintln!("want:");
+      eprintln!("{}", want);
       panic!("Unexpected representation...");
     }
   }
