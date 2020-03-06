@@ -28,13 +28,19 @@ pub(crate) struct Create {
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
     help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
-    long_help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas:
-
-`--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
-
-Announce tiers are stored in the `announce-list` key of the top-level metainfo dictionary as a list of lists of strings, as defined by BEP 12: Multitracker Metadata Extension.
-
-Note: Many BitTorrent clients do not implement the behavior described in BEP 12. See the discussion here for more details: https://github.com/bittorrent/bittorrent.org/issues/82"
+    long_help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
+                 tier. To add multiple trackers to a given tier, separate their announce URLs \
+                 with commas:\n\
+                 \n\
+                 `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
+                 \n\
+                 Announce tiers are stored in the `announce-list` key of the top-level metainfo \
+                 dictionary as a list of lists of strings, as defined by BEP 12: Multitracker \
+                 Metadata Extension.
+                 \n\
+                 Note: Many BitTorrent clients do not implement the behavior described in BEP \
+                 12. See the discussion here for more details: \
+                 https://github.com/bittorrent/bittorrent.org/issues/82"
   )]
   announce_tiers: Vec<String>,
   #[structopt(

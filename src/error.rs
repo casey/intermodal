@@ -51,7 +51,8 @@ pub(crate) enum Error {
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
   #[snafu(display(
-    "Interal error, this may indicate a bug in intermodal: {}\nConsider filing an issue: https://github.com/casey/imdl/issues/new",
+    "Interal error, this may indicate a bug in intermodal: {}\n\
+     Consider filing an issue: https://github.com/casey/imdl/issues/new",
     message,
   ))]
   Internal { message: String },
@@ -104,7 +105,8 @@ pub(crate) enum Error {
   #[snafu(display("Failed to write to standard output: {}", source))]
   Stdout { source: io::Error },
   #[snafu(display(
-      "Attempted to create torrent from symlink `{}`. To override, pass the `--follow-symlinks` flag.",
+      "Attempted to create torrent from symlink `{}`. To override, pass the \
+      `--follow-symlinks` flag.",
       root.display()
   ))]
   SymlinkRoot { root: PathBuf },

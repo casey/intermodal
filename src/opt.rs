@@ -29,7 +29,10 @@ pub(crate) struct Opt {
     set = ArgSettings::CaseInsensitive,
     possible_values = use_color::VALUES,
     help = "Print colorful output.",
-    long_help = "Print colorful output. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set with a value of `dumb`.",
+    long_help = "Print colorful output. When `auto`, the default, colored output is only enabled \
+                 if imdl detects that it is connected to a terminal, the `NO_COLOR` environment \
+                 variable is not set, and the `TERM` environment variable is not set with a \
+                 value of `dumb`.",
   )]
   pub(crate) use_color: UseColor,
   #[structopt(subcommand)]
