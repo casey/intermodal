@@ -1391,24 +1391,26 @@ Content Size  9 bytes
       }
     };
 
-    #[cfg(target_os = "windows")]
-    {
+    if cfg!(target_os = "windows") {
       Command::new("attrib")
         .arg("+h")
         .arg(env.resolve("foo/hidden"))
         .status()
         .unwrap();
-    }
-    #[cfg(target_os = "macos")]
-    {
+    } else if cfg!(target_os = "macos") {
       Command::new("chflags")
         .arg("hidden")
         .arg(env.resolve("foo/hidden"))
         .status()
         .unwrap();
+    } else {
+      fs::remove_file(env.resolve("foo/hidden")).unwrap();
     }
+
     env.run().unwrap();
+
     let metainfo = env.load_metainfo("foo.torrent");
+
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 0
@@ -1431,16 +1433,32 @@ Content Size  9 bytes
       tree: {
         foo: {
           ".hidden": "abc",
+          hidden: "abc",
         },
-      },
+      }
     };
+
+    if cfg!(target_os = "windows") {
+      Command::new("attrib")
+        .arg("+h")
+        .arg(env.resolve("foo/hidden"))
+        .status()
+        .unwrap();
+    } else if cfg!(target_os = "macos") {
+      Command::new("chflags")
+        .arg("hidden")
+        .arg(env.resolve("foo/hidden"))
+        .status()
+        .unwrap();
+    }
+
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
-      Mode::Multiple { files } if files.len() == 1
+      Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abc"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
   }
 
   fn populate_symlinks(env: &Env) {
