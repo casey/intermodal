@@ -1,6 +1,8 @@
 use crate::common::*;
 
-pub(crate) struct Verifier {
+pub(crate) struct Verifier<'a> {
+  metainfo: &'a Metainfo,
+  base: &'a Path,
   buffer: Vec<u8>,
   piece_length: usize,
   pieces: PieceList,
@@ -8,38 +10,40 @@ pub(crate) struct Verifier {
   piece_bytes_hashed: usize,
 }
 
-impl Verifier {
-  pub(crate) fn new(piece_length: usize) -> Verifier {
-    Verifier {
+impl<'a> Verifier<'a> {
+  fn new(metainfo: &'a Metainfo, base: &'a Path) -> Result<Verifier<'a>> {
+    let piece_length = metainfo.info.piece_length.as_piece_length()?.into_usize();
+
+    Ok(Verifier {
       buffer: vec![0; piece_length],
       piece_bytes_hashed: 0,
-      sha1: Sha1::new(),
       pieces: PieceList::new(),
+      sha1: Sha1::new(),
+      base,
+      metainfo,
       piece_length,
-    }
+    })
   }
 
-  pub(crate) fn verify(metainfo: &Metainfo, base: &Path) -> Result<Status> {
-    let piece_length = metainfo.info.piece_length.as_piece_length()?;
+  pub(crate) fn verify(metainfo: &'a Metainfo, base: &'a Path) -> Result<Status> {
+    Self::new(metainfo, base)?.verify_metainfo()
+  }
 
-    let piece_length = piece_length.into_usize();
-
+  fn verify_metainfo(mut self) -> Result<Status> {
     let mut status = Vec::new();
 
-    let mut hasher = Self::new(piece_length);
-
-    for (path, len, md5sum) in metainfo.files(&base) {
+    for (path, len, md5sum) in self.metainfo.files(&self.base) {
       status.push(FileStatus::status(&path, len, md5sum));
-      hasher.hash(&path).ok();
+      self.hash(&path).ok();
     }
 
-    if hasher.piece_bytes_hashed > 0 {
-      hasher.pieces.push(hasher.sha1.digest().into());
-      hasher.sha1.reset();
-      hasher.piece_bytes_hashed = 0;
+    if self.piece_bytes_hashed > 0 {
+      self.pieces.push(self.sha1.digest().into());
+      self.sha1.reset();
+      self.piece_bytes_hashed = 0;
     }
 
-    let pieces = hasher.pieces == metainfo.info.pieces;
+    let pieces = self.pieces == self.metainfo.info.pieces;
 
     Ok(Status::new(pieces, status))
   }
@@ -73,6 +77,75 @@ impl Verifier {
 
       remaining -= buffer.len().into_u64();
     }
+
+    Ok(())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn good() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    env.run()?;
+
+    let metainfo = env.load_metainfo("foo.torrent");
+
+    assert!(metainfo.verify(&env.resolve("foo"))?.good());
+
+    Ok(())
+  }
+
+  #[test]
+  fn piece_mismatch() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    env.run()?;
+
+    env.write("foo/a", "xyz");
+
+    let metainfo = env.load_metainfo("foo.torrent");
+
+    let status = metainfo.verify(&env.resolve("foo"))?;
+
+    assert!(status.files().iter().all(FileStatus::good));
+
+    assert!(!status.pieces());
 
     Ok(())
   }

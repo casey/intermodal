@@ -10,7 +10,7 @@ pub(crate) struct Verify {
   #[structopt(
     name = "TORRENT",
     long = "metainfo",
-    help = "Verify input data against `TORRENT` metainfo file.",
+    help = "Verify input data against torrent metainfo in `TORRENT`.",
     parse(from_os_str)
   )]
   metainfo: PathBuf,
@@ -36,9 +36,8 @@ impl Verify {
 
     let status = metainfo.verify(&base)?;
 
-    status.write(env)?;
-
     if status.good() {
+      errln!(env, "Verification succeeded.");
       Ok(())
     } else {
       Err(Error::Verify { status })
@@ -50,13 +49,96 @@ impl Verify {
 mod tests {
   use super::*;
 
-  fn environment(args: &[&str]) -> TestEnv {
-    testing::env(["torrent", "create"].iter().chain(args).cloned())
+  #[test]
+  fn require_metainfo_argument() {
+    let mut env = test_env! {
+      args: [],
+      tree: {},
+    };
+    assert!(matches!(env.run(), Err(Error::Clap { .. })));
   }
 
   #[test]
-  fn require_metainfo_argument() {
-    let mut env = environment(&[]);
-    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+  fn pass() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--metainfo",
+        torrent,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.run(), Ok(()));
+
+    assert_eq!(verify_env.err(), "Verification succeeded.\n");
+
+    Ok(())
+  }
+
+  #[test]
+  fn fail() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    create_env.write("foo/a", "xyz");
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--metainfo",
+        torrent,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.run(), Err(Error::Verify { .. }));
+
+    assert_eq!(verify_env.err(), "");
+
+    Ok(())
   }
 }
