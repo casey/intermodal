@@ -1,13 +1,5 @@
 use crate::common::*;
 
-// $ imdl torrent verify --metainfo foo.torrent --input foo
-// Verification succeeded.
-
-// $ imdl torrent verify --metainfo foo.torrent --input foo
-// - pieces status
-// - file statuse
-// error: Torrent verification failed.
-
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -43,8 +35,6 @@ impl Verify {
     };
 
     let status = metainfo.verify(&base)?;
-
-    // status.write(env)?;
 
     if status.good() {
       errln!(env, "Verification succeeded.");

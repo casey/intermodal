@@ -10,15 +10,6 @@ pub(crate) struct Verifier<'a> {
   piece_bytes_hashed: usize,
 }
 
-// enum PieceStatus {
-//   Good,
-//   Bad,
-//   Missing,
-// }
-
-// match
-// mismatch
-
 impl<'a> Verifier<'a> {
   fn new(metainfo: &'a Metainfo, base: &'a Path) -> Result<Verifier<'a>> {
     let piece_length = metainfo.info.piece_length.as_piece_length()?.into_usize();
@@ -39,13 +30,6 @@ impl<'a> Verifier<'a> {
   }
 
   fn verify_metainfo(mut self) -> Result<Status> {
-    // let mut expected_piece_count =
-    //   self.metainfo.content_size().count() / self.metainfo.info.piece_length.count();
-
-    // if self.metainfo.content_size().count() % self.metainfo.info.piece_length.count() != 0 {
-    //   expected_piece_count += 1;
-    // }
-
     let mut status = Vec::new();
 
     for (path, len, md5sum) in self.metainfo.files(&self.base) {
