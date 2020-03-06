@@ -55,7 +55,6 @@ impl Metainfo {
   pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
     let path = path.as_ref();
     let metainfo = bendy::serde::de::from_bytes(&bytes).context(error::MetainfoLoad { path })?;
-    // TODO: verify that piece size matches
     Ok(metainfo)
   }
 
