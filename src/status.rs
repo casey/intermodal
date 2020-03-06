@@ -15,6 +15,7 @@ impl Status {
     self.pieces
   }
 
+  #[cfg(test)]
   pub(crate) fn files(&self) -> &[FileStatus] {
     &self.files
   }

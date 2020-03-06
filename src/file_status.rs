@@ -63,35 +63,35 @@ impl FileStatus {
     Ok(())
   }
 
-  pub(crate) fn icon(&self) -> char {
-    if self.error.is_some() {
-      return '!';
-    }
+  // pub(crate) fn icon(&self) -> char {
+  //   if self.error.is_some() {
+  //     return '!';
+  //   }
 
-    if !self.present {
-      return '?';
-    }
+  //   if !self.present {
+  //     return '?';
+  //   }
 
-    if !self.file {
-      return '¿';
-    }
+  //   if !self.file {
+  //     return '¿';
+  //   }
 
-    if !self.md5() {
-      return 'x';
-    }
+  //   if !self.md5() {
+  //     return 'x';
+  //   }
 
-    let length = self.length_actual.unwrap();
+  //   let length = self.length_actual.unwrap();
 
-    if length > self.length_expected {
-      return '+';
-    }
+  //   if length > self.length_expected {
+  //     return '+';
+  //   }
 
-    if length < self.length_expected {
-      return '-';
-    }
+  //   if length < self.length_expected {
+  //     return '-';
+  //   }
 
-    '♡'
-  }
+  //   '♡'
+  // }
 
   fn md5(&self) -> bool {
     match (self.md5_actual, self.md5_expected) {
@@ -108,7 +108,8 @@ impl FileStatus {
   pub(crate) fn bad(&self) -> bool {
     !self.good()
   }
-  pub(crate) fn path(&self) -> &Path {
-    &self.path
-  }
+
+  // pub(crate) fn path(&self) -> &Path {
+  //   &self.path
+  // }
 }
