@@ -28,8 +28,7 @@ pub(crate) struct Create {
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
     help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
-    long_help = "\
-Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
+    long_help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas:
 
 `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
 
@@ -1251,12 +1250,12 @@ mod tests {
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     let have = env.out();
+    #[rustfmt::skip]
     let want = format!(
       "        Name  foo
   Created By  {}
    Info Hash  d3432a4b9d18baa413095a70f1e417021ceaca5b
-Torrent \
-       Size  237 bytes
+Torrent Size  237 bytes
 Content Size  9 bytes
      Private  no
      Tracker  http://bar/
