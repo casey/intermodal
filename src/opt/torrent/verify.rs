@@ -104,10 +104,7 @@ mod tests {
 
     assert_matches!(verify_env.run(), Ok(()));
 
-    assert_eq!(
-      verify_env.err(),
-      "Verification complete, no problems found!\n"
-    );
+    assert_eq!(verify_env.err(), "Verification succeeded.\n");
 
     Ok(())
   }
@@ -150,7 +147,7 @@ mod tests {
 
     assert_matches!(verify_env.run(), Err(Error::Verify { .. }));
 
-    assert_eq!(verify_env.err(), "Verification failed, piece mismatch.\n");
+    assert_eq!(verify_env.err(), "");
 
     Ok(())
   }
