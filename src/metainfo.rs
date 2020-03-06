@@ -92,13 +92,6 @@ impl Metainfo {
     }
   }
 
-  // pub(crate) fn content_size(&self) -> Bytes {
-  //   match &self.info.mode {
-  //     Mode::Single { length, .. } => *length,
-  //     Mode::Multiple { files } => files.iter().map(|file| file.length).sum(),
-  //   }
-  // }
-
   pub(crate) fn verify(&self, base: &Path) -> Result<Status> {
     Verifier::verify(self, base)
   }
