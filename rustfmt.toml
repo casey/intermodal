@@ -1,9 +1,9 @@
 comment_width                = 80
 edition                      = "2018"
-error_on_line_overflow       = true
-error_on_unformatted         = true
+#error_on_line_overflow       = true
+#error_on_unformatted         = true
 format_code_in_doc_comments  = true
-format_macro_bodies          = true
+#format_macro_bodies          = true
 format_strings               = true
 match_arm_blocks             = false
 match_block_trailing_comma   = true
