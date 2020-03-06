@@ -1,7 +1,7 @@
 use crate::common::*;
 
 pub(crate) struct TestEnvBuilder {
-  args: Vec<String>,
+  args: Vec<OsString>,
   out_is_term: bool,
   use_color: bool,
   tempdir: Option<TempDir>,
@@ -22,21 +22,14 @@ impl TestEnvBuilder {
     self
   }
 
-  pub(crate) fn arg(mut self, arg: impl Into<String>) -> Self {
+  pub(crate) fn arg(mut self, arg: impl Into<OsString>) -> Self {
     self.args.push(arg.into());
-    self
-  }
-
-  pub(crate) fn args(mut self, args: impl IntoIterator<Item = impl Into<String>>) -> Self {
-    for arg in args {
-      self.args.push(arg.into());
-    }
     self
   }
 
   pub(crate) fn arg_slice(mut self, args: &[&str]) -> Self {
     for arg in args.iter().cloned() {
-      self.args.push(arg.to_owned());
+      self.args.push(arg.into());
     }
     self
   }
