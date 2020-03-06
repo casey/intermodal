@@ -43,9 +43,7 @@ mod err;
 mod outln;
 
 #[cfg(test)]
-mod testing;
-
-#[cfg(test)]
+#[macro_use]
 mod test_env;
 
 #[cfg(test)]

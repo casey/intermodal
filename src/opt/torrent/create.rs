@@ -328,47 +328,39 @@ mod tests {
 
   use pretty_assertions::assert_eq;
 
-  fn environment(args: &[&str]) -> TestEnv {
-    testing::env(["torrent", "create"].iter().chain(args).cloned())
-  }
-
-  fn tree_environment(args: &[&str], tempdir: TempDir) -> TestEnv {
-    TestEnvBuilder::new()
-      .args(["imdl", "torrent", "create"].iter().chain(args).cloned())
-      .tempdir(tempdir)
-      .build()
-  }
-
-  macro_rules! env {
-    {
-      args: [$($arg:expr),* $(,)?],
-      tree: {
-        $($tree:tt)*
-      } $(,)?
-    } => {
-      {
-        let tempdir = temptree! { $($tree)* };
-        tree_environment(&[$($arg),*], tempdir)
-      }
-    }
-  }
-
   #[test]
   fn require_input_argument() {
-    let mut env = env! { args: [], tree: {} };
+    let mut env = test_env! { args: [], tree: {} };
     assert!(matches!(env.run(), Err(Error::Clap { .. })));
   }
 
   #[test]
   fn require_input_present() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {},
+    };
     assert!(matches!(env.run(), Err(Error::Filesystem { .. })));
   }
 
   #[test]
   fn torrent_file_is_bencode_dict() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "https://bar"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
       tree: {
         foo: "",
       }
@@ -382,8 +374,8 @@ mod tests {
 
   #[test]
   fn privacy_defaults_to_false() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "https://bar"],
+    let mut env = test_env! {
+      args: ["torrent", "create", "--input", "foo", "--announce", "https://bar"],
       tree: {
         foo: "",
       }
@@ -395,8 +387,8 @@ mod tests {
 
   #[test]
   fn privacy_flag_sets_privacy() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "https://bar", "--private"],
+    let mut env = test_env! {
+      args: ["torrent", "create", "--input", "foo", "--announce", "https://bar", "--private"],
       tree: {
         foo: "",
       }
@@ -408,8 +400,8 @@ mod tests {
 
   #[test]
   fn tracker_flag_must_be_url() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "bar"],
+    let mut env = test_env! {
+      args: ["torrent", "create", "--input", "foo", "--announce", "bar"],
       tree: {
         foo: "",
       }
@@ -419,8 +411,8 @@ mod tests {
 
   #[test]
   fn announce_single() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar"],
+    let mut env = test_env! {
+      args: ["torrent", "create", "--input", "foo", "--announce", "http://bar"],
       tree: {
         foo: "",
       }
@@ -433,8 +425,10 @@ mod tests {
 
   #[test]
   fn announce_udp() {
-    let mut env = env! {
+    let mut env = test_env! {
       args: [
+        "torrent",
+        "create",
         "--input",
         "foo",
         "--announce",
@@ -455,8 +449,19 @@ mod tests {
 
   #[test]
   fn announce_wss_tracker() {
-    let mut env = environment(&["--input", "foo", "--announce", "wss://tracker.btorrent.xyz"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "wss://tracker.btorrent.xyz",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce, "wss://tracker.btorrent.xyz/");
@@ -465,15 +470,21 @@ mod tests {
 
   #[test]
   fn announce_single_tier() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--announce-tier",
-      "http://bar,http://baz",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--announce-tier",
+        "http://bar,http://baz",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce, "http://bar/");
@@ -485,17 +496,23 @@ mod tests {
 
   #[test]
   fn announce_multiple_tiers() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--announce-tier",
-      "http://bar,http://baz",
-      "--announce-tier",
-      "http://abc,http://xyz",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--announce-tier",
+        "http://bar,http://baz",
+        "--announce-tier",
+        "http://abc,http://xyz",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce, "http://bar/");
@@ -510,8 +527,19 @@ mod tests {
 
   #[test]
   fn comment_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.comment, None);
@@ -519,15 +547,21 @@ mod tests {
 
   #[test]
   fn comment_set() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--comment",
-      "Hello, world!",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--comment",
+        "Hello, world!",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.comment.unwrap(), "Hello, world!");
@@ -535,8 +569,19 @@ mod tests {
 
   #[test]
   fn piece_length_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes::from(16 * 2u32.pow(10)));
@@ -544,15 +589,21 @@ mod tests {
 
   #[test]
   fn piece_length_override() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "64KiB",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "64KiB",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes(64 * 1024));
@@ -560,15 +611,21 @@ mod tests {
 
   #[test]
   fn si_piece_size() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "0.5MiB",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "0.5MiB",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes(512 * 1024));
@@ -576,15 +633,21 @@ mod tests {
 
   #[test]
   fn name() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "16KiB",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "16KiB",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.name, "foo");
@@ -592,17 +655,23 @@ mod tests {
 
   #[test]
   fn name_subdir() {
-    let mut env = environment(&[
-      "--input",
-      "foo/bar",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "32KiB",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join("bar"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo/bar",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "32KiB",
+      ],
+      tree: {
+        foo: {
+          bar: "",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo/bar.torrent");
     assert_eq!(metainfo.info.name, "bar");
@@ -610,23 +679,40 @@ mod tests {
 
   #[test]
   fn destination_override() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--output",
-      "x.torrent",
-      "--announce",
-      "http://bar",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--output",
+        "x.torrent",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     env.load_metainfo("x.torrent");
   }
 
   #[test]
   fn created_by_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.created_by.unwrap(), consts::CREATED_BY_DEFAULT);
@@ -634,14 +720,20 @@ mod tests {
 
   #[test]
   fn created_by_unset() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--no-created-by",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--no-created-by",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.created_by, None);
@@ -649,8 +741,19 @@ mod tests {
 
   #[test]
   fn encoding() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.encoding, Some("UTF-8".into()));
@@ -658,8 +761,19 @@ mod tests {
 
   #[test]
   fn created_date_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     let now = SystemTime::now()
       .duration_since(SystemTime::UNIX_EPOCH)
       .unwrap()
@@ -672,14 +786,20 @@ mod tests {
 
   #[test]
   fn created_date_unset() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--no-creation-date",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--no-creation-date",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.creation_date, None);
@@ -687,8 +807,15 @@ mod tests {
 
   #[test]
   fn single_small() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        ],
       tree: {
         foo: "bar",
       },
@@ -707,18 +834,23 @@ mod tests {
 
   #[test]
   fn single_one_byte_piece() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "1",
-      "--allow",
-      "small-piece-length",
-    ]);
-    let contents = "bar";
-    fs::write(env.resolve("foo"), contents).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "1",
+        "--allow",
+        "small-piece-length",
+      ],
+      tree: {
+        foo: "bar",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
@@ -728,7 +860,7 @@ mod tests {
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
-        length: Bytes(contents.len() as u64),
+        length: Bytes(3),
         md5sum: None,
       }
     )
@@ -736,9 +868,19 @@ mod tests {
 
   #[test]
   fn single_empty() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let contents = "";
-    fs::write(env.resolve("foo"), contents).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces.count(), 0);
@@ -753,9 +895,19 @@ mod tests {
 
   #[test]
   fn multiple_no_files() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: {},
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces.count(), 0);
@@ -764,8 +916,16 @@ mod tests {
 
   #[test]
   fn multiple_one_file_md5() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar", "--md5sum"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum",
+      ],
       tree: {
         foo: {
           bar: "bar",
@@ -792,8 +952,15 @@ mod tests {
 
   #[test]
   fn multiple_one_file_md5_off() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
       tree: {
         foo: {
           bar: "bar",
@@ -820,12 +987,24 @@ mod tests {
 
   #[test]
   fn multiple_three_files() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join("a"), "abc").unwrap();
-    fs::write(dir.join("x"), "xyz").unwrap();
-    fs::write(dir.join("h"), "hij").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum"
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          x: "xyz",
+          h: "hij",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abchijxyz"]));
@@ -858,7 +1037,18 @@ mod tests {
 
   #[test]
   fn open() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--open"]);
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--open",
+      ],
+      tree: {},
+    };
 
     let opened = env.resolve("opened.txt");
     let torrent = env.resolve("foo.torrent");
@@ -910,16 +1100,21 @@ mod tests {
 
   #[test]
   fn uneven_piece_length() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "17KiB",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "17KiB",
+      ],
+      tree: {
+        foo: {},
+      },
+    };
     assert_matches!(
       env.run(),
       Err(Error::PieceLengthUneven { bytes }) if bytes.0 == 17 * 1024
@@ -928,66 +1123,86 @@ mod tests {
 
   #[test]
   fn uneven_piece_length_allow() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "17KiB",
-      "--allow",
-      "uneven-piece-length",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "17KiB",
+        "--allow",
+        "uneven-piece-length",
+      ],
+      tree: {
+        foo: {},
+      },
+    };
     env.run().unwrap();
     env.load_metainfo("foo.torrent");
   }
 
   #[test]
   fn zero_piece_length() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "0",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "0",
+      ],
+      tree: {
+        foo: {},
+      },
+    };
     assert_matches!(env.run(), Err(Error::PieceLengthZero));
   }
 
   #[test]
   fn small_piece_length() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "8KiB",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "8KiB",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     assert_matches!(env.run(), Err(Error::PieceLengthSmall));
   }
 
   #[test]
   fn small_piece_length_allow() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--piece-length",
-      "8KiB",
-      "--allow",
-      "small-piece-length",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--piece-length",
+        "8KiB",
+        "--allow",
+        "small-piece-length",
+      ],
+      tree: {
+        foo: {},
+      }
+    };
     env.run().unwrap();
     env.load_metainfo("foo.torrent");
   }
@@ -1038,15 +1253,21 @@ Content Size  9 bytes
 
   #[test]
   fn write_to_stdout() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--output",
-      "-",
-    ]);
-    fs::write(env.resolve("foo"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--output",
+        "-",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
     env.run().unwrap();
     let bytes = env.out_bytes();
     Metainfo::from_bytes(&bytes);
@@ -1054,9 +1275,20 @@ Content Size  9 bytes
 
   #[test]
   fn force_default() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    fs::write(env.resolve("foo"), "").unwrap();
-    fs::write(env.resolve("foo.torrent"), "").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar"
+      ],
+      tree: {
+        foo: "",
+        "foo.torrent": "foo",
+      },
+    };
     assert_matches!(
       env.run().unwrap_err(),
       Error::Filesystem {source, path}
@@ -1066,20 +1298,43 @@ Content Size  9 bytes
 
   #[test]
   fn force_true() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--force"]);
-    fs::write(env.resolve("foo"), "").unwrap();
-    fs::write(env.resolve("foo.torrent"), "foo").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--force",
+      ],
+      tree: {
+        foo: "",
+        "foo.torrent": "foo",
+      },
+    };
     env.run().unwrap();
     env.load_metainfo("foo.torrent");
   }
 
   #[test]
   fn exclude_junk() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join("Thumbs.db"), "abc").unwrap();
-    fs::write(dir.join("Desktop.ini"), "abc").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: {
+          "Thumbs.db": "abc",
+          "Desktop.ini": "abc",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1091,17 +1346,23 @@ Content Size  9 bytes
 
   #[test]
   fn include_junk() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--include-junk",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join("Thumbs.db"), "abc").unwrap();
-    fs::write(dir.join("Desktop.ini"), "abc").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--include-junk",
+      ],
+      tree: {
+        foo: {
+          "Thumbs.db": "abc",
+          "Desktop.ini": "abc",
+        },
+      },
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1113,32 +1374,43 @@ Content Size  9 bytes
 
   #[test]
   fn skip_hidden() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar"]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join(".hidden"), "abc").unwrap();
-    #[cfg(target_os = "windows")]
-    {
-      let path = dir.join("hidden");
-      fs::write(&path, "abc").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: {
+          ".hidden": "abc",
+          hidden: "abc",
+        },
+      }
+    };
+
+    if cfg!(target_os = "windows") {
       Command::new("attrib")
         .arg("+h")
-        .arg(&path)
+        .arg(env.resolve("foo/hidden"))
         .status()
         .unwrap();
-    }
-    #[cfg(target_os = "macos")]
-    {
-      let path = dir.join("hidden");
-      fs::write(&path, "abc").unwrap();
+    } else if cfg!(target_os = "macos") {
       Command::new("chflags")
         .arg("hidden")
-        .arg(&path)
+        .arg(env.resolve("foo/hidden"))
         .status()
         .unwrap();
+    } else {
+      fs::remove_file(env.resolve("foo/hidden")).unwrap();
     }
+
     env.run().unwrap();
+
     let metainfo = env.load_metainfo("foo.torrent");
+
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 0
@@ -1148,23 +1420,45 @@ Content Size  9 bytes
 
   #[test]
   fn include_hidden() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--include-hidden",
-    ]);
-    let dir = env.resolve("foo");
-    fs::create_dir(&dir).unwrap();
-    fs::write(dir.join(".hidden"), "abc").unwrap();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--include-hidden",
+      ],
+      tree: {
+        foo: {
+          ".hidden": "abc",
+          hidden: "abc",
+        },
+      }
+    };
+
+    if cfg!(target_os = "windows") {
+      Command::new("attrib")
+        .arg("+h")
+        .arg(env.resolve("foo/hidden"))
+        .status()
+        .unwrap();
+    } else if cfg!(target_os = "macos") {
+      Command::new("chflags")
+        .arg("hidden")
+        .arg(env.resolve("foo/hidden"))
+        .status()
+        .unwrap();
+    }
+
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
-      Mode::Multiple { files } if files.len() == 1
+      Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abc"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
   }
 
   fn populate_symlinks(env: &Env) {
@@ -1199,7 +1493,18 @@ Content Size  9 bytes
 
   #[test]
   fn skip_symlinks() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum",
+      ],
+      tree: {},
+    };
     populate_symlinks(&env);
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
@@ -1213,14 +1518,19 @@ Content Size  9 bytes
   #[test]
   #[cfg(unix)]
   fn follow_symlinks() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--follow-symlinks",
-      "--md5sum",
-    ]);
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--follow-symlinks",
+        "--md5sum",
+      ],
+      tree: {},
+    };
     populate_symlinks(&env);
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
@@ -1252,7 +1562,19 @@ Content Size  9 bytes
   #[test]
   #[cfg(unix)]
   fn symlink_root() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum",
+      ],
+      tree: {},
+    };
+
     let file_src = env.resolve("bar");
     let file_link = env.resolve("foo");
 
@@ -1268,9 +1590,24 @@ Content Size  9 bytes
 
   #[test]
   fn skip_dot_dir_contents() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
-    env.create_dir("foo/.bar");
-    env.create_file("foo/.bar/baz", "baz");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum",
+      ],
+      tree: {
+        foo: {
+          ".bar": {
+            baz: "baz",
+          },
+        },
+      }
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1282,11 +1619,26 @@ Content Size  9 bytes
 
   #[test]
   fn skip_hidden_attribute_dir_contents() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--md5sum"]);
-    env.create_dir("foo/bar");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--md5sum"
+      ],
+      tree: {
+        foo: {
+          bar: {},
+        },
+      },
+    };
+
     #[cfg(target_os = "windows")]
     {
-      env.create_file("foo/bar/baz", "baz");
+      env.write("foo/bar/baz", "baz");
       let path = env.resolve("foo/bar");
       Command::new("attrib")
         .arg("+h")
@@ -1294,9 +1646,10 @@ Content Size  9 bytes
         .status()
         .unwrap();
     }
+
     #[cfg(target_os = "macos")]
     {
-      env.create_file("foo/bar/baz", "baz");
+      env.write("foo/bar/baz", "baz");
       let path = env.resolve("foo/bar");
       Command::new("chflags")
         .arg("hidden")
@@ -1304,6 +1657,7 @@ Content Size  9 bytes
         .status()
         .unwrap();
     }
+
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1315,11 +1669,25 @@ Content Size  9 bytes
 
   #[test]
   fn glob_exclude() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "!a"]);
-    env.create_dir("foo");
-    env.create_file("foo/a", "a");
-    env.create_file("foo/b", "b");
-    env.create_file("foo/c", "c");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "!a"
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          b: "b",
+          c: "c",
+        },
+      }
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1333,11 +1701,26 @@ Content Size  9 bytes
 
   #[test]
   fn glob_exclude_nomatch() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "!x"]);
-    env.create_dir("foo");
-    env.create_file("foo/a", "a");
-    env.create_file("foo/b", "b");
-    env.create_file("foo/c", "c");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "!x"
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          b: "b",
+          c: "c",
+        },
+      }
+    };
+
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1351,18 +1734,25 @@ Content Size  9 bytes
 
   #[test]
   fn glob_include() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--glob",
-      "[bc]",
-    ]);
-    env.create_dir("foo");
-    env.create_file("foo/a", "a");
-    env.create_file("foo/b", "b");
-    env.create_file("foo/c", "c");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "[bc]",
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          b: "b",
+          c: "c",
+        },
+      }
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1376,11 +1766,25 @@ Content Size  9 bytes
 
   #[test]
   fn glob_include_nomatch() {
-    let mut env = environment(&["--input", "foo", "--announce", "http://bar", "--glob", "x"]);
-    env.create_dir("foo");
-    env.create_file("foo/a", "a");
-    env.create_file("foo/b", "b");
-    env.create_file("foo/c", "c");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "x",
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          b: "b",
+          c: "c",
+        },
+      }
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1392,37 +1796,49 @@ Content Size  9 bytes
 
   #[test]
   fn glob_precedence() {
-    let mut env = environment(&[
-      "--input",
-      "foo",
-      "--announce",
-      "http://bar",
-      "--glob",
-      "!*",
-      "--glob",
-      "[ab]",
-      "--glob",
-      "!b",
-    ]);
-    env.create_dir("foo");
-    env.create_file("foo/a", "a");
-    env.create_file("foo/b", "b");
-    env.create_file("foo/c", "c");
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "!*",
+        "--glob",
+        "[ab]",
+        "--glob",
+        "!b",
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          b: "b",
+          c: "c",
+        },
+      }
+    };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    let mut pieces = PieceList::new();
-    pieces.push(Sha1::from("a").digest().into());
-    assert_eq!(metainfo.info.pieces, pieces);
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["a"]));
   }
 
   #[test]
   fn nodes_default() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ],
       tree: {
         foo: "",
       }
@@ -1434,8 +1850,17 @@ Content Size  9 bytes
 
   #[test]
   fn nodes_invalid() {
-    let mut env = env! {
-      args: ["--input", "foo", "--announce", "http://bar", "--dht-node", "blah"],
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--dht-node",
+        "blah",
+      ],
       tree: {
         foo: "",
       },
@@ -1445,8 +1870,10 @@ Content Size  9 bytes
 
   #[test]
   fn nodes_valid() {
-    let mut env = env! {
+    let mut env = test_env! {
       args: [
+        "torrent",
+        "create",
         "--input",
         "foo",
         "--announce",

@@ -1,5 +1,24 @@
 use crate::common::*;
 
+macro_rules! test_env {
+  {
+    args: [$($arg:expr),* $(,)?],
+    tree: {
+      $($tree:tt)*
+    } $(,)?
+  } => {
+    {
+      let tempdir = temptree! { $($tree)* };
+
+      TestEnvBuilder::new()
+        .tempdir(tempdir)
+        .arg("imdl")
+        $(.arg($arg))*
+        .build()
+    }
+  }
+}
+
 pub(crate) struct TestEnv {
   env: Env,
   err: Capture,
@@ -23,11 +42,7 @@ impl TestEnv {
     self.out.bytes()
   }
 
-  pub(crate) fn create_dir(&self, path: impl AsRef<Path>) {
-    fs::create_dir_all(self.env.resolve(path.as_ref())).unwrap();
-  }
-
-  pub(crate) fn create_file(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
+  pub(crate) fn write(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
     fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
   }
 
