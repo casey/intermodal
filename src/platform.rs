@@ -30,8 +30,7 @@ impl PlatformInterface for Platform {
   }
 
   fn hidden(path: &Path) -> Result<bool, Error> {
-    use std::os::unix::ffi::OsStrExt;
-    use std::{ffi::CString, mem};
+    use std::{ffi::CString, mem, os::unix::ffi::OsStrExt};
 
     const HIDDEN_MASK_MAC: u32 = 0x0000_8000;
 

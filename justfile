@@ -33,6 +33,9 @@ test:
 clippy:
 	cargo clippy --all
 
+fmt:
+	cargo +nightly fmt --all
+
 lint:
 	./bin/lint
 
@@ -59,7 +62,7 @@ check-minimal-versions:
 
 check: test clippy lint check-minimal-versions
 	git diff --no-ext-diff --quiet --exit-code
-	cargo fmt --all -- --check
+	cargo +nightly fmt --all -- --check
 	cargo run --package update-readme toc
 	git diff --no-ext-diff --quiet --exit-code
 
