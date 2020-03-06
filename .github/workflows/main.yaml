@@ -44,7 +44,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: ./bin/lint
     - name: Format
-      run: cargo fmt --all -- --check
+      run: cargo +nightly fmt --all -- --check
     - name: Readme
       if: matrix.os != 'windows-latest'
       run: |
