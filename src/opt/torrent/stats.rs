@@ -12,7 +12,8 @@ pub(crate) struct Stats {
     long = "limit",
     short = "l",
     help = "Stop after processing the first `COUNT` torrents.",
-    long_help = "Stop after processing the first `COUNT` torrents. Useful when processing large collections of `.torrent` files."
+    long_help = "Stop after processing the first `COUNT` torrents. Useful when processing large \
+                 collections of `.torrent` files."
   )]
   limit: Option<u64>,
   #[structopt(
@@ -20,8 +21,12 @@ pub(crate) struct Stats {
     long = "extract-pattern",
     short = "e",
     help = "Extract and display values from key paths that match `REGEX`.",
-    long_help = "\
-Extract and display values under key paths that match `REGEX`. Subkeys of a bencodeded dictionary are delimited by `/`, and values of a bencoded list are delmited by `*`. For example, given the following bencoded dictionary `{\"foo\": [{\"bar\": {\"baz\": 2}}]}`, the value `2`'s key path will be `foo*bar/baz`. The value `2` would be displayed if any of `bar`, `foo[*]bar/baz`, or `foo.*baz` were passed to `--extract-pattern."
+    long_help = "Extract and display values under key paths that match `REGEX`. Subkeys of a \
+                 bencodeded dictionary are delimited by `/`, and values of a bencoded list are \
+                 delmited by `*`. For example, given the following bencoded dictionary `{\"foo\": \
+                 [{\"bar\": {\"baz\": 2}}]}`, the value `2`'s key path will be `foo*bar/baz`. The \
+                 value `2` would be displayed if any of `bar`, `foo[*]bar/baz`, or `foo.*baz` \
+                 were passed to `--extract-pattern."
   )]
   extract_patterns: Vec<Regex>,
   #[structopt(
@@ -29,7 +34,8 @@ Extract and display values under key paths that match `REGEX`. Subkeys of a benc
     long = "input",
     short = "i",
     help = "Search `INPUT` for torrents.",
-    long_help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file.",
+    long_help = "Search `INPUT` for torrents. May be a directory to search or a single torrent \
+                 file.",
     parse(from_os_str)
   )]
   input: PathBuf,
