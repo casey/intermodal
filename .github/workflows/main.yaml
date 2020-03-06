@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
     - uses: actions/checkout@v2
-    - name: Install
+    - name: Install Stable
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
@@ -43,6 +43,13 @@ jobs:
     - name: Lint
       if: matrix.os != 'windows-latest'
       run: ./bin/lint
+    - name: Install Nightly
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        target: ${{matrix.target}}
+        profile: minimal
+        components: rustfmt
     - name: Format
       run: cargo +nightly fmt --all -- --check
     - name: Readme
