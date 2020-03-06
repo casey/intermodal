@@ -4,14 +4,14 @@
 // Constraints:
 // - Decreasing piece length increases protocol overhead.
 // - Decreasing piece length increases torrent metainfo size.
-// - Increasing piece length increases the amount of data that must be
-//   thrown away in case of corruption.
+// - Increasing piece length increases the amount of data that must be thrown
+//   away in case of corruption.
 // - Increasing piece length increases the amount of data that must be
 //   downloaded before it can be verified and uploaded to other peers.
-// - Decreasing piece length increases the proportion of disk seeks to
-//   disk reads. This can be an issue for spinning disks.
-// - The BitTorrent v2 specification requires that piece sizes be
-//   larger than 16 KiB.
+// - Decreasing piece length increases the proportion of disk seeks to disk
+//   reads. This can be an issue for spinning disks.
+// - The BitTorrent v2 specification requires that piece sizes be larger than 16
+//   KiB.
 //
 // These constraints could probably be exactly defined and optimized
 // using an integer programming solver, but instead we just copy what

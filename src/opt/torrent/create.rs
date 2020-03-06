@@ -12,42 +12,53 @@ pub(crate) struct Create {
     long = "announce",
     required(true),
     help = "Use `ANNOUNCE` as the primary tracker announce URL.",
-    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
+    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce \
+                 URLs, also use `--announce-tier`."
   )]
   announce: Url,
   #[structopt(
     name = "ALLOW",
     long = "allow",
     help = "Use `ANNOUNCE` as the primary tracker announce URL.",
-    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, also use `--announce-tier`."
+    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce \
+                 URLs, also use `--announce-tier`."
   )]
   allowed_lints: Vec<Lint>,
   #[structopt(
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
     help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
-    long_help = "\
-Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new tier. To add multiple trackers to a given tier, separate their announce URLs with commas: 
-
-`--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
-
-Announce tiers are stored in the `announce-list` key of the top-level metainfo dictionary as a list of lists of strings, as defined by BEP 12: Multitracker Metadata Extension.
-
-Note: Many BitTorrent clients do not implement the behavior described in BEP 12. See the discussion here for more details: https://github.com/bittorrent/bittorrent.org/issues/82"
+    long_help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
+                 tier. To add multiple trackers to a given tier, separate their announce URLs \
+                 with commas:\n\
+                 \n\
+                 `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
+                 \n\
+                 Announce tiers are stored in the `announce-list` key of the top-level metainfo \
+                 dictionary as a list of lists of strings, as defined by BEP 12: Multitracker \
+                 Metadata Extension.
+                 \n\
+                 Note: Many BitTorrent clients do not implement the behavior described in BEP \
+                 12. See the discussion here for more details: \
+                 https://github.com/bittorrent/bittorrent.org/issues/82"
   )]
   announce_tiers: Vec<String>,
   #[structopt(
     name = "COMMENT",
     long = "comment",
     help = "Include `COMMENT` in generated `.torrent` file.",
-    long_help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of top-level metainfo dictionary."
+    long_help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of \
+                 top-level metainfo dictionary."
   )]
   comment: Option<String>,
   #[structopt(
     name = "NODE",
     long = "dht-node",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`.",
-    long_help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by brackets. May be given more than once to add multiple bootstrap nodes. Examples:
+    long_help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form \
+                 `HOST:PORT`, where `HOST` is a domain name, an IPv4 address, or an IPv6 address \
+                 surrounded by brackets. May be given more than once to add multiple bootstrap \
+                 nodes. Examples:
     `--dht-node router.example.com:1337`
     `--dht-node 203.0.113.0:2290`
     `--dht-node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
@@ -56,7 +67,8 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   #[structopt(
     name = "FOLLOW-SYMLINKS",
     long = "follow-symlinks",
-    help = "Follow symlinks in torrent input. By default, symlinks to files and directories are not included in torrent contents."
+    help = "Follow symlinks in torrent input. By default, symlinks to files and directories are \
+            not included in torrent contents."
   )]
   follow_symlinks: bool,
   #[structopt(
@@ -68,13 +80,15 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
   #[structopt(
     name = "GLOB",
     long = "glob",
-    help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the last one taking precedence. Precede a glob with a ! to exclude it."
+    help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the \
+            last one taking precedence. Precede a glob with a ! to exclude it."
   )]
   globs: Vec<String>,
   #[structopt(
     name = "INCLUDE-HIDDEN",
     long = "include-hidden",
-    help = "Include hidden files that would otherwise be skipped, such as files that start with a `.`, and files hidden by file attributes on macOS and Windows."
+    help = "Include hidden files that would otherwise be skipped, such as files that start with a \
+            `.`, and files hidden by file attributes on macOS and Windows."
   )]
   include_hidden: bool,
   #[structopt(
@@ -87,15 +101,19 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     name = "INPUT",
     long = "input",
     help = "Read torrent contents from `INPUT`.",
-    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a single-file torrent, otherwise if `INPUT` is a directory, torrent will be a multi-file torrent.",
+    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a \
+                 single-file torrent, otherwise if `INPUT` is a directory, torrent will be a \
+                 multi-file torrent.",
     parse(from_os_str)
   )]
   input: PathBuf,
   #[structopt(
     name = "MD5SUM",
     long = "md5sum",
-    help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for safeguarding against accidental corruption.",
-    long_help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and only suitable for checking for accidental corruption."
+    help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
+            broken and only suitable for safeguarding against accidental corruption.",
+    long_help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
+                 broken and only suitable for checking for accidental corruption."
   )]
   md5sum: bool,
   #[structopt(
@@ -120,13 +138,15 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     name = "OPEN",
     long = "open",
     help = "Open `.torrent` file after creation",
-    long_help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start on Windows"
+    long_help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or \
+                 `kde-open` on Linux; `open` on macOS; and `cmd /C start on Windows"
   )]
   open: bool,
   #[structopt(
     name = "OUTPUT",
     long = "output",
-    help = "Save `.torrent` file to `OUTPUT`, or `-` for standard output. Defaults to `$INPUT.torrent`.",
+    help = "Save `.torrent` file to `OUTPUT`, or `-` for standard output. Defaults to \
+            `$INPUT.torrent`.",
     parse(from_os_str)
   )]
   output: Option<Target>,
@@ -134,21 +154,27 @@ Note: Many BitTorrent clients do not implement the behavior described in BEP 12.
     name = "PIECE-LENGTH",
     long = "piece-length",
     help = "Set piece length to `PIECE-LENGTH` bytes.",
-    long_help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
+    long_help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and \
+                 gib."
   )]
   piece_length: Option<Bytes>,
   #[structopt(
     name = "PRIVATE",
     long = "private",
     help = "Set the `private` flag.",
-    long_help = "Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information."
+    long_help = "Set the `private` flag. Torrent clients that understand the flag and participate \
+                 in the swarm of a torrent with the flag set will only announce themselves to the \
+                 announce URLs included in the torrent, and will not use other peer discovery \
+                 mechanisms, such as the DHT or local peer discovery. See BEP 27: Private \
+                 Torrents for more information."
   )]
   private: bool,
   #[structopt(
     name = "SOURCE",
     long = "source",
     help = "Include `SOURCE` in generated `.torrent` file.",
-    long_help = "Include `SOURCe` in generated `.torrent` file. Stored under `info.source` key of metainfo dictionary."
+    long_help = "Include `SOURCe` in generated `.torrent` file. Stored under `info.source` key of \
+                 metainfo dictionary."
   )]
   source: Option<String>,
 }
@@ -1230,6 +1256,7 @@ mod tests {
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     let have = env.out();
+    #[rustfmt::skip]
     let want = format!(
       "        Name  foo
   Created By  {}
