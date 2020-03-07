@@ -52,15 +52,15 @@ impl Env {
     #[cfg(not(test))]
     pretty_env_logger::init();
 
-    let opt = Opt::from_iter_safe(&self.args)?;
+    let args = Args::from_iter_safe(&self.args)?;
 
-    match opt.use_color {
+    match args.options().use_color {
       UseColor::Always => self.err_style = Style::active(),
       UseColor::Auto => {}
       UseColor::Never => self.err_style = Style::inactive(),
     }
 
-    opt.run(self)
+    args.run(self)
   }
 
   pub(crate) fn new<D, O, E, S, I>(

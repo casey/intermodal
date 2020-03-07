@@ -52,6 +52,7 @@ mod test_env_builder;
 #[cfg(test)]
 mod capture;
 
+mod args;
 mod bytes;
 mod common;
 mod consts;
@@ -71,7 +72,7 @@ mod md5_digest;
 mod metainfo;
 mod mode;
 mod node;
-mod opt;
+mod options;
 mod path_ext;
 mod piece_length_picker;
 mod piece_list;
@@ -81,6 +82,7 @@ mod reckoner;
 mod sha1_digest;
 mod status;
 mod style;
+mod subcommand;
 mod table;
 mod target;
 mod torrent_summary;
