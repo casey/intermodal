@@ -48,12 +48,8 @@ pub(crate) struct Stats {
 }
 
 impl Stats {
-  pub(crate) fn run(self, env: &mut Env, unstable: bool) -> Result<(), Error> {
-    if !unstable {
-      return Err(Error::Unstable {
-        feature: "torrent stats subcommand",
-      });
-    }
+  pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
+    options.require_unstable("torrent stats subcommand")?;
 
     let path = env.resolve(self.input);
 
