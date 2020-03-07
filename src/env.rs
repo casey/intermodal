@@ -2,7 +2,7 @@ use crate::common::*;
 
 pub(crate) struct Env {
   args: Vec<OsString>,
-  dir: Box<dyn AsRef<Path>>,
+  dir: PathBuf,
   pub(crate) err: Box<dyn Write>,
   pub(crate) out: Box<dyn Write>,
   err_style: Style,
@@ -63,8 +63,8 @@ impl Env {
     args.run(self)
   }
 
-  pub(crate) fn new<D, O, E, S, I>(
-    dir: D,
+  pub(crate) fn new<O, E, S, I>(
+    dir: PathBuf,
     out: O,
     out_style: Style,
     out_is_term: bool,
@@ -73,7 +73,6 @@ impl Env {
     args: I,
   ) -> Self
   where
-    D: AsRef<Path> + 'static,
     O: Write + 'static,
     E: Write + 'static,
     S: Into<OsString>,
@@ -81,9 +80,9 @@ impl Env {
   {
     Self {
       args: args.into_iter().map(Into::into).collect(),
-      dir: Box::new(dir),
       err: Box::new(err),
       out: Box::new(out),
+      dir,
       out_style,
       out_is_term,
       err_style,
@@ -133,7 +132,7 @@ impl Env {
   }
 
   pub(crate) fn dir(&self) -> &Path {
-    self.dir.as_ref().as_ref()
+    &self.dir
   }
 
   pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
