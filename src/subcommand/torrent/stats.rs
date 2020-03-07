@@ -8,17 +8,17 @@ use crate::common::*;
 )]
 pub(crate) struct Stats {
   #[structopt(
-    name = "COUNT",
     long = "limit",
     short = "l",
-    help = "Stop after processing the first `COUNT` torrents. Useful when processing large \
-            collections of `.torrent` files."
+    value_name = "N",
+    help = "Stop after processing `N` torrents. Useful when processing large collections of \
+            `.torrent` files."
   )]
   limit: Option<u64>,
   #[structopt(
-    name = "REGEX",
     long = "extract-pattern",
     short = "e",
+    value_name = "REGEX",
     help = "Extract and display values under key paths that match `REGEX`. Subkeys of a \
             bencodeded dictionary are delimited by `/`, and values of a bencoded list are \
             delmited by `*`. For example, given the following bencoded dictionary `{\"foo\": \
@@ -28,10 +28,10 @@ pub(crate) struct Stats {
   )]
   extract_patterns: Vec<Regex>,
   #[structopt(
-    name = "INPUT",
     long = "input",
     short = "i",
-    help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file.",
+    value_name = "PATH",
+    help = "Search `PATH` for torrents. May be a directory or a single torrent file.",
     parse(from_os_str)
   )]
   input: PathBuf,
