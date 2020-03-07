@@ -67,7 +67,7 @@ impl PlatformInterface for Platform {
     Err(Error::OpenerMissing { tried: OPENERS })
   }
 
-  fn hidden(path: &Path) -> Result<bool, Error> {
+  fn hidden(_path: &Path) -> Result<bool, Error> {
     Ok(false)
   }
 }
