@@ -6,14 +6,16 @@ pub(crate) enum Lint {
   SmallPieceLength,
 }
 
-const UNEVEN_PIECE_LENGTH: &str = "uneven-piece-length";
-const SMALL_PIECE_LENGTH: &str = "small-piece-length";
-
 impl Lint {
+  const SMALL_PIECE_LENGTH: &'static str = "small-piece-length";
+  const UNEVEN_PIECE_LENGTH: &'static str = "uneven-piece-length";
+  pub(crate) const VALUES: &'static [&'static str] =
+    &[Self::SMALL_PIECE_LENGTH, Self::UNEVEN_PIECE_LENGTH];
+
   pub(crate) fn name(self) -> &'static str {
     match self {
-      Self::UnevenPieceLength => UNEVEN_PIECE_LENGTH,
-      Self::SmallPieceLength => SMALL_PIECE_LENGTH,
+      Self::SmallPieceLength => Self::SMALL_PIECE_LENGTH,
+      Self::UnevenPieceLength => Self::UNEVEN_PIECE_LENGTH,
     }
   }
 }
@@ -23,8 +25,8 @@ impl FromStr for Lint {
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text.replace('_', "-").to_lowercase().as_str() {
-      UNEVEN_PIECE_LENGTH => Ok(Self::UnevenPieceLength),
-      SMALL_PIECE_LENGTH => Ok(Self::SmallPieceLength),
+      Self::SMALL_PIECE_LENGTH => Ok(Self::SmallPieceLength),
+      Self::UNEVEN_PIECE_LENGTH => Ok(Self::UnevenPieceLength),
       _ => Err(Error::LintUnknown {
         text: text.to_string(),
       }),
