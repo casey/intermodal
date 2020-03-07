@@ -41,7 +41,7 @@ pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
 
 // modules
-pub(crate) use crate::{consts, error, use_color};
+pub(crate) use crate::{consts, error};
 
 // traits
 pub(crate) use crate::{

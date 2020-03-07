@@ -8,23 +8,23 @@ use crate::common::*;
 )]
 pub(crate) struct Create {
   #[structopt(
-    name = "ANNOUNCE",
     long = "announce",
+    value_name = "URL",
     required(true),
     help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, \
             also use `--announce-tier`."
   )]
   announce: Url,
   #[structopt(
-    name = "ALLOW",
     long = "allow",
-    help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, \
-            also use `--announce-tier`."
+    value_name = "LINT",
+    possible_values = Lint::VALUES,
+    help = "Allow `LINT`.",
   )]
   allowed_lints: Vec<Lint>,
   #[structopt(
     long = "announce-tier",
-    name = "ANNOUNCE-TIER",
+    value_name = "URL-LIST",
     help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
             tier. To add multiple trackers to a given tier, separate their announce URLs \
             with commas:\n\
@@ -41,15 +41,15 @@ pub(crate) struct Create {
   )]
   announce_tiers: Vec<String>,
   #[structopt(
-    name = "COMMENT",
     long = "comment",
-    help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of \
-            top-level metainfo dictionary."
+    value_name = "TEXT",
+    help = "Include `TEXT` in as the comment for generated `.torrent` file. Stored under \
+            `comment` key of top-level metainfo dictionary."
   )]
   comment: Option<String>,
   #[structopt(
-    name = "NODE",
     long = "dht-node",
+    value_name = "HOST-PORT",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
             where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
             brackets. May be given more than once to add multiple bootstrap nodes. Examples:
@@ -59,41 +59,37 @@ pub(crate) struct Create {
   )]
   dht_nodes: Vec<Node>,
   #[structopt(
-    name = "FOLLOW-SYMLINKS",
     long = "follow-symlinks",
     help = "Follow symlinks in torrent input. By default, symlinks to files and directories are \
             not included in torrent contents."
   )]
   follow_symlinks: bool,
   #[structopt(
-    name = "FORCE",
     long = "force",
     help = "Overwrite the destination `.torrent` file, if it exists."
   )]
   force: bool,
   #[structopt(
-    name = "GLOB",
     long = "glob",
+    value_name = "GLOB",
     help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the \
             last one taking precedence. Precede a glob with a ! to exclude it."
   )]
   globs: Vec<String>,
   #[structopt(
-    name = "INCLUDE-HIDDEN",
     long = "include-hidden",
     help = "Include hidden files that would otherwise be skipped, such as files that start with a \
             `.`, and files hidden by file attributes on macOS and Windows."
   )]
   include_hidden: bool,
   #[structopt(
-    name = "INCLUDE-JUNK",
     long = "include-junk",
     help = "Include junk files that would otherwise be skipped."
   )]
   include_junk: bool,
   #[structopt(
-    name = "INPUT",
     long = "input",
+    value_name = "INPUT",
     help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a \
             single-file torrent, otherwise if `INPUT` is a directory, torrent will be a \
             multi-file torrent.",
@@ -101,53 +97,48 @@ pub(crate) struct Create {
   )]
   input: PathBuf,
   #[structopt(
-    name = "MD5SUM",
     long = "md5sum",
     help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
             broken and only suitable for checking for accidental corruption."
   )]
   md5sum: bool,
   #[structopt(
-    name = "NAME",
     long = "name",
+    value_name = "TEXT",
     help = "Set name of torrent to `NAME`. Defaults to the filename of `--input`."
   )]
   name: Option<String>,
   #[structopt(
-    name = "NO-CREATED-BY",
     long = "no-created-by",
     help = "Do not populate `created by` key of generated torrent with imdl version information."
   )]
   no_created_by: bool,
   #[structopt(
-    name = "NO-CREATION-DATE",
     long = "no-creation-date",
     help = "Do not populate `creation date` key of generated torrent with current time."
   )]
   no_creation_date: bool,
   #[structopt(
-    name = "OPEN",
     long = "open",
     help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on \
             Linux; `open` on macOS; and `cmd /C start on Windows"
   )]
   open: bool,
   #[structopt(
-    name = "OUTPUT",
     long = "output",
+    value_name = "PATH",
     help = "Save `.torrent` file to `OUTPUT`, or `-` for standard output. Defaults to \
             `$INPUT.torrent`.",
     parse(from_os_str)
   )]
   output: Option<Target>,
   #[structopt(
-    name = "PIECE-LENGTH",
     long = "piece-length",
+    value_name = "BYTES",
     help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
   )]
   piece_length: Option<Bytes>,
   #[structopt(
-    name = "PRIVATE",
     long = "private",
     help = "Set the `private` flag. Torrent clients that understand the flag and participate in \
             the swarm of a torrent with the flag set will only announce themselves to the \
@@ -157,8 +148,8 @@ pub(crate) struct Create {
   )]
   private: bool,
   #[structopt(
-    name = "SOURCE",
     long = "source",
+    value_name = "TEXT",
     help = "Include `SOURCE` in generated `.torrent` file. Stored under `info.source` key of \
             metainfo dictionary."
   )]

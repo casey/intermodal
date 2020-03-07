@@ -13,9 +13,10 @@ pub(crate) struct Options {
   unstable: bool,
   #[structopt(
     long = "color",
-    default_value = use_color::AUTO,
+    value_name = "WHEN",
+    default_value = UseColor::AUTO,
     set = ArgSettings::CaseInsensitive,
-    possible_values = use_color::VALUES,
+    possible_values = UseColor::VALUES,
     help = "Print colorful output. When `auto`, the default, colored output is only enabled \
             if imdl detects that it is connected to a terminal, the `NO_COLOR` environment \
             variable is not set, and the `TERM` environment variable is not set with a \

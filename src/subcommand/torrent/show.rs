@@ -8,8 +8,8 @@ use crate::common::*;
 )]
 pub(crate) struct Show {
   #[structopt(
-    name = "TORRENT",
     long = "input",
+    value_name = "TORRENT",
     help = "Show information about `TORRENT`.",
     parse(from_os_str)
   )]
