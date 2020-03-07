@@ -1,18 +1,7 @@
 use crate::common::*;
 
-mod torrent;
-
 #[derive(StructOpt)]
-#[structopt(
-  about(consts::ABOUT),
-  version(consts::VERSION),
-  author(consts::AUTHOR),
-  help_message(consts::HELP_MESSAGE),
-  version_message(consts::VERSION_MESSAGE),
-  global_setting(AppSettings::ColoredHelp),
-  global_setting(AppSettings::ColorAuto)
-)]
-pub(crate) struct Opt {
+pub(crate) struct Options {
   #[structopt(
     long = "unstable",
     short = "u",
@@ -35,25 +24,14 @@ pub(crate) struct Opt {
                  value of `dumb`.",
   )]
   pub(crate) use_color: UseColor,
-  #[structopt(subcommand)]
-  subcommand: Subcommand,
 }
 
-impl Opt {
-  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    self.subcommand.run(env, self.unstable)
-  }
-}
-
-#[derive(StructOpt)]
-pub(crate) enum Subcommand {
-  Torrent(torrent::Torrent),
-}
-
-impl Subcommand {
-  pub(crate) fn run(self, env: &mut Env, unstable: bool) -> Result<(), Error> {
-    match self {
-      Self::Torrent(torrent) => torrent.run(env, unstable),
+impl Options {
+  pub(crate) fn require_unstable(&self, feature: &'static str) -> Result<(), Error> {
+    if self.unstable {
+      Ok(())
+    } else {
+      Err(Error::Unstable { feature })
     }
   }
 }
