@@ -11,21 +11,24 @@ pub(crate) struct Create {
     long = "announce",
     value_name = "URL",
     required(true),
-    help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, \
-            also use `--announce-tier`."
+    help = "Use `URL` as the primary tracker announce URL. To supply multiple announce URLs, also \
+            use `--announce-tier`."
   )]
   announce: Url,
   #[structopt(
     long = "allow",
     value_name = "LINT",
     possible_values = Lint::VALUES,
-    help = "Allow `LINT`.",
+    help = "Allow `LINT`. Lints check for conditions which, although technically permitted, are \
+            usually not desirable. For example, piece size can be any nonzero value, but probably \
+            shouldn't be below 16 KiB. The lint `small-piece-size` checks for this, and \
+            `--allow small-piece-size` can be used to disable this check.",
   )]
   allowed_lints: Vec<Lint>,
   #[structopt(
     long = "announce-tier",
     value_name = "URL-LIST",
-    help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
+    help = "Use `URL-LIST` as a tracker announce tiers. Each instance adds a new \
             tier. To add multiple trackers to a given tier, separate their announce URLs \
             with commas:\n\
             \n\
@@ -49,7 +52,7 @@ pub(crate) struct Create {
   comment: Option<String>,
   #[structopt(
     long = "dht-node",
-    value_name = "HOST-PORT",
+    value_name = "NODE",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
             where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
             brackets. May be given more than once to add multiple bootstrap nodes. Examples:
@@ -73,7 +76,7 @@ pub(crate) struct Create {
     long = "glob",
     value_name = "GLOB",
     help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the \
-            last one taking precedence. Precede a glob with a ! to exclude it."
+            last one taking precedence. Precede a glob with `!` to exclude it."
   )]
   globs: Vec<String>,
   #[structopt(
@@ -89,10 +92,9 @@ pub(crate) struct Create {
   include_junk: bool,
   #[structopt(
     long = "input",
-    value_name = "INPUT",
-    help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a \
-            single-file torrent, otherwise if `INPUT` is a directory, torrent will be a \
-            multi-file torrent.",
+    value_name = "PATH",
+    help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
+            torrent, otherwise if `PATH` is a directory, torrent will be a multi-file torrent.",
     parse(from_os_str)
   )]
   input: PathBuf,
@@ -105,7 +107,7 @@ pub(crate) struct Create {
   #[structopt(
     long = "name",
     value_name = "TEXT",
-    help = "Set name of torrent to `NAME`. Defaults to the filename of `--input`."
+    help = "Set name of torrent to `TEXT`. Defaults to the filename of `--input`."
   )]
   name: Option<String>,
   #[structopt(
@@ -126,16 +128,16 @@ pub(crate) struct Create {
   open: bool,
   #[structopt(
     long = "output",
-    value_name = "PATH",
-    help = "Save `.torrent` file to `OUTPUT`, or `-` for standard output. Defaults to \
-            `$INPUT.torrent`.",
+    value_name = "TARGET",
+    help = "Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. \
+            Defaults to `$INPUT.torrent`.",
     parse(from_os_str)
   )]
   output: Option<Target>,
   #[structopt(
     long = "piece-length",
     value_name = "BYTES",
-    help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
+    help = "Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib."
   )]
   piece_length: Option<Bytes>,
   #[structopt(
@@ -150,8 +152,10 @@ pub(crate) struct Create {
   #[structopt(
     long = "source",
     value_name = "TEXT",
-    help = "Include `SOURCE` in generated `.torrent` file. Stored under `info.source` key of \
-            metainfo dictionary."
+    help = "Set torrent source to `TEXT`. Stored under `info.source` key of metainfo dictionary. \
+            This is useful if you'd like to create torrents with the same content for different \
+            trackers, but with different infohashes, so a torrent client participating in \
+            multiple such swarms will report statistics correctly."
   )]
   source: Option<String>,
 }

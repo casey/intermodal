@@ -9,8 +9,8 @@ use crate::common::*;
 pub(crate) struct Show {
   #[structopt(
     long = "input",
-    value_name = "TORRENT",
-    help = "Show information about `TORRENT`.",
+    value_name = "PATH",
+    help = "Show information about the torrent at `PATH`.",
     parse(from_os_str)
   )]
   input: PathBuf,

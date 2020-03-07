@@ -10,8 +10,8 @@ pub(crate) struct Stats {
   #[structopt(
     long = "limit",
     short = "l",
-    value_name = "COUNT",
-    help = "Stop after processing the first `COUNT` torrents. Useful when processing large \
+    value_name = "N",
+    help = "Stop after processing the first `N` torrents. Useful when processing large \
             collections of `.torrent` files."
   )]
   limit: Option<u64>,
@@ -30,8 +30,8 @@ pub(crate) struct Stats {
   #[structopt(
     long = "input",
     short = "i",
-    value_name = "INPUT",
-    help = "Search `INPUT` for torrents. May be a directory to search or a single torrent file.",
+    value_name = "PATH",
+    help = "Search `PATH` for torrents. May be a directory or a single torrent file.",
     parse(from_os_str)
   )]
   input: PathBuf,

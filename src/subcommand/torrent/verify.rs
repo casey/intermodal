@@ -9,15 +9,16 @@ use crate::common::*;
 pub(crate) struct Verify {
   #[structopt(
     long = "metainfo",
-    value_name = "TORRENT",
-    help = "Verify input data against torrent metainfo in `TORRENT`.",
+    value_name = "FILE",
+    help = "Verify input data against torrent metainfo in `FILE`.",
     parse(from_os_str)
   )]
   metainfo: PathBuf,
   #[structopt(
     long = "input",
-    value_name = "INPUT",
-    help = "Verify `INPUT`. Defaults to `info.name` field of torrent metainfo.",
+    value_name = "PATH",
+    help = "Verify data at `PATH` against torrent metainfo. Defaults to `info.name` field of \
+            torrent metainfo.",
     parse(from_os_str)
   )]
   input: Option<PathBuf>,

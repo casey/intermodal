@@ -17,10 +17,10 @@ pub(crate) struct Options {
     default_value = UseColor::AUTO,
     set = ArgSettings::CaseInsensitive,
     possible_values = UseColor::VALUES,
-    help = "Print colorful output. When `auto`, the default, colored output is only enabled \
-            if imdl detects that it is connected to a terminal, the `NO_COLOR` environment \
-            variable is not set, and the `TERM` environment variable is not set with a \
-            value of `dumb`.",
+    help = "Print colorful output according to `WHEN`. When `auto`, the default, colored output \
+            is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` \
+            environment variable is not set, and the `TERM` environment variable is not set with \
+            a value of `dumb`.",
   )]
   pub(crate) use_color: UseColor,
 }
