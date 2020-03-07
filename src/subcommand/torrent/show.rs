@@ -10,7 +10,7 @@ pub(crate) struct Show {
   #[structopt(
     long = "input",
     value_name = "PATH",
-    help = "Show information about the torrent at `PATH`.",
+    help = "Show information about torrent at `PATH`.",
     parse(from_os_str)
   )]
   input: PathBuf,

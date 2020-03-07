@@ -11,8 +11,8 @@ pub(crate) struct Stats {
     long = "limit",
     short = "l",
     value_name = "N",
-    help = "Stop after processing the first `N` torrents. Useful when processing large \
-            collections of `.torrent` files."
+    help = "Stop after processing `N` torrents. Useful when processing large collections of \
+            `.torrent` files."
   )]
   limit: Option<u64>,
   #[structopt(

@@ -19,8 +19,8 @@ pub(crate) struct Create {
     long = "allow",
     value_name = "LINT",
     possible_values = Lint::VALUES,
-    help = "Allow `LINT`. Lints check for conditions which, although technically permitted, are \
-            usually not desirable. For example, piece size can be any nonzero value, but probably \
+    help = "Allow `LINT`. Lints check for conditions which, although permitted, are not usually \
+            desirable. For example, piece length can be any non-zero value, but probably \
             shouldn't be below 16 KiB. The lint `small-piece-size` checks for this, and \
             `--allow small-piece-size` can be used to disable this check.",
   )]
@@ -28,7 +28,7 @@ pub(crate) struct Create {
   #[structopt(
     long = "announce-tier",
     value_name = "URL-LIST",
-    help = "Use `URL-LIST` as a tracker announce tiers. Each instance adds a new \
+    help = "Use `URL-LIST` as a tracker announce tier. Each instance adds a new \
             tier. To add multiple trackers to a given tier, separate their announce URLs \
             with commas:\n\
             \n\
@@ -46,8 +46,8 @@ pub(crate) struct Create {
   #[structopt(
     long = "comment",
     value_name = "TEXT",
-    help = "Include `TEXT` in as the comment for generated `.torrent` file. Stored under \
-            `comment` key of top-level metainfo dictionary."
+    help = "Include `TEXT` as the comment for generated `.torrent` file. Stored under `comment` \
+            key of top-level metainfo dictionary."
   )]
   comment: Option<String>,
   #[structopt(
@@ -94,7 +94,7 @@ pub(crate) struct Create {
     long = "input",
     value_name = "PATH",
     help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
-            torrent, otherwise if `PATH` is a directory, torrent will be a multi-file torrent.",
+            torrent, if `PATH` is a directory, torrent will be a multi-file torrent.",
     parse(from_os_str)
   )]
   input: PathBuf,
@@ -107,7 +107,7 @@ pub(crate) struct Create {
   #[structopt(
     long = "name",
     value_name = "TEXT",
-    help = "Set name of torrent to `TEXT`. Defaults to the filename of `--input`."
+    help = "Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`."
   )]
   name: Option<String>,
   #[structopt(
@@ -152,10 +152,12 @@ pub(crate) struct Create {
   #[structopt(
     long = "source",
     value_name = "TEXT",
-    help = "Set torrent source to `TEXT`. Stored under `info.source` key of metainfo dictionary. \
-            This is useful if you'd like to create torrents with the same content for different \
-            trackers, but with different infohashes, so a torrent client participating in \
-            multiple such swarms will report statistics correctly."
+    help = "Set torrent source to `TEXT`. Stored under `source` key of info dictionary. This is \
+            useful for keeping statistics from being mis-reported when participating in swarms \
+            with the same contents, but with different trackers. When source is set to a unique \
+            value for torrents with the same contents, torrent clients will treat them as \
+            distinct torrents, and not share peers between them, and will correctly report \
+            download and upload statistics to multiple trackers."
   )]
   source: Option<String>,
 }

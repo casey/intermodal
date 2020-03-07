@@ -10,15 +10,15 @@ pub(crate) struct Verify {
   #[structopt(
     long = "metainfo",
     value_name = "FILE",
-    help = "Verify input data against torrent metainfo in `FILE`.",
+    help = "Verify torrent contents against torrent metainfo in `FILE`.",
     parse(from_os_str)
   )]
   metainfo: PathBuf,
   #[structopt(
     long = "input",
     value_name = "PATH",
-    help = "Verify data at `PATH` against torrent metainfo. Defaults to `info.name` field of \
-            torrent metainfo.",
+    help = "Verify torrent contents at `PATH` against torrent metainfo. Defaults to `name` field \
+            of torrent info dictionary.",
     parse(from_os_str)
   )]
   input: Option<PathBuf>,
