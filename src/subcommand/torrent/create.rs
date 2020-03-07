@@ -11,54 +11,48 @@ pub(crate) struct Create {
     name = "ANNOUNCE",
     long = "announce",
     required(true),
-    help = "Use `ANNOUNCE` as the primary tracker announce URL.",
-    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce \
-                 URLs, also use `--announce-tier`."
+    help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, \
+            also use `--announce-tier`."
   )]
   announce: Url,
   #[structopt(
     name = "ALLOW",
     long = "allow",
-    help = "Use `ANNOUNCE` as the primary tracker announce URL.",
-    long_help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce \
-                 URLs, also use `--announce-tier`."
+    help = "Use `ANNOUNCE` as the primary tracker announce URL. To supply multiple announce URLs, \
+            also use `--announce-tier`."
   )]
   allowed_lints: Vec<Lint>,
   #[structopt(
     long = "announce-tier",
     name = "ANNOUNCE-TIER",
-    help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers.",
-    long_help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
-                 tier. To add multiple trackers to a given tier, separate their announce URLs \
-                 with commas:\n\
-                 \n\
-                 `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
-                 \n\
-                 Announce tiers are stored in the `announce-list` key of the top-level metainfo \
-                 dictionary as a list of lists of strings, as defined by BEP 12: Multitracker \
-                 Metadata Extension.
-                 \n\
-                 Note: Many BitTorrent clients do not implement the behavior described in BEP \
-                 12. See the discussion here for more details: \
-                 https://github.com/bittorrent/bittorrent.org/issues/82"
+    help = "Add `ANNOUNCE-TIER` to list of tracker announce tiers. Each instance adds a new \
+            tier. To add multiple trackers to a given tier, separate their announce URLs \
+            with commas:\n\
+            \n\
+            `--announce-tier udp://example.com:80/announce,https://example.net:443/announce`
+            \n\
+            Announce tiers are stored in the `announce-list` key of the top-level metainfo \
+            dictionary as a list of lists of strings, as defined by BEP 12: Multitracker \
+            Metadata Extension.
+            \n\
+            Note: Many BitTorrent clients do not implement the behavior described in BEP \
+            12. See the discussion here for more details: \
+            https://github.com/bittorrent/bittorrent.org/issues/82"
   )]
   announce_tiers: Vec<String>,
   #[structopt(
     name = "COMMENT",
     long = "comment",
-    help = "Include `COMMENT` in generated `.torrent` file.",
-    long_help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of \
-                 top-level metainfo dictionary."
+    help = "Include `COMMENT` in generated `.torrent` file. Stored under `comment` key of \
+            top-level metainfo dictionary."
   )]
   comment: Option<String>,
   #[structopt(
     name = "NODE",
     long = "dht-node",
-    help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`.",
-    long_help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form \
-                 `HOST:PORT`, where `HOST` is a domain name, an IPv4 address, or an IPv6 address \
-                 surrounded by brackets. May be given more than once to add multiple bootstrap \
-                 nodes. Examples:
+    help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
+            where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
+            brackets. May be given more than once to add multiple bootstrap nodes. Examples:
     `--dht-node router.example.com:1337`
     `--dht-node 203.0.113.0:2290`
     `--dht-node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
@@ -100,10 +94,9 @@ pub(crate) struct Create {
   #[structopt(
     name = "INPUT",
     long = "input",
-    help = "Read torrent contents from `INPUT`.",
-    long_help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a \
-                 single-file torrent, otherwise if `INPUT` is a directory, torrent will be a \
-                 multi-file torrent.",
+    help = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will be a \
+            single-file torrent, otherwise if `INPUT` is a directory, torrent will be a \
+            multi-file torrent.",
     parse(from_os_str)
   )]
   input: PathBuf,
@@ -111,9 +104,7 @@ pub(crate) struct Create {
     name = "MD5SUM",
     long = "md5sum",
     help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
-            broken and only suitable for safeguarding against accidental corruption.",
-    long_help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
-                 broken and only suitable for checking for accidental corruption."
+            broken and only suitable for checking for accidental corruption."
   )]
   md5sum: bool,
   #[structopt(
@@ -137,9 +128,8 @@ pub(crate) struct Create {
   #[structopt(
     name = "OPEN",
     long = "open",
-    help = "Open `.torrent` file after creation",
-    long_help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or \
-                 `kde-open` on Linux; `open` on macOS; and `cmd /C start on Windows"
+    help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on \
+            Linux; `open` on macOS; and `cmd /C start on Windows"
   )]
   open: bool,
   #[structopt(
@@ -153,28 +143,24 @@ pub(crate) struct Create {
   #[structopt(
     name = "PIECE-LENGTH",
     long = "piece-length",
-    help = "Set piece length to `PIECE-LENGTH` bytes.",
-    long_help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and \
-                 gib."
+    help = "Set piece length to `PIECE-LENGTH` bytes. Accepts SI units, e.g. kib, mib, and gib."
   )]
   piece_length: Option<Bytes>,
   #[structopt(
     name = "PRIVATE",
     long = "private",
-    help = "Set the `private` flag.",
-    long_help = "Set the `private` flag. Torrent clients that understand the flag and participate \
-                 in the swarm of a torrent with the flag set will only announce themselves to the \
-                 announce URLs included in the torrent, and will not use other peer discovery \
-                 mechanisms, such as the DHT or local peer discovery. See BEP 27: Private \
-                 Torrents for more information."
+    help = "Set the `private` flag. Torrent clients that understand the flag and participate in \
+            the swarm of a torrent with the flag set will only announce themselves to the \
+            announce URLs included in the torrent, and will not use other peer discovery \
+            mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for \
+            more information."
   )]
   private: bool,
   #[structopt(
     name = "SOURCE",
     long = "source",
-    help = "Include `SOURCE` in generated `.torrent` file.",
-    long_help = "Include `SOURCe` in generated `.torrent` file. Stored under `info.source` key of \
-                 metainfo dictionary."
+    help = "Include `SOURCE` in generated `.torrent` file. Stored under `info.source` key of \
+            metainfo dictionary."
   )]
   source: Option<String>,
 }
