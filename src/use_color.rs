@@ -1,11 +1,5 @@
 use crate::common::*;
 
-pub(crate) const AUTO: &str = "auto";
-pub(crate) const ALWAYS: &str = "always";
-pub(crate) const NEVER: &str = "never";
-
-pub(crate) const VALUES: &[&str] = &[AUTO, ALWAYS, NEVER];
-
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub(crate) enum UseColor {
   Auto,
@@ -13,14 +7,21 @@ pub(crate) enum UseColor {
   Never,
 }
 
+impl UseColor {
+  pub(crate) const ALWAYS: &'static str = "always";
+  pub(crate) const AUTO: &'static str = "auto";
+  pub(crate) const NEVER: &'static str = "never";
+  pub(crate) const VALUES: &'static [&'static str] = &[Self::AUTO, Self::ALWAYS, Self::NEVER];
+}
+
 impl FromStr for UseColor {
   type Err = Infallible;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     match text.to_lowercase().as_str() {
-      AUTO => Ok(Self::Auto),
-      ALWAYS => Ok(Self::Always),
-      NEVER => Ok(Self::Never),
+      Self::AUTO => Ok(Self::Auto),
+      Self::ALWAYS => Ok(Self::Always),
+      Self::NEVER => Ok(Self::Never),
       _ => unreachable!(),
     }
   }
@@ -32,11 +33,20 @@ mod tests {
 
   #[test]
   fn from_str() {
-    assert_eq!(UseColor::Auto, AUTO.parse().unwrap());
-    assert_eq!(UseColor::Always, ALWAYS.parse().unwrap());
-    assert_eq!(UseColor::Never, NEVER.parse().unwrap());
-    assert_eq!(UseColor::Auto, AUTO.to_uppercase().parse().unwrap());
-    assert_eq!(UseColor::Always, ALWAYS.to_uppercase().parse().unwrap());
-    assert_eq!(UseColor::Never, NEVER.to_uppercase().parse().unwrap());
+    assert_eq!(UseColor::Auto, UseColor::AUTO.parse().unwrap());
+    assert_eq!(UseColor::Always, UseColor::ALWAYS.parse().unwrap());
+    assert_eq!(UseColor::Never, UseColor::NEVER.parse().unwrap());
+    assert_eq!(
+      UseColor::Auto,
+      UseColor::AUTO.to_uppercase().parse().unwrap()
+    );
+    assert_eq!(
+      UseColor::Always,
+      UseColor::ALWAYS.to_uppercase().parse().unwrap()
+    );
+    assert_eq!(
+      UseColor::Never,
+      UseColor::NEVER.to_uppercase().parse().unwrap()
+    );
   }
 }
