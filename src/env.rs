@@ -52,7 +52,7 @@ impl Env {
     #[cfg(not(test))]
     pretty_env_logger::init();
 
-    let args = Args::from_iter_safe(&self.args)?;
+    let args = Arguments::from_iter_safe(&self.args)?;
 
     match args.options().use_color {
       UseColor::Always => self.err_style = Style::active(),

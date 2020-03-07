@@ -10,14 +10,14 @@ use crate::common::*;
   global_setting(AppSettings::ColoredHelp),
   global_setting(AppSettings::ColorAuto)
 )]
-pub(crate) struct Args {
+pub(crate) struct Arguments {
   #[structopt(flatten)]
   options: Options,
   #[structopt(subcommand)]
   subcommand: Subcommand,
 }
 
-impl Args {
+impl Arguments {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     self.subcommand.run(env, &self.options)
   }

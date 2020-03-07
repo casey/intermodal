@@ -52,7 +52,7 @@ mod test_env_builder;
 #[cfg(test)]
 mod capture;
 
-mod args;
+mod arguments;
 mod bytes;
 mod common;
 mod consts;
