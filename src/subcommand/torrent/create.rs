@@ -184,11 +184,15 @@ impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
 
+    let style = ProgressStyle::default_spinner().template("{spinner} Searching for files…");
+    let spinner = ProgressBar::new_spinner().with_style(style);
+    
     let files = Walker::new(&input)
       .include_junk(self.include_junk)
       .include_hidden(self.include_hidden)
       .follow_symlinks(self.follow_symlinks)
       .globs(&self.globs)?
+      .spinner(spinner)
       .files()?;
 
     let piece_length = self

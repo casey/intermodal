@@ -24,6 +24,7 @@ pub(crate) use std::{
 pub(crate) use bendy::{decoding::FromBencode, encoding::ToBencode, value::Value};
 pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
+pub(crate) use indicatif::{ProgressBar, ProgressStyle};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
