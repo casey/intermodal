@@ -865,6 +865,144 @@ mod tests {
   }
 
   #[test]
+  fn uneven_last_piece() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--allow",
+        "small-piece-length",
+        "--piece-length",
+        "4",
+        ],
+      tree: {
+        foo: "123",
+      },
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["123"]));
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Single {
+        length: Bytes(3),
+        md5sum: None,
+      }
+    )
+  }
+
+  #[test]
+  fn even_last_piece() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--allow",
+        "small-piece-length",
+        "--piece-length",
+        "4",
+        ],
+      tree: {
+        foo: "1234",
+      },
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["1234"]));
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Single {
+        length: Bytes(4),
+        md5sum: None,
+      }
+    )
+  }
+
+  #[test]
+  fn multi_piece_file() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--allow",
+        "small-piece-length",
+        "--piece-length",
+        "2",
+        ],
+      tree: {
+        foo: "1234",
+      },
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["12", "34"]));
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Single {
+        length: Bytes(4),
+        md5sum: None,
+      }
+    )
+  }
+
+  #[test]
+  fn multi_file_piece() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "dir",
+        "--announce",
+        "http://bar",
+        "--allow",
+        "small-piece-length",
+        "--piece-length",
+        "8",
+        "--md5sum",
+        ],
+      tree: {
+        dir: {
+          foo: "1234",
+          bar: "5678",
+        },
+      },
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("dir.torrent");
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["56781234"]));
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Multiple {
+        files: vec![
+          FileInfo {
+            path: FilePath::from_components(&["bar"]),
+            length: Bytes(4),
+            md5sum: Some(Md5Digest::from_data("5678")),
+          },
+          FileInfo {
+            path: FilePath::from_components(&["foo"]),
+            length: Bytes(4),
+            md5sum: Some(Md5Digest::from_data("1234")),
+          },
+        ],
+      }
+    )
+  }
+
+  #[test]
   fn single_small() {
     let mut env = test_env! {
       args: [
