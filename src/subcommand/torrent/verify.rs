@@ -8,20 +8,22 @@ use crate::common::*;
 )]
 pub(crate) struct Verify {
   #[structopt(
-    long = "metainfo",
-    value_name = "FILE",
+    long = "input",
+    short = "i",
+    value_name = "METAINFO",
     help = "Verify torrent contents against torrent metainfo in `FILE`.",
     parse(from_os_str)
   )]
   metainfo: PathBuf,
   #[structopt(
-    long = "input",
+    long = "content",
+    short = "c",
     value_name = "PATH",
-    help = "Verify torrent contents at `PATH` against torrent metainfo. Defaults to `name` field \
+    help = "Verify torrent content at `PATH` against torrent metainfo. Defaults to `name` field \
             of torrent info dictionary.",
     parse(from_os_str)
   )]
-  input: Option<PathBuf>,
+  content: Option<PathBuf>,
 }
 
 impl Verify {
@@ -29,8 +31,8 @@ impl Verify {
     let metainfo_path = env.resolve(&self.metainfo);
     let metainfo = Metainfo::load(&metainfo_path)?;
 
-    let base = if let Some(input) = &self.input {
-      env.resolve(input)
+    let base = if let Some(content) = &self.content {
+      env.resolve(content)
     } else {
       metainfo_path.parent().unwrap().join(&metainfo.info.name)
     };
@@ -87,7 +89,7 @@ mod tests {
       args: [
         "torrent",
         "verify",
-        "--metainfo",
+        "--input",
         torrent,
       ],
       tree: {},
@@ -130,7 +132,7 @@ mod tests {
       args: [
         "torrent",
         "verify",
-        "--metainfo",
+        "--input",
         torrent,
       ],
       tree: {},
@@ -139,6 +141,55 @@ mod tests {
     assert_matches!(verify_env.run(), Err(Error::Verify { .. }));
 
     assert_eq!(verify_env.err(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn alternate_path() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    let foo = create_env.resolve("foo");
+
+    let bar = create_env.resolve("bar");
+
+    fs::rename(&foo, &bar).unwrap();
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        torrent,
+        "--content",
+        bar,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.run(), Ok(()));
+
+    assert_eq!(verify_env.err(), "Verification succeeded.\n");
 
     Ok(())
   }
