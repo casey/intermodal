@@ -183,8 +183,24 @@ pub(crate) struct Create {
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
+    
+    let mut announce_list = Vec::new();
+    for tier in &self.announce_tiers {
+      let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
 
-    let style = ProgressStyle::default_spinner().template("{spinner} Searching for files…");
+      tier
+        .iter()
+        .map(|announce| announce.parse())
+        .collect::<Result<Vec<Url>, url::ParseError>>()
+        .context(error::AnnounceUrlParse)?;
+
+      announce_list.push(tier);
+    }
+
+    errln!(env, "[1/3] Searching for files…");
+
+    let style = ProgressStyle::default_spinner().template("{spinner}");
+
     let spinner = ProgressBar::new_spinner().with_style(style);
     
     let files = Walker::new(&input)
@@ -214,19 +230,6 @@ impl Create {
 
     if linter.is_denied(Lint::SmallPieceLength) && piece_length.count() < 16 * 1024 {
       return Err(Error::PieceLengthSmall);
-    }
-
-    let mut announce_list = Vec::new();
-    for tier in &self.announce_tiers {
-      let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
-
-      tier
-        .iter()
-        .map(|announce| announce.parse())
-        .collect::<Result<Vec<Url>, url::ParseError>>()
-        .context(error::AnnounceUrlParse)?;
-
-      announce_list.push(tier);
     }
 
     let filename = input.file_name().ok_or_else(|| Error::FilenameExtract {
@@ -272,11 +275,15 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
+    errln!(env, "[2/3] Hashing pieces…");
+
     let (mode, pieces) = Hasher::hash(
       &files,
       self.md5sum,
       piece_length.as_piece_length()?.into_usize(),
     )?;
+
+    errln!(env, "[3/3] Writing metainfo to `{}`…", output);
 
     let info = Info {
       source: self.source,
