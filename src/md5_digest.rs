@@ -21,6 +21,11 @@ impl Md5Digest {
 
     Self { bytes }
   }
+
+  #[cfg(test)]
+  pub(crate) fn from_data(data: impl AsRef<[u8]>) -> Self {
+    md5::compute(data).into()
+  }
 }
 
 impl From<md5::Digest> for Md5Digest {
