@@ -2,18 +2,20 @@ use crate::common::*;
 
 pub(crate) struct TestEnvBuilder {
   args: Vec<OsString>,
+  current_dir: Option<PathBuf>,
   out_is_term: bool,
-  use_color: bool,
   tempdir: Option<TempDir>,
+  use_color: bool,
 }
 
 impl TestEnvBuilder {
   pub(crate) fn new() -> TestEnvBuilder {
     TestEnvBuilder {
       args: Vec::new(),
+      current_dir: None,
       out_is_term: false,
-      use_color: false,
       tempdir: None,
+      use_color: false,
     }
   }
 
@@ -24,6 +26,11 @@ impl TestEnvBuilder {
 
   pub(crate) fn arg(mut self, arg: impl Into<OsString>) -> Self {
     self.args.push(arg.into());
+    self
+  }
+
+  pub(crate) fn current_dir(mut self, path: PathBuf) -> Self {
+    self.current_dir = Some(path);
     self
   }
 
@@ -43,8 +50,16 @@ impl TestEnvBuilder {
     let err = Capture::new();
     let out = Capture::new();
 
+    let tempdir = self.tempdir.unwrap_or_else(|| tempfile::tempdir().unwrap());
+
+    let current_dir = if let Some(current_dir) = self.current_dir {
+      tempdir.path().join(current_dir)
+    } else {
+      tempdir.path().to_owned()
+    };
+
     let env = Env::new(
-      self.tempdir.unwrap_or_else(|| tempfile::tempdir().unwrap()),
+      current_dir,
       out.clone(),
       if self.use_color && self.out_is_term {
         Style::active()
@@ -57,6 +72,6 @@ impl TestEnvBuilder {
       self.args,
     );
 
-    TestEnv::new(env, err, out)
+    TestEnv::new(tempdir, env, err, out)
   }
 }

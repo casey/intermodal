@@ -3,6 +3,7 @@ use crate::common::*;
 macro_rules! test_env {
   {
     args: [$($arg:expr),* $(,)?],
+    $(cwd: $cwd:expr,)?
     tree: {
       $($tree:tt)*
     } $(,)?
@@ -11,6 +12,7 @@ macro_rules! test_env {
       let tempdir = temptree! { $($tree)* };
 
       TestEnvBuilder::new()
+        $(.current_dir(tempdir.path().join($cwd)))?
         .tempdir(tempdir)
         .arg("imdl")
         $(.arg($arg))*
@@ -21,13 +23,20 @@ macro_rules! test_env {
 
 pub(crate) struct TestEnv {
   env: Env,
+  #[allow(unused)]
+  tempdir: TempDir,
   err: Capture,
   out: Capture,
 }
 
 impl TestEnv {
-  pub(crate) fn new(env: Env, err: Capture, out: Capture) -> TestEnv {
-    Self { err, env, out }
+  pub(crate) fn new(tempdir: TempDir, env: Env, err: Capture, out: Capture) -> TestEnv {
+    Self {
+      tempdir,
+      err,
+      env,
+      out,
+    }
   }
 
   pub(crate) fn err(&self) -> String {
