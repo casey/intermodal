@@ -382,6 +382,56 @@ mod tests {
   }
 
   #[test]
+  fn input_dot() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        ".",
+        "--announce",
+        "https://bar",
+      ],
+      cwd: "dir",
+      tree: {
+        dir: {
+          foo: "",
+        },
+      }
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("../dir.torrent");
+    assert_eq!(metainfo.info.name, "dir");
+    assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
+  }
+
+  #[test]
+  fn input_dot_dot() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "..",
+        "--announce",
+        "https://bar",
+      ],
+      cwd: "a/b",
+      tree: {
+        a: {
+          b: {
+            foo: "",
+          },
+        },
+      }
+    };
+    env.run().unwrap();
+    let metainfo = env.load_metainfo("../../a.torrent");
+    assert_eq!(metainfo.info.name, "a");
+    assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
+  }
+
+  #[test]
   fn privacy_defaults_to_false() {
     let mut env = test_env! {
       args: ["torrent", "create", "--input", "foo", "--announce", "https://bar"],
