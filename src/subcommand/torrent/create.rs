@@ -9,6 +9,7 @@ use crate::common::*;
 pub(crate) struct Create {
   #[structopt(
     long = "announce",
+    short = "a",
     value_name = "URL",
     required(true),
     help = "Use `URL` as the primary tracker announce URL. To supply multiple announce URLs, also \
@@ -17,6 +18,7 @@ pub(crate) struct Create {
   announce: Url,
   #[structopt(
     long = "allow",
+    short = "A",
     value_name = "LINT",
     possible_values = Lint::VALUES,
     help = "Allow `LINT`. Lints check for conditions which, although permitted, are not usually \
@@ -27,6 +29,7 @@ pub(crate) struct Create {
   allowed_lints: Vec<Lint>,
   #[structopt(
     long = "announce-tier",
+    short = "t",
     value_name = "URL-LIST",
     help = "Use `URL-LIST` as a tracker announce tier. Each instance adds a new \
             tier. To add multiple trackers to a given tier, separate their announce URLs \
@@ -45,35 +48,40 @@ pub(crate) struct Create {
   announce_tiers: Vec<String>,
   #[structopt(
     long = "comment",
+    short = "c",
     value_name = "TEXT",
     help = "Include `TEXT` as the comment for generated `.torrent` file. Stored under `comment` \
             key of top-level metainfo dictionary."
   )]
   comment: Option<String>,
   #[structopt(
-    long = "dht-node",
+    long = "node",
+    short = "n",
     value_name = "NODE",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
             where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
             brackets. May be given more than once to add multiple bootstrap nodes. Examples:
-    `--dht-node router.example.com:1337`
-    `--dht-node 203.0.113.0:2290`
-    `--dht-node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
+    `--node router.example.com:1337`
+    `--node 203.0.113.0:2290`
+    `--node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
   )]
   dht_nodes: Vec<Node>,
   #[structopt(
     long = "follow-symlinks",
+    short = "F",
     help = "Follow symlinks in torrent input. By default, symlinks to files and directories are \
             not included in torrent contents."
   )]
   follow_symlinks: bool,
   #[structopt(
     long = "force",
+    short = "f",
     help = "Overwrite the destination `.torrent` file, if it exists."
   )]
   force: bool,
   #[structopt(
     long = "glob",
+    short = "g",
     value_name = "GLOB",
     help = "Include or exclude files that match `GLOB`. Multiple glob may be provided, with the \
             last one taking precedence. Precede a glob with `!` to exclude it."
@@ -81,17 +89,20 @@ pub(crate) struct Create {
   globs: Vec<String>,
   #[structopt(
     long = "include-hidden",
+    short = "h",
     help = "Include hidden files that would otherwise be skipped, such as files that start with a \
             `.`, and files hidden by file attributes on macOS and Windows."
   )]
   include_hidden: bool,
   #[structopt(
     long = "include-junk",
+    short = "j",
     help = "Include junk files that would otherwise be skipped."
   )]
   include_junk: bool,
   #[structopt(
     long = "input",
+    short = "i",
     value_name = "PATH",
     help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
             torrent, if `PATH` is a directory, torrent will be a multi-file torrent.",
@@ -99,13 +110,15 @@ pub(crate) struct Create {
   )]
   input: PathBuf,
   #[structopt(
-    long = "md5sum",
+    long = "md5",
+    short = "M",
     help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
             broken and only suitable for checking for accidental corruption."
   )]
   md5sum: bool,
   #[structopt(
     long = "name",
+    short = "N",
     value_name = "TEXT",
     help = "Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`."
   )]
@@ -122,12 +135,14 @@ pub(crate) struct Create {
   no_creation_date: bool,
   #[structopt(
     long = "open",
+    short = "O",
     help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on \
             Linux; `open` on macOS; and `cmd /C start on Windows"
   )]
   open: bool,
   #[structopt(
     long = "output",
+    short = "o",
     value_name = "TARGET",
     help = "Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. \
             Defaults to `$INPUT.torrent`.",
@@ -136,12 +151,14 @@ pub(crate) struct Create {
   output: Option<Target>,
   #[structopt(
     long = "piece-length",
+    short = "p",
     value_name = "BYTES",
     help = "Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib."
   )]
   piece_length: Option<Bytes>,
   #[structopt(
     long = "private",
+    short = "P",
     help = "Set the `private` flag. Torrent clients that understand the flag and participate in \
             the swarm of a torrent with the flag set will only announce themselves to the \
             announce URLs included in the torrent, and will not use other peer discovery \
@@ -151,6 +168,7 @@ pub(crate) struct Create {
   private: bool,
   #[structopt(
     long = "source",
+    short = "s",
     value_name = "TEXT",
     help = "Set torrent source to `TEXT`. Stored under `source` key of info dictionary. This is \
             useful for keeping statistics from being mis-reported when participating in swarms \
@@ -971,7 +989,7 @@ mod tests {
         "small-piece-length",
         "--piece-length",
         "8",
-        "--md5sum",
+        "--md5",
         ],
       tree: {
         dir: {
@@ -1121,7 +1139,7 @@ mod tests {
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum",
+        "--md5",
       ],
       tree: {
         foo: {
@@ -1192,7 +1210,7 @@ mod tests {
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum"
+        "--md5"
       ],
       tree: {
         foo: {
@@ -1699,7 +1717,7 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum",
+        "--md5",
       ],
       tree: {},
     };
@@ -1725,7 +1743,7 @@ Content Size  9 bytes
         "--announce",
         "http://bar",
         "--follow-symlinks",
-        "--md5sum",
+        "--md5",
       ],
       tree: {},
     };
@@ -1768,7 +1786,7 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum",
+        "--md5",
       ],
       tree: {},
     };
@@ -1796,7 +1814,7 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum",
+        "--md5",
       ],
       tree: {
         foo: {
@@ -1825,7 +1843,7 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--md5sum"
+        "--md5"
       ],
       tree: {
         foo: {
@@ -2056,7 +2074,7 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--dht-node",
+        "--node",
         "blah",
       ],
       tree: {
@@ -2076,11 +2094,11 @@ Content Size  9 bytes
         "foo",
         "--announce",
         "http://bar",
-        "--dht-node",
+        "--node",
         "router.example.com:1337",
-        "--dht-node",
+        "--node",
         "203.0.113.0:2290",
-        "--dht-node",
+        "--node",
         "[2001:db8:4275:7920:6269:7463:6f69:6e21]:8832",
       ],
       tree: {
