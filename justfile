@@ -42,12 +42,17 @@ lint:
 preview-readme:
 	grip -b README.md
 
+# build and serve the book
+book:
+	mdbook serve book --open
+
 # add git log messages to changelog
 changes:
 	git log --pretty=format:%s >> CHANGELOG.md
 
 dev-deps:
 	brew install grip
+	cargo install mdbook
 
 # update readme table of contents
 update-toc:
