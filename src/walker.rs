@@ -18,8 +18,8 @@ pub(crate) struct Walker {
 }
 
 impl Walker {
-  pub(crate) fn new(root: &Path) -> Walker {
-    Walker {
+  pub(crate) fn new(root: &Path) -> Self {
+    Self {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
@@ -30,14 +30,14 @@ impl Walker {
   }
 
   pub(crate) fn include_junk(self, include_junk: bool) -> Self {
-    Walker {
+    Self {
       include_junk,
       ..self
     }
   }
 
   pub(crate) fn include_hidden(self, include_hidden: bool) -> Self {
-    Walker {
+    Self {
       include_hidden,
       ..self
     }
@@ -57,14 +57,14 @@ impl Walker {
   }
 
   pub(crate) fn follow_symlinks(self, follow_symlinks: bool) -> Self {
-    Walker {
+    Self {
       follow_symlinks,
       ..self
     }
   }
 
   pub(crate) fn spinner(self, spinner: ProgressBar) -> Self {
-    Walker {
+    Self {
       spinner: Some(spinner),
       ..self
     }
