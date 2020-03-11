@@ -64,14 +64,13 @@ impl Walker {
   }
 
   pub(crate) fn spinner(self, spinner: ProgressBar) -> Self {
-      Walker {
-          spinner: Some(spinner),
-          ..self
-      }
+    Walker {
+      spinner: Some(spinner),
+      ..self
+    }
   }
 
   pub(crate) fn files(self) -> Result<Files, Error> {
-
     if !self.follow_symlinks
       && self
         .root
@@ -93,10 +92,13 @@ impl Walker {
     }
 
     let filter = |entry: &walkdir::DirEntry| {
-        if let Some(s) = &self.spinner {
-            s.tick();
-        }
       let path = entry.path();
+
+      if let Some(s) = &self.spinner {
+        let display_path = path.strip_prefix(&self.root).unwrap_or(&path);
+        s.set_message(&display_path.display().to_string());
+        s.tick();
+      }
 
       let file_name = entry.file_name();
 

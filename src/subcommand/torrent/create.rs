@@ -199,7 +199,7 @@ impl Create {
 
     errln!(env, "[1/3] \u{1F9FF} Searching for files…");
 
-    let style = ProgressStyle::default_spinner().template("{spinner}");
+    let style = ProgressStyle::default_spinner().template("{spinner} {msg}…");
 
     let spinner = ProgressBar::new_spinner().with_style(style);
 
