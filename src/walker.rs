@@ -178,7 +178,6 @@ impl Walker {
 
     true
   }
-
 }
 
 #[cfg(test)]

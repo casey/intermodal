@@ -183,7 +183,7 @@ pub(crate) struct Create {
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
-    
+
     let mut announce_list = Vec::new();
     for tier in &self.announce_tiers {
       let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
@@ -2149,10 +2149,8 @@ Content Size  9 bytes
     fs::write(env.resolve("foo"), "").unwrap();
 
     let want = format!(
-      "[1/3] \u{1F9FF} Searching for files…\n\
-       [2/3] \u{1F9EE} Hashing pieces…\n\
-       [3/3] \u{1F4BE} Writing metainfo to `{}`…\n\
-       \u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      "[1/3] \u{1F9FF} Searching for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \u{1F4BE} \
+       Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
       env.resolve("foo.torrent").display()
     );
 
