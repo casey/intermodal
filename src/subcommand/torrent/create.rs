@@ -197,12 +197,12 @@ impl Create {
       announce_list.push(tier);
     }
 
-    errln!(env, "[1/3] Searching for files…");
+    errln!(env, "[1/3] \u{1F9FF} Searching for files…");
 
     let style = ProgressStyle::default_spinner().template("{spinner}");
 
     let spinner = ProgressBar::new_spinner().with_style(style);
-    
+
     let files = Walker::new(&input)
       .include_junk(self.include_junk)
       .include_hidden(self.include_hidden)
@@ -275,7 +275,7 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    errln!(env, "[2/3] Hashing pieces…");
+    errln!(env, "[2/3] \u{1F9EE} Hashing pieces…");
 
     let (mode, pieces) = Hasher::hash(
       &files,
@@ -283,7 +283,7 @@ impl Create {
       piece_length.as_piece_length()?.into_usize(),
     )?;
 
-    errln!(env, "[3/3] Writing metainfo to `{}`…", output);
+    errln!(env, "[3/3] \u{1F4BE} Writing metainfo to {}…", output);
 
     let info = Info {
       source: self.source,
@@ -355,6 +355,8 @@ impl Create {
         return Err(Error::Verify { status });
       }
     }
+
+    errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}");
 
     Ok(())
   }
@@ -2128,5 +2130,34 @@ Content Size  9 bytes
           .unwrap(),
       ]),
     );
+  }
+
+  #[test]
+  fn create_progress_messages() {
+    let mut env = TestEnvBuilder::new()
+      .arg_slice(&[
+        "imdl",
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+      ])
+      .build();
+
+    fs::write(env.resolve("foo"), "").unwrap();
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching for files…\n\
+       [2/3] \u{1F9EE} Hashing pieces…\n\
+       [3/3] \u{1F4BE} Writing metainfo to `{}`…\n\
+       \u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      env.resolve("foo.torrent").display()
+    );
+
+    env.run().unwrap();
+
+    assert_eq!(env.err(), want);
   }
 }
