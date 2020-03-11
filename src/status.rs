@@ -7,8 +7,8 @@ pub(crate) struct Status {
 }
 
 impl Status {
-  pub(crate) fn new(pieces: bool, files: Vec<FileStatus>) -> Status {
-    Status { pieces, files }
+  pub(crate) fn new(pieces: bool, files: Vec<FileStatus>) -> Self {
+    Self { pieces, files }
   }
 
   pub(crate) fn pieces(&self) -> bool {

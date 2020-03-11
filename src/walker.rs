@@ -14,28 +14,30 @@ pub(crate) struct Walker {
   include_junk: bool,
   patterns: Vec<Pattern>,
   root: PathBuf,
+  spinner: Option<ProgressBar>,
 }
 
 impl Walker {
-  pub(crate) fn new(root: &Path) -> Walker {
-    Walker {
+  pub(crate) fn new(root: &Path) -> Self {
+    Self {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
       patterns: Vec::new(),
       root: root.to_owned(),
+      spinner: None,
     }
   }
 
   pub(crate) fn include_junk(self, include_junk: bool) -> Self {
-    Walker {
+    Self {
       include_junk,
       ..self
     }
   }
 
   pub(crate) fn include_hidden(self, include_hidden: bool) -> Self {
-    Walker {
+    Self {
       include_hidden,
       ..self
     }
@@ -55,8 +57,15 @@ impl Walker {
   }
 
   pub(crate) fn follow_symlinks(self, follow_symlinks: bool) -> Self {
-    Walker {
+    Self {
       follow_symlinks,
+      ..self
+    }
+  }
+
+  pub(crate) fn spinner(self, spinner: ProgressBar) -> Self {
+    Self {
+      spinner: Some(spinner),
       ..self
     }
   }
@@ -84,6 +93,12 @@ impl Walker {
 
     let filter = |entry: &walkdir::DirEntry| {
       let path = entry.path();
+
+      if let Some(s) = &self.spinner {
+        let display_path = path.strip_prefix(&self.root).unwrap_or(&path);
+        s.set_message(&display_path.display().to_string());
+        s.tick();
+      }
 
       let file_name = entry.file_name();
 
