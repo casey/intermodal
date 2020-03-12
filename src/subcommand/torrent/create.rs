@@ -199,7 +199,7 @@ impl Create {
 
     errln!(env, "[1/3] \u{1F9FF} Searching for files…");
 
-    let style = ProgressStyle::default_spinner().template("{spinner} {msg}…");
+    let style = ProgressStyle::default_spinner().template("{spinner:.green} {msg:.bold}…");
 
     let spinner = ProgressBar::new_spinner().with_style(style);
 
@@ -277,10 +277,17 @@ impl Create {
 
     errln!(env, "[2/3] \u{1F9EE} Hashing pieces…");
 
+    let style = ProgressStyle::default_bar()
+        .template("{spinner:.green} [{elapsed_precise}] \u{2588}{bar:40.cyan/blue}\u{2588} {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
+        .progress_chars("\u{2593}\u{2592}\u{2591}");
+
+    let progress_bar = ProgressBar::new(files.total_size().count()).with_style(style);
+
     let (mode, pieces) = Hasher::hash(
       &files,
       self.md5sum,
       piece_length.as_piece_length()?.into_usize(),
+      progress_bar,
     )?;
 
     errln!(env, "[3/3] \u{1F4BE} Writing metainfo to {}…", output);
