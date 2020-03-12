@@ -69,6 +69,7 @@ impl TestEnvBuilder {
       self.out_is_term,
       err.clone(),
       Style::inactive(),
+      false,
       self.args,
     );
 

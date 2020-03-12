@@ -8,6 +8,7 @@ pub(crate) struct Env {
   err_style: Style,
   out_style: Style,
   out_is_term: bool,
+  err_is_term: bool,
 }
 
 impl Env {
@@ -33,6 +34,7 @@ impl Env {
     };
 
     let out_is_term = atty::is(atty::Stream::Stdout);
+    let err_is_term = atty::is(atty::Stream::Stderr);
 
     Self::new(
       dir,
@@ -41,6 +43,7 @@ impl Env {
       out_is_term,
       io::stderr(),
       err_style,
+      err_is_term,
       env::args(),
     )
   }
@@ -70,6 +73,7 @@ impl Env {
     out_is_term: bool,
     err: E,
     err_style: Style,
+    err_is_term: bool,
     args: I,
   ) -> Self
   where
@@ -86,6 +90,7 @@ impl Env {
       out_style,
       out_is_term,
       err_style,
+      err_is_term,
     }
   }
 
@@ -145,6 +150,10 @@ impl Env {
 
   pub(crate) fn out_style(&self) -> Style {
     self.out_style
+  }
+
+  pub(crate) fn err_is_term(&self) -> bool {
+    self.err_is_term
   }
 }
 
