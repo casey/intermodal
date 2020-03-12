@@ -1,6 +1,7 @@
 // stdlib types
 pub(crate) use std::{
   borrow::Cow,
+  char,
   cmp::Reverse,
   collections::{BTreeMap, BTreeSet, HashMap},
   convert::{Infallible, TryInto},

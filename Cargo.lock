@@ -340,8 +340,7 @@ dependencies = [
 [[package]]
 name = "indicatif"
 version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49a68371cf417889c9d7f98235b7102ea7c54fc59bcbd22f3dea785be9d27e40"
+source = "git+https://github.com/casey/indicatif.git?branch=binary-bytes-per-sec#a22e3bdce304d195890774688a1660427c59f2fd"
 dependencies = [
  "console",
  "lazy_static",
