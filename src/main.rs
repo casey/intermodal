@@ -17,6 +17,7 @@
   clippy::result_expect_used,
   clippy::result_unwrap_used,
   clippy::shadow_reuse,
+  clippy::too_many_arguments,
   clippy::too_many_lines,
   clippy::unreachable,
   clippy::unseparated_literal_suffix,
