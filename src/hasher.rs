@@ -8,7 +8,7 @@ pub(crate) struct Hasher {
   piece_length: usize,
   pieces: PieceList,
   sha1: Sha1,
-  progress_bar: ProgressBar,
+  progress_bar: Option<ProgressBar>,
 }
 
 impl Hasher {
@@ -16,12 +16,12 @@ impl Hasher {
     files: &Files,
     md5sum: bool,
     piece_length: usize,
-    progress_bar: ProgressBar,
+    progress_bar: Option<ProgressBar>,
   ) -> Result<(Mode, PieceList), Error> {
     Self::new(md5sum, piece_length, progress_bar).hash_files(files)
   }
 
-  fn new(md5sum: bool, piece_length: usize, progress_bar: ProgressBar) -> Self {
+  fn new(md5sum: bool, piece_length: usize, progress_bar: Option<ProgressBar>) -> Self {
     Self {
       buffer: vec![0; piece_length],
       length: 0,
@@ -126,7 +126,9 @@ impl Hasher {
 
       remaining -= buffer.len().into_u64();
 
-      self.progress_bar.inc(to_buffer.into_u64());
+      if let Some(progress_bar) = &self.progress_bar {
+        progress_bar.inc(to_buffer.into_u64());
+      }
     }
 
     self.length += length;
