@@ -205,7 +205,9 @@ impl Create {
 
     errln!(env, "[1/3] \u{1F9FF} Searching for files…");
 
-    let style = ProgressStyle::default_spinner().template("{spinner:.green} {msg:.bold}…");
+    let style = ProgressStyle::default_spinner()
+      .template("{spinner:.green} {msg:.bold}…")
+      .tick_chars(&Self::tick_chars());
 
     let spinner = ProgressBar::new_spinner().with_style(style);
 
@@ -285,10 +287,11 @@ impl Create {
 
     let style = ProgressStyle::default_bar()
       .template(
-        "{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] \
-         {binary_bytes}/{binary_total_bytes} ({bytes_per_sec}, {eta})",
+        "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ {binary_bytes}/{binary_total_bytes} \
+         ⟨{binary_bytes_per_sec}, {eta}⟩",
       )
-      .progress_chars("\u{2593}\u{2592}\u{2591}");
+      .tick_chars(&Self::tick_chars())
+      .progress_chars("█▉▊▋▌▍▎▏ ");
 
     let progress_bar = ProgressBar::new(files.total_size().count()).with_style(style);
 
@@ -375,6 +378,27 @@ impl Create {
     }
 
     Ok(())
+  }
+
+  fn tick_chars() -> &'static str {
+    "\
+    ⠀⠁⠂⠃⠄⠅⠆⠇⡀⡁⡂⡃⡄⡅⡆⡇\
+    ⠈⠉⠊⠋⠌⠍⠎⠏⡈⡉⡊⡋⡌⡍⡎⡏\
+    ⠐⠑⠒⠓⠔⠕⠖⠗⡐⡑⡒⡓⡔⡕⡖⡗\
+    ⠘⠙⠚⠛⠜⠝⠞⠟⡘⡙⡚⡛⡜⡝⡞⡟\
+    ⠠⠡⠢⠣⠤⠥⠦⠧⡠⡡⡢⡣⡤⡥⡦⡧\
+    ⠨⠩⠪⠫⠬⠭⠮⠯⡨⡩⡪⡫⡬⡭⡮⡯\
+    ⠰⠱⠲⠳⠴⠵⠶⠷⡰⡱⡲⡳⡴⡵⡶⡷\
+    ⠸⠹⠺⠻⠼⠽⠾⠿⡸⡹⡺⡻⡼⡽⡾⡿\
+    ⢀⢁⢂⢃⢄⢅⢆⢇⣀⣁⣂⣃⣄⣅⣆⣇\
+    ⢈⢉⢊⢋⢌⢍⢎⢏⣈⣉⣊⣋⣌⣍⣎⣏\
+    ⢐⢑⢒⢓⢔⢕⢖⢗⣐⣑⣒⣓⣔⣕⣖⣗\
+    ⢘⢙⢚⢛⢜⢝⢞⢟⣘⣙⣚⣛⣜⣝⣞⣟\
+    ⢠⢡⢢⢣⢤⢥⢦⢧⣠⣡⣢⣣⣤⣥⣦⣧\
+    ⢨⢩⢪⢫⢬⢭⢮⢯⣨⣩⣪⣫⣬⣭⣮⣯\
+    ⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷\
+    ⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿\
+    "
   }
 }
 
