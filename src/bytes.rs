@@ -1,53 +1,5 @@
 use crate::common::*;
 
-impl Div<Bytes> for Bytes {
-  type Output = u64;
-
-  fn div(self, rhs: Bytes) -> u64 {
-    self.0 / rhs.0
-  }
-}
-
-impl Div<u64> for Bytes {
-  type Output = Bytes;
-
-  fn div(self, rhs: u64) -> Bytes {
-    Bytes::from(self.0 / rhs)
-  }
-}
-
-impl Mul<u64> for Bytes {
-  type Output = Bytes;
-
-  fn mul(self, rhs: u64) -> Self {
-    Bytes::from(self.0 * rhs)
-  }
-}
-
-impl DivAssign<u64> for Bytes {
-  fn div_assign(&mut self, rhs: u64) {
-    self.0 /= rhs;
-  }
-}
-
-impl MulAssign<u64> for Bytes {
-  fn mul_assign(&mut self, rhs: u64) {
-    self.0 *= rhs;
-  }
-}
-
-impl AddAssign<Bytes> for Bytes {
-  fn add_assign(&mut self, rhs: Bytes) {
-    self.0 += rhs.0;
-  }
-}
-
-impl SubAssign<u64> for Bytes {
-  fn sub_assign(&mut self, rhs: u64) {
-    self.0 -= rhs;
-  }
-}
-
 const KI: u64 = 1 << 10;
 const MI: u64 = KI << 10;
 const GI: u64 = MI << 10;
@@ -138,6 +90,54 @@ impl FromStr for Bytes {
     };
 
     Ok(Bytes(float_to_int(value * int_to_float(multiple))))
+  }
+}
+
+impl Div<Bytes> for Bytes {
+  type Output = u64;
+
+  fn div(self, rhs: Bytes) -> u64 {
+    self.0 / rhs.0
+  }
+}
+
+impl Div<u64> for Bytes {
+  type Output = Bytes;
+
+  fn div(self, rhs: u64) -> Bytes {
+    Bytes::from(self.0 / rhs)
+  }
+}
+
+impl Mul<u64> for Bytes {
+  type Output = Bytes;
+
+  fn mul(self, rhs: u64) -> Self {
+    Bytes::from(self.0 * rhs)
+  }
+}
+
+impl DivAssign<u64> for Bytes {
+  fn div_assign(&mut self, rhs: u64) {
+    self.0 /= rhs;
+  }
+}
+
+impl MulAssign<u64> for Bytes {
+  fn mul_assign(&mut self, rhs: u64) {
+    self.0 *= rhs;
+  }
+}
+
+impl AddAssign<Bytes> for Bytes {
+  fn add_assign(&mut self, rhs: Bytes) {
+    self.0 += rhs.0;
+  }
+}
+
+impl SubAssign<u64> for Bytes {
+  fn sub_assign(&mut self, rhs: u64) {
+    self.0 -= rhs;
   }
 }
 
