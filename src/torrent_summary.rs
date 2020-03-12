@@ -72,7 +72,7 @@ impl TorrentSummary {
     if let Some(creation_date) = self.metainfo.creation_date {
       #[allow(clippy::as_conversions)]
       table.row(
-        "Created",
+        "Creation Date",
         Utc.timestamp(
           creation_date
             .min(i64::max_value() as u64)
