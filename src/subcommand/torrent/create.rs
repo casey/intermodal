@@ -278,8 +278,11 @@ impl Create {
     errln!(env, "[2/3] \u{1F9EE} Hashing pieces…");
 
     let style = ProgressStyle::default_bar()
-        .template("{spinner:.green} [{elapsed_precise}] \u{2588}{bar:40.cyan/blue}\u{2588} {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
-        .progress_chars("\u{2593}\u{2592}\u{2591}");
+      .template(
+        "{spinner:.green} [{elapsed_precise}] \u{2588}{bar:40.cyan/blue}\u{2588} \
+         {bytes}/{total_bytes} ({bytes_per_sec}, {eta})",
+      )
+      .progress_chars("\u{2593}\u{2592}\u{2591}");
 
     let progress_bar = ProgressBar::new(files.total_size().count()).with_style(style);
 
