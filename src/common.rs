@@ -55,10 +55,10 @@ pub(crate) use crate::{
   arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_info::FileInfo,
   file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher, info::Info,
   lint::Lint, linter::Linter, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, node::Node,
-  options::Options, piece_length_picker::PieceLengthPicker, piece_list::PieceList,
-  platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
-  subcommand::Subcommand, table::Table, target::Target, torrent_summary::TorrentSummary,
-  use_color::UseColor, verifier::Verifier, walker::Walker,
+  options::Options, output_target::OutputTarget, piece_length_picker::PieceLengthPicker,
+  piece_list::PieceList, platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
+  subcommand::Subcommand, table::Table, torrent_summary::TorrentSummary, use_color::UseColor,
+  verifier::Verifier, walker::Walker,
 };
 
 // type aliases

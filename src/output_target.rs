@@ -1,34 +1,34 @@
 use crate::common::*;
 
 #[derive(PartialEq, Debug)]
-pub(crate) enum Target {
+pub(crate) enum OutputTarget {
   File(PathBuf),
-  Stdio,
+  Stdout,
 }
 
-impl Target {
+impl OutputTarget {
   pub(crate) fn resolve(&self, env: &Env) -> Self {
     match self {
       Self::File(path) => Self::File(env.resolve(path)),
-      Self::Stdio => Self::Stdio,
+      Self::Stdout => Self::Stdout,
     }
   }
 }
 
-impl From<&OsStr> for Target {
+impl From<&OsStr> for OutputTarget {
   fn from(text: &OsStr) -> Self {
     if text == OsStr::new("-") {
-      Self::Stdio
+      Self::Stdout
     } else {
       Self::File(text.into())
     }
   }
 }
 
-impl Display for Target {
+impl Display for OutputTarget {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match self {
-      Self::Stdio => write!(f, "standard I/O"),
+      Self::Stdout => write!(f, "standard output"),
       Self::File(path) => write!(f, "`{}`", path.display()),
     }
   }
@@ -40,26 +40,29 @@ mod tests {
 
   #[test]
   fn file() {
-    assert_eq!(Target::from(OsStr::new("foo")), Target::File("foo".into()));
+    assert_eq!(
+      OutputTarget::from(OsStr::new("foo")),
+      OutputTarget::File("foo".into())
+    );
   }
 
   #[test]
   fn stdio() {
-    assert_eq!(Target::from(OsStr::new("-")), Target::Stdio);
+    assert_eq!(OutputTarget::from(OsStr::new("-")), OutputTarget::Stdout);
   }
 
   #[test]
   fn display_file() {
     let path = PathBuf::from("./path");
-    let have = Target::File(path).to_string();
+    let have = OutputTarget::File(path).to_string();
     let want = "`./path`";
     assert_eq!(have, want);
   }
 
   #[test]
   fn display_stdio() {
-    let have = Target::Stdio.to_string();
-    let want = "standard I/O";
+    let have = OutputTarget::Stdout.to_string();
+    let want = "standard output";
     assert_eq!(have, want);
   }
 }

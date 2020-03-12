@@ -148,7 +148,7 @@ pub(crate) struct Create {
             Defaults to `$INPUT.torrent`.",
     parse(from_os_str)
   )]
-  output: Option<Target>,
+  output: Option<OutputTarget>,
   #[structopt(
     long = "piece-length",
     short = "p",
@@ -260,7 +260,7 @@ impl Create {
         let mut torrent_name = name.to_owned();
         torrent_name.push_str(".torrent");
 
-        Target::File(input.parent().unwrap().join(torrent_name))
+        OutputTarget::File(input.parent().unwrap().join(torrent_name))
       });
 
     let private = if self.private { Some(true) } else { None };
@@ -332,7 +332,7 @@ impl Create {
     let bytes = metainfo.serialize()?;
 
     match &output {
-      Target::File(path) => {
+      OutputTarget::File(path) => {
         let mut open_options = fs::OpenOptions::new();
 
         if self.force {
@@ -346,7 +346,7 @@ impl Create {
           .and_then(|mut file| file.write_all(&bytes))
           .context(error::Filesystem { path })?;
       }
-      Target::Stdio => env.out.write_all(&bytes).context(error::Stdout)?,
+      OutputTarget::Stdout => env.out.write_all(&bytes).context(error::Stdout)?,
     }
 
     #[cfg(test)]
@@ -368,7 +368,7 @@ impl Create {
       TorrentSummary::from_metainfo(metainfo)?.write(env)?;
     }
 
-    if let Target::File(path) = output {
+    if let OutputTarget::File(path) = output {
       if self.open {
         Platform::open(&path)?;
       }
