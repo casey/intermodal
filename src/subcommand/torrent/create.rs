@@ -205,11 +205,15 @@ impl Create {
 
     errln!(env, "[1/3] \u{1F9FF} Searching for files…");
 
-    let style = ProgressStyle::default_spinner()
-      .template("{spinner:.green} {msg:.bold}…")
-      .tick_chars(&Self::tick_chars());
+    let spinner = if env.err_is_term() {
+      let style = ProgressStyle::default_spinner()
+        .template("{spinner:.green} {msg:.bold}…")
+        .tick_chars(&Self::tick_chars());
 
-    let spinner = ProgressBar::new_spinner().with_style(style);
+      Some(ProgressBar::new_spinner().with_style(style))
+    } else {
+      None
+    };
 
     let files = Walker::new(&input)
       .include_junk(self.include_junk)
@@ -293,15 +297,19 @@ impl Create {
 
     errln!(env, "[2/3] \u{1F9EE} Hashing pieces…");
 
-    let style = ProgressStyle::default_bar()
-      .template(
-        "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ {binary_bytes}/{binary_total_bytes} \
-         ⟨{binary_bytes_per_sec}, {eta}⟩",
-      )
-      .tick_chars(&Self::tick_chars())
-      .progress_chars("█▉▊▋▌▍▎▏ ");
+    let progress_bar = if env.err_is_term() {
+      let style = ProgressStyle::default_bar()
+        .template(
+          "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
+           {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
+        )
+        .tick_chars(&Self::tick_chars())
+        .progress_chars("█▉▊▋▌▍▎▏ ");
 
-    let progress_bar = ProgressBar::new(files.total_size().count()).with_style(style);
+      Some(ProgressBar::new(files.total_size().count()).with_style(style))
+    } else {
+      None
+    };
 
     let (mode, pieces) = Hasher::hash(
       &files,
