@@ -63,11 +63,8 @@ impl Walker {
     }
   }
 
-  pub(crate) fn spinner(self, spinner: ProgressBar) -> Self {
-    Self {
-      spinner: Some(spinner),
-      ..self
-    }
+  pub(crate) fn spinner(self, spinner: Option<ProgressBar>) -> Self {
+    Self { spinner, ..self }
   }
 
   pub(crate) fn files(self) -> Result<Files, Error> {
