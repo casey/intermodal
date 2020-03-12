@@ -285,8 +285,8 @@ impl Create {
 
     let style = ProgressStyle::default_bar()
       .template(
-        "{spinner:.green} [{elapsed_precise}] \u{2588}{bar:40.cyan/blue}\u{2588} \
-         {bytes}/{total_bytes} ({bytes_per_sec}, {eta})",
+        "{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] \
+         {binary_bytes}/{binary_total_bytes} ({bytes_per_sec}, {eta})",
       )
       .progress_chars("\u{2593}\u{2592}\u{2591}");
 
