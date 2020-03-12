@@ -50,6 +50,8 @@ pub(crate) enum Error {
   NodeParsePort { text: String, source: ParseIntError },
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display("Output path already exists: `{}`", path.display()))]
+  OutputExists { path: PathBuf },
   #[snafu(display(
     "Interal error, this may indicate a bug in intermodal: {}\n\
      Consider filing an issue: https://github.com/casey/imdl/issues/new",

@@ -269,6 +269,14 @@ impl Create {
         OutputTarget::File(input.parent().unwrap().join(torrent_name))
       });
 
+    if let OutputTarget::File(path) = &output {
+      if !self.force && path.exists() {
+        return Err(Error::OutputExists {
+          path: path.to_owned(),
+        });
+      }
+    }
+
     let private = if self.private { Some(true) } else { None };
 
     let creation_date = if self.no_creation_date {
@@ -1594,8 +1602,8 @@ Content Size  9 bytes
     };
     assert_matches!(
       env.run().unwrap_err(),
-      Error::Filesystem {source, path}
-      if path == env.resolve("foo.torrent") && source.kind() == io::ErrorKind::AlreadyExists
+      Error::OutputExists {path}
+      if path == env.resolve("foo.torrent")
     )
   }
 
