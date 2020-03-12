@@ -167,6 +167,12 @@ pub(crate) struct Create {
   )]
   private: bool,
   #[structopt(
+    long = "show",
+    short = "S",
+    help = "Display information about created torrent file."
+  )]
+  show: bool,
+  #[structopt(
     long = "source",
     short = "s",
     value_name = "TEXT",
@@ -339,16 +345,6 @@ impl Create {
           .open(path)
           .and_then(|mut file| file.write_all(&bytes))
           .context(error::Filesystem { path })?;
-
-        #[cfg(test)]
-        TorrentSummary::from_metainfo(metainfo.clone())?.write(env)?;
-
-        #[cfg(not(test))]
-        TorrentSummary::from_metainfo(metainfo)?.write(env)?;
-
-        if self.open {
-          Platform::open(&path)?;
-        }
       }
       Target::Stdio => env.out.write_all(&bytes).context(error::Stdout)?,
     }
@@ -367,6 +363,16 @@ impl Create {
     }
 
     errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}");
+
+    if self.show {
+      TorrentSummary::from_metainfo(metainfo)?.write(env)?;
+    }
+
+    if let Target::File(path) = output {
+      if self.open {
+        Platform::open(&path)?;
+      }
+    }
 
     Ok(())
   }
@@ -1457,6 +1463,32 @@ mod tests {
         "--announce",
         "http://bar",
         "--no-creation-date",
+      ])
+      .out_is_term()
+      .build();
+
+    let dir = env.resolve("foo");
+    fs::create_dir(&dir).unwrap();
+    fs::write(dir.join("a"), "abc").unwrap();
+    fs::write(dir.join("x"), "xyz").unwrap();
+    fs::write(dir.join("h"), "hij").unwrap();
+    env.run().unwrap();
+    assert_eq!(env.out(), "");
+  }
+
+  #[test]
+  fn show() {
+    let mut env = TestEnvBuilder::new()
+      .arg_slice(&[
+        "imdl",
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--no-creation-date",
+        "--show",
       ])
       .out_is_term()
       .build();
