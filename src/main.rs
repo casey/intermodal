@@ -28,10 +28,6 @@ use crate::common::*;
 
 #[cfg(test)]
 #[macro_use]
-mod matches;
-
-#[cfg(test)]
-#[macro_use]
 mod assert_matches;
 
 #[macro_use]
