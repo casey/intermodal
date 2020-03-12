@@ -72,25 +72,25 @@ mod tests {
       env.run().unwrap();
 
       let have = env.out();
-      let want = "        Name  foo
-     Comment  comment
-     Created  1970-01-01 00:00:01 UTC
-  Created By  created by
-      Source  source
-   Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
-Torrent Size  339 bytes
-Content Size  20 bytes
-     Private  yes
-    Trackers  Tier 1: announce
-                      b
-              Tier 2: c
-   DHT Nodes  x:12
-              1.1.1.1:16
-              [2001:db8:85a3::8a2e:370]:7334
-  Piece Size  16 KiB
- Piece Count  2
-  File Count  1
-       Files  foo
+      let want = "         Name  foo
+      Comment  comment
+Creation Date  1970-01-01 00:00:01 UTC
+   Created By  created by
+       Source  source
+    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
+ Torrent Size  339 bytes
+ Content Size  20 bytes
+      Private  yes
+     Trackers  Tier 1: announce
+                       b
+               Tier 2: c
+    DHT Nodes  x:12
+               1.1.1.1:16
+               [2001:db8:85a3::8a2e:370]:7334
+   Piece Size  16 KiB
+  Piece Count  2
+   File Count  1
+        Files  foo
 ";
 
       assert_eq!(have, want);
@@ -109,21 +109,21 @@ Content Size  20 bytes
 
       let have = env.out();
       let want = "\
-Name\tfoo
-Comment\tcomment
-Created\t1970-01-01 00:00:01 UTC
-Created By\tcreated by
-Source\tsource
-Info Hash\te12253978dc6d50db11d05747abcea1ad03b51c5
-Torrent Size\t339
-Content Size\t20
-Private\tyes
-Trackers\tannounce\tb\tc
-DHT Nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
-Piece Size\t16384
-Piece Count\t2
-File Count\t1
-Files\tfoo
+name\tfoo
+comment\tcomment
+creation date\t1970-01-01 00:00:01 UTC
+created by\tcreated by
+source\tsource
+info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
+torrent size\t339
+content size\t20
+private\tyes
+trackers\tannounce\tb\tc
+dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+piece size\t16384
+piece count\t2
+file count\t1
+files\tfoo
 ";
 
       assert_eq!(have, want);
@@ -170,26 +170,26 @@ Files\tfoo
       env.run().unwrap();
 
       let have = env.out();
-      let want = "        Name  foo
-     Comment  comment
-     Created  1970-01-01 00:00:01 UTC
-  Created By  created by
-      Source  source
-   Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
-Torrent Size  327 bytes
-Content Size  20 bytes
-     Private  yes
-    Trackers  a
-              x
-              y
-              z
-   DHT Nodes  x:12
-              1.1.1.1:16
-              [2001:db8:85a3::8a2e:370]:7334
-  Piece Size  16 KiB
- Piece Count  2
-  File Count  1
-       Files  foo
+      let want = "         Name  foo
+      Comment  comment
+Creation Date  1970-01-01 00:00:01 UTC
+   Created By  created by
+       Source  source
+    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
+ Torrent Size  327 bytes
+ Content Size  20 bytes
+      Private  yes
+     Trackers  a
+               x
+               y
+               z
+    DHT Nodes  x:12
+               1.1.1.1:16
+               [2001:db8:85a3::8a2e:370]:7334
+   Piece Size  16 KiB
+  Piece Count  2
+   File Count  1
+        Files  foo
 ";
 
       assert_eq!(have, want);
@@ -208,21 +208,21 @@ Content Size  20 bytes
 
       let have = env.out();
       let want = "\
-Name\tfoo
-Comment\tcomment
-Created\t1970-01-01 00:00:01 UTC
-Created By\tcreated by
-Source\tsource
-Info Hash\te12253978dc6d50db11d05747abcea1ad03b51c5
-Torrent Size\t327
-Content Size\t20
-Private\tyes
-Trackers\ta\tx\ty\tz
-DHT Nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
-Piece Size\t16384
-Piece Count\t2
-File Count\t1
-Files\tfoo
+name\tfoo
+comment\tcomment
+creation date\t1970-01-01 00:00:01 UTC
+created by\tcreated by
+source\tsource
+info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
+torrent size\t327
+content size\t20
+private\tyes
+trackers\ta\tx\ty\tz
+dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+piece size\t16384
+piece count\t2
+file count\t1
+files\tfoo
 ";
 
       assert_eq!(have, want);
@@ -269,25 +269,25 @@ Files\tfoo
       env.run().unwrap();
 
       let have = env.out();
-      let want = "        Name  foo
-     Comment  comment
-     Created  1970-01-01 00:00:01 UTC
-  Created By  created by
-      Source  source
-   Info Hash  b9cd9cae5748518c99d00d8ae86c0162510be4d9
-Torrent Size  307 bytes
-Content Size  20 bytes
-     Private  yes
-    Trackers  b
-              c
-              a
-   DHT Nodes  x:12
-              1.1.1.1:16
-              [2001:db8:85a3::8a2e:370]:7334
-  Piece Size  16 KiB
- Piece Count  1
-  File Count  1
-       Files  foo
+      let want = "         Name  foo
+      Comment  comment
+Creation Date  1970-01-01 00:00:01 UTC
+   Created By  created by
+       Source  source
+    Info Hash  b9cd9cae5748518c99d00d8ae86c0162510be4d9
+ Torrent Size  307 bytes
+ Content Size  20 bytes
+      Private  yes
+     Trackers  b
+               c
+               a
+    DHT Nodes  x:12
+               1.1.1.1:16
+               [2001:db8:85a3::8a2e:370]:7334
+   Piece Size  16 KiB
+  Piece Count  1
+   File Count  1
+        Files  foo
 ";
 
       assert_eq!(have, want);
@@ -306,21 +306,21 @@ Content Size  20 bytes
 
       let have = env.out();
       let want = "\
-Name\tfoo
-Comment\tcomment
-Created\t1970-01-01 00:00:01 UTC
-Created By\tcreated by
-Source\tsource
-Info Hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
-Torrent Size\t307
-Content Size\t20
-Private\tyes
-Trackers\tb\tc\ta
-DHT Nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
-Piece Size\t16384
-Piece Count\t1
-File Count\t1
-Files\tfoo
+name\tfoo
+comment\tcomment
+creation date\t1970-01-01 00:00:01 UTC
+created by\tcreated by
+source\tsource
+info hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
+torrent size\t307
+content size\t20
+private\tyes
+trackers\tb\tc\ta
+dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+piece size\t16384
+piece count\t1
+file count\t1
+files\tfoo
 ";
 
       assert_eq!(have, want);

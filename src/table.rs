@@ -163,7 +163,7 @@ impl Table {
 
   pub(crate) fn write_tab_delimited(&self, out: &mut dyn Write) -> io::Result<()> {
     for (name, value) in self.rows() {
-      write!(out, "{}\t", name)?;
+      write!(out, "{}\t", name.to_lowercase())?;
       match value {
         Value::List(list) => {
           for (i, value) in list.iter().enumerate() {
@@ -315,7 +315,7 @@ mod tests {
         FilePath::from_components(&["d"]),
       ],
     );
-    tab_delimited(&table, "Files\tFoo/a/b\tFoo/a/c\tFoo/d\n");
+    tab_delimited(&table, "files\tFoo/a/b\tFoo/a/c\tFoo/d\n");
     human_readable(
       &table,
       "\
@@ -333,7 +333,7 @@ Files  Foo
     let mut table = Table::new();
     table.row("Foo", "bar");
     human_readable(&table, "Foo  bar\n");
-    tab_delimited(&table, "Foo\tbar\n");
+    tab_delimited(&table, "foo\tbar\n");
   }
 
   #[test]
@@ -342,7 +342,7 @@ Files  Foo
     table.row("Foo", "bar");
     table.row("X", "y");
     human_readable(&table, "Foo  bar\n  X  y\n");
-    tab_delimited(&table, "Foo\tbar\nX\ty\n");
+    tab_delimited(&table, "foo\tbar\nx\ty\n");
   }
 
   #[test]
@@ -364,8 +364,8 @@ Something  a
     tab_delimited(
       &table,
       "\
-Something\ta\tb\tc
-Other\tx\ty\tz
+something\ta\tb\tc
+other\tx\ty\tz
 ",
     );
   }
@@ -383,7 +383,7 @@ Foo  Bar: a
           y
 ",
     );
-    tab_delimited(&table, "Foo\ta\tb\tx\ty\n");
+    tab_delimited(&table, "foo\ta\tb\tx\ty\n");
   }
 
   #[test]
@@ -414,7 +414,7 @@ Second  Row:        the
     );
     tab_delimited(
       &table,
-      "First\tthe\tthing\tabout\tthat\nSecond\tthe\tthing\tabout\tthat\n",
+      "first\tthe\tthing\tabout\tthat\nsecond\tthe\tthing\tabout\tthat\n",
     );
   }
 }
