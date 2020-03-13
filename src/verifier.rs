@@ -8,10 +8,15 @@ pub(crate) struct Verifier<'a> {
   pieces: PieceList,
   sha1: Sha1,
   piece_bytes_hashed: usize,
+  progress_bar: Option<ProgressBar>,
 }
 
 impl<'a> Verifier<'a> {
-  fn new(metainfo: &'a Metainfo, base: &'a Path) -> Result<Verifier<'a>> {
+  fn new(
+    metainfo: &'a Metainfo,
+    base: &'a Path,
+    progress_bar: Option<ProgressBar>,
+  ) -> Result<Verifier<'a>> {
     let piece_length = metainfo.info.piece_length.as_piece_length()?.into_usize();
 
     Ok(Verifier {
@@ -22,11 +27,16 @@ impl<'a> Verifier<'a> {
       base,
       metainfo,
       piece_length,
+      progress_bar,
     })
   }
 
-  pub(crate) fn verify(metainfo: &'a Metainfo, base: &'a Path) -> Result<Status> {
-    Self::new(metainfo, base)?.verify_metainfo()
+  pub(crate) fn verify(
+    metainfo: &'a Metainfo,
+    base: &'a Path,
+    progress_bar: Option<ProgressBar>,
+  ) -> Result<Status> {
+    Self::new(metainfo, base, progress_bar)?.verify_metainfo()
   }
 
   fn verify_metainfo(mut self) -> Result<Status> {
@@ -76,6 +86,10 @@ impl<'a> Verifier<'a> {
       }
 
       remaining -= buffer.len().into_u64();
+
+      if let Some(progress_bar) = &self.progress_bar {
+        progress_bar.inc(to_buffer.into_u64());
+      }
     }
 
     Ok(())
@@ -110,7 +124,7 @@ mod tests {
 
     let metainfo = env.load_metainfo("foo.torrent");
 
-    assert!(metainfo.verify(&env.resolve("foo"))?.good());
+    assert!(metainfo.verify(&env.resolve("foo"), None)?.good());
 
     Ok(())
   }
@@ -141,7 +155,7 @@ mod tests {
 
     let metainfo = env.load_metainfo("foo.torrent");
 
-    let status = metainfo.verify(&env.resolve("foo"))?;
+    let status = metainfo.verify(&env.resolve("foo"), None)?;
 
     assert!(status.files().iter().all(FileStatus::good));
 

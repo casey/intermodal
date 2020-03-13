@@ -18,7 +18,7 @@ pub(crate) enum Mode {
 }
 
 impl Mode {
-  pub(crate) fn total_size(&self) -> Bytes {
+  pub(crate) fn content_size(&self) -> Bytes {
     match self {
       Self::Single { length, .. } => *length,
       Self::Multiple { files } => files.iter().map(|file| file.length).sum(),
