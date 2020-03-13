@@ -1,4 +1,7 @@
 use crate::common::*;
+use verify_step::VerifyStep;
+
+mod verify_step;
 
 #[derive(StructOpt)]
 #[structopt(
@@ -31,16 +34,40 @@ impl Verify {
     let metainfo_path = env.resolve(&self.metainfo);
     let metainfo = Metainfo::load(&metainfo_path)?;
 
+    VerifyStep::Loading {
+      metainfo: &metainfo_path,
+    }
+    .print(env)?;
+
     let base = if let Some(content) = &self.content {
       env.resolve(content)
     } else {
       metainfo_path.parent().unwrap().join(&metainfo.info.name)
     };
 
-    let status = metainfo.verify(&base)?;
+    let progress_bar = if env.err_is_term() {
+      let style = ProgressStyle::default_bar()
+        .template(
+          "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
+           {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
+        )
+        .tick_chars(consts::TICK_CHARS)
+        .progress_chars(consts::PROGRESS_CHARS);
+
+      Some(ProgressBar::new(metainfo.content_size().count()).with_style(style))
+    } else {
+      None
+    };
+
+    VerifyStep::Verifying { content: &base }.print(env)?;
+
+    let status = metainfo.verify(&base, progress_bar)?;
 
     if status.good() {
-      errln!(env, "Verification succeeded.")?;
+      errln!(
+        env,
+        "\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}"
+      )?;
       Ok(())
     } else {
       Err(Error::Verify { status })
@@ -90,14 +117,22 @@ mod tests {
         "torrent",
         "verify",
         "--input",
-        torrent,
+        &torrent,
       ],
       tree: {},
     };
 
     assert_matches!(verify_env.run(), Ok(()));
 
-    assert_eq!(verify_env.err(), "Verification succeeded.\n");
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
+       `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+      torrent.display(),
+      create_env.resolve("foo").display()
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
 
     Ok(())
   }
@@ -133,14 +168,21 @@ mod tests {
         "torrent",
         "verify",
         "--input",
-        torrent,
+        &torrent,
       ],
       tree: {},
     };
 
     assert_matches!(verify_env.run(), Err(Error::Verify { .. }));
 
-    assert_eq!(verify_env.err(), "");
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from `{}`…\n",
+      torrent.display(),
+      create_env.resolve("foo").display()
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
 
     Ok(())
   }
@@ -180,16 +222,24 @@ mod tests {
         "torrent",
         "verify",
         "--input",
-        torrent,
+        &torrent,
         "--content",
-        bar,
+        &bar,
       ],
       tree: {},
     };
 
     assert_matches!(verify_env.run(), Ok(()));
 
-    assert_eq!(verify_env.err(), "Verification succeeded.\n");
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
+       `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+      torrent.display(),
+      bar.display(),
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
 
     Ok(())
   }
