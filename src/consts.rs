@@ -26,12 +26,12 @@ pub(crate) const HELP_MESSAGE: &str = "Print help message.";
 
 pub(crate) const VERSION_MESSAGE: &str = "Print version number.";
 
-/// The pogress chars are from the Block Elements unicode block:
-///     https://en.wikipedia.org/wiki/Block_Elements
+/// The pogress chars are from the
+/// [Block Elements unicode block](https://en.wikipedia.org/wiki/Block_Elements).
 pub(crate) const PROGRESS_CHARS: &str = "█▉▊▋▌▍▎▏ ";
 
-/// The tick chars are from the Braille Patterns unicode block:
-///     https://en.wikipedia.org/wiki/Braille_Patterns
+/// The tick chars are from the
+/// [Braille Patterns unicode block](https://en.wikipedia.org/wiki/Braille_Patterns).
 ///
 /// The chars are ordered to represent the 8 bit numbers in increasing
 /// order. The individual braille cells represent bits, with empty cells
