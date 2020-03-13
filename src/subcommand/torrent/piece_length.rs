@@ -59,7 +59,7 @@ impl PieceLength {
         w1 = w.1,
         w2 = w.2,
         w3 = w.3,
-      );
+      )?;
     }
 
     Ok(())

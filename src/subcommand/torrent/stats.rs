@@ -61,13 +61,13 @@ impl Stats {
       extractor.process(entry.path());
     }
 
-    errln!(env, "Torrents processed: {}", extractor.torrents);
-    errln!(env, "Read failed:        {}", extractor.io_errors);
+    errln!(env, "Torrents processed: {}", extractor.torrents)?;
+    errln!(env, "Read failed:        {}", extractor.io_errors)?;
     errln!(
       env,
       "Decode failed:      {}",
       extractor.bencode_decode_errors
-    );
+    )?;
 
     let mut paths = extractor.paths.into_iter().collect::<Vec<(String, u64)>>();
     paths.sort_by_key(|(_, count)| Reverse(*count));
@@ -75,16 +75,16 @@ impl Stats {
     let width = max.to_string().len();
 
     if !paths.is_empty() {
-      errln!(env, "Keys:");
+      errln!(env, "Keys:")?;
       for (key, count) in &paths {
         if key.starts_with("info/files") {
           continue;
         }
-        errln!(env, "{:<width$} - {}", count, key, width = width);
+        errln!(env, "{:<width$} - {}", count, key, width = width)?;
       }
       for (key, count) in paths {
         if key.starts_with("info/files") {
-          errln!(env, "{:<width$} - {}", count, key, width = width);
+          errln!(env, "{:<width$} - {}", count, key, width = width)?;
         }
       }
     }
@@ -95,16 +95,16 @@ impl Stats {
         .into_iter()
         .collect::<Vec<(String, Vec<String>)>>();
 
-      errln!(env, "Values:");
+      errln!(env, "Values:")?;
       for (pattern, values) in values {
-        err!(env, "{}: ", pattern);
+        err!(env, "{}: ", pattern)?;
         for (i, value) in values.iter().enumerate() {
           if i > 0 {
-            err!(env, ", ");
+            err!(env, ", ")?;
           }
-          err!(env, "{}", value);
+          err!(env, "{}", value)?;
         }
-        errln!(env)
+        errln!(env)?;
       }
     }
 
