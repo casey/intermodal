@@ -37,9 +37,7 @@ walkdir           = "2.1.0"
 lazy_static       = "1.4.0"
 
 [dependencies.bendy]
-version  = "0.2.2"
-git      = "https://github.com/casey/bendy.git"
-branch   = "serde"
+version  = "0.3.0"
 features = ["serde"]
 
 [dependencies.indicatif]
