@@ -40,7 +40,7 @@ impl Verify {
     let status = metainfo.verify(&base)?;
 
     if status.good() {
-      errln!(env, "Verification succeeded.");
+      errln!(env, "Verification succeeded.")?;
       Ok(())
     } else {
       Err(Error::Verify { status })
