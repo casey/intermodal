@@ -77,8 +77,9 @@ dependencies = [
 
 [[package]]
 name = "bendy"
-version = "0.2.2"
-source = "git+https://github.com/casey/bendy.git?branch=serde#5b20df5036bbf2dbb32d60b2b1181bc647ffbf49"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da59940cb55c84298eeea8fc29659abe7af365b137c64d35d5db60ad1ad48a86"
 dependencies = [
  "failure",
  "serde",
