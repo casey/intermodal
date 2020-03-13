@@ -35,4 +35,12 @@ impl Style {
       ansi_term::Style::new()
     }
   }
+
+  pub(crate) fn dim(self) -> ansi_term::Style {
+    if self.active {
+      ansi_term::Style::new().dimmed()
+    } else {
+      ansi_term::Style::new()
+    }
+  }
 }
