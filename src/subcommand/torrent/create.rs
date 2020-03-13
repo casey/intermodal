@@ -203,7 +203,7 @@ impl Create {
       announce_list.push(tier);
     }
 
-    errln!(env, "[1/3] \u{1F9FF} Searching for files…");
+    Step::Searching.print(env)?;
 
     let spinner = if env.err_is_term() {
       let style = ProgressStyle::default_spinner()
@@ -295,7 +295,7 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    errln!(env, "[2/3] \u{1F9EE} Hashing pieces…");
+    Step::Hashing.print(env)?;
 
     let progress_bar = if env.err_is_term() {
       let style = ProgressStyle::default_bar()
@@ -318,7 +318,7 @@ impl Create {
       progress_bar,
     )?;
 
-    errln!(env, "[3/3] \u{1F4BE} Writing metainfo to {}…", output);
+    Step::Writing { output: &output }.print(env)?;
 
     let info = Info {
       source: self.source,
@@ -381,7 +381,7 @@ impl Create {
       }
     }
 
-    errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}");
+    errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
 
     if self.show {
       TorrentSummary::from_metainfo(metainfo)?.write(env)?;
@@ -415,6 +415,43 @@ impl Create {
       "⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷",
       "⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿",
     )
+  }
+}
+
+#[derive(Clone, Copy)]
+enum Step<'output> {
+  Searching,
+  Hashing,
+  Writing { output: &'output OutputTarget },
+}
+
+impl<'output> Step<'output> {
+  fn print(self, env: &mut Env) -> Result<(), Error> {
+    let style = env.err_style();
+    let dim = style.dim();
+    let message = style.message();
+
+    err!(env, "{}[{}/3]{} ", dim.prefix(), self.n(), dim.suffix())?;
+
+    err!(env, "{}", message.prefix())?;
+
+    match self {
+      Self::Searching => err!(env, "\u{1F9FF} Searching for files…")?,
+      Self::Hashing => err!(env, "\u{1F9EE} Hashing pieces…")?,
+      Self::Writing { output } => err!(env, "\u{1F4BE} Writing metainfo to {}…", output)?,
+    }
+
+    errln!(env, "{}", message.suffix())?;
+
+    Ok(())
+  }
+
+  fn n(self) -> usize {
+    match self {
+      Self::Searching => 1,
+      Self::Hashing => 2,
+      Self::Writing { .. } => 3,
+    }
   }
 }
 

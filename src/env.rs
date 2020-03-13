@@ -155,6 +155,10 @@ impl Env {
   pub(crate) fn err_is_term(&self) -> bool {
     self.err_is_term
   }
+
+  pub(crate) fn err_style(&self) -> Style {
+    self.err_style
+  }
 }
 
 #[cfg(test)]
