@@ -75,23 +75,6 @@ impl Metainfo {
     Self::deserialize("<TEST>", bytes).unwrap()
   }
 
-  pub(crate) fn files<'a>(
-    &'a self,
-    base: &'a Path,
-  ) -> Box<dyn Iterator<Item = (PathBuf, Bytes, Option<Md5Digest>)> + 'a> {
-    match &self.info.mode {
-      Mode::Single { length, md5sum } => Box::new(iter::once((base.to_owned(), *length, *md5sum))),
-      Mode::Multiple { files } => {
-        let base = base.to_owned();
-        Box::new(
-          files
-            .iter()
-            .map(move |file| (file.path.absolute(&base), file.length, file.md5sum)),
-        )
-      }
-    }
-  }
-
   pub(crate) fn verify(&self, base: &Path, progress_bar: Option<ProgressBar>) -> Result<Status> {
     Verifier::verify(self, base, progress_bar)
   }

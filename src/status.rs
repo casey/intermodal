@@ -1,45 +1,88 @@
 use crate::common::*;
 
 #[derive(Debug)]
-pub(crate) struct Status {
-  pieces: bool,
-  files: Vec<FileStatus>,
+pub(crate) enum Status {
+  Single {
+    pieces: bool,
+    error: Option<FileError>,
+  },
+  Multiple {
+    pieces: bool,
+    files: Vec<FileStatus>,
+  },
 }
 
 impl Status {
-  pub(crate) fn new(pieces: bool, files: Vec<FileStatus>) -> Self {
-    Self { pieces, files }
+  pub(crate) fn single(pieces: bool, error: Option<FileError>) -> Self {
+    Status::Single { pieces, error }
+  }
+
+  pub(crate) fn multiple(pieces: bool, files: Vec<FileStatus>) -> Self {
+    Status::Multiple { pieces, files }
   }
 
   pub(crate) fn pieces(&self) -> bool {
-    self.pieces
-  }
-
-  #[cfg(test)]
-  pub(crate) fn files(&self) -> &[FileStatus] {
-    &self.files
+    match self {
+      Self::Single { pieces, .. } | Self::Multiple { pieces, .. } => *pieces,
+    }
   }
 
   pub(crate) fn good(&self) -> bool {
-    self.pieces && self.files.iter().all(FileStatus::good)
+    self.pieces()
+      && match self {
+        Self::Single { error, .. } => error.is_none(),
+        Self::Multiple { files, .. } => files.iter().all(FileStatus::is_good),
+      }
   }
-}
 
-impl Display for Status {
-  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    let bad = self.files.iter().filter(|status| status.bad()).count();
+  #[cfg(test)]
+  pub(crate) fn count_bad(&self) -> usize {
+    match self {
+      Self::Single { error, .. } => {
+        if error.is_some() {
+          1
+        } else {
+          0
+        }
+      }
+      Self::Multiple { files, .. } => files.iter().filter(|file| file.is_bad()).count(),
+    }
+  }
 
-    if bad != 0 {
-      write!(f, "{} of {} files corrupted", bad, self.files.len())?;
-      return Ok(());
+  pub(crate) fn print_body(&self, env: &mut Env) -> Result<()> {
+    match self {
+      Self::Single { error, .. } => {
+        if let Some(error) = error {
+          error.println(env.err_mut()).context(error::Stderr)?;
+        }
+      }
+      Self::Multiple { files, .. } => {
+        for file in files {
+          if let Some(error) = file.error() {
+            let style = env.err().style();
+            err!(
+              env,
+              "{}{}:{} ",
+              style.message().prefix(),
+              file.path(),
+              style.message().suffix(),
+            )?;
+            error.println(env.err_mut()).context(error::Stderr)?;
+          }
+        }
+
+        errln!(
+          env,
+          "{}/{} files corrupted.",
+          files.iter().filter(|file| file.is_bad()).count(),
+          files.len(),
+        )?;
+      }
     }
 
     if !self.pieces() {
-      write!(f, "pieces corrupted")?;
-      return Ok(());
+      errln!(env, "Pieces corrupted.")?;
     }
-
-    write!(f, "ok")?;
 
     Ok(())
   }

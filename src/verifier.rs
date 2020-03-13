@@ -40,22 +40,34 @@ impl<'a> Verifier<'a> {
   }
 
   fn verify_metainfo(mut self) -> Result<Status> {
-    let mut status = Vec::new();
+    match &self.metainfo.info.mode {
+      Mode::Single { length, md5sum } => {
+        self.hash(&self.base).ok();
+        let error = FileError::verify(&self.base, *length, *md5sum).err();
 
-    for (path, len, md5sum) in self.metainfo.files(&self.base) {
-      status.push(FileStatus::status(&path, len, md5sum));
-      self.hash(&path).ok();
+        let pieces = self.finish();
+        Ok(Status::single(pieces, error))
+      }
+      Mode::Multiple { files } => {
+        let mut status = Vec::new();
+
+        for file in files {
+          let path = file.path.absolute(self.base);
+          self.hash(&path).ok();
+
+          status.push(FileStatus::status(
+            &path,
+            file.path.clone(),
+            file.length,
+            file.md5sum,
+          ));
+        }
+
+        let pieces = self.finish();
+
+        Ok(Status::multiple(pieces, status))
+      }
     }
-
-    if self.piece_bytes_hashed > 0 {
-      self.pieces.push(self.sha1.digest().into());
-      self.sha1.reset();
-      self.piece_bytes_hashed = 0;
-    }
-
-    let pieces = self.pieces == self.metainfo.info.pieces;
-
-    Ok(Status::new(pieces, status))
   }
 
   pub(crate) fn hash(&mut self, path: &Path) -> io::Result<()> {
@@ -93,6 +105,16 @@ impl<'a> Verifier<'a> {
     }
 
     Ok(())
+  }
+
+  fn finish(&mut self) -> bool {
+    if self.piece_bytes_hashed > 0 {
+      self.pieces.push(self.sha1.digest().into());
+      self.sha1.reset();
+      self.piece_bytes_hashed = 0;
+    }
+
+    self.pieces == self.metainfo.info.pieces
   }
 }
 
@@ -157,7 +179,7 @@ mod tests {
 
     let status = metainfo.verify(&env.resolve("foo"), None)?;
 
-    assert!(status.files().iter().all(FileStatus::good));
+    assert_eq!(status.count_bad(), 0);
 
     assert!(!status.pieces());
 

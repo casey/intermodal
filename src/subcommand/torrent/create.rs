@@ -208,7 +208,7 @@ impl Create {
 
     CreateStep::Searching.print(env)?;
 
-    let spinner = if env.err_is_term() {
+    let spinner = if env.err().is_styled() {
       let style = ProgressStyle::default_spinner()
         .template("{spinner:.green} {msg:.bold}…")
         .tick_chars(consts::TICK_CHARS);
@@ -300,7 +300,7 @@ impl Create {
 
     CreateStep::Hashing.print(env)?;
 
-    let progress_bar = if env.err_is_term() {
+    let progress_bar = if env.err().is_styled() {
       let style = ProgressStyle::default_bar()
         .template(
           "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
@@ -368,7 +368,7 @@ impl Create {
           .and_then(|mut file| file.write_all(&bytes))
           .context(error::Filesystem { path })?;
       }
-      OutputTarget::Stdout => env.out.write_all(&bytes).context(error::Stdout)?,
+      OutputTarget::Stdout => env.out_mut().write_all(&bytes).context(error::Stdout)?,
     }
 
     #[cfg(test)]

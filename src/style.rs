@@ -4,10 +4,16 @@ pub(crate) struct Style {
 }
 
 impl Style {
+  pub(crate) fn from_active(active: bool) -> Self {
+    Self { active }
+  }
+
+  #[cfg(test)]
   pub(crate) fn active() -> Self {
     Self { active: true }
   }
 
+  #[cfg(test)]
   pub(crate) fn inactive() -> Self {
     Self { active: false }
   }
