@@ -95,7 +95,7 @@ impl TorrentSummary {
 
     table.size("Torrent Size", self.size);
 
-    table.size("Content Size", self.metainfo.info.mode.total_size());
+    table.size("Content Size", self.metainfo.content_size());
 
     table.row(
       "Private",

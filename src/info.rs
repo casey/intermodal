@@ -21,3 +21,9 @@ pub(crate) struct Info {
   #[serde(flatten)]
   pub(crate) mode: Mode,
 }
+
+impl Info {
+  pub(crate) fn content_size(&self) -> Bytes {
+    self.mode.content_size()
+  }
+}
