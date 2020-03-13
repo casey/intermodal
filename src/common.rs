@@ -48,7 +48,7 @@ pub(crate) use crate::{consts, error};
 // traits
 pub(crate) use crate::{
   into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
-  platform_interface::PlatformInterface, reckoner::Reckoner,
+  platform_interface::PlatformInterface, reckoner::Reckoner, step::Step,
 };
 
 // structs and enums

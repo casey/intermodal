@@ -1,4 +1,7 @@
 use crate::common::*;
+use create_step::CreateStep;
+
+mod create_step;
 
 #[derive(StructOpt)]
 #[structopt(
@@ -203,12 +206,12 @@ impl Create {
       announce_list.push(tier);
     }
 
-    Step::Searching.print(env)?;
+    CreateStep::Searching.print(env)?;
 
     let spinner = if env.err_is_term() {
       let style = ProgressStyle::default_spinner()
         .template("{spinner:.green} {msg:.bold}…")
-        .tick_chars(&Self::tick_chars());
+        .tick_chars(consts::TICK_CHARS);
 
       Some(ProgressBar::new_spinner().with_style(style))
     } else {
@@ -295,7 +298,7 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    Step::Hashing.print(env)?;
+    CreateStep::Hashing.print(env)?;
 
     let progress_bar = if env.err_is_term() {
       let style = ProgressStyle::default_bar()
@@ -303,8 +306,8 @@ impl Create {
           "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
            {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
         )
-        .tick_chars(&Self::tick_chars())
-        .progress_chars("█▉▊▋▌▍▎▏ ");
+        .tick_chars(consts::TICK_CHARS)
+        .progress_chars(consts::PROGRESS_CHARS);
 
       Some(ProgressBar::new(files.total_size().count()).with_style(style))
     } else {
@@ -318,7 +321,7 @@ impl Create {
       progress_bar,
     )?;
 
-    Step::Writing { output: &output }.print(env)?;
+    CreateStep::Writing { output: &output }.print(env)?;
 
     let info = Info {
       source: self.source,
@@ -374,7 +377,7 @@ impl Create {
 
       assert_eq!(deserialized, metainfo);
 
-      let status = metainfo.verify(&input)?;
+      let status = metainfo.verify(&input, None)?;
 
       if !status.good() {
         return Err(Error::Verify { status });
@@ -394,82 +397,6 @@ impl Create {
     }
 
     Ok(())
-  }
-
-  fn tick_chars() -> &'static str {
-    // The tick chars are from the Braille Patterns unicode block:
-    //     https://en.wikipedia.org/wiki/Braille_Patterns
-    //
-    // The chars are ordered to represent the 8 bit numbers in increasing
-    // order. The individual braille cells represent bits, with empty cells
-    // representing `0` and full cells representing `1`.
-    //
-    // Digits are ordered from least significant to most significant from
-    // top to bottom, and then left to right, like so:
-    //
-    // ```
-    // ╔═════╗
-    // ║ 0 4 ║
-    // ║ 1 5 ║
-    // ║ 2 6 ║
-    // ║ 3 7 ║
-    // ╚═════╝
-    // ```
-    concat!(
-      "⠀⠁⠂⠃⠄⠅⠆⠇⡀⡁⡂⡃⡄⡅⡆⡇", // 0b0000----
-      "⠈⠉⠊⠋⠌⠍⠎⠏⡈⡉⡊⡋⡌⡍⡎⡏", // 0b0001----
-      "⠐⠑⠒⠓⠔⠕⠖⠗⡐⡑⡒⡓⡔⡕⡖⡗", // 0b0010----
-      "⠘⠙⠚⠛⠜⠝⠞⠟⡘⡙⡚⡛⡜⡝⡞⡟", // 0b0011----
-      "⠠⠡⠢⠣⠤⠥⠦⠧⡠⡡⡢⡣⡤⡥⡦⡧", // 0b0100----
-      "⠨⠩⠪⠫⠬⠭⠮⠯⡨⡩⡪⡫⡬⡭⡮⡯", // 0b0101----
-      "⠰⠱⠲⠳⠴⠵⠶⠷⡰⡱⡲⡳⡴⡵⡶⡷", // 0b0110----
-      "⠸⠹⠺⠻⠼⠽⠾⠿⡸⡹⡺⡻⡼⡽⡾⡿", // 0b0111----
-      "⢀⢁⢂⢃⢄⢅⢆⢇⣀⣁⣂⣃⣄⣅⣆⣇", // 0b1000----
-      "⢈⢉⢊⢋⢌⢍⢎⢏⣈⣉⣊⣋⣌⣍⣎⣏", // 0b1001----
-      "⢐⢑⢒⢓⢔⢕⢖⢗⣐⣑⣒⣓⣔⣕⣖⣗", // 0b1010----
-      "⢘⢙⢚⢛⢜⢝⢞⢟⣘⣙⣚⣛⣜⣝⣞⣟", // 0b1011----
-      "⢠⢡⢢⢣⢤⢥⢦⢧⣠⣡⣢⣣⣤⣥⣦⣧", // 0b1100----
-      "⢨⢩⢪⢫⢬⢭⢮⢯⣨⣩⣪⣫⣬⣭⣮⣯", // 0b1101----
-      "⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷", // 0b1110----
-      "⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿", // 0b1111----
-    )
-  }
-}
-
-#[derive(Clone, Copy)]
-enum Step<'output> {
-  Searching,
-  Hashing,
-  Writing { output: &'output OutputTarget },
-}
-
-impl<'output> Step<'output> {
-  fn print(self, env: &mut Env) -> Result<(), Error> {
-    let style = env.err_style();
-    let dim = style.dim();
-    let message = style.message();
-
-    err!(env, "{}[{}/3]{} ", dim.prefix(), self.n(), dim.suffix())?;
-
-    err!(env, "{}", message.prefix())?;
-
-    match self {
-      Self::Searching => err!(env, "\u{1F9FF} Searching for files…")?,
-      Self::Hashing => err!(env, "\u{1F9EE} Hashing pieces…")?,
-      Self::Writing { output } => err!(env, "\u{1F4BE} Writing metainfo to {}…", output)?,
-    }
-
-    errln!(env, "{}", message.suffix())?;
-
-    Ok(())
-  }
-
-  fn n(self) -> usize {
-    match self {
-      Self::Searching => 1,
-      Self::Hashing => 2,
-      Self::Writing { .. } => 3,
-    }
   }
 }
 

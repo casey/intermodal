@@ -79,6 +79,7 @@ mod platform_interface;
 mod reckoner;
 mod sha1_digest;
 mod status;
+mod step;
 mod style;
 mod subcommand;
 mod table;

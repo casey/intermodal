@@ -92,8 +92,12 @@ impl Metainfo {
     }
   }
 
-  pub(crate) fn verify(&self, base: &Path) -> Result<Status> {
-    Verifier::verify(self, base)
+  pub(crate) fn verify(&self, base: &Path, progress_bar: Option<ProgressBar>) -> Result<Status> {
+    Verifier::verify(self, base, progress_bar)
+  }
+
+  pub(crate) fn content_size(&self) -> Bytes {
+    self.info.content_size()
   }
 }
 
