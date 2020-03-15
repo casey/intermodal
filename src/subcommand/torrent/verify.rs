@@ -45,7 +45,7 @@ impl Verify {
       metainfo_path.parent().unwrap().join(&metainfo.info.name)
     };
 
-    let progress_bar = if env.err_is_term() {
+    let progress_bar = if env.err().is_styled() {
       let style = ProgressStyle::default_bar()
         .template(
           "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \

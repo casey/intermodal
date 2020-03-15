@@ -58,20 +58,15 @@ impl TestEnvBuilder {
       tempdir.path().to_owned()
     };
 
-    let env = Env::new(
-      current_dir,
-      out.clone(),
-      if self.use_color && self.out_is_term {
-        Style::active()
-      } else {
-        Style::inactive()
-      },
+    let out_stream = OutputStream::new(
+      Box::new(out.clone()),
+      self.use_color && self.out_is_term,
       self.out_is_term,
-      err.clone(),
-      Style::inactive(),
-      false,
-      self.args,
     );
+
+    let err_stream = OutputStream::new(Box::new(err.clone()), false, false);
+
+    let env = Env::new(current_dir, self.args, out_stream, err_stream);
 
     TestEnv::new(tempdir, env, err, out)
   }

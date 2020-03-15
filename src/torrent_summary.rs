@@ -46,14 +46,14 @@ impl TorrentSummary {
   pub(crate) fn write(&self, env: &mut Env) -> Result<(), Error> {
     let table = self.table();
 
-    if env.out_is_term() {
-      let out_style = env.out_style();
+    if env.out().is_term() {
+      let style = env.out().style();
       table
-        .write_human_readable(&mut env.out, out_style)
+        .write_human_readable(env.out_mut(), style)
         .context(error::Stdout)?;
     } else {
       table
-        .write_tab_delimited(&mut env.out)
+        .write_tab_delimited(env.out_mut())
         .context(error::Stdout)?;
     }
 
