@@ -54,6 +54,7 @@ version  = "0.3.0"
 features = ["default", "wrap_help"]
 
 [dev-dependencies]
+indoc    = "0.3.4"
 temptree = "0.0.0"
 
 [workspace]

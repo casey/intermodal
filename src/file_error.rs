@@ -73,8 +73,8 @@ impl Display for FileError {
       Self::Io(io_error) => write!(f, "{}", io_error),
       Self::Missing => write!(f, "File missing"),
       Self::Directory => write!(f, "Expected file but found directory"),
-      Self::Surfeit(difference) => write!(f, "Extra bytes: {}", difference),
-      Self::Dearth(difference) => write!(f, "Missing bytes: {}", difference),
+      Self::Surfeit(difference) => write!(f, "{} too long", difference),
+      Self::Dearth(difference) => write!(f, "{} too short", difference),
       Self::Md5 { actual, expected } => write!(
         f,
         "MD5 checksum mismatch: {} (expected {})",

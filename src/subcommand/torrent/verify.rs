@@ -63,6 +63,8 @@ impl Verify {
 
     let status = metainfo.verify(&base, progress_bar)?;
 
+    status.print(env)?;
+
     if status.good() {
       errln!(
         env,
@@ -70,7 +72,7 @@ impl Verify {
       )?;
       Ok(())
     } else {
-      Err(Error::Verify { status })
+      Err(Error::Verify)
     }
   }
 }
@@ -78,6 +80,8 @@ impl Verify {
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  use pretty_assertions::assert_eq;
 
   #[test]
   fn require_metainfo_argument() {
@@ -173,13 +177,22 @@ mod tests {
       tree: {},
     };
 
-    assert_matches!(verify_env.run(), Err(Error::Verify { .. }));
+    assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
 
-    let want = format!(
-      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from `{}`…\n",
-      torrent.display(),
-      create_env.resolve("foo").display()
-    );
+    let want = [
+      &format!(
+        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
+        torrent.display()
+      ),
+      &format!(
+        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
+        create_env.resolve("foo").display()
+      ),
+      "Pieces corrupted.",
+      "error: Torrent verification failed.",
+      "",
+    ]
+    .join("\n");
 
     assert_eq!(verify_env.err(), want);
     assert_eq!(verify_env.out(), "");
@@ -237,6 +250,98 @@ mod tests {
       torrent.display(),
       bar.display(),
     );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn output() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    create_env.write("foo/a", "boo");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        &torrent,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
+
+    let want = [
+      &format!(
+        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
+        torrent.display()
+      ),
+      &format!(
+        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
+        create_env.resolve("foo").display()
+      ),
+      "Pieces corrupted.",
+      "error: Torrent verification failed.",
+      "",
+    ]
+    .join("\n");
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    create_env.write("foo/a", "booo");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        &torrent,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
+
+    let want = [
+      &format!(
+        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
+        torrent.display()
+      ),
+      &format!(
+        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
+        create_env.resolve("foo").display()
+      ),
+      "a: 1 byte too long",
+      "Pieces corrupted.",
+      "error: Torrent verification failed.",
+      "",
+    ]
+    .join("\n");
 
     assert_eq!(verify_env.err(), want);
     assert_eq!(verify_env.out(), "");

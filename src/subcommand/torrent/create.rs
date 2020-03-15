@@ -380,7 +380,7 @@ impl Create {
       let status = metainfo.verify(&input, None)?;
 
       if !status.good() {
-        return Err(Error::Verify { status });
+        return Err(Error::Verify);
       }
     }
 
