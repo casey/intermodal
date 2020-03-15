@@ -11,9 +11,9 @@ pub(crate) use std::{
   fs::{self, File},
   hash::Hash,
   io::{self, Read, Write},
-  iter::{self, Sum},
+  iter::Sum,
   num::{ParseFloatError, ParseIntError, TryFromIntError},
-  ops::{AddAssign, Div, DivAssign, Mul, MulAssign, SubAssign},
+  ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
@@ -48,18 +48,18 @@ pub(crate) use crate::{consts, error};
 // traits
 pub(crate) use crate::{
   into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
-  platform_interface::PlatformInterface, reckoner::Reckoner, step::Step,
+  platform_interface::PlatformInterface, print::Print, reckoner::Reckoner, step::Step,
 };
 
 // structs and enums
 pub(crate) use crate::{
-  arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_info::FileInfo,
-  file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher, info::Info,
-  lint::Lint, linter::Linter, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, node::Node,
-  options::Options, output_target::OutputTarget, piece_length_picker::PieceLengthPicker,
-  piece_list::PieceList, platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
-  subcommand::Subcommand, table::Table, torrent_summary::TorrentSummary, use_color::UseColor,
-  verifier::Verifier, walker::Walker,
+  arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_error::FileError,
+  file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
+  info::Info, lint::Lint, linter::Linter, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode,
+  node::Node, options::Options, output_stream::OutputStream, output_target::OutputTarget,
+  piece_length_picker::PieceLengthPicker, piece_list::PieceList, platform::Platform,
+  sha1_digest::Sha1Digest, status::Status, style::Style, subcommand::Subcommand, table::Table,
+  torrent_summary::TorrentSummary, use_color::UseColor, verifier::Verifier, walker::Walker,
 };
 
 // type aliases

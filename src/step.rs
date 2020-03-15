@@ -2,7 +2,7 @@ use crate::common::*;
 
 pub(crate) trait Step {
   fn print(&self, env: &mut Env) -> Result<(), Error> {
-    let style = env.err_style();
+    let style = env.err().style();
     let dim = style.dim();
     let message = style.message();
 
@@ -17,7 +17,7 @@ pub(crate) trait Step {
 
     err!(env, "{}{} ", message.prefix(), self.symbol())?;
 
-    self.write_message(&mut env.err).context(error::Stderr)?;
+    self.write_message(env.err_mut()).context(error::Stderr)?;
 
     errln!(env, "{}", message.suffix())?;
 

@@ -30,6 +30,14 @@ impl Bytes {
       .try_into()
       .context(error::PieceLengthTooLarge { bytes: self })
   }
+
+  pub(crate) fn absolute_difference(self, other: Bytes) -> Bytes {
+    if self > other {
+      self - other
+    } else {
+      other - self
+    }
+  }
 }
 
 fn float_to_int(x: f64) -> u64 {
@@ -98,6 +106,14 @@ impl Div<Bytes> for Bytes {
 
   fn div(self, rhs: Bytes) -> u64 {
     self.0 / rhs.0
+  }
+}
+
+impl Sub<Bytes> for Bytes {
+  type Output = Bytes;
+
+  fn sub(self, rhs: Bytes) -> Bytes {
+    Bytes(self.count() - rhs.count())
   }
 }
 

@@ -119,7 +119,7 @@ pub(crate) enum Error {
     feature
   ))]
   Unstable { feature: &'static str },
-  #[snafu(display("Torrent verification failed: {}", status))]
+  #[snafu(display("Torrent verification failed."))]
   Verify { status: Status },
 }
 
@@ -133,9 +133,17 @@ impl Error {
   }
 
   pub(crate) fn internal(message: impl Into<String>) -> Error {
-    Error::Internal {
+    Self::Internal {
       message: message.into(),
     }
+  }
+
+  pub(crate) fn print_body(&self, env: &mut Env) -> Result<()> {
+    if let Self::Verify { status } = self {
+      status.print_body(env)?;
+    }
+
+    Ok(())
   }
 }
 
