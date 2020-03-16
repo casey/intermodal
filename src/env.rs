@@ -78,8 +78,6 @@ impl Env {
         )
         .ok();
 
-        error.print_body(self).ok();
-
         if let Some(lint) = error.lint() {
           writeln!(
             &mut self.err,

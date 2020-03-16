@@ -49,7 +49,7 @@ impl Status {
     }
   }
 
-  pub(crate) fn print_body(&self, env: &mut Env) -> Result<()> {
+  pub(crate) fn print(&self, env: &mut Env) -> Result<()> {
     match self {
       Self::Single { error, .. } => {
         if let Some(error) = error {
@@ -70,13 +70,6 @@ impl Status {
             error.println(env.err_mut()).context(error::Stderr)?;
           }
         }
-
-        errln!(
-          env,
-          "{}/{} files corrupted.",
-          files.iter().filter(|file| file.is_bad()).count(),
-          files.len(),
-        )?;
       }
     }
 
