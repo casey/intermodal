@@ -40,14 +40,14 @@ pub(crate) enum Error {
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
   #[snafu(display("DHT node port missing: {}", text))]
-  NodeParsePortMissing { text: String },
+  HostPortParsePortMissing { text: String },
   #[snafu(display("Failed to parse DHT node host `{}`: {}", text, source))]
-  NodeParseHost {
+  HostPortParseHost {
     text: String,
     source: url::ParseError,
   },
   #[snafu(display("Failed to parse DHT node port `{}`: {}", text, source))]
-  NodeParsePort { text: String, source: ParseIntError },
+  HostPortParsePort { text: String, source: ParseIntError },
   #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
   OpenerMissing { tried: &'static [&'static str] },
   #[snafu(display("Output path already exists: `{}`", path.display()))]

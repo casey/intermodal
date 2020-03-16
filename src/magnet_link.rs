@@ -3,7 +3,7 @@ use crate::common::*;
 struct MagnetLink {
   info_hash: Sha1Digest,
   name: Option<String>,
-  peers: Vec<Node>,
+  peers: Vec<HostPort>,
   trackers: Vec<Url>,
 }
 
@@ -21,7 +21,7 @@ impl MagnetLink {
     self.name = Some(name.into());
   }
 
-  fn add_peer(&mut self, peer: Node) {
+  fn add_peer(&mut self, peer: HostPort) {
     self.peers.push(peer);
   }
 
@@ -54,9 +54,6 @@ impl MagnetLink {
     url
   }
 }
-
-// TODO:
-// - rename node to HostPort, since it's used for peer addresses too
 
 #[cfg(test)]
 mod tests {

@@ -68,7 +68,7 @@ pub(crate) struct Create {
     `--node 203.0.113.0:2290`
     `--node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
   )]
-  dht_nodes: Vec<Node>,
+  dht_nodes: Vec<HostPort>,
   #[structopt(
     long = "follow-symlinks",
     short = "F",

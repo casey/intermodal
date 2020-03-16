@@ -42,7 +42,7 @@ pub(crate) struct Metainfo {
     default,
     with = "unwrap_or_skip"
   )]
-  pub(crate) nodes: Option<Vec<Node>>,
+  pub(crate) nodes: Option<Vec<HostPort>>,
 }
 
 impl Metainfo {

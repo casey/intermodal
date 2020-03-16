@@ -1,12 +1,12 @@
 use crate::common::*;
 
 #[derive(Debug, PartialEq, Clone)]
-pub(crate) struct Node {
+pub(crate) struct HostPort {
   host: Host,
   port: u16,
 }
 
-impl FromStr for Node {
+impl FromStr for HostPort {
   type Err = Error;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
@@ -25,24 +25,24 @@ impl FromStr for Node {
       let host_text = captures.name("host").unwrap().as_str();
       let port_text = captures.name("port").unwrap().as_str();
 
-      let host = Host::parse(&host_text).context(error::NodeParseHost {
+      let host = Host::parse(&host_text).context(error::HostPortParseHost {
         text: text.to_owned(),
       })?;
 
-      let port = port_text.parse::<u16>().context(error::NodeParsePort {
+      let port = port_text.parse::<u16>().context(error::HostPortParsePort {
         text: text.to_owned(),
       })?;
 
       Ok(Self { host, port })
     } else {
-      Err(Error::NodeParsePortMissing {
+      Err(Error::HostPortParsePortMissing {
         text: text.to_owned(),
       })
     }
   }
 }
 
-impl Display for Node {
+impl Display for HostPort {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     write!(f, "{}:{}", self.host, self.port)
   }
@@ -51,8 +51,8 @@ impl Display for Node {
 #[derive(Serialize, Deserialize)]
 struct Tuple(String, u16);
 
-impl From<&Node> for Tuple {
-  fn from(node: &Node) -> Self {
+impl From<&HostPort> for Tuple {
+  fn from(node: &HostPort) -> Self {
     let host = match &node.host {
       Host::Domain(domain) => domain.to_string(),
       Host::Ipv4(ipv4) => ipv4.to_string(),
@@ -62,7 +62,7 @@ impl From<&Node> for Tuple {
   }
 }
 
-impl Serialize for Node {
+impl Serialize for HostPort {
   fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
   where
     S: Serializer,
@@ -71,7 +71,7 @@ impl Serialize for Node {
   }
 }
 
-impl<'de> Deserialize<'de> for Node {
+impl<'de> Deserialize<'de> for HostPort {
   fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
   where
     D: Deserializer<'de>,
@@ -85,7 +85,7 @@ impl<'de> Deserialize<'de> for Node {
     }
     .map_err(|error| D::Error::custom(format!("Failed to parse node host: {}", error)))?;
 
-    Ok(Node {
+    Ok(HostPort {
       host,
       port: tuple.1,
     })
@@ -99,8 +99,8 @@ mod tests {
   use std::net::{Ipv4Addr, Ipv6Addr};
 
   fn case(host: Host, port: u16, text: &str, bencode: &str) {
-    let node = Node { host, port };
-    let parsed: Node = text.parse().expect(&format!("Failed to parse {}", text));
+    let node = HostPort { host, port };
+    let parsed: HostPort = text.parse().expect(&format!("Failed to parse {}", text));
     assert_eq!(parsed, node);
     let ser = bendy::serde::to_bytes(&node).unwrap();
     assert_eq!(
@@ -110,7 +110,7 @@ mod tests {
       String::from_utf8_lossy(&ser),
       bencode,
     );
-    let de = bendy::serde::from_bytes::<Node>(&ser).unwrap();
+    let de = bendy::serde::from_bytes::<HostPort>(&ser).unwrap();
     assert_eq!(de, node);
   }
 
