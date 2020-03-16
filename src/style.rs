@@ -42,6 +42,14 @@ impl Style {
     }
   }
 
+  pub(crate) fn good(self) -> ansi_term::Style {
+    if self.active {
+      ansi_term::Style::new().fg(ansi_term::Color::Green).bold()
+    } else {
+      ansi_term::Style::new()
+    }
+  }
+
   pub(crate) fn dim(self) -> ansi_term::Style {
     if self.active {
       ansi_term::Style::new().dimmed()

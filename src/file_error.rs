@@ -67,32 +67,30 @@ impl From<io::Error> for FileError {
   }
 }
 
-impl Display for FileError {
-  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    match self {
-      Self::Io(io_error) => write!(f, "{}", io_error),
-      Self::Missing => write!(f, "File missing"),
-      Self::Directory => write!(f, "Expected file but found directory"),
-      Self::Surfeit(difference) => write!(f, "{} too long", difference),
-      Self::Dearth(difference) => write!(f, "{} too short", difference),
-      Self::Md5 { actual, expected } => write!(
-        f,
-        "MD5 checksum mismatch: {} (expected {})",
-        actual, expected
-      ),
-    }
-  }
-}
-
 impl Print for FileError {
   fn print(&self, stream: &mut OutputStream) -> io::Result<()> {
     let style = stream.style();
-    write!(
-      stream,
-      "{}{}{}",
-      style.error().prefix(),
-      self,
-      style.error().suffix(),
-    )
+
+    if let Self::Md5 { actual, expected } = self {
+      write!(
+        stream,
+        "MD5 checksum mismatch: {} (expected {})",
+        style.error().paint(actual.to_string()),
+        style.good().paint(expected.to_string()),
+      )?;
+
+      return Ok(());
+    }
+
+    match self {
+      Self::Io(io_error) => write!(stream, "{}", io_error)?,
+      Self::Missing => write!(stream, "File missing")?,
+      Self::Directory => write!(stream, "Expected file but found directory")?,
+      Self::Surfeit(difference) => write!(stream, "{} too long", difference)?,
+      Self::Dearth(difference) => write!(stream, "{} too short", difference)?,
+      Self::Md5 { .. } => unreachable!(),
+    }
+
+    Ok(())
   }
 }
