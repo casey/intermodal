@@ -65,6 +65,7 @@ mod into_u64;
 mod into_usize;
 mod lint;
 mod linter;
+mod magnet_link;
 mod md5_digest;
 mod metainfo;
 mod mode;

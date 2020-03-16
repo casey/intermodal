@@ -15,6 +15,11 @@ impl Sha1Digest {
   pub(crate) fn bytes(self) -> [u8; Self::LENGTH] {
     self.bytes
   }
+
+  #[cfg(test)]
+  pub(crate) fn from_data(data: impl AsRef<[u8]>) -> Self {
+    Sha1::from(data).digest().into()
+  }
 }
 
 impl From<sha1::Digest> for Sha1Digest {
@@ -22,5 +27,15 @@ impl From<sha1::Digest> for Sha1Digest {
     Self {
       bytes: digest.bytes(),
     }
+  }
+}
+
+impl Display for Sha1Digest {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    for byte in &self.bytes {
+      write!(f, "{:x}", byte)?;
+    }
+
+    Ok(())
   }
 }
