@@ -6,6 +6,7 @@ pub(crate) struct TestEnvBuilder {
   out_is_term: bool,
   tempdir: Option<TempDir>,
   use_color: bool,
+  err_style: bool,
 }
 
 impl TestEnvBuilder {
@@ -16,11 +17,17 @@ impl TestEnvBuilder {
       out_is_term: false,
       tempdir: None,
       use_color: false,
+      err_style: false,
     }
   }
 
   pub(crate) fn out_is_term(mut self) -> Self {
     self.out_is_term = true;
+    self
+  }
+
+  pub(crate) fn err_style(mut self, err_style: bool) -> Self {
+    self.err_style = err_style;
     self
   }
 
@@ -64,7 +71,7 @@ impl TestEnvBuilder {
       self.out_is_term,
     );
 
-    let err_stream = OutputStream::new(Box::new(err.clone()), false, false);
+    let err_stream = OutputStream::new(Box::new(err.clone()), self.err_style, false);
 
     let env = Env::new(current_dir, self.args, out_stream, err_stream);
 

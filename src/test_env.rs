@@ -4,6 +4,7 @@ macro_rules! test_env {
   {
     args: [$($arg:expr),* $(,)?],
     $(cwd: $cwd:expr,)?
+    $(err_style: $err_style:expr,)?
     tree: {
       $($tree:tt)*
     } $(,)?
@@ -13,6 +14,7 @@ macro_rules! test_env {
 
       TestEnvBuilder::new()
         $(.current_dir(tempdir.path().join($cwd)))?
+        $(.err_style($err_style))?
         .tempdir(tempdir)
         .arg("imdl")
         $(.arg($arg))*
@@ -53,6 +55,22 @@ impl TestEnv {
 
   pub(crate) fn write(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
     fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
+  }
+
+  pub(crate) fn remove_file(&self, path: impl AsRef<Path>) {
+    fs::remove_file(self.env.resolve(path)).unwrap();
+  }
+
+  pub(crate) fn create_dir(&self, path: impl AsRef<Path>) {
+    fs::create_dir(self.env.resolve(path)).unwrap();
+  }
+
+  pub(crate) fn metadata(&self, path: impl AsRef<Path>) -> fs::Metadata {
+    fs::metadata(self.env.resolve(path)).unwrap()
+  }
+
+  pub(crate) fn set_permissions(&self, path: impl AsRef<Path>, permissions: fs::Permissions) {
+    fs::set_permissions(self.env.resolve(path), permissions).unwrap();
   }
 
   pub(crate) fn load_metainfo(&self, filename: impl AsRef<Path>) -> Metainfo {

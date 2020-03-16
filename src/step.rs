@@ -15,7 +15,7 @@ pub(crate) trait Step {
       dim.suffix()
     )?;
 
-    err!(env, "{}{} ", message.prefix(), self.symbol())?;
+    err!(env, "{} {}", self.symbol(), message.prefix())?;
 
     self.write_message(env.err_mut()).context(error::Stderr)?;
 
