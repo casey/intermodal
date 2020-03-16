@@ -42,8 +42,7 @@ features = ["serde"]
 
 [dependencies.indicatif]
 version = "0.14.0"
-git     = "https://github.com/casey/indicatif.git"
-branch  = "binary-bytes-per-sec"
+package = "imdl-indicatif"
 
 [dependencies.serde]
 version  = "1.0.103"
