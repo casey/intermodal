@@ -408,7 +408,7 @@ mod tests {
         style.message().prefix(),
         path,
         style.message().suffix(),
-        style.error().paint(message)
+        message,
       )
     }
 
@@ -428,10 +428,11 @@ mod tests {
           create_env.resolve("foo").display()
         ))
       ),
-      &error(
-        "a",
-        "MD5 checksum mismatch: d16fb36f911f878998c136191af705e (expected \
-         90150983cd24fb0d6963f7d28e17f72)",
+      &format!(
+        "{} MD5 checksum mismatch: {} (expected {})",
+        style.message().paint("a:"),
+        style.error().paint("d16fb36f911f878998c136191af705e"),
+        style.good().paint("90150983cd24fb0d6963f7d28e17f72"),
       ),
       &error("d", "1 byte too long"),
       &error("h", "1 byte too short"),
@@ -454,8 +455,6 @@ mod tests {
 
     Ok(())
   }
-
-  // MD5 checksum mismatch: BAD (expected  GOOD)
 
   #[test]
   fn output_single() -> Result<()> {
