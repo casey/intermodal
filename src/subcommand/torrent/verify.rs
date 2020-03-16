@@ -258,7 +258,91 @@ mod tests {
   }
 
   #[test]
-  fn output() -> Result<()> {
+  fn output_multiple() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+        "--md5",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+          l: "mno",
+          p: "qrs",
+          t: "uvw",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    create_env.write("foo/a", "xyz");
+    create_env.write("foo/d", "efgg");
+    create_env.write("foo/h", "ik");
+    create_env.remove_file("foo/l");
+    create_env.remove_file("foo/p");
+    create_env.create_dir("foo/p");
+
+    #[cfg(unix)]
+    {
+      use std::os::unix::fs::PermissionsExt;
+      let metadata = create_env.metadata("foo/t");
+      let mut permissions = metadata.permissions();
+      permissions.set_mode(0);
+      create_env.set_permissions("foo/t", permissions);
+    }
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        &torrent,
+      ],
+      tree: {},
+    };
+
+    assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
+
+    let want = [
+      &format!(
+        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
+        torrent.display()
+      ),
+      &format!(
+        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
+        create_env.resolve("foo").display()
+      ),
+      "a: MD5 checksum mismatch: d16fb36f911f878998c136191af705e (expected \
+       90150983cd24fb0d6963f7d28e17f72)",
+      "d: 1 byte too long",
+      "h: 1 byte too short",
+      "l: File missing",
+      "p: Expected file but found directory",
+      "t: Permission denied (os error 13)",
+      "Pieces corrupted.",
+      "error: Torrent verification failed.",
+      "",
+    ]
+    .join("\n");
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn output_single() -> Result<()> {
     let mut create_env = test_env! {
       args: [
         "torrent",
@@ -269,11 +353,7 @@ mod tests {
         "https://bar",
       ],
       tree: {
-        foo: {
-          a: "abc",
-          d: "efg",
-          h: "ijk",
-        },
+        foo: "abc",
       },
     };
 
@@ -281,7 +361,7 @@ mod tests {
 
     let torrent = create_env.resolve("foo.torrent");
 
-    create_env.write("foo/a", "boo");
+    create_env.write("foo", "abcxyz");
 
     let mut verify_env = test_env! {
       args: [
@@ -304,39 +384,7 @@ mod tests {
         "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
         create_env.resolve("foo").display()
       ),
-      "Pieces corrupted.",
-      "error: Torrent verification failed.",
-      "",
-    ]
-    .join("\n");
-
-    assert_eq!(verify_env.err(), want);
-    assert_eq!(verify_env.out(), "");
-
-    create_env.write("foo/a", "booo");
-
-    let mut verify_env = test_env! {
-      args: [
-        "torrent",
-        "verify",
-        "--input",
-        &torrent,
-      ],
-      tree: {},
-    };
-
-    assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
-
-    let want = [
-      &format!(
-        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
-        torrent.display()
-      ),
-      &format!(
-        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
-        create_env.resolve("foo").display()
-      ),
-      "a: 1 byte too long",
+      "3 bytes too long",
       "Pieces corrupted.",
       "error: Torrent verification failed.",
       "",
