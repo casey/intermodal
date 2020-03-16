@@ -315,7 +315,7 @@ dependencies = [
  "chrono",
  "console",
  "globset",
- "indicatif",
+ "imdl-indicatif",
  "indoc",
  "lazy_static",
  "libc",
@@ -340,9 +340,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "indicatif"
+name = "imdl-indicatif"
 version = "0.14.0"
-source = "git+https://github.com/casey/indicatif.git?branch=binary-bytes-per-sec#a22e3bdce304d195890774688a1660427c59f2fd"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6cd52c6090487185174be0dc0c3b2ba6e8ea687422d9de66fa244e0bf9339b28"
 dependencies = [
  "console",
  "lazy_static",

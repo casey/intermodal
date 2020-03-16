@@ -22,6 +22,7 @@ impl FileStatus {
     self.error.is_none()
   }
 
+  #[cfg(test)]
   pub(crate) fn is_bad(&self) -> bool {
     !self.is_good()
   }
