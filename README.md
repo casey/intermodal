@@ -124,22 +124,21 @@ at any time.
 | [38](http://bittorrent.org/beps/bep_0038.html) | :heavy_minus_sign:                                    | Finding Local Data Via Torrent File Hints                        |
 | [39](http://bittorrent.org/beps/bep_0039.html) | [:x:](https://github.com/casey/intermodal/issues/98)  | Updating Torrents Via Feed URL                                   |
 | [40](http://bittorrent.org/beps/bep_0040.html) | :heavy_minus_sign:                                    | Canonical Peer Priority                                          |
-| [41](http://bittorrent.org/beps/bep_0041.html) | :heavy_minus_sign:  | UDP Tracker Protocol Extensions                                  |
+| [41](http://bittorrent.org/beps/bep_0041.html) | :heavy_minus_sign:                                    | UDP Tracker Protocol Extensions                                  |
 | [42](http://bittorrent.org/beps/bep_0042.html) | :heavy_minus_sign:                                    | DHT Security extension                                           |
 | [43](http://bittorrent.org/beps/bep_0043.html) | :heavy_minus_sign:                                    | Read-only DHT Nodes                                              |
 | [44](http://bittorrent.org/beps/bep_0044.html) | :heavy_minus_sign:                                    | Storing arbitrary data in the DHT                                |
 | [45](http://bittorrent.org/beps/bep_0045.html) | :heavy_minus_sign:                                    | Multiple-address operation for the BitTorrent DHT                |
-| [46](http://bittorrent.org/beps/bep_0046.html) | :heavy_minus_sign:                                    | Updating Torrents Via DHT Mutable Items                          |
+| [46](http://bittorrent.org/beps/bep_0046.html) | [:x:](https://github.com/casey/intermodal/issues/244) | Updating Torrents Via DHT Mutable Items                          |
 | [47](http://bittorrent.org/beps/bep_0047.html) | [:x:](https://github.com/casey/intermodal/issues/99)  | Padding files and extended file attributes                       |
 | [48](http://bittorrent.org/beps/bep_0048.html) | :heavy_minus_sign:                                    | Tracker Protocol Extension: Scrape                               |
 | [49](http://bittorrent.org/beps/bep_0049.html) | [:x:](https://github.com/casey/intermodal/issues/100) | Distributed Torrent Feeds                                        |
 | [50](http://bittorrent.org/beps/bep_0050.html) | :heavy_minus_sign:                                    | Publish/Subscribe Protocol                                       |
 | [51](http://bittorrent.org/beps/bep_0051.html) | :heavy_minus_sign:                                    | DHT Infohash Indexing                                            |
 | [52](http://bittorrent.org/beps/bep_0052.html) | [:x:](https://github.com/casey/intermodal/issues/101) | The BitTorrent Protocol Specification v2                         |
-| [53](http://bittorrent.org/beps/bep_0053.html) | :heavy_minus_sign:                                    | Magnet URI extension - Select specific file indices for download |
+| [53](http://bittorrent.org/beps/bep_0053.html) | [:x:](https://github.com/casey/intermodal/issues/245) | Magnet URI extension - Select specific file indices for download |
 | [54](http://bittorrent.org/beps/bep_0054.html) | :heavy_minus_sign:                                    | The lt_donthave extension                                        |
 | [55](http://bittorrent.org/beps/bep_0055.html) | :heavy_minus_sign:                                    | Holepunch extension                                              |
-
 ## References
 
 ### Alternatives & Prior Art
