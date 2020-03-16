@@ -49,6 +49,10 @@ impl OutputStream {
     self.style
   }
 
+  pub(crate) fn is_styled_term(&self) -> bool {
+    self.is_styled() && self.is_term()
+  }
+
   pub(crate) fn style(&self) -> Style {
     Style::from_active(self.style)
   }
