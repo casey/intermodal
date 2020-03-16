@@ -455,6 +455,8 @@ mod tests {
     Ok(())
   }
 
+  // MD5 checksum mismatch: BAD (expected  GOOD)
+
   #[test]
   fn output_single() -> Result<()> {
     let mut create_env = test_env! {
