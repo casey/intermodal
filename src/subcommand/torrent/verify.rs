@@ -328,6 +328,7 @@ mod tests {
       "h: 1 byte too short",
       "l: File missing",
       "p: Expected file but found directory",
+      #[cfg(unix)]
       "t: Permission denied (os error 13)",
       "Pieces corrupted.",
       "error: Torrent verification failed.",
@@ -436,6 +437,7 @@ mod tests {
       &error("h", "1 byte too short"),
       &error("l", "File missing"),
       &error("p", "Expected file but found directory"),
+      #[cfg(unix)]
       &error("t", "Permission denied (os error 13)"),
       "Pieces corrupted.",
       &format!(
