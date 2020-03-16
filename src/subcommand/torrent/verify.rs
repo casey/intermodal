@@ -398,24 +398,51 @@ mod tests {
 
     assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
 
+    let style = Style::active();
+
+    fn error(path: &str, message: &str) -> String {
+      let style = Style::active();
+      format!(
+        "{}{}:{} {}",
+        style.message().prefix(),
+        path,
+        style.message().suffix(),
+        style.error().paint(message)
+      )
+    }
+
     let want = [
       &format!(
-        "[1/2] \u{1F4BE} Loading metainfo from `{}`…",
-        torrent.display()
+        "{} \u{1F4BE} {}",
+        style.dim().paint("[1/2]"),
+        style
+          .message()
+          .paint(format!("Loading metainfo from `{}`…", torrent.display()))
       ),
       &format!(
-        "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
-        create_env.resolve("foo").display()
+        "{} \u{1F9EE} {}",
+        style.dim().paint("[2/2]"),
+        style.message().paint(format!(
+          "Verifying pieces from `{}`…",
+          create_env.resolve("foo").display()
+        ))
       ),
-      "a: MD5 checksum mismatch: d16fb36f911f878998c136191af705e (expected \
-       90150983cd24fb0d6963f7d28e17f72)",
-      "d: 1 byte too long",
-      "h: 1 byte too short",
-      "l: File missing",
-      "p: Expected file but found directory",
-      "t: Permission denied (os error 13)",
+      &error(
+        "a",
+        "MD5 checksum mismatch: d16fb36f911f878998c136191af705e (expected \
+         90150983cd24fb0d6963f7d28e17f72)",
+      ),
+      &error("d", "1 byte too long"),
+      &error("h", "1 byte too short"),
+      &error("l", "File missing"),
+      &error("p", "Expected file but found directory"),
+      &error("t", "Permission denied (os error 13)"),
       "Pieces corrupted.",
-      "error: Torrent verification failed.",
+      &format!(
+        "{}{}",
+        style.error().paint("error"),
+        style.message().paint(": Torrent verification failed.")
+      ),
       "",
     ]
     .join("\n");
