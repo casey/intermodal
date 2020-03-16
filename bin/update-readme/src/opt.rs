@@ -214,7 +214,7 @@ impl Opt {
 
     let table = lines.join("\n");
 
-    let readme = &[before.trim(), "", &table, after.trim()].join("\n");
+    let readme = &[before.trim(), "", &table, after.trim(), ""].join("\n");
 
     fs::write(README, readme.as_bytes())?;
 
