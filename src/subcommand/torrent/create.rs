@@ -208,7 +208,7 @@ impl Create {
 
     CreateStep::Searching.print(env)?;
 
-    let spinner = if env.err().is_styled() {
+    let spinner = if env.err().is_styled_term() {
       let style = ProgressStyle::default_spinner()
         .template("{spinner:.green} {msg:.bold}…")
         .tick_chars(consts::TICK_CHARS);
@@ -300,7 +300,7 @@ impl Create {
 
     CreateStep::Hashing.print(env)?;
 
-    let progress_bar = if env.err().is_styled() {
+    let progress_bar = if env.err().is_styled_term() {
       let style = ProgressStyle::default_bar()
         .template(
           "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \

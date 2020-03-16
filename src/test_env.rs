@@ -4,6 +4,7 @@ macro_rules! test_env {
   {
     args: [$($arg:expr),* $(,)?],
     $(cwd: $cwd:expr,)?
+    $(err_style: $err_style:expr,)?
     tree: {
       $($tree:tt)*
     } $(,)?
@@ -13,6 +14,7 @@ macro_rules! test_env {
 
       TestEnvBuilder::new()
         $(.current_dir(tempdir.path().join($cwd)))?
+        $(.err_style($err_style))?
         .tempdir(tempdir)
         .arg("imdl")
         $(.arg($arg))*
