@@ -43,6 +43,8 @@ pub(crate) struct Metainfo {
     with = "unwrap_or_skip"
   )]
   pub(crate) nodes: Option<Vec<HostPort>>,
+  /* #[serde(skip)]
+   * pub(crate) raw: Option<Value<'static>>, */
 }
 
 impl Metainfo {
@@ -82,6 +84,12 @@ impl Metainfo {
   pub(crate) fn content_size(&self) -> Bytes {
     self.info.content_size()
   }
+
+  // pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> +
+  // 'a {   iter::once(&self.announce)
+  //     .chain(self.announce_list.iter().flatten().flatten())
+  //     .map(|text| text.parse().context(error::AnnounceUrlParse))
+  // }
 }
 
 #[cfg(test)]

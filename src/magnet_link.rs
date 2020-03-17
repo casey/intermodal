@@ -1,6 +1,6 @@
 use crate::common::*;
 
-struct MagnetLink {
+pub(crate) struct MagnetLink {
   info_hash: Sha1Digest,
   name: Option<String>,
   peers: Vec<HostPort>,
@@ -8,7 +8,7 @@ struct MagnetLink {
 }
 
 impl MagnetLink {
-  fn new(info_hash: Sha1Digest) -> MagnetLink {
+  pub(crate) fn new(info_hash: Sha1Digest) -> MagnetLink {
     MagnetLink {
       info_hash,
       name: None,
@@ -17,19 +17,19 @@ impl MagnetLink {
     }
   }
 
-  fn set_name(&mut self, name: impl Into<String>) {
+  pub(crate) fn set_name(&mut self, name: impl Into<String>) {
     self.name = Some(name.into());
   }
 
-  fn add_peer(&mut self, peer: HostPort) {
+  pub(crate) fn add_peer(&mut self, peer: HostPort) {
     self.peers.push(peer);
   }
 
-  fn add_tracker(&mut self, tracker: Url) {
+  pub(crate) fn add_tracker(&mut self, tracker: Url) {
     self.trackers.push(tracker);
   }
 
-  fn to_url(&self) -> Url {
+  pub(crate) fn to_url(&self) -> Url {
     let mut url = Url::parse("magnet:").unwrap();
 
     let mut query = format!("xt=urn:btih:{}", self.info_hash);
@@ -59,12 +59,15 @@ impl MagnetLink {
 mod tests {
   use super::*;
 
+  // TODO: make this import part of common
+  use pretty_assertions::assert_eq;
+
   #[test]
   fn basic() {
     let link = MagnetLink::new(Sha1Digest::from_data(""));
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4bd3255bfef95601890afd879"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709"
     );
   }
 
@@ -74,7 +77,7 @@ mod tests {
     link.set_name("foo");
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4bd3255bfef95601890afd879&dn=foo"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&dn=foo"
     );
   }
 
@@ -84,7 +87,7 @@ mod tests {
     link.add_peer("foo.com:1337".parse().unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4bd3255bfef95601890afd879&x.pe=foo.com:1337"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&x.pe=foo.com:1337"
     );
   }
 
@@ -94,7 +97,7 @@ mod tests {
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4bd3255bfef95601890afd879&tr=http://foo.com/announce"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
     );
   }
 
@@ -109,7 +112,7 @@ mod tests {
     assert_eq!(
       link.to_url().as_str(),
       concat!(
-        "magnet:?xt=urn:btih:da39a3ee5e6b4bd3255bfef95601890afd879",
+        "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
         "&dn=foo",
         "&tr=http://foo.com/announce",
         "&tr=http://bar.net/announce",

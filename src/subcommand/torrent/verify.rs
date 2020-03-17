@@ -322,8 +322,8 @@ mod tests {
         "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
         create_env.resolve("foo").display()
       ),
-      "a: MD5 checksum mismatch: d16fb36f911f878998c136191af705e (expected \
-       90150983cd24fb0d6963f7d28e17f72)",
+      "a: MD5 checksum mismatch: d16fb36f0911f878998c136191af705e (expected \
+       900150983cd24fb0d6963f7d28e17f72)",
       "d: 1 byte too long",
       "h: 1 byte too short",
       "l: File missing",
@@ -431,8 +431,8 @@ mod tests {
       &format!(
         "{} MD5 checksum mismatch: {} (expected {})",
         style.message().paint("a:"),
-        style.error().paint("d16fb36f911f878998c136191af705e"),
-        style.good().paint("90150983cd24fb0d6963f7d28e17f72"),
+        style.error().paint("d16fb36f0911f878998c136191af705e"),
+        style.good().paint("900150983cd24fb0d6963f7d28e17f72"),
       ),
       &error("d", "1 byte too long"),
       &error("h", "1 byte too short"),
