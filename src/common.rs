@@ -48,7 +48,7 @@ pub(crate) use walkdir::WalkDir;
 pub(crate) use log::trace;
 
 // modules
-pub(crate) use crate::{consts, error};
+pub(crate) use crate::{consts, error, host_port_parse_error};
 
 // traits
 pub(crate) use crate::{
@@ -60,8 +60,8 @@ pub(crate) use crate::{
 pub(crate) use crate::{
   arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_error::FileError,
   file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
-  host_port::HostPort, info::Info, infohash::Infohash, lint::Lint, linter::Linter,
-  magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo,
+  host_port::HostPort, host_port_parse_error::HostPortParseError, info::Info, infohash::Infohash,
+  lint::Lint, linter::Linter, magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo,
   metainfo_error::MetainfoError, mode::Mode, options::Options, output_stream::OutputStream,
   output_target::OutputTarget, piece_length_picker::PieceLengthPicker, piece_list::PieceList,
   platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,

@@ -47,15 +47,6 @@ pub(crate) enum Error {
   GlobParse { source: globset::Error },
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
-  #[snafu(display("DHT node port missing: {}", text))]
-  HostPortParsePortMissing { text: String },
-  #[snafu(display("Failed to parse DHT node host `{}`: {}", text, source))]
-  HostPortParseHost {
-    text: String,
-    source: url::ParseError,
-  },
-  #[snafu(display("Failed to parse DHT node port `{}`: {}", text, source))]
-  HostPortParsePort { text: String, source: ParseIntError },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
   InfoSerialize { source: bendy::serde::Error },
   #[snafu(display(

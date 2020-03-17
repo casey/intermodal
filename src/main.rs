@@ -61,6 +61,7 @@ mod file_status;
 mod files;
 mod hasher;
 mod host_port;
+mod host_port_parse_error;
 mod info;
 mod infohash;
 mod into_u64;

@@ -7,7 +7,7 @@ pub(crate) struct HostPort {
 }
 
 impl FromStr for HostPort {
-  type Err = Error;
+  type Err = HostPortParseError;
 
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     let socket_address_re = Regex::new(
@@ -25,17 +25,19 @@ impl FromStr for HostPort {
       let host_text = captures.name("host").unwrap().as_str();
       let port_text = captures.name("port").unwrap().as_str();
 
-      let host = Host::parse(&host_text).context(error::HostPortParseHost {
+      let host = Host::parse(&host_text).context(host_port_parse_error::Host {
         text: text.to_owned(),
       })?;
 
-      let port = port_text.parse::<u16>().context(error::HostPortParsePort {
-        text: text.to_owned(),
-      })?;
+      let port = port_text
+        .parse::<u16>()
+        .context(host_port_parse_error::Port {
+          text: text.to_owned(),
+        })?;
 
       Ok(Self { host, port })
     } else {
-      Err(Error::HostPortParsePortMissing {
+      Err(HostPortParseError::PortMissing {
         text: text.to_owned(),
       })
     }
