@@ -2,7 +2,12 @@ use crate::common::*;
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub(crate) struct Metainfo {
-  pub(crate) announce: String,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip"
+  )]
+  pub(crate) announce: Option<String>,
   #[serde(
     rename = "announce-list",
     skip_serializing_if = "Option::is_none",
@@ -42,7 +47,7 @@ pub(crate) struct Metainfo {
     default,
     with = "unwrap_or_skip"
   )]
-  pub(crate) nodes: Option<Vec<Node>>,
+  pub(crate) nodes: Option<Vec<HostPort>>,
 }
 
 impl Metainfo {
@@ -54,7 +59,8 @@ impl Metainfo {
 
   pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
     let path = path.as_ref();
-    let metainfo = bendy::serde::de::from_bytes(&bytes).context(error::MetainfoLoad { path })?;
+    let metainfo =
+      bendy::serde::de::from_bytes(&bytes).context(error::MetainfoDeserialize { path })?;
     Ok(metainfo)
   }
 
@@ -82,6 +88,17 @@ impl Metainfo {
   pub(crate) fn content_size(&self) -> Bytes {
     self.info.content_size()
   }
+
+  pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> + 'a {
+    iter::once(&self.announce)
+      .flatten()
+      .chain(self.announce_list.iter().flatten().flatten())
+      .map(|text| text.parse().context(error::AnnounceUrlParse))
+  }
+
+  pub(crate) fn infohash(&self) -> Result<Infohash> {
+    self.info.infohash()
+  }
 }
 
 #[cfg(test)]
@@ -91,7 +108,7 @@ mod tests {
   #[test]
   fn round_trip_single() {
     let value = Metainfo {
-      announce: "announce".into(),
+      announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
@@ -121,7 +138,7 @@ mod tests {
   #[test]
   fn round_trip_multiple() {
     let value = Metainfo {
-      announce: "announce".into(),
+      announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
       nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       comment: Some("comment".into()),
@@ -166,7 +183,7 @@ mod tests {
   #[test]
   fn bencode_representation_single_some() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: Some(vec![vec!["A".into(), "B".into()], vec!["C".into()]]),
       nodes: Some(vec![
         "domain:1".parse().unwrap(),
@@ -227,7 +244,7 @@ mod tests {
   #[test]
   fn bencode_representation_single_none() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -266,7 +283,7 @@ mod tests {
   #[test]
   fn bencode_representation_multiple_some() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -314,7 +331,7 @@ mod tests {
   #[test]
   fn bencode_representation_multiple_none() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -361,7 +378,7 @@ mod tests {
   #[test]
   fn private_false() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,

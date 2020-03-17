@@ -27,8 +27,7 @@ impl Env {
     #[cfg(windows)]
     ansi_term::enable_ansi_support().ok();
 
-    #[cfg(not(test))]
-    pretty_env_logger::init();
+    Self::initialize_logging();
 
     let args = Arguments::from_iter_safe(&self.args)?;
 
@@ -37,6 +36,37 @@ impl Env {
     self.out.set_use_color(use_color);
 
     args.run(self)
+  }
+
+  /// Initialize `pretty-env-logger` as the global logging backend.
+  ///
+  /// This function is called in `Env::run`, so the logger will always be
+  /// initialized when the program runs via main, and in tests which construct
+  /// and `Env` and run them.
+  ///
+  /// The logger will not be initialized in tests which don't construct an
+  /// `Env`, for example in unit tests that test functionality below the level
+  /// of a full program invocation.
+  ///
+  /// To enable logging in those tests, call `Env::initialize_logging()` like
+  /// so:
+  ///
+  /// ```
+  /// #[test]
+  /// fn foo() {
+  ///   Env::initialize_logging();
+  ///   // Rest of the test...
+  /// }
+  /// ```
+  ///
+  /// If the logger has already been initialized, `Env::initialize_logging()` is
+  /// a no-op, so it's safe to call more than once.
+  pub(crate) fn initialize_logging() {
+    static ONCE: Once = Once::new();
+
+    ONCE.call_once(|| {
+      pretty_env_logger::init();
+    });
   }
 
   pub(crate) fn new<S, I>(dir: PathBuf, args: I, out: OutputStream, err: OutputStream) -> Self

@@ -5,17 +5,25 @@ use structopt::clap;
 #[derive(Debug, Snafu)]
 #[snafu(visibility(pub(crate)))]
 pub(crate) enum Error {
-  #[snafu(display("Must provide at least one announce URL"))]
-  AnnounceEmpty,
   #[snafu(display("Failed to parse announce URL: {}", source))]
   AnnounceUrlParse { source: url::ParseError },
   #[snafu(display("Failed to deserialize torrent metainfo from `{}`: {}", path.display(), source))]
-  MetainfoLoad {
+  MetainfoDeserialize {
     source: bendy::serde::Error,
     path: PathBuf,
   },
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
   MetainfoSerialize { source: bendy::serde::Error },
+  #[snafu(display("Failed to decode torrent metainfo from `{}`: {}", path.display(), error))]
+  MetainfoDecode {
+    path: PathBuf,
+    error: bendy::decoding::Error,
+  },
+  #[snafu(display("Metainfo from `{}` failed to validate: {}", path.display(), source))]
+  MetainfoValidate {
+    path: PathBuf,
+    source: MetainfoError,
+  },
   #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]
   ByteParse {
     text: String,
@@ -39,25 +47,18 @@ pub(crate) enum Error {
   GlobParse { source: globset::Error },
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
-  #[snafu(display("DHT node port missing: {}", text))]
-  NodeParsePortMissing { text: String },
-  #[snafu(display("Failed to parse DHT node host `{}`: {}", text, source))]
-  NodeParseHost {
-    text: String,
-    source: url::ParseError,
-  },
-  #[snafu(display("Failed to parse DHT node port `{}`: {}", text, source))]
-  NodeParsePort { text: String, source: ParseIntError },
-  #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
-  OpenerMissing { tried: &'static [&'static str] },
-  #[snafu(display("Output path already exists: `{}`", path.display()))]
-  OutputExists { path: PathBuf },
+  #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
+  InfoSerialize { source: bendy::serde::Error },
   #[snafu(display(
     "Interal error, this may indicate a bug in intermodal: {}\n\
      Consider filing an issue: https://github.com/casey/imdl/issues/new",
     message,
   ))]
   Internal { message: String },
+  #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
+  OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display("Output path already exists: `{}`", path.display()))]
+  OutputExists { path: PathBuf },
   #[snafu(display(
     "Path `{}` contains non-normal component: {}",
     path.display(),
@@ -102,6 +103,8 @@ pub(crate) enum Error {
   PieceLengthSmall,
   #[snafu(display("Piece length cannot be zero"))]
   PieceLengthZero,
+  #[snafu(display("Private torrents must have tracker"))]
+  PrivateTrackerless,
   #[snafu(display("Failed to write to standard error: {}", source))]
   Stderr { source: io::Error },
   #[snafu(display("Failed to write to standard output: {}", source))]
@@ -128,6 +131,7 @@ impl Error {
     match self {
       Self::PieceLengthUneven { .. } => Some(Lint::UnevenPieceLength),
       Self::PieceLengthSmall { .. } => Some(Lint::SmallPieceLength),
+      Self::PrivateTrackerless => Some(Lint::PrivateTrackerless),
       _ => None,
     }
   }
