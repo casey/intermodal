@@ -48,8 +48,6 @@ pub(crate) struct Metainfo {
     with = "unwrap_or_skip"
   )]
   pub(crate) nodes: Option<Vec<HostPort>>,
-  /* #[serde(skip)]
-   * pub(crate) raw: Option<Value<'static>>, */
 }
 
 impl Metainfo {
@@ -61,7 +59,8 @@ impl Metainfo {
 
   pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
     let path = path.as_ref();
-    let metainfo = bendy::serde::de::from_bytes(&bytes).context(error::MetainfoLoad { path })?;
+    let metainfo =
+      bendy::serde::de::from_bytes(&bytes).context(error::MetainfoDeserialize { path })?;
     Ok(metainfo)
   }
 
@@ -95,6 +94,10 @@ impl Metainfo {
       .flatten()
       .chain(self.announce_list.iter().flatten().flatten())
       .map(|text| text.parse().context(error::AnnounceUrlParse))
+  }
+
+  pub(crate) fn infohash(&self) -> Result<Infohash> {
+    self.info.infohash()
   }
 }
 

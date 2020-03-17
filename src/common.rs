@@ -28,7 +28,6 @@ pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use indicatif::{ProgressBar, ProgressStyle};
 pub(crate) use libc::EXIT_FAILURE;
-pub(crate) use log::trace;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
 pub(crate) use serde_hex::SerHex;
@@ -44,6 +43,10 @@ pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
 
+// logging functions
+#[allow(unused)]
+pub(crate) use log::trace;
+
 // modules
 pub(crate) use crate::{consts, error};
 
@@ -58,9 +61,10 @@ pub(crate) use crate::{
   arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_error::FileError,
   file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
   host_port::HostPort, info::Info, infohash::Infohash, lint::Lint, linter::Linter,
-  magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, options::Options,
-  output_stream::OutputStream, output_target::OutputTarget, piece_length_picker::PieceLengthPicker,
-  piece_list::PieceList, platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
+  magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo,
+  metainfo_error::MetainfoError, mode::Mode, options::Options, output_stream::OutputStream,
+  output_target::OutputTarget, piece_length_picker::PieceLengthPicker, piece_list::PieceList,
+  platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
   subcommand::Subcommand, table::Table, torrent_summary::TorrentSummary, use_color::UseColor,
   verifier::Verifier, walker::Walker,
 };

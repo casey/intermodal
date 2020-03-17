@@ -1,10 +1,5 @@
 use crate::common::*;
 
-// TODO:
-// - test torrent output with no announce URL
-// - consider if I should allow trackerless torrents by default. maybe make it a
-//   lint, like "trackerless"
-
 pub(crate) struct MagnetLink {
   infohash: Infohash,
   name: Option<String>,
@@ -68,7 +63,7 @@ mod tests {
 
   #[test]
   fn basic() {
-    let link = MagnetLink::with_infohash(Infohash::from_data(""));
+    let link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
     assert_eq!(
       link.to_url().as_str(),
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709"
@@ -77,7 +72,7 @@ mod tests {
 
   #[test]
   fn with_name() {
-    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
     link.set_name("foo");
     assert_eq!(
       link.to_url().as_str(),
@@ -87,7 +82,7 @@ mod tests {
 
   #[test]
   fn with_peer() {
-    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
     link.add_peer("foo.com:1337".parse().unwrap());
     assert_eq!(
       link.to_url().as_str(),
@@ -97,7 +92,7 @@ mod tests {
 
   #[test]
   fn with_tracker() {
-    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
@@ -107,7 +102,7 @@ mod tests {
 
   #[test]
   fn complex() {
-    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
     link.set_name("foo");
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     link.add_tracker(Url::parse("http://bar.net/announce").unwrap());

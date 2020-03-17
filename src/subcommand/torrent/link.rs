@@ -80,7 +80,10 @@ mod tests {
         "foo.torrent",
       ],
       tree: {
-        "foo.torrent": "d8:announce24:https://foo.com/announce4:infod6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:ee",
+        "foo.torrent": "d\
+          8:announce24:https://foo.com/announce\
+          4:infod6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e\
+        e",
       }
     };
 
@@ -123,14 +126,22 @@ mod tests {
   }
 
   #[test]
-  #[ignore]
   fn bad_metainfo_error() {
-    todo!()
-  }
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "link",
+        "--input",
+        "foo.torrent",
+      ],
+      tree: {
+        "foo.torrent": "i0e",
+      }
+    };
 
-  #[test]
-  #[ignore]
-  fn trailing_bytes_error() {
-    todo!()
+    assert_matches!(
+      env.run(), Err(Error::MetainfoValidate { path, source: MetainfoError::Type })
+      if path == env.resolve("foo.torrent")
+    );
   }
 }

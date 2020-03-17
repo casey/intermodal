@@ -70,6 +70,7 @@ mod linter;
 mod magnet_link;
 mod md5_digest;
 mod metainfo;
+mod metainfo_error;
 mod mode;
 mod options;
 mod output_stream;

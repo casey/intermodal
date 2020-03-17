@@ -1,50 +1,36 @@
 use crate::common::*;
 
 pub(crate) struct TorrentSummary {
+  infohash: Infohash,
   metainfo: Metainfo,
-  // TODO: use Infohash
-  infohash: sha1::Digest,
   size: Bytes,
 }
 
 impl TorrentSummary {
-  fn new(bytes: &[u8], metainfo: Metainfo) -> Result<Self, Error> {
-    let value = Value::from_bencode(&bytes).unwrap();
-
-    let infohash = if let Value::Dict(items) = value {
-      let info = items
-        .iter()
-        .find(|pair: &(&Cow<[u8]>, &Value)| pair.0.as_ref() == b"info")
-        .unwrap()
-        .1
-        .to_bencode()
-        .unwrap();
-      Sha1::from(info).digest()
-    } else {
-      unreachable!()
-    };
-
-    Ok(Self {
-      size: Bytes::from(bytes.len().into_u64()),
+  fn new(metainfo: Metainfo, infohash: Infohash, size: Bytes) -> Self {
+    Self {
       infohash,
       metainfo,
-    })
+      size,
+    }
   }
 
-  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self, Error> {
+  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self> {
     let bytes = metainfo.serialize()?;
-    Self::new(&bytes, metainfo)
+    let size = Bytes(bytes.len().into_u64());
+    let infohash = metainfo.infohash()?;
+    Ok(Self::new(metainfo, infohash, size))
   }
 
-  pub(crate) fn load(path: &Path) -> Result<Self, Error> {
+  pub(crate) fn load(path: &Path) -> Result<Self> {
     let bytes = fs::read(path).context(error::Filesystem { path })?;
 
     let metainfo = Metainfo::deserialize(path, &bytes)?;
 
-    Self::new(&bytes, metainfo)
+    Ok(Self::from_metainfo(metainfo)?)
   }
 
-  pub(crate) fn write(&self, env: &mut Env) -> Result<(), Error> {
+  pub(crate) fn write(&self, env: &mut Env) -> Result<()> {
     let table = self.table();
 
     if env.out().is_term() {
