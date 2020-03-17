@@ -1,49 +1,36 @@
 use crate::common::*;
 
 pub(crate) struct TorrentSummary {
+  infohash: Infohash,
   metainfo: Metainfo,
-  infohash: sha1::Digest,
   size: Bytes,
 }
 
 impl TorrentSummary {
-  fn new(bytes: &[u8], metainfo: Metainfo) -> Result<Self, Error> {
-    let value = Value::from_bencode(&bytes).unwrap();
-
-    let infohash = if let Value::Dict(items) = value {
-      let info = items
-        .iter()
-        .find(|pair: &(&Cow<[u8]>, &Value)| pair.0.as_ref() == b"info")
-        .unwrap()
-        .1
-        .to_bencode()
-        .unwrap();
-      Sha1::from(info).digest()
-    } else {
-      unreachable!()
-    };
-
-    Ok(Self {
-      size: Bytes::from(bytes.len().into_u64()),
+  fn new(metainfo: Metainfo, infohash: Infohash, size: Bytes) -> Self {
+    Self {
       infohash,
       metainfo,
-    })
+      size,
+    }
   }
 
-  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self, Error> {
+  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self> {
     let bytes = metainfo.serialize()?;
-    Self::new(&bytes, metainfo)
+    let size = Bytes(bytes.len().into_u64());
+    let infohash = metainfo.infohash()?;
+    Ok(Self::new(metainfo, infohash, size))
   }
 
-  pub(crate) fn load(path: &Path) -> Result<Self, Error> {
+  pub(crate) fn load(path: &Path) -> Result<Self> {
     let bytes = fs::read(path).context(error::Filesystem { path })?;
 
     let metainfo = Metainfo::deserialize(path, &bytes)?;
 
-    Self::new(&bytes, metainfo)
+    Ok(Self::from_metainfo(metainfo)?)
   }
 
-  pub(crate) fn write(&self, env: &mut Env) -> Result<(), Error> {
+  pub(crate) fn write(&self, env: &mut Env) -> Result<()> {
     let table = self.table();
 
     if env.out().is_term() {
@@ -106,40 +93,18 @@ impl TorrentSummary {
       },
     );
 
-    match &self.metainfo.announce_list {
-      Some(tiers) => {
-        if tiers.iter().all(|tier| tier.len() == 1) {
-          let mut list = Vec::new();
-          if !tiers
-            .iter()
-            .any(|tier| tier.contains(&self.metainfo.announce))
-          {
-            list.push(self.metainfo.announce.clone());
-          }
+    if let Some(announce) = &self.metainfo.announce {
+      table.row("Tracker", announce);
+    }
 
-          for tier in tiers {
-            list.push(tier[0].clone());
-          }
+    if let Some(tiers) = &self.metainfo.announce_list {
+      let mut value = Vec::new();
 
-          table.list("Trackers", list);
-        } else {
-          let mut value = Vec::new();
-
-          if !tiers
-            .iter()
-            .any(|tier| tier.contains(&self.metainfo.announce))
-          {
-            value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
-          }
-
-          for (i, tier) in tiers.iter().enumerate() {
-            value.push((format!("Tier {}", i + 1), tier.clone()));
-          }
-
-          table.tiers("Trackers", value);
-        }
+      for (i, tier) in tiers.iter().enumerate() {
+        value.push((format!("Tier {}", i + 1), tier.clone()));
       }
-      None => table.row("Tracker", &self.metainfo.announce),
+
+      table.tiers("Announce List", value);
     }
 
     if let Some(nodes) = &self.metainfo.nodes {
