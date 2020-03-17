@@ -59,7 +59,11 @@ impl Link {
     outln!(env, "{}", url)?;
 
     if self.open {
-      Platform::open_url(&url)?;
+      if cfg!(windows) {
+        Platform::open_url(&"magnet:".parse().unwrap())?;
+      } else {
+        Platform::open_url(&url)?;
+      }
     }
 
     Ok(())
