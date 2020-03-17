@@ -3,7 +3,7 @@ pub(crate) use std::{
   borrow::Cow,
   char,
   cmp::Reverse,
-  collections::{BTreeMap, BTreeSet, HashMap},
+  collections::{BTreeMap, BTreeSet, HashMap, HashSet},
   convert::{Infallible, TryInto},
   env,
   ffi::{OsStr, OsString},
@@ -11,12 +11,13 @@ pub(crate) use std::{
   fs::{self, File},
   hash::Hash,
   io::{self, Read, Write},
-  iter::Sum,
+  iter::{self, Sum},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
+  sync::Once,
   time::{SystemTime, SystemTimeError},
   usize,
 };
@@ -42,8 +43,12 @@ pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
 
+// logging functions
+#[allow(unused_imports)]
+pub(crate) use log::trace;
+
 // modules
-pub(crate) use crate::{consts, error};
+pub(crate) use crate::{consts, error, host_port_parse_error};
 
 // traits
 pub(crate) use crate::{
@@ -55,11 +60,13 @@ pub(crate) use crate::{
 pub(crate) use crate::{
   arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_error::FileError,
   file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
-  info::Info, lint::Lint, linter::Linter, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode,
-  node::Node, options::Options, output_stream::OutputStream, output_target::OutputTarget,
-  piece_length_picker::PieceLengthPicker, piece_list::PieceList, platform::Platform,
-  sha1_digest::Sha1Digest, status::Status, style::Style, subcommand::Subcommand, table::Table,
-  torrent_summary::TorrentSummary, use_color::UseColor, verifier::Verifier, walker::Walker,
+  host_port::HostPort, host_port_parse_error::HostPortParseError, info::Info, infohash::Infohash,
+  lint::Lint, linter::Linter, magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo,
+  metainfo_error::MetainfoError, mode::Mode, options::Options, output_stream::OutputStream,
+  output_target::OutputTarget, piece_length_picker::PieceLengthPicker, piece_list::PieceList,
+  platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
+  subcommand::Subcommand, table::Table, torrent_summary::TorrentSummary, use_color::UseColor,
+  verifier::Verifier, walker::Walker,
 };
 
 // type aliases

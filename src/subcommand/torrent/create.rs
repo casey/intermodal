@@ -14,16 +14,16 @@ pub(crate) struct Create {
     long = "announce",
     short = "a",
     value_name = "URL",
-    required(true),
     help = "Use `URL` as the primary tracker announce URL. To supply multiple announce URLs, also \
             use `--announce-tier`."
   )]
-  announce: Url,
+  announce: Option<Url>,
   #[structopt(
     long = "allow",
     short = "A",
     value_name = "LINT",
     possible_values = Lint::VALUES,
+    set(ArgSettings::CaseInsensitive),
     help = "Allow `LINT`. Lints check for conditions which, although permitted, are not usually \
             desirable. For example, piece length can be any non-zero value, but probably \
             shouldn't be below 16 KiB. The lint `small-piece-size` checks for this, and \
@@ -68,7 +68,7 @@ pub(crate) struct Create {
     `--node 203.0.113.0:2290`
     `--node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
   )]
-  dht_nodes: Vec<Node>,
+  dht_nodes: Vec<HostPort>,
   #[structopt(
     long = "follow-symlinks",
     short = "F",
@@ -193,6 +193,9 @@ impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let input = env.resolve(&self.input);
 
+    let mut linter = Linter::new();
+    linter.allow(self.allowed_lints.iter().cloned());
+
     let mut announce_list = Vec::new();
     for tier in &self.announce_tiers {
       let tier = tier.split(',').map(str::to_string).collect::<Vec<String>>();
@@ -204,6 +207,10 @@ impl Create {
         .context(error::AnnounceUrlParse)?;
 
       announce_list.push(tier);
+    }
+
+    if linter.is_denied(Lint::PrivateTrackerless) && self.private && self.announce.is_none() {
+      return Err(Error::PrivateTrackerless);
     }
 
     CreateStep::Searching.print(env)?;
@@ -229,9 +236,6 @@ impl Create {
     let piece_length = self
       .piece_length
       .unwrap_or_else(|| PieceLengthPicker::from_content_size(files.total_size()));
-
-    let mut linter = Linter::new();
-    linter.allow(self.allowed_lints.iter().cloned());
 
     if piece_length.count() == 0 {
       return Err(Error::PieceLengthZero);
@@ -335,7 +339,7 @@ impl Create {
     let metainfo = Metainfo {
       comment: self.comment,
       encoding: Some(consts::ENCODING_UTF8.to_string()),
-      announce: self.announce.to_string(),
+      announce: self.announce.map(|url| url.to_string()),
       announce_list: if announce_list.is_empty() {
         None
       } else {
@@ -426,6 +430,23 @@ mod tests {
       tree: {},
     };
     assert!(matches!(env.run(), Err(Error::Filesystem { .. })));
+  }
+
+  #[test]
+  fn announce_is_optional() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
   }
 
   #[test]
@@ -547,7 +568,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce, Some("http://bar/".into()));
     assert!(metainfo.announce_list.is_none());
   }
 
@@ -569,8 +590,8 @@ mod tests {
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
-      metainfo.announce,
-      "udp://tracker.opentrackr.org:1337/announce"
+      metainfo.announce.as_deref(),
+      Some("udp://tracker.opentrackr.org:1337/announce")
     );
     assert!(metainfo.announce_list.is_none());
   }
@@ -592,7 +613,10 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "wss://tracker.btorrent.xyz/");
+    assert_eq!(
+      metainfo.announce.as_deref(),
+      Some("wss://tracker.btorrent.xyz/")
+    );
     assert!(metainfo.announce_list.is_none());
   }
 
@@ -615,7 +639,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
       metainfo.announce_list,
       Some(vec![vec!["http://bar".into(), "http://baz".into()]]),
@@ -643,7 +667,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
       metainfo.announce_list,
       Some(vec![
@@ -2221,5 +2245,47 @@ Content Size  9 bytes
     env.run().unwrap();
 
     assert_eq!(env.err(), want);
+  }
+
+  #[test]
+  fn private_requires_announce() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--private",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(
+      env.run(),
+      Err(error @ Error::PrivateTrackerless)
+      if error.lint() == Some(Lint::PrivateTrackerless)
+    );
+  }
+
+  #[test]
+  fn private_trackerless_announce() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--private",
+        "--allow",
+        "private-trackerLESS",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
   }
 }

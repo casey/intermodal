@@ -6,9 +6,13 @@ bt := "0"
 
 export RUST_BACKTRACE := bt
 
+log := "warn"
+
+export RUST_LOG := log
+
 # watch filesystem for changes and rerun tests
-watch:
-	cargo watch --exec test
+watch +ARGS='':
+	cargo watch --clear --exec 'test {{ARGS}}'
 
 # show stats about torrents at `PATH`
 stats PATH:

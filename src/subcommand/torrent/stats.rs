@@ -255,7 +255,7 @@ impl Extractor {
     } else {
       buffer.push('<');
       for byte in string {
-        buffer.push_str(&format!("{:X}", byte));
+        buffer.push_str(&format!("{:02X}", byte));
       }
       buffer.push('>');
     }

@@ -26,4 +26,9 @@ impl Info {
   pub(crate) fn content_size(&self) -> Bytes {
     self.mode.content_size()
   }
+
+  pub(crate) fn infohash(&self) -> Result<Infohash> {
+    let encoded = bendy::serde::ser::to_bytes(self).context(error::InfoSerialize)?;
+    Ok(Infohash::from_bencoded_info_dict(&encoded))
+  }
 }

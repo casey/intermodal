@@ -1,6 +1,7 @@
 use crate::common::*;
 
 mod create;
+mod link;
 mod piece_length;
 mod show;
 mod stats;
@@ -14,6 +15,7 @@ mod verify;
 )]
 pub(crate) enum Torrent {
   Create(create::Create),
+  Link(link::Link),
   #[structopt(alias = "piece-size")]
   PieceLength(piece_length::PieceLength),
   Show(show::Show),
@@ -25,6 +27,7 @@ impl Torrent {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
     match self {
       Self::Create(create) => create.run(env),
+      Self::Link(link) => link.run(env),
       Self::PieceLength(piece_length) => piece_length.run(env),
       Self::Show(show) => show.run(env),
       Self::Stats(stats) => stats.run(env, options),

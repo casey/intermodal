@@ -37,7 +37,7 @@ impl From<md5::Digest> for Md5Digest {
 impl Display for Md5Digest {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     for byte in &self.bytes {
-      write!(f, "{:x}", byte)?;
+      write!(f, "{:02x}", byte)?;
     }
 
     Ok(())
@@ -64,5 +64,14 @@ mod tests {
     let string_bytes = bendy::serde::ser::to_bytes(&"000102030405060708090a0b0c0d0e0f").unwrap();
 
     assert_eq!(bytes, string_bytes);
+  }
+
+  #[test]
+  fn display() {
+    let digest = Md5Digest {
+      bytes: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    };
+
+    assert_eq!(digest.to_string(), "000102030405060708090a0b0c0d0e0f");
   }
 }
