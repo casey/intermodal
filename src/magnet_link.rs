@@ -1,16 +1,16 @@
 use crate::common::*;
 
 pub(crate) struct MagnetLink {
-  info_hash: Sha1Digest,
+  infohash: Infohash,
   name: Option<String>,
   peers: Vec<HostPort>,
   trackers: Vec<Url>,
 }
 
 impl MagnetLink {
-  pub(crate) fn new(info_hash: Sha1Digest) -> MagnetLink {
+  pub(crate) fn with_infohash(infohash: Infohash) -> MagnetLink {
     MagnetLink {
-      info_hash,
+      infohash,
       name: None,
       peers: Vec::new(),
       trackers: Vec::new(),
@@ -32,7 +32,7 @@ impl MagnetLink {
   pub(crate) fn to_url(&self) -> Url {
     let mut url = Url::parse("magnet:").unwrap();
 
-    let mut query = format!("xt=urn:btih:{}", self.info_hash);
+    let mut query = format!("xt=urn:btih:{}", self.infohash);
 
     if let Some(name) = &self.name {
       query.push_str("&dn=");
@@ -59,12 +59,11 @@ impl MagnetLink {
 mod tests {
   use super::*;
 
-  // TODO: make this import part of common
   use pretty_assertions::assert_eq;
 
   #[test]
   fn basic() {
-    let link = MagnetLink::new(Sha1Digest::from_data(""));
+    let link = MagnetLink::with_infohash(Infohash::from_data(""));
     assert_eq!(
       link.to_url().as_str(),
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709"
@@ -73,7 +72,7 @@ mod tests {
 
   #[test]
   fn with_name() {
-    let mut link = MagnetLink::new(Sha1Digest::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
     link.set_name("foo");
     assert_eq!(
       link.to_url().as_str(),
@@ -83,7 +82,7 @@ mod tests {
 
   #[test]
   fn with_peer() {
-    let mut link = MagnetLink::new(Sha1Digest::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
     link.add_peer("foo.com:1337".parse().unwrap());
     assert_eq!(
       link.to_url().as_str(),
@@ -93,7 +92,7 @@ mod tests {
 
   #[test]
   fn with_tracker() {
-    let mut link = MagnetLink::new(Sha1Digest::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
@@ -103,7 +102,7 @@ mod tests {
 
   #[test]
   fn complex() {
-    let mut link = MagnetLink::new(Sha1Digest::from_data(""));
+    let mut link = MagnetLink::with_infohash(Infohash::from_data(""));
     link.set_name("foo");
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     link.add_tracker(Url::parse("http://bar.net/announce").unwrap());

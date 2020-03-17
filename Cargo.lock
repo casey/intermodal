@@ -328,6 +328,7 @@ dependencies = [
  "imdl-indicatif",
  "lazy_static",
  "libc",
+ "log",
  "md5",
  "pretty_assertions",
  "pretty_env_logger",

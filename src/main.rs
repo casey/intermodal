@@ -62,6 +62,7 @@ mod files;
 mod hasher;
 mod host_port;
 mod info;
+mod infohash;
 mod into_u64;
 mod into_usize;
 mod lint;

@@ -2,7 +2,12 @@ use crate::common::*;
 
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
 pub(crate) struct Metainfo {
-  pub(crate) announce: String,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip"
+  )]
+  pub(crate) announce: Option<String>,
   #[serde(
     rename = "announce-list",
     skip_serializing_if = "Option::is_none",
@@ -85,11 +90,12 @@ impl Metainfo {
     self.info.content_size()
   }
 
-  // pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> +
-  // 'a {   iter::once(&self.announce)
-  //     .chain(self.announce_list.iter().flatten().flatten())
-  //     .map(|text| text.parse().context(error::AnnounceUrlParse))
-  // }
+  pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> + 'a {
+    iter::once(&self.announce)
+      .flatten()
+      .chain(self.announce_list.iter().flatten().flatten())
+      .map(|text| text.parse().context(error::AnnounceUrlParse))
+  }
 }
 
 #[cfg(test)]

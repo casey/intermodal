@@ -3,7 +3,7 @@ pub(crate) use std::{
   borrow::Cow,
   char,
   cmp::Reverse,
-  collections::{BTreeMap, BTreeSet, HashMap},
+  collections::{BTreeMap, BTreeSet, HashMap, HashSet},
   convert::{Infallible, TryInto},
   env,
   ffi::{OsStr, OsString},
@@ -11,12 +11,13 @@ pub(crate) use std::{
   fs::{self, File},
   hash::Hash,
   io::{self, Read, Write},
-  iter::Sum,
+  iter::{self, Sum},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
   process::{self, Command, ExitStatus},
   str::{self, FromStr},
+  sync::Once,
   time::{SystemTime, SystemTimeError},
   usize,
 };
@@ -27,6 +28,7 @@ pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use indicatif::{ProgressBar, ProgressStyle};
 pub(crate) use libc::EXIT_FAILURE;
+pub(crate) use log::trace;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
 pub(crate) use serde_hex::SerHex;
@@ -55,8 +57,8 @@ pub(crate) use crate::{
 pub(crate) use crate::{
   arguments::Arguments, bytes::Bytes, env::Env, error::Error, file_error::FileError,
   file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
-  host_port::HostPort, info::Info, lint::Lint, linter::Linter, magnet_link::MagnetLink,
-  md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, options::Options,
+  host_port::HostPort, info::Info, infohash::Infohash, lint::Lint, linter::Linter,
+  magnet_link::MagnetLink, md5_digest::Md5Digest, metainfo::Metainfo, mode::Mode, options::Options,
   output_stream::OutputStream, output_target::OutputTarget, piece_length_picker::PieceLengthPicker,
   piece_list::PieceList, platform::Platform, sha1_digest::Sha1Digest, status::Status, style::Style,
   subcommand::Subcommand, table::Table, torrent_summary::TorrentSummary, use_color::UseColor,
