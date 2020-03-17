@@ -1,3 +1,11 @@
+pub(crate) const ABOUT: &str = concat!(
+  env!("CARGO_PKG_DESCRIPTION"),
+  " - ",
+  env!("CARGO_PKG_HOMEPAGE")
+);
+
+pub(crate) const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
+
 /// Default value for `created by` torrent metainfo field.
 ///
 /// Example: imdl/0.0.0 (1234567890AB)
@@ -12,19 +20,7 @@ pub(crate) const CREATED_BY_DEFAULT: &str = concat!(
 /// Value for `encoding` torrent metainfo field.
 pub(crate) const ENCODING_UTF8: &str = "UTF-8";
 
-pub(crate) const ABOUT: &str = concat!(
-  env!("CARGO_PKG_DESCRIPTION"),
-  " - ",
-  env!("CARGO_PKG_HOMEPAGE")
-);
-
-pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
-
-pub(crate) const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
-
 pub(crate) const HELP_MESSAGE: &str = "Print help message.";
-
-pub(crate) const VERSION_MESSAGE: &str = "Print version number.";
 
 /// The pogress chars are from the
 /// [Block Elements unicode block](https://en.wikipedia.org/wiki/Block_Elements).
@@ -66,3 +62,7 @@ pub(crate) const TICK_CHARS: &str = concat!(
   "⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷", // 0b1110----
   "⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿", // 0b1111----
 );
+
+pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
+
+pub(crate) const VERSION_MESSAGE: &str = "Print version number.";

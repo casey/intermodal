@@ -1,9 +1,17 @@
 use crate::common::*;
 
 pub(crate) trait PlatformInterface {
-  fn open(path: &Path) -> Result<(), Error> {
+  fn open_file(path: &Path) -> Result<(), Error> {
+    Self::open_raw(path.as_os_str())
+  }
+
+  fn open_url(url: &Url) -> Result<(), Error> {
+    Self::open_raw(url.as_str().as_ref())
+  }
+
+  fn open_raw(target: &OsStr) -> Result<(), Error> {
     let mut command = Self::opener()?;
-    command.push(OsString::from(path));
+    command.push(OsString::from(target));
 
     let command_string = || {
       command
