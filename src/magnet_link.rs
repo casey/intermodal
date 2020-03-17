@@ -17,10 +17,12 @@ impl MagnetLink {
     }
   }
 
+  #[allow(dead_code)]
   pub(crate) fn set_name(&mut self, name: impl Into<String>) {
     self.name = Some(name.into());
   }
 
+  #[allow(dead_code)]
   pub(crate) fn add_peer(&mut self, peer: HostPort) {
     self.peers.push(peer);
   }

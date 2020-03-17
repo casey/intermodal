@@ -44,7 +44,7 @@ pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
 
 // logging functions
-#[allow(unused)]
+#[allow(unused_imports)]
 pub(crate) use log::trace;
 
 // modules
