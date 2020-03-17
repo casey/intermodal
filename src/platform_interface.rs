@@ -6,7 +6,12 @@ pub(crate) trait PlatformInterface {
   }
 
   fn open_url(url: &Url) -> Result<(), Error> {
-    Self::open_raw(url.as_str().as_ref())
+    if cfg!(windows) {
+      let escaped = format!("\"{}\"", url);
+      Self::open_raw(escaped.as_str().as_ref())
+    } else {
+      Self::open_raw(url.as_str().as_ref())
+    }
   }
 
   fn open_raw(target: &OsStr) -> Result<(), Error> {
