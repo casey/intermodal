@@ -278,7 +278,7 @@ mod tests {
 
     let expected = if cfg!(target_os = "windows") {
       let script = env.resolve("open.bat");
-      fs::write(&script, format!("echo \"\" > {}", opened.display())).unwrap();
+      fs::write(&script, format!("echo > {}", opened.display())).unwrap();
       format!("\r\n")
     } else {
       let script = env.resolve(&Platform::opener().unwrap()[0]);
