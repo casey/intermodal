@@ -16,6 +16,13 @@ pub(crate) struct Link {
   )]
   input: PathBuf,
   #[structopt(
+    long = "open",
+    short = "O",
+    help = "Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; \
+            `open` on macOS; and `cmd /C start` on Windows"
+  )]
+  open: bool,
+  #[structopt(
     long = "peer",
     short = "p",
     value_name = "PEER",
@@ -47,7 +54,13 @@ impl Link {
       link.add_peer(peer);
     }
 
-    outln!(env, "{}", link.to_url())?;
+    let url = link.to_url();
+
+    outln!(env, "{}", url)?;
+
+    if self.open {
+      Platform::open_url(&url)?;
+    }
 
     Ok(())
   }
@@ -228,5 +241,82 @@ mod tests {
       env.run(), Err(Error::MetainfoValidate { path, source: MetainfoError::Type })
       if path == env.resolve("foo.torrent")
     );
+  }
+
+  #[test]
+  fn open() {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(create_env.run(), Ok(()));
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "link",
+        "--input",
+        &torrent,
+        "--open",
+      ],
+      tree: {},
+    };
+
+    let opened = env.resolve("opened.txt");
+
+    let link = "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo";
+
+    let expected = if cfg!(target_os = "windows") {
+      let script = env.resolve("open.bat");
+      fs::write(&script, format!("echo > {}", opened.display())).unwrap();
+      format!("ECHO is on.\r\n")
+    } else {
+      let script = env.resolve(&Platform::opener().unwrap()[0]);
+      fs::write(
+        &script,
+        format!("#!/usr/bin/env sh\necho $1 > {}", opened.display()),
+      )
+      .unwrap();
+
+      Command::new("chmod")
+        .arg("+x")
+        .arg(&script)
+        .status()
+        .unwrap();
+
+      format!("{}\n", link)
+    };
+
+    const KEY: &str = "PATH";
+    let path = env::var_os(KEY).unwrap();
+    let mut split = env::split_paths(&path)
+      .into_iter()
+      .collect::<Vec<PathBuf>>();
+    split.insert(0, env.dir().to_owned());
+    let new = env::join_paths(split).unwrap();
+    env::set_var(KEY, new);
+
+    assert_matches!(env.run(), Ok(()));
+
+    let start = Instant::now();
+
+    while start.elapsed() < Duration::new(2, 0) {
+      if let Ok(text) = fs::read_to_string(&opened) {
+        assert_eq!(text, expected);
+        return;
+      }
+    }
+
+    panic!("Failed to read `opened.txt`.");
   }
 }
