@@ -19,7 +19,7 @@ pub(crate) struct Link {
     long = "peer",
     short = "p",
     value_name = "PEER",
-    help = "Add PEER to magnet link."
+    help = "Add `PEER` to magnet link."
   )]
   peers: Vec<HostPort>,
 }
