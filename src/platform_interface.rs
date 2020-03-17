@@ -6,12 +6,7 @@ pub(crate) trait PlatformInterface {
   }
 
   fn open_url(url: &Url) -> Result<(), Error> {
-    if cfg!(windows) {
-      let text = url.as_str().replace('&', "^&");
-      Self::open_raw(text.as_ref())
-    } else {
-      Self::open_raw(url.as_str().as_ref())
-    }
+    Self::open_raw(url.as_str().as_ref())
   }
 
   fn open_raw(target: &OsStr) -> Result<(), Error> {
