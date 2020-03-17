@@ -1,6 +1,5 @@
 use crate::common::*;
 use create_step::CreateStep;
-use structopt::clap::ArgSettings;
 
 mod create_step;
 
