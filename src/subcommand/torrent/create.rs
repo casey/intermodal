@@ -140,7 +140,7 @@ pub(crate) struct Create {
     long = "open",
     short = "O",
     help = "Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on \
-            Linux; `open` on macOS; and `cmd /C start on Windows"
+            Linux; `open` on macOS; and `cmd /C start` on Windows"
   )]
   open: bool,
   #[structopt(
@@ -396,7 +396,7 @@ impl Create {
 
     if let OutputTarget::File(path) = output {
       if self.open {
-        Platform::open(&path)?;
+        Platform::open_file(&path)?;
       }
     }
 
