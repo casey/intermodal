@@ -60,8 +60,8 @@ impl Link {
 
     if self.open {
       if cfg!(windows) {
-        let link = "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo";
-        Platform::open_url(&link.parse().unwrap())?;
+        let link = "\"magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo\"";
+        Platform::open_file(Path::new(link))?;
       } else {
         Platform::open_url(&url)?;
       }
