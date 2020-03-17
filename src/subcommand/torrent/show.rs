@@ -35,7 +35,7 @@ mod tests {
   #[test]
   fn output() {
     let metainfo = Metainfo {
-      announce: "announce".into(),
+      announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
       nodes: Some(vec![
         "x:12".parse().unwrap(),
@@ -81,7 +81,8 @@ Creation Date  1970-01-01 00:00:01 UTC
  Torrent Size  339 bytes
  Content Size  20 bytes
       Private  yes
-     Trackers  Tier 1: announce
+      Tracker  announce
+Announce List  Tier 1: announce
                        b
                Tier 2: c
     DHT Nodes  x:12
@@ -118,7 +119,8 @@ info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
 torrent size\t339
 content size\t20
 private\tyes
-trackers\tannounce\tb\tc
+tracker\tannounce
+announce list\tannounce\tb\tc
 dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
 piece count\t2
@@ -133,7 +135,7 @@ files\tfoo
   #[test]
   fn tier_list_with_main() {
     let metainfo = Metainfo {
-      announce: "a".into(),
+      announce: Some("a".into()),
       announce_list: Some(vec![vec!["x".into()], vec!["y".into()], vec!["z".into()]]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
@@ -179,10 +181,10 @@ Creation Date  1970-01-01 00:00:01 UTC
  Torrent Size  327 bytes
  Content Size  20 bytes
       Private  yes
-     Trackers  a
-               x
-               y
-               z
+      Tracker  a
+Announce List  Tier 1: x
+               Tier 2: y
+               Tier 3: z
     DHT Nodes  x:12
                1.1.1.1:16
                [2001:db8:85a3::8a2e:370]:7334
@@ -217,7 +219,8 @@ info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
 torrent size\t327
 content size\t20
 private\tyes
-trackers\ta\tx\ty\tz
+tracker\ta
+announce list\tx\ty\tz
 dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
 piece count\t2
@@ -232,7 +235,7 @@ files\tfoo
   #[test]
   fn tier_list_without_main() {
     let metainfo = Metainfo {
-      announce: "a".into(),
+      announce: Some("a".into()),
       announce_list: Some(vec![vec!["b".into()], vec!["c".into()], vec!["a".into()]]),
       comment: Some("comment".into()),
       nodes: Some(vec![
@@ -278,9 +281,10 @@ Creation Date  1970-01-01 00:00:01 UTC
  Torrent Size  307 bytes
  Content Size  20 bytes
       Private  yes
-     Trackers  b
-               c
-               a
+      Tracker  a
+Announce List  Tier 1: b
+               Tier 2: c
+               Tier 3: a
     DHT Nodes  x:12
                1.1.1.1:16
                [2001:db8:85a3::8a2e:370]:7334
@@ -315,7 +319,8 @@ info hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
 torrent size\t307
 content size\t20
 private\tyes
-trackers\tb\tc\ta
+tracker\ta
+announce list\tb\tc\ta
 dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
 piece count\t1

@@ -2,6 +2,7 @@ use crate::common::*;
 
 pub(crate) struct TorrentSummary {
   metainfo: Metainfo,
+  // TODO: use Infohash
   infohash: sha1::Digest,
   size: Bytes,
 }
@@ -106,40 +107,18 @@ impl TorrentSummary {
       },
     );
 
-    match &self.metainfo.announce_list {
-      Some(tiers) => {
-        if tiers.iter().all(|tier| tier.len() == 1) {
-          let mut list = Vec::new();
-          if !tiers
-            .iter()
-            .any(|tier| tier.contains(&self.metainfo.announce))
-          {
-            list.push(self.metainfo.announce.clone());
-          }
+    if let Some(announce) = &self.metainfo.announce {
+      table.row("Tracker", announce);
+    }
 
-          for tier in tiers {
-            list.push(tier[0].clone());
-          }
+    if let Some(tiers) = &self.metainfo.announce_list {
+      let mut value = Vec::new();
 
-          table.list("Trackers", list);
-        } else {
-          let mut value = Vec::new();
-
-          if !tiers
-            .iter()
-            .any(|tier| tier.contains(&self.metainfo.announce))
-          {
-            value.push(("Main".to_owned(), vec![self.metainfo.announce.clone()]));
-          }
-
-          for (i, tier) in tiers.iter().enumerate() {
-            value.push((format!("Tier {}", i + 1), tier.clone()));
-          }
-
-          table.tiers("Trackers", value);
-        }
+      for (i, tier) in tiers.iter().enumerate() {
+        value.push((format!("Tier {}", i + 1), tier.clone()));
       }
-      None => table.row("Tracker", &self.metainfo.announce),
+
+      table.tiers("Announce List", value);
     }
 
     if let Some(nodes) = &self.metainfo.nodes {

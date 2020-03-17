@@ -14,11 +14,10 @@ pub(crate) struct Create {
     long = "announce",
     short = "a",
     value_name = "URL",
-    required(true),
     help = "Use `URL` as the primary tracker announce URL. To supply multiple announce URLs, also \
             use `--announce-tier`."
   )]
-  announce: Url,
+  announce: Option<Url>,
   #[structopt(
     long = "allow",
     short = "A",
@@ -335,7 +334,7 @@ impl Create {
     let metainfo = Metainfo {
       comment: self.comment,
       encoding: Some(consts::ENCODING_UTF8.to_string()),
-      announce: self.announce.to_string(),
+      announce: self.announce.map(|url| url.to_string()),
       announce_list: if announce_list.is_empty() {
         None
       } else {
@@ -547,7 +546,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce, Some("http://bar/".into()));
     assert!(metainfo.announce_list.is_none());
   }
 
@@ -569,8 +568,8 @@ mod tests {
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
-      metainfo.announce,
-      "udp://tracker.opentrackr.org:1337/announce"
+      metainfo.announce.as_deref(),
+      Some("udp://tracker.opentrackr.org:1337/announce")
     );
     assert!(metainfo.announce_list.is_none());
   }
@@ -592,7 +591,10 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "wss://tracker.btorrent.xyz/");
+    assert_eq!(
+      metainfo.announce.as_deref(),
+      Some("wss://tracker.btorrent.xyz/")
+    );
     assert!(metainfo.announce_list.is_none());
   }
 
@@ -615,7 +617,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
       metainfo.announce_list,
       Some(vec![vec!["http://bar".into(), "http://baz".into()]]),
@@ -643,7 +645,7 @@ mod tests {
     };
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.announce, "http://bar/");
+    assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
       metainfo.announce_list,
       Some(vec![

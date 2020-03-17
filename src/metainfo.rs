@@ -105,7 +105,7 @@ mod tests {
   #[test]
   fn round_trip_single() {
     let value = Metainfo {
-      announce: "announce".into(),
+      announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
       comment: Some("comment".into()),
       created_by: Some("created by".into()),
@@ -135,7 +135,7 @@ mod tests {
   #[test]
   fn round_trip_multiple() {
     let value = Metainfo {
-      announce: "announce".into(),
+      announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
       nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
       comment: Some("comment".into()),
@@ -180,7 +180,7 @@ mod tests {
   #[test]
   fn bencode_representation_single_some() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: Some(vec![vec!["A".into(), "B".into()], vec!["C".into()]]),
       nodes: Some(vec![
         "domain:1".parse().unwrap(),
@@ -241,7 +241,7 @@ mod tests {
   #[test]
   fn bencode_representation_single_none() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -280,7 +280,7 @@ mod tests {
   #[test]
   fn bencode_representation_multiple_some() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -328,7 +328,7 @@ mod tests {
   #[test]
   fn bencode_representation_multiple_none() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,
@@ -375,7 +375,7 @@ mod tests {
   #[test]
   fn private_false() {
     let value = Metainfo {
-      announce: "ANNOUNCE".into(),
+      announce: Some("ANNOUNCE".into()),
       announce_list: None,
       nodes: None,
       comment: None,

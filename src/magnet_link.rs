@@ -1,5 +1,10 @@
 use crate::common::*;
 
+// TODO:
+// - test torrent output with no announce URL
+// - consider if I should allow trackerless torrents by default. maybe make it a
+//   lint, like "trackerless"
+
 pub(crate) struct MagnetLink {
   infohash: Infohash,
   name: Option<String>,
