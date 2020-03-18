@@ -8,13 +8,11 @@ pub(crate) const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
 
 /// Default value for `created by` torrent metainfo field.
 ///
-/// Example: imdl/0.0.0 (1234567890AB)
+/// Example: imdl/0.0.0 (1234567890ab)
 pub(crate) const CREATED_BY_DEFAULT: &str = concat!(
   "imdl/",
   env!("CARGO_PKG_VERSION"),
-  " (",
   env!("GIT_HEAD_PARTIAL_HASH"),
-  ")"
 );
 
 /// Value for `encoding` torrent metainfo field.
@@ -22,7 +20,7 @@ pub(crate) const ENCODING_UTF8: &str = "UTF-8";
 
 pub(crate) const HELP_MESSAGE: &str = "Print help message.";
 
-/// The pogress chars are from the
+/// The progress chars are from the
 /// [Block Elements unicode block](https://en.wikipedia.org/wiki/Block_Elements).
 pub(crate) const PROGRESS_CHARS: &str = "█▉▊▋▌▍▎▏ ";
 
@@ -66,3 +64,32 @@ pub(crate) const TICK_CHARS: &str = concat!(
 pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
 
 pub(crate) const VERSION_MESSAGE: &str = "Print version number.";
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::common::*;
+
+  #[test]
+  fn created_by() {
+    let pattern = Regex::new(
+      r#"(?x)
+      imdl/
+      [0-9]+.[0-9]+.[0-9]+(-.*)?
+      (
+        [\ ]
+        \(
+          [0-9a-f]{12}
+        \)
+      )?
+    "#,
+    )
+    .unwrap();
+
+    assert!(
+      pattern.is_match(CREATED_BY_DEFAULT),
+      "Bad created by string: `{}`",
+      CREATED_BY_DEFAULT
+    );
+  }
+}
