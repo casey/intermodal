@@ -161,7 +161,7 @@ pub(crate) struct Create {
     long = "peer",
     value_name = "PEER",
     help = "Add `PEER` to magnet link.",
-    // requires("link")
+    requires("print-magnet-link")
   )]
   peers: Vec<HostPort>,
   #[structopt(
@@ -407,7 +407,11 @@ impl Create {
     }
 
     if self.print_magnet_link {
-      outln!(env, "{}", MagnetLink::from_metainfo(&metainfo)?)?;
+      let mut link = MagnetLink::from_metainfo(&metainfo)?;
+      for peer in self.peers {
+        link.add_peer(peer);
+      }
+      outln!(env, "{}", link)?;
     }
 
     if let OutputTarget::File(path) = output {
@@ -2388,5 +2392,32 @@ Content Size  9 bytes
     };
 
     assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn link_with_peers() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--peer",
+        "foo:1337",
+        "--peer",
+        "bar:666",
+        "--link"
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
+    assert_eq!(
+      env.out(),
+      "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo&x.pe=foo:1337&x.pe=bar:\
+       666\n"
+    );
   }
 }
