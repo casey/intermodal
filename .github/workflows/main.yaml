@@ -37,6 +37,10 @@ jobs:
         profile: minimal
         components: clippy, rustfmt
         override: true
+
+    - name: Install `musl-gcc`
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install musl-tools
     - name: Version
       run: |
         rustup --version
