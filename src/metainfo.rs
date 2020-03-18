@@ -90,9 +90,18 @@ impl Metainfo {
   }
 
   pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> + 'a {
+    let mut seen = HashSet::new();
     iter::once(&self.announce)
       .flatten()
       .chain(self.announce_list.iter().flatten().flatten())
+      .filter(move |text| {
+        if seen.contains(text) {
+          false
+        } else {
+          seen.insert(text.clone());
+          true
+        }
+      })
       .map(|text| text.parse().context(error::AnnounceUrlParse))
   }
 
@@ -413,5 +422,47 @@ mod tests {
     );
 
     representation(value, want);
+  }
+
+  #[test]
+  fn trackers() {
+    let mut metainfo = Metainfo {
+      announce: Some("http://foo".into()),
+      announce_list: None,
+      nodes: None,
+      comment: None,
+      created_by: None,
+      creation_date: None,
+      encoding: None,
+      info: Info {
+        private: Some(false),
+        piece_length: Bytes(1024),
+        source: None,
+        name: "NAME".into(),
+        pieces: PieceList::from_pieces(&["fae50"]),
+        mode: Mode::Single {
+          length: Bytes(5),
+          md5sum: None,
+        },
+      },
+    };
+
+    let trackers = metainfo.trackers().collect::<Result<Vec<Url>>>().unwrap();
+    assert_eq!(trackers, &["http://foo".parse().unwrap()]);
+
+    metainfo.announce_list = Some(vec![
+      vec!["http://bar".into(), "http://baz".into()],
+      vec!["http://foo".into()],
+    ]);
+
+    let trackers = metainfo.trackers().collect::<Result<Vec<Url>>>().unwrap();
+    assert_eq!(
+      trackers,
+      &[
+        "http://foo".parse().unwrap(),
+        "http://bar".parse().unwrap(),
+        "http://baz".parse().unwrap(),
+      ],
+    );
   }
 }
