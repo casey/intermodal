@@ -94,15 +94,14 @@ impl Metainfo {
     iter::once(&self.announce)
       .flatten()
       .chain(self.announce_list.iter().flatten().flatten())
-      .filter(move |text| {
+      .filter_map(move |text| {
         if seen.contains(text) {
-          false
+          None
         } else {
           seen.insert(text.clone());
-          true
+          Some(text.parse().context(error::AnnounceUrlParse))
         }
       })
-      .map(|text| text.parse().context(error::AnnounceUrlParse))
   }
 
   pub(crate) fn infohash(&self) -> Result<Infohash> {
