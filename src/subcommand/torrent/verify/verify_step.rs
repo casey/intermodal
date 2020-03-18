@@ -2,7 +2,7 @@ use crate::common::*;
 
 #[derive(Clone, Copy)]
 pub(crate) enum VerifyStep<'a> {
-  Loading { metainfo: &'a Path },
+  Loading { metainfo: &'a InputTarget },
   Verifying { content: &'a Path },
 }
 
@@ -27,9 +27,7 @@ impl<'a> Step for VerifyStep<'a> {
 
   fn write_message(&self, write: &mut dyn Write) -> io::Result<()> {
     match self {
-      Self::Loading { metainfo } => {
-        write!(write, "Loading metainfo from `{}`…", metainfo.display())
-      }
+      Self::Loading { metainfo } => write!(write, "Loading metainfo from {}…", metainfo),
       Self::Verifying { content } => {
         write!(write, "Verifying pieces from `{}`…", content.display())
       }

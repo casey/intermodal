@@ -7,21 +7,21 @@ use structopt::clap;
 pub(crate) enum Error {
   #[snafu(display("Failed to parse announce URL: {}", source))]
   AnnounceUrlParse { source: url::ParseError },
-  #[snafu(display("Failed to deserialize torrent metainfo from `{}`: {}", path.display(), source))]
+  #[snafu(display("Failed to deserialize torrent metainfo from {}: {}", input, source))]
   MetainfoDeserialize {
     source: bendy::serde::Error,
-    path: PathBuf,
+    input: InputTarget,
   },
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
   MetainfoSerialize { source: bendy::serde::Error },
-  #[snafu(display("Failed to decode torrent metainfo from `{}`: {}", path.display(), error))]
+  #[snafu(display("Failed to decode torrent metainfo from {}: {}", input, error))]
   MetainfoDecode {
-    path: PathBuf,
+    input: InputTarget,
     error: bendy::decoding::Error,
   },
-  #[snafu(display("Metainfo from `{}` failed to validate: {}", path.display(), source))]
+  #[snafu(display("Metainfo from {} failed to validate: {}", input, source))]
   MetainfoValidate {
-    path: PathBuf,
+    input: InputTarget,
     source: MetainfoError,
   },
   #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]

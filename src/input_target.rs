@@ -6,28 +6,6 @@ pub(crate) enum InputTarget {
   Stdin,
 }
 
-impl InputTarget {
-  // TODO: remove
-  pub(crate) fn resolve(&self, env: &Env) -> Self {
-    match self {
-      Self::File(path) => Self::File(env.resolve(path)),
-      Self::Stdin => Self::Stdin,
-    }
-  }
-
-  // TODO: remove
-  pub(crate) fn read(&self) -> Result<Vec<u8>> {
-    match self {
-      Self::File(path) => fs::read(path).context(error::Filesystem { path }),
-      Self::Stdin => {
-        let mut buffer = Vec::new();
-        io::stdin().read_to_end(&mut buffer).context(error::Stdin)?;
-        Ok(buffer)
-      }
-    }
-  }
-}
-
 impl From<&OsStr> for InputTarget {
   fn from(text: &OsStr) -> Self {
     if text == OsStr::new("-") {
@@ -43,6 +21,16 @@ impl Display for InputTarget {
     match self {
       Self::Stdin => write!(f, "standard input"),
       Self::File(path) => write!(f, "`{}`", path.display()),
+    }
+  }
+}
+
+#[cfg(test)]
+impl<P: AsRef<Path>> PartialEq<P> for InputTarget {
+  fn eq(&self, other: &P) -> bool {
+    match self {
+      Self::File(path) => path == other.as_ref(),
+      Self::Stdin => Path::new("-") == other.as_ref(),
     }
   }
 }

@@ -3,10 +3,11 @@ use crate::common::*;
 pub(crate) struct TestEnvBuilder {
   args: Vec<OsString>,
   current_dir: Option<PathBuf>,
+  err_style: bool,
+  input: Option<Box<dyn Read>>,
   out_is_term: bool,
   tempdir: Option<TempDir>,
   use_color: bool,
-  err_style: bool,
 }
 
 impl TestEnvBuilder {
@@ -14,10 +15,11 @@ impl TestEnvBuilder {
     TestEnvBuilder {
       args: Vec::new(),
       current_dir: None,
+      err_style: false,
+      input: None,
       out_is_term: false,
       tempdir: None,
       use_color: false,
-      err_style: false,
     }
   }
 
@@ -28,6 +30,11 @@ impl TestEnvBuilder {
 
   pub(crate) fn err_style(mut self, err_style: bool) -> Self {
     self.err_style = err_style;
+    self
+  }
+
+  pub(crate) fn input(mut self, input: impl AsRef<[u8]>) -> Self {
+    self.input = Some(Box::new(io::Cursor::new(input.as_ref().to_owned())));
     self
   }
 
@@ -73,7 +80,13 @@ impl TestEnvBuilder {
 
     let err_stream = OutputStream::new(Box::new(err.clone()), self.err_style, false);
 
-    let env = Env::new(current_dir, self.args, out_stream, err_stream);
+    let env = Env::new(
+      current_dir,
+      self.args,
+      self.input.unwrap_or_else(|| Box::new(io::empty())),
+      out_stream,
+      err_stream,
+    );
 
     TestEnv::new(tempdir, env, err, out)
   }

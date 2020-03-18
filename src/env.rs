@@ -3,6 +3,7 @@ use crate::common::*;
 pub(crate) struct Env {
   args: Vec<OsString>,
   dir: PathBuf,
+  input: Box<dyn Read>,
   err: OutputStream,
   out: OutputStream,
 }
@@ -20,7 +21,13 @@ impl Env {
     let out_stream = OutputStream::stdout(style);
     let err_stream = OutputStream::stderr(style);
 
-    Self::new(dir, env::args(), out_stream, err_stream)
+    Self::new(
+      dir,
+      env::args(),
+      Box::new(io::stdin()),
+      out_stream,
+      err_stream,
+    )
   }
 
   pub(crate) fn run(&mut self) -> Result<(), Error> {
@@ -69,13 +76,20 @@ impl Env {
     });
   }
 
-  pub(crate) fn new<S, I>(dir: PathBuf, args: I, out: OutputStream, err: OutputStream) -> Self
+  pub(crate) fn new<S, I>(
+    dir: PathBuf,
+    args: I,
+    input: Box<dyn Read>,
+    out: OutputStream,
+    err: OutputStream,
+  ) -> Self
   where
     S: Into<OsString>,
     I: IntoIterator<Item = S>,
   {
     Self {
       args: args.into_iter().map(Into::into).collect(),
+      input,
       dir,
       out,
       err,
@@ -129,10 +143,6 @@ impl Env {
     &self.dir
   }
 
-  pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
-    self.dir().join(path).clean()
-  }
-
   pub(crate) fn err(&self) -> &OutputStream {
     &self.err
   }
@@ -147,6 +157,26 @@ impl Env {
 
   pub(crate) fn out_mut(&mut self) -> &mut OutputStream {
     &mut self.out
+  }
+
+  pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
+    self.dir().join(path).clean()
+  }
+
+  pub(crate) fn read(&mut self, source: InputTarget) -> Result<Input> {
+    let data = match &source {
+      InputTarget::File(path) => {
+        let absolute = self.resolve(path);
+        fs::read(absolute).context(error::Filesystem { path })?
+      }
+      InputTarget::Stdin => {
+        let mut buffer = Vec::new();
+        self.input.read_to_end(&mut buffer).context(error::Stdin)?;
+        buffer
+      }
+    };
+
+    Ok(Input::new(source, data))
   }
 }
 
