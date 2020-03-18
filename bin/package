@@ -33,7 +33,7 @@ cp \
   Cargo.lock \
   Cargo.toml \
   CHANGELOG.md \
-  CONTRIBUTING.md \
+  CONTRIBUTING \
   LICENSE \
   README.md \
   $dist
