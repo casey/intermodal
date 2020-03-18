@@ -113,6 +113,11 @@ pub(crate) struct Create {
   )]
   input: PathBuf,
   #[structopt(
+    long = "link",
+    help = "Print created torrent `magnet:` URL to standard output"
+  )]
+  print_magnet_link: bool,
+  #[structopt(
     long = "md5",
     short = "M",
     help = "Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically \
@@ -152,6 +157,13 @@ pub(crate) struct Create {
     parse(from_os_str)
   )]
   output: Option<OutputTarget>,
+  #[structopt(
+    long = "peer",
+    value_name = "PEER",
+    help = "Add `PEER` to magnet link.",
+    requires("print-magnet-link")
+  )]
+  peers: Vec<HostPort>,
   #[structopt(
     long = "piece-length",
     short = "p",
@@ -391,7 +403,15 @@ impl Create {
     errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
 
     if self.show {
-      TorrentSummary::from_metainfo(metainfo)?.write(env)?;
+      TorrentSummary::from_metainfo(metainfo.clone())?.write(env)?;
+    }
+
+    if self.print_magnet_link {
+      let mut link = MagnetLink::from_metainfo(&metainfo)?;
+      for peer in self.peers {
+        link.add_peer(peer);
+      }
+      outln!(env, "{}", link)?;
     }
 
     if let OutputTarget::File(path) = output {
@@ -2287,5 +2307,117 @@ Content Size  9 bytes
     };
 
     assert_matches!(env.run(), Ok(()));
+  }
+
+  #[test]
+  fn no_print_magnet_link() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
+    assert_eq!(env.out(), "");
+  }
+
+  #[test]
+  fn print_magnet_link() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--link",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
+    assert_eq!(
+      env.out(),
+      "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo\n"
+    );
+  }
+
+  #[test]
+  fn print_magnet_link_with_announce() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--link",
+        "--announce",
+        "http://foo.com/announce",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
+    assert_eq!(
+      env.out(),
+      "magnet:\
+      ?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e\
+      &dn=foo\
+      &tr=http://foo.com/announce\n"
+    );
+  }
+
+  #[test]
+  fn peer_requires_link() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--peer",
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn link_with_peers() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--peer",
+        "foo:1337",
+        "--peer",
+        "bar:666",
+        "--link"
+      ],
+      tree: {
+        foo: "",
+      },
+    };
+
+    assert_matches!(env.run(), Ok(()));
+    assert_eq!(
+      env.out(),
+      "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo&x.pe=foo:1337&x.pe=bar:\
+       666\n"
+    );
   }
 }
