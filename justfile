@@ -24,7 +24,7 @@ push: check
 	git push github
 
 # clean up feature branch BRANCH
-done BRANCH:
+done BRANCH=`git rev-parse --abbrev-ref HEAD`:
 	git checkout master
 	git diff --no-ext-diff --quiet --exit-code
 	git pull --rebase github master
