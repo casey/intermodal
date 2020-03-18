@@ -93,7 +93,7 @@ at any time.
 | [06](http://bittorrent.org/beps/bep_0006.html) | :heavy_minus_sign:                                    | Fast Extension                                                   |
 | [07](http://bittorrent.org/beps/bep_0007.html) | :heavy_minus_sign:                                    | IPv6 Tracker Extension                                           |
 | [08](http://bittorrent.org/beps/bep_0008.html) | :heavy_minus_sign:                                    | Tracker Peer Obfuscation                                         |
-| [09](http://bittorrent.org/beps/bep_0009.html) | [:x:](https://github.com/casey/intermodal/issues/91)  | Extension for Peers to Send Metadata Files                       |
+| [09](http://bittorrent.org/beps/bep_0009.html) | :white_check_mark:                                    | Extension for Peers to Send Metadata Files                       |
 | [10](http://bittorrent.org/beps/bep_0010.html) | :heavy_minus_sign:                                    | Extension Protocol                                               |
 | [11](http://bittorrent.org/beps/bep_0011.html) | :heavy_minus_sign:                                    | Peer Exchange (PEX)                                              |
 | [12](http://bittorrent.org/beps/bep_0012.html) | :white_check_mark:                                    | Multitracker Metadata Extension                                  |
