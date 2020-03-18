@@ -14,10 +14,11 @@ pub(crate) struct Verify {
     long = "input",
     short = "i",
     value_name = "METAINFO",
-    help = "Verify torrent contents against torrent metainfo in `FILE`.",
+    help = "Verify torrent contents against torrent metainfo in `METAINFO`. If `METAINFO` is `-`, \
+            read metainfo from standard input.",
     parse(from_os_str)
   )]
-  metainfo: PathBuf,
+  metainfo: InputTarget,
   #[structopt(
     long = "content",
     short = "c",
@@ -31,18 +32,22 @@ pub(crate) struct Verify {
 
 impl Verify {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let metainfo_path = env.resolve(&self.metainfo);
-    let metainfo = Metainfo::load(&metainfo_path)?;
-
     VerifyStep::Loading {
-      metainfo: &metainfo_path,
+      metainfo: &self.metainfo,
     }
     .print(env)?;
 
-    let base = if let Some(content) = &self.content {
-      env.resolve(content)
+    let input = env.read(self.metainfo.clone())?;
+
+    let metainfo = Metainfo::from_input(&input)?;
+
+    let content = if let Some(content) = &self.content {
+      content.clone()
     } else {
-      metainfo_path.parent().unwrap().join(&metainfo.info.name)
+      match &self.metainfo {
+        InputTarget::File(path) => path.parent().unwrap().join(&metainfo.info.name),
+        InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
+      }
     };
 
     let progress_bar = if env.err().is_styled_term() {
@@ -59,9 +64,9 @@ impl Verify {
       None
     };
 
-    VerifyStep::Verifying { content: &base }.print(env)?;
+    VerifyStep::Verifying { content: &content }.print(env)?;
 
-    let status = metainfo.verify(&base, progress_bar)?;
+    let status = metainfo.verify(&env.resolve(content), progress_bar)?;
 
     status.print(env)?;
 
@@ -249,6 +254,58 @@ mod tests {
        `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
       torrent.display(),
       bar.display(),
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn verify_stdin() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+    let content = create_env.resolve("foo");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        "-",
+        "--content",
+        &content,
+      ],
+      input: fs::read(&torrent).unwrap(),
+      tree: {},
+    };
+
+    assert_matches!(verify_env.run(), Ok(()));
+
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying pieces \
+       from `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+      content.display()
     );
 
     assert_eq!(verify_env.err(), want);
@@ -508,6 +565,57 @@ mod tests {
 
     assert_eq!(verify_env.err(), want);
     assert_eq!(verify_env.out(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn stdin_uses_name() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.run()?;
+
+    let torrent = create_env.resolve("foo.torrent");
+
+    let metainfo = fs::read(torrent).unwrap();
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        "-",
+      ],
+      input: metainfo,
+      tree: {},
+    };
+
+    fs::rename(create_env.resolve("foo"), verify_env.resolve("foo")).unwrap();
+
+    assert_matches!(verify_env.run(), Ok(()));
+
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying pieces \
+       from `foo`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+    );
+
+    assert_eq!(verify_env.err(), want);
 
     Ok(())
   }

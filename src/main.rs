@@ -64,6 +64,8 @@ mod host_port;
 mod host_port_parse_error;
 mod info;
 mod infohash;
+mod input;
+mod input_target;
 mod into_u64;
 mod into_usize;
 mod lint;

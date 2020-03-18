@@ -11,10 +11,11 @@ pub(crate) struct Link {
     long = "input",
     short = "i",
     value_name = "METAINFO",
-    help = "Generate magnet link from metainfo at `PATH`.",
+    help = "Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from \
+            standard input.",
     parse(from_os_str)
   )]
-  input: PathBuf,
+  input: InputTarget,
   #[structopt(
     long = "open",
     short = "O",
@@ -33,9 +34,10 @@ pub(crate) struct Link {
 
 impl Link {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.resolve(&self.input);
-    let infohash = Infohash::load(&input)?;
-    let metainfo = Metainfo::load(&input)?;
+    let input = env.read(self.input.clone())?;
+
+    let infohash = Infohash::from_input(&input)?;
+    let metainfo = Metainfo::from_input(&input)?;
 
     let mut link = MagnetLink::with_infohash(infohash);
 
@@ -233,8 +235,8 @@ mod tests {
     };
 
     assert_matches!(
-      env.run(), Err(Error::MetainfoValidate { path, source: MetainfoError::Type })
-      if path == env.resolve("foo.torrent")
+      env.run(), Err(Error::MetainfoValidate { input, source: MetainfoError::Type })
+      if input == "foo.torrent"
     );
   }
 

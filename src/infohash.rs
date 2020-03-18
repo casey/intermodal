@@ -6,11 +6,9 @@ pub(crate) struct Infohash {
 }
 
 impl Infohash {
-  pub(crate) fn load(path: &Path) -> Result<Infohash, Error> {
-    let bytes = fs::read(path).context(error::Filesystem { path })?;
-
-    let value = Value::from_bencode(&bytes).map_err(|error| Error::MetainfoDecode {
-      path: path.to_owned(),
+  pub(crate) fn from_input(input: &Input) -> Result<Infohash, Error> {
+    let value = Value::from_bencode(input.data()).map_err(|error| Error::MetainfoDecode {
+      input: input.source().clone(),
       error,
     })?;
 
@@ -20,7 +18,7 @@ impl Infohash {
           .iter()
           .find(|pair: &(&Cow<[u8]>, &Value)| pair.0.as_ref() == b"info")
           .ok_or_else(|| Error::MetainfoValidate {
-            path: path.to_owned(),
+            input: input.source().clone(),
             source: MetainfoError::InfoMissing,
           })?
           .1;
@@ -33,13 +31,13 @@ impl Infohash {
           Ok(Self::from_bencoded_info_dict(&encoded))
         } else {
           Err(Error::MetainfoValidate {
-            path: path.to_owned(),
+            input: input.source().clone(),
             source: MetainfoError::InfoType,
           })
         }
       }
       _ => Err(Error::MetainfoValidate {
-        path: path.to_owned(),
+        input: input.source().clone(),
         source: MetainfoError::Type,
       }),
     }
@@ -49,6 +47,12 @@ impl Infohash {
     Infohash {
       inner: Sha1Digest::from_data(info),
     }
+  }
+
+  #[cfg(test)]
+  pub(crate) fn load(path: &Path) -> Result<Infohash, Error> {
+    let input = Input::from_path(path)?;
+    Self::from_input(&input)
   }
 }
 
@@ -74,12 +78,12 @@ mod tests {
       foo: "x",
     };
 
-    let input = tempdir.path().join("foo");
+    let path = tempdir.path().join("foo");
 
     assert_matches!(
-      Infohash::load(&input),
-      Err(Error::MetainfoDecode{path, .. })
-      if path == input
+      Infohash::load(&path),
+      Err(Error::MetainfoDecode{input, .. })
+      if input == path
     );
   }
 
@@ -89,12 +93,12 @@ mod tests {
       foo: "i0e",
     };
 
-    let input = tempdir.path().join("foo");
+    let path = tempdir.path().join("foo");
 
     assert_matches!(
-      Infohash::load(&input),
-      Err(Error::MetainfoValidate{path, source: MetainfoError::Type})
-      if path == input
+      Infohash::load(&path),
+      Err(Error::MetainfoValidate{input, source: MetainfoError::Type})
+      if input == path
     );
   }
 
@@ -104,12 +108,12 @@ mod tests {
       foo: "de",
     };
 
-    let input = tempdir.path().join("foo");
+    let path = tempdir.path().join("foo");
 
     assert_matches!(
-      Infohash::load(&input),
-      Err(Error::MetainfoValidate{path, source: MetainfoError::InfoMissing})
-      if path == input
+      Infohash::load(&path),
+      Err(Error::MetainfoValidate{input, source: MetainfoError::InfoMissing})
+      if input == path
     );
   }
 
@@ -119,12 +123,12 @@ mod tests {
       foo: "d4:infoi0ee",
     };
 
-    let input = tempdir.path().join("foo");
+    let path = tempdir.path().join("foo");
 
     assert_matches!(
-      Infohash::load(&input),
-      Err(Error::MetainfoValidate{path, source: MetainfoError::InfoType})
-      if path == input
+      Infohash::load(&path),
+      Err(Error::MetainfoValidate{input, source: MetainfoError::InfoType})
+      if input == path
     );
   }
 }
