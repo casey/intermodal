@@ -1578,7 +1578,7 @@ mod tests {
       "        Name  foo
   Created By  {}
    Info Hash  d3432a4b9d18baa413095a70f1e417021ceaca5b
-Torrent Size  237 bytes
+Torrent Size  {} bytes
 Content Size  9 bytes
      Private  no
      Tracker  http://bar/
@@ -1590,7 +1590,8 @@ Content Size  9 bytes
               ├─h
               └─x
 ",
-      consts::CREATED_BY_DEFAULT
+      consts::CREATED_BY_DEFAULT,
+      212 + consts::CREATED_BY_DEFAULT.len()
     );
     assert_eq!(have, want);
   }
