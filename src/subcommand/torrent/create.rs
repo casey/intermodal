@@ -59,7 +59,6 @@ pub(crate) struct Create {
   comment: Option<String>,
   #[structopt(
     long = "node",
-    short = "n",
     value_name = "NODE",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
             where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
@@ -69,6 +68,12 @@ pub(crate) struct Create {
     `--node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
   )]
   dht_nodes: Vec<HostPort>,
+  #[structopt(
+    long = "dry-run",
+    short = "n",
+    help = "Skip writing `.torrent` file to disk."
+  )]
+  dry_run: bool,
   #[structopt(
     long = "follow-symlinks",
     short = "F",
@@ -369,22 +374,24 @@ impl Create {
 
     let bytes = metainfo.serialize()?;
 
-    match &output {
-      OutputTarget::File(path) => {
-        let mut open_options = fs::OpenOptions::new();
+    if !self.dry_run {
+      match &output {
+        OutputTarget::File(path) => {
+          let mut open_options = fs::OpenOptions::new();
 
-        if self.force {
-          open_options.write(true).create(true).truncate(true);
-        } else {
-          open_options.write(true).create_new(true);
+          if self.force {
+            open_options.write(true).create(true).truncate(true);
+          } else {
+            open_options.write(true).create_new(true);
+          }
+
+          open_options
+            .open(path)
+            .and_then(|mut file| file.write_all(&bytes))
+            .context(error::Filesystem { path })?;
         }
-
-        open_options
-          .open(path)
-          .and_then(|mut file| file.write_all(&bytes))
-          .context(error::Filesystem { path })?;
+        OutputTarget::Stdout => env.out_mut().write_all(&bytes).context(error::Stdout)?,
       }
-      OutputTarget::Stdout => env.out_mut().write_all(&bytes).context(error::Stdout)?,
     }
 
     #[cfg(test)]
@@ -2419,5 +2426,25 @@ Content Size  9 bytes
       "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo&x.pe=foo:1337&x.pe=bar:\
        666\n"
     );
+  }
+
+  #[test]
+  fn dry_run_skips_torrent_file_creation() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--dry-run",
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    assert_matches!(env.run(), Ok(()));
+    let torrent = env.resolve("foo.torrent");
+    let err = fs::read(torrent).unwrap_err();
+    assert_eq!(err.kind(), io::ErrorKind::NotFound);
   }
 }
