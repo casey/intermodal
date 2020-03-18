@@ -20,7 +20,7 @@ pub(crate) struct Show {
 
 impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.read(self.input.clone())?;
+    let input = env.read(self.input)?;
     let summary = TorrentSummary::from_input(&input)?;
     summary.write(env)?;
     Ok(())
