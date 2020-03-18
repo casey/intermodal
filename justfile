@@ -75,6 +75,9 @@ check: test clippy lint check-minimal-versions
 	cargo run --package update-readme toc
 	git diff --no-ext-diff --quiet --exit-code
 
+pr: push
+	hub pull-request -o
+
 publish-check: check
 	cargo outdated --exit-code 1
 	git branch | grep '* master'
