@@ -107,6 +107,8 @@ pub(crate) enum Error {
   PrivateTrackerless,
   #[snafu(display("Failed to write to standard error: {}", source))]
   Stderr { source: io::Error },
+  #[snafu(display("Failed to read from standard input: {}", source))]
+  Stdin { source: io::Error },
   #[snafu(display("Failed to write to standard output: {}", source))]
   Stdout { source: io::Error },
   #[snafu(display(

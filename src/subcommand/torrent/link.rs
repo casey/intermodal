@@ -7,11 +7,13 @@ use crate::common::*;
   about("Generate a magnet link from a `.torrent` file.")
 )]
 pub(crate) struct Link {
+  // TODO: Make this an InputTarget
   #[structopt(
     long = "input",
     short = "i",
     value_name = "METAINFO",
-    help = "Generate magnet link from metainfo at `PATH`.",
+    help = "Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from \
+            standard input.",
     parse(from_os_str)
   )]
   input: PathBuf,
