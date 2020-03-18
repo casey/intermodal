@@ -8,6 +8,18 @@ pub(crate) struct MagnetLink {
 }
 
 impl MagnetLink {
+  pub(crate) fn from_metainfo(metainfo: &Metainfo) -> Result<MagnetLink> {
+    let mut link = Self::with_infohash(metainfo.infohash()?);
+
+    link.set_name(metainfo.info.name.clone());
+
+    for tracker in metainfo.trackers() {
+      link.add_tracker(tracker?);
+    }
+
+    Ok(link)
+  }
+
   pub(crate) fn with_infohash(infohash: Infohash) -> MagnetLink {
     MagnetLink {
       infohash,
@@ -57,11 +69,26 @@ impl MagnetLink {
   }
 }
 
+impl Display for MagnetLink {
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    write!(f, "{}", self.to_url())
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
 
   use pretty_assertions::assert_eq;
+
+  #[test]
+  fn display() {
+    let link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
+    assert_eq!(
+      link.to_string(),
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    );
+  }
 
   #[test]
   fn basic() {
