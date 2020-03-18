@@ -32,6 +32,8 @@ cp \
   $executable \
   Cargo.lock \
   Cargo.toml \
+  CHANGELOG.md \
+  CONTRIBUTING.md \
   LICENSE \
   README.md \
   $dist
