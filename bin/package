@@ -15,6 +15,10 @@ test -f Cargo.lock || cargo generate-lockfile
 
 echo "Building $bin..."
 
+if [ "$os" = "ubuntu-latest" ]; then
+  sudo apt-get install musl-tools
+fi
+
 case $os in
   ubuntu-latest | macos-latest)
     cargo rustc --bin $bin --target $target --release -- -C lto
