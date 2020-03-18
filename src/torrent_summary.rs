@@ -22,10 +22,8 @@ impl TorrentSummary {
     Ok(Self::new(metainfo, infohash, size))
   }
 
-  pub(crate) fn load(path: &Path) -> Result<Self> {
-    let bytes = fs::read(path).context(error::Filesystem { path })?;
-
-    let metainfo = Metainfo::deserialize(path, &bytes)?;
+  pub(crate) fn from_input(input: &Input) -> Result<Self> {
+    let metainfo = Metainfo::from_input(input)?;
 
     Ok(Self::from_metainfo(metainfo)?)
   }

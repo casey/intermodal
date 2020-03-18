@@ -11,16 +11,17 @@ pub(crate) struct Show {
     long = "input",
     short = "i",
     value_name = "PATH",
-    help = "Show information about torrent at `PATH`.",
+    help = "Show information about torrent at `PATH`. If `Path` is `-`, read torrent metainfo \
+            from standard input.",
     parse(from_os_str)
   )]
-  input: PathBuf,
+  input: InputTarget,
 }
 
 impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.resolve(&self.input);
-    let summary = TorrentSummary::load(&input)?;
+    let input = env.read(self.input)?;
+    let summary = TorrentSummary::from_input(&input)?;
     summary.write(env)?;
     Ok(())
   }
