@@ -41,13 +41,8 @@ impl Link {
 
     link.set_name(&metainfo.info.name);
 
-    let mut trackers = HashSet::new();
     for result in metainfo.trackers() {
-      let tracker = result?;
-      if !trackers.contains(&tracker) {
-        trackers.insert(tracker.clone());
-        link.add_tracker(tracker);
-      }
+      link.add_tracker(result?);
     }
 
     for peer in self.peers {
