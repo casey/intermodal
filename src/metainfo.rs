@@ -51,16 +51,14 @@ pub(crate) struct Metainfo {
 }
 
 impl Metainfo {
-  pub(crate) fn load(path: impl AsRef<Path>) -> Result<Metainfo, Error> {
-    let path = path.as_ref();
-    let bytes = fs::read(path).context(error::Filesystem { path })?;
-    Self::deserialize(path, &bytes)
+  pub(crate) fn from_input(input: &Input) -> Result<Metainfo> {
+    Self::deserialize(input.source(), input.data())
   }
 
-  pub(crate) fn deserialize(path: impl AsRef<Path>, bytes: &[u8]) -> Result<Metainfo, Error> {
-    let path = path.as_ref();
-    let metainfo =
-      bendy::serde::de::from_bytes(&bytes).context(error::MetainfoDeserialize { path })?;
+  pub(crate) fn deserialize(source: &InputTarget, data: &[u8]) -> Result<Metainfo, Error> {
+    let metainfo = bendy::serde::de::from_bytes(&data).context(error::MetainfoDeserialize {
+      input: source.clone(),
+    })?;
     Ok(metainfo)
   }
 
@@ -78,7 +76,7 @@ impl Metainfo {
 
   #[cfg(test)]
   pub(crate) fn from_bytes(bytes: &[u8]) -> Metainfo {
-    Self::deserialize("<TEST>", bytes).unwrap()
+    Self::deserialize(&InputTarget::File("<TEST>".into()), bytes).unwrap()
   }
 
   pub(crate) fn verify(&self, base: &Path, progress_bar: Option<ProgressBar>) -> Result<Status> {
