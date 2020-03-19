@@ -1,0 +1,63 @@
+:root {
+  --width-target:      calc(100vw / 6);
+  --height-target:     calc(100vh / 3);
+  --size:              min(var(--width-target), var(--height-target));
+  --margin-vertical:   calc((100vh - var(--size) * 2) / 2);
+  --margin-horizontal: calc((100vw - var(--size) * 5) / 2);
+}
+
+* {
+  margin:  0;
+  padding: 0;
+}
+
+html {
+  background-color: black;
+  color:            white;
+  font-family:      sans-serif;
+  font-size:        var(--size);
+  line-height:      var(--size);
+  overflow:         hidden;
+  text-align:       center;
+}
+
+a {
+  color:           white;
+  text-decoration: none;
+}
+
+#intermodal {
+  display:               grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-bottom:         var(--margin-vertical);
+  margin-left:           var(--margin-horizontal);
+  margin-right:          var(--margin-horizontal);
+  margin-top:            var(--margin-vertical);
+}
+
+#intermodal > * {
+  height:       var(--size);
+  width:        var(--size);
+}
+
+/* intermodal is an isogram */
+#i:after        { content: 'I';  }
+#i:hover:after  { content: '私'; }
+#n:after        { content: 'N';  }
+#n:hover:after  { content: '∅';  }
+#t:after        { content: 'T';  }
+#t:hover:after  { content: '࿈';  }
+#e:after        { content: 'E';  }
+#e:hover:after  { content: 'Ə';  }
+#r:after        { content: 'R';  }
+#r:hover:after  { content: 'ℜ';  }
+#m:after        { content: 'M';  }
+#m:hover:after  { content: '☾';  }
+#o:after        { content: 'O';  }
+#o:hover:after  { content: 'ꙮ';  }
+#d:after        { content: 'D';  }
+#d:hover:after  { content: '↓';  }
+#a:after        { content: 'A';  }
+#a:hover:after  { content: 'א';  }
+#l:after        { content: 'L';  }
+#l:hover:after  { content: 'し'; }
