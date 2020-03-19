@@ -9,7 +9,7 @@ on:
     - master
 
 jobs:
-  deploy:
+  all:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +20,7 @@ jobs:
       - run: mdbook build book --dest-dir ../docs/book
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
+        if:   github.ref == 'refs/heads/master'
         with:
           github_token:   ${{secrets.GITHUB_TOKEN}}
           publish_branch: gh-pages
