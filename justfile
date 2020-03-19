@@ -62,10 +62,6 @@ dev-deps:
 update-toc:
 	cargo run --package update-readme toc
 
-# update readme table of supported BEPs
-update-supported-beps:
-	cargo run --package update-readme supported-beps
-
 check-minimal-versions:
 	./bin/check-minimal-versions
 
