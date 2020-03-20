@@ -48,7 +48,7 @@ preview-readme:
 
 # build and serve the book
 book:
-	mdbook serve book --open
+	mdbook serve book --open --dest-dir ../www/book
 
 # add git log messages to changelog
 changes:
@@ -61,10 +61,6 @@ dev-deps:
 # update readme table of contents
 update-toc:
 	cargo run --package update-readme toc
-
-# update readme table of supported BEPs
-update-supported-beps:
-	cargo run --package update-readme supported-beps
 
 check-minimal-versions:
 	./bin/check-minimal-versions
@@ -88,9 +84,9 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 
-# open github pages index
-open-pages:
-	open docs/index.html
+# open site index
+www:
+	open www/index.html
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
