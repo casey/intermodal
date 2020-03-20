@@ -1809,10 +1809,8 @@ Content Size  9 bytes
   fn populate_symlinks(env: &Env) {
     let dir = env.resolve("foo");
     let file_src = env.resolve("bar");
-    let file_link = env.resolve("foo/bar");
     let dir_src = env.resolve("dir-src");
     let dir_contents = dir_src.join("baz");
-    let dir_link = env.resolve("foo/dir");
     fs::create_dir(&dir_src).unwrap();
     fs::write(dir_contents, "baz").unwrap();
 
@@ -1820,6 +1818,8 @@ Content Size  9 bytes
     fs::write(file_src, "bar").unwrap();
     #[cfg(unix)]
     {
+      let file_link = env.resolve("foo/bar");
+      let dir_link = env.resolve("foo/dir");
       Command::new("ln")
         .arg("-s")
         .arg("../bar")
