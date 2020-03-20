@@ -41,6 +41,7 @@ a {
 
 #intermodal > div {
   height: var(--size);
+  text-shadow: 0 0 5px #fff;
 }
 
 #intermodal > a {
