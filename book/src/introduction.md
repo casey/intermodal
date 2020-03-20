@@ -28,10 +28,12 @@ Generate magnet links from torrent files:
 $ imdl torrent link --input foo.torrent
 ```
 
+Functionality that is not yet finalized, but still available for preview, can be accessed with the `--unstable` flag:
+
 Print information about a collection of torrents:
 
 ```
-$ imdl torrent stats --input dir
+$ imdl --unstable torrent stats --input dir
 ```
 
 Happy sharing!
