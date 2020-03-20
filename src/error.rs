@@ -7,23 +7,6 @@ use structopt::clap;
 pub(crate) enum Error {
   #[snafu(display("Failed to parse announce URL: {}", source))]
   AnnounceUrlParse { source: url::ParseError },
-  #[snafu(display("Failed to deserialize torrent metainfo from {}: {}", input, source))]
-  MetainfoDeserialize {
-    source: bendy::serde::Error,
-    input: InputTarget,
-  },
-  #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
-  MetainfoSerialize { source: bendy::serde::Error },
-  #[snafu(display("Failed to decode torrent metainfo from {}: {}", input, error))]
-  MetainfoDecode {
-    input: InputTarget,
-    error: bendy::decoding::Error,
-  },
-  #[snafu(display("Metainfo from {} failed to validate: {}", input, source))]
-  MetainfoValidate {
-    input: InputTarget,
-    source: MetainfoError,
-  },
   #[snafu(display("Failed to parse byte count `{}`: {}", text, source))]
   ByteParse {
     text: String,
@@ -45,8 +28,6 @@ pub(crate) enum Error {
   Filesystem { source: io::Error, path: PathBuf },
   #[snafu(display("Invalid glob: {}", source))]
   GlobParse { source: globset::Error },
-  #[snafu(display("Unknown lint: {}", text))]
-  LintUnknown { text: String },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
   InfoSerialize { source: bendy::serde::Error },
   #[snafu(display(
@@ -55,8 +36,29 @@ pub(crate) enum Error {
     message,
   ))]
   Internal { message: String },
-  #[snafu(display("Failed to find opener utility, please install one of {}", tried.join(",")))]
-  OpenerMissing { tried: &'static [&'static str] },
+  #[snafu(display("Unknown lint: {}", text))]
+  LintUnknown { text: String },
+  #[snafu(display("Failed to deserialize torrent metainfo from {}: {}", input, source))]
+  MetainfoDeserialize {
+    source: bendy::serde::Error,
+    input: InputTarget,
+  },
+  #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
+  MetainfoSerialize { source: bendy::serde::Error },
+  #[snafu(display("Failed to decode torrent metainfo from {}: {}", input, error))]
+  MetainfoDecode {
+    input: InputTarget,
+    error: bendy::decoding::Error,
+  },
+  #[snafu(display("Metainfo from {} failed to validate: {}", input, source))]
+  MetainfoValidate {
+    input: InputTarget,
+    source: MetainfoError,
+  },
+  #[snafu(display("Failed to invoke opener: {}", source))]
+  OpenerInvoke { source: io::Error },
+  #[snafu(display("Opener failed: {}", exit_status))]
+  OpenerExitStatus { exit_status: ExitStatus },
   #[snafu(display("Output path already exists: `{}`", path.display()))]
   OutputExists { path: PathBuf },
   #[snafu(display(

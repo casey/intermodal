@@ -80,7 +80,6 @@ mod test {
     io::Cursor,
     ops::{Deref, DerefMut},
     rc::Rc,
-    time::{Duration, Instant},
   };
 
   // test dependencies
