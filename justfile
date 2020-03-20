@@ -48,7 +48,7 @@ preview-readme:
 
 # build and serve the book
 book:
-	mdbook serve book --open
+	mdbook serve book --open --dest-dir ../www/book
 
 # add git log messages to changelog
 changes:
@@ -84,9 +84,9 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 
-# open github pages index
-open-pages:
-	open docs/index.html
+# open site index
+open-www:
+	open www/index.html
 
 # retrieve large collection of torrents from the Internet Archive
 get-torrents:
