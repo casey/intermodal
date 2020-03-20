@@ -6,12 +6,8 @@ pub(crate) trait PlatformInterface {
   }
 
   fn open_url(url: &Url) -> Result<(), Error> {
-    if cfg!(windows) {
-      let escaped = format!("{}", url);
-      Self::open_raw(escaped.as_str().as_ref())
-    } else {
-      Self::open_raw(url.as_str().as_ref())
-    }
+    let escaped = Self::escape_url(url);
+    Self::open_raw(escaped.as_ref().as_ref())
   }
 
   fn open_raw(target: &OsStr) -> Result<(), Error> {
@@ -42,6 +38,10 @@ pub(crate) trait PlatformInterface {
         status,
       })
     }
+  }
+
+  fn escape_url(url: &Url) -> Cow<str> {
+    url.as_str().into()
   }
 
   fn opener() -> Result<Vec<OsString>, Error>;

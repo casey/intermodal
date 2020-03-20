@@ -5,12 +5,12 @@ pub(crate) struct Platform;
 #[cfg(target_os = "windows")]
 impl PlatformInterface for Platform {
   fn opener() -> Result<Vec<OsString>, Error> {
-    let exe = if cfg!(test) { "open.bat" } else { "cmd" };
-    Ok(vec![
-      OsString::from(exe),
-      OsString::from("/C"),
-      OsString::from("start"),
-    ])
+    let exe = if cfg!(test) { "open.bat" } else { "powershell" };
+    Ok(vec![OsString::from(exe), OsString::from("start")])
+  }
+
+  fn escape_url(url: &Url) -> Cow<str> {
+    format!("\"{}\"", url).into()
   }
 
   fn hidden(path: &Path) -> Result<bool, Error> {
