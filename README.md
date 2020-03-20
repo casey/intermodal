@@ -17,11 +17,6 @@ binary is called `imdl`.
     - [Cargo](#cargo)
   - [Semantic Versioning](#semantic-versioning)
   - [Unstable Features](#unstable-features)
-- [Bittorrent](#bittorrent)
-  - [BEP Support](#bep-support)
-- [References](#references)
-  - [Alternatives & Prior Art](#alternatives--prior-art)
-  - [BitTorrent](#bittorrent)
 - [Acknowledgments](#acknowledgments)
 
 ## General
