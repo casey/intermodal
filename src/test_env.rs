@@ -67,10 +67,12 @@ impl TestEnv {
     fs::create_dir(self.env.resolve(path)).unwrap();
   }
 
+  #[cfg(unix)]
   pub(crate) fn metadata(&self, path: impl AsRef<Path>) -> fs::Metadata {
     fs::metadata(self.env.resolve(path)).unwrap()
   }
 
+  #[cfg(unix)]
   pub(crate) fn set_permissions(&self, path: impl AsRef<Path>, permissions: fs::Permissions) {
     fs::set_permissions(self.env.resolve(path), permissions).unwrap();
   }
