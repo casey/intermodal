@@ -43,7 +43,8 @@ jobs:
         cargo --version
         cargo clippy --version
     - name: Build
-      run: cargo build --all --verbose
+      run: RUSTFLAGS="-D warnings" cargo build --all --verbose
+      shell: bash
     - name: Test
       run: cargo test --all --verbose
     - name: Clippy
