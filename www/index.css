@@ -52,6 +52,10 @@ a {
   line-height:     calc(var(--size) / 9);
 }
 
+a:hover {
+  text-shadow: 0 0 5px #fff;
+}
+
 /* intermodal is an isogram */
 #i:after        { content: 'I';  }
 #i:hover:after  { content: '私'; }
@@ -73,7 +77,3 @@ a {
 #a:hover:after  { content: 'א';  }
 #l:after        { content: 'L';  }
 #l:hover:after  { content: 'し'; }
-
-#links {
-  font-style: italic;
-}
