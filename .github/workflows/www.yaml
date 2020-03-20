@@ -1,4 +1,4 @@
-name: Site
+name: WWW
 
 on:
   push:
