@@ -330,6 +330,7 @@ dependencies = [
  "libc",
  "log",
  "md5",
+ "open",
  "pretty_assertions",
  "pretty_env_logger",
  "regex",
@@ -446,6 +447,15 @@ name = "number_prefix"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "17b02fc0ff9a9e4b35b3342880f48e896ebf69f2967921fe8646bf5b7125956a"
+
+[[package]]
+name = "open"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c283bf0114efea9e42f1a60edea9859e8c47528eae09d01df4b29c1e489cc48"
+dependencies = [
+ "winapi 0.3.8",
+]
 
 [[package]]
 name = "output_vt100"
