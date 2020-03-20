@@ -1,4 +1,4 @@
-name: Site
+name: WWW
 
 on:
   push:
@@ -18,11 +18,11 @@ jobs:
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: latest
-      - run: mdbook build book --dest-dir ../docs/book
+      - run: mdbook build book --dest-dir ../www/book
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if:   github.ref == 'refs/heads/master'
         with:
           github_token:   ${{secrets.GITHUB_TOKEN}}
           publish_branch: gh-pages
-          publish_dir:    ./docs
+          publish_dir:    ./www
