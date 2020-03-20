@@ -1,8 +1,8 @@
 :root {
   --width-target:      calc(100vw / 6);
-  --height-target:     calc(100vh / 3);
+  --height-target:     calc(100vh / 4);
   --size:              min(var(--width-target), var(--height-target));
-  --margin-vertical:   calc((100vh - var(--size) * 2) / 2);
+  --margin-vertical:   calc((100vh - var(--size) * 2.5) / 2);
   --margin-horizontal: calc((100vw - var(--size) * 5) / 2);
 }
 
@@ -36,8 +36,20 @@ a {
 }
 
 #intermodal > * {
-  height:       var(--size);
-  width:        var(--size);
+  width: var(--size);
+}
+
+#intermodal > div {
+  height: var(--size);
+}
+
+#intermodal > a {
+  align-items:     center;
+  display:         flex;
+  font-size:       calc(var(--size) / 9);
+  height:          calc(var(--size) / 2);
+  justify-content: center;
+  line-height:     calc(var(--size) / 9);
 }
 
 /* intermodal is an isogram */
