@@ -85,7 +85,7 @@ publish: publish-check
 	git push github {{version}}
 
 # open site index
-open-www:
+www:
 	open www/index.html
 
 # retrieve large collection of torrents from the Internet Archive
