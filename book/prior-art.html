@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Intermodal - Intermodal</title>
+        <title>Alternatives &amp; Prior Art - Intermodal</title>
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div id="sidebar-scrollbox" class="sidebar-scrollbox">
-                <ol class="chapter"><li class="expanded affix "><a href="introduction.html">Intermodal</a></li><li class="expanded "><a href="bep-support.html"><strong aria-hidden="true">1.</strong> BitTorrent BEP Support</a></li><li class="expanded "><a href="prior-art.html"><strong aria-hidden="true">2.</strong> Alternatives &amp; Prior Art</a></li><li class="expanded "><a href="bittorrent-references.html"><strong aria-hidden="true">3.</strong> BitTorrent References</a></li></ol>
+                <ol class="chapter"><li class="expanded affix "><a href="introduction.html">Intermodal</a></li><li class="expanded "><a href="bep-support.html"><strong aria-hidden="true">1.</strong> BitTorrent BEP Support</a></li><li class="expanded "><a href="prior-art.html" class="active"><strong aria-hidden="true">2.</strong> Alternatives &amp; Prior Art</a></li><li class="expanded "><a href="bittorrent-references.html"><strong aria-hidden="true">3.</strong> BitTorrent References</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -148,35 +148,36 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#intermodal" id="intermodal">Intermodal</a></h1>
-<p>Intermodal is, as the moment, a BitTorrent metainfo utility. The binary is called <code>imdl</code>.</p>
-<p>Project development is hosted on GitHub at <a href="https://github.com/casey/intermodal">github.com/casey/intermodal</a>.</p>
-<p>Intermodal can be used to create <code>.torrent</code> files:</p>
-<pre><code>$ imdl torrent create --input foo
-</code></pre>
-<p>Print information about existing torrent files:</p>
-<pre><code>$ imdl torrent show --input foo.torrent
-</code></pre>
-<p>Verify downloaded torrents:</p>
-<pre><code>$ imdl torrent verify --input foo.torrent --content foo
-</code></pre>
-<p>Generate magnet links from torrent files:</p>
-<pre><code>$ imdl torrent link --input foo.torrent
-</code></pre>
-<p>Functionality that is not yet finalized, but still available for preview, can be accessed with the <code>--unstable</code> flag:</p>
-<p>Print information about a collection of torrents:</p>
-<pre><code>$ imdl --unstable torrent stats --input dir
-</code></pre>
-<p>Happy sharing!</p>
+                        <h2><a class="header" href="#alternatives--prior-art" id="alternatives--prior-art">Alternatives &amp; Prior Art</a></h2>
+<table><thead><tr><th>Name</th><th>UI</th><th>Language</th><th>Notes</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/rndusr/torf-cli">torf-cli</a></td><td>CLI</td><td>Python</td><td>Highly recommended utility for creating torrents and magnet links, as well as displaying information about and editing existing torrents.</td></tr>
+<tr><td><a href="https://github.com/Rudde/mktorrent">mktorrent</a></td><td>CLI</td><td>C</td><td>Popular but unmaintained torrent file creator.</td></tr>
+<tr><td><a href="https://github.com/xxkfqz/pmktorrent">pmktorrent</a></td><td>CLI</td><td>C</td><td>Maintained fork of mktorrent.</td></tr>
+<tr><td><a href="https://github.com/mukaibot/mktorrent">mktorrent</a></td><td>Library</td><td>Ruby</td><td>Library for creating torrent files.</td></tr>
+<tr><td><a href="https://github.com/rsnitsch/py3createtorrent/">py3createtorrent</a></td><td>CLI</td><td>Python</td><td>Torrent file creator.</td></tr>
+<tr><td><a href="https://github.com/webtorrent/create-torrent">create-torrent</a></td><td>Library &amp; CLI</td><td>JavaScript</td><td>Javascript library and CLI for creating torrents.</td></tr>
+<tr><td><a href="https://github.com/RecursiveForest/whatmp3">whatmp3</a></td><td>CLI</td><td>Python</td><td>Torrent file creator that automatically transcodes FLAC files.</td></tr>
+<tr><td><a href="https://github.com/torrent-file-editor/torrent-file-editor">torrent-file-editor</a></td><td>GUI</td><td>C++</td><td>Graphical torrent file editor.</td></tr>
+<tr><td><a href="https://github.com/repolho/torrent2magnet">torrent2magnet</a></td><td>CLI</td><td>Python</td><td>Creates magnet links from torrent files.</td></tr>
+<tr><td><a href="https://github.com/elektito/ih2torrent">h2torrent</a></td><td>CLI</td><td>Python</td><td>Creates .torrent files from an infohash or magnet URI.</td></tr>
+<tr><td><a href="https://github.com/kz26/dottorrent">dottorrent</a></td><td>Library</td><td>Python</td><td>Library for creating torrent files</td></tr>
+<tr><td><a href="https://github.com/kz26/dottorrent-cli">dottorrent-cli</a></td><td>CLI</td><td>Python</td><td>Torrent file creator.</td></tr>
+<tr><td><a href="https://github.com/kimbatt/torrent-creator/">torrent-creator</a></td><td>Web page</td><td>Typescript</td><td>Single-page web app torrent file creator.</td></tr>
+<tr><td><a href="https://github.com/pyroscope/pyrocore">pyrocore</a></td><td>CLI</td><td>PYthon</td><td>Utilities for creating, modifying, and displaying torrent files.</td></tr>
+</tbody></table>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
+                            <a rel="prev" href="bep-support.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
 
                         
-                            <a rel="next" href="bep-support.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="bittorrent-references.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -188,9 +189,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
+                    <a href="bep-support.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
                 
-                    <a href="bep-support.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="bittorrent-references.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
