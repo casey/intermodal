@@ -61,3 +61,7 @@ a {
 #a:hover:after  { content: 'א';  }
 #l:after        { content: 'L';  }
 #l:hover:after  { content: 'し'; }
+
+#links {
+  font-style: italic;
+}
