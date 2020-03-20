@@ -15,7 +15,7 @@ pub(crate) use std::{
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
-  process::{self, Command, ExitStatus},
+  process::{self, ExitStatus},
   str::{self, FromStr},
   sync::Once,
   time::{SystemTime, SystemTimeError},
@@ -79,8 +79,8 @@ mod test {
     cell::RefCell,
     io::Cursor,
     ops::{Deref, DerefMut},
+    process::Command,
     rc::Rc,
-    time::{Duration, Instant},
   };
 
   // test dependencies
