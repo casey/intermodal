@@ -74,11 +74,11 @@ jobs:
     - name: Build Book
       run: mdbook build book --dest-dir ../www/book
     - name: Record Git Revision
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && matrix.os != 'ubuntu-latest'
       run: git rev-parse --verify HEAD > www/head.txt
     - name: Deploy Pages
       uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && matrix.os != 'ubuntu-latest'
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         publish_branch: gh-pages
