@@ -58,7 +58,7 @@ a:hover {
 }
 
 /* intermodal is an isogram */
-#i:after        { content: 'I';  }
+#i:after        { content: '𝙸';  }
 #i:hover:after  { content: '私'; }
 #n:after        { content: 'N';  }
 #n:hover:after  { content: '∅';  }
