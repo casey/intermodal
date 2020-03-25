@@ -12,6 +12,7 @@ pub(crate) struct Walker {
   follow_symlinks: bool,
   include_hidden: bool,
   include_junk: bool,
+  file_order: FileOrder,
   patterns: Vec<Pattern>,
   root: PathBuf,
   spinner: Option<ProgressBar>,
@@ -23,6 +24,7 @@ impl Walker {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
+      file_order: FileOrder::AlphabeticalAsc,
       patterns: Vec::new(),
       root: root.to_owned(),
       spinner: None,
@@ -41,6 +43,10 @@ impl Walker {
       include_hidden,
       ..self
     }
+  }
+
+  pub(crate) fn file_order(self, file_order: FileOrder) -> Self {
+    Self { file_order, ..self }
   }
 
   pub(crate) fn globs(mut self, globs: &[String]) -> Result<Self, Error> {
@@ -114,9 +120,25 @@ impl Walker {
 
     let mut paths = Vec::new();
     let mut total_size = 0;
+    let forder = self.file_order.clone();
     for result in WalkDir::new(&self.root)
       .follow_links(self.follow_symlinks)
-      .sort_by(|a, b| a.file_name().cmp(b.file_name()))
+      .sort_by(move |a, b| match forder {
+        FileOrder::AlphabeticalAsc => a.file_name().cmp(b.file_name()),
+        FileOrder::AlphabeticalDesc => b.file_name().cmp(a.file_name()),
+        FileOrder::SizeAsc => {
+          let size_a = a.metadata().map_or(0, |v| v.len());
+          let size_b = b.metadata().map_or(0, |v| v.len());
+
+          size_a.cmp(&size_b)
+        }
+        FileOrder::SizeDesc => {
+          let size_a = a.metadata().map_or(0, |v| v.len());
+          let size_b = b.metadata().map_or(0, |v| v.len());
+
+          size_b.cmp(&size_a)
+        }
+      })
       .into_iter()
       .filter_entry(filter)
     {
@@ -154,12 +176,25 @@ impl Walker {
         continue;
       }
 
-      total_size += metadata.len();
+      let len = metadata.len();
+      total_size += len;
 
-      paths.push(file_path);
+      paths.push((file_path, len));
     }
 
-    Ok(Files::dir(self.root, Bytes::from(total_size), paths))
+    use FileOrder::*;
+    match self.file_order {
+      AlphabeticalAsc => paths.sort_by(|a, b| a.0.cmp(&b.0)),
+      AlphabeticalDesc => paths.sort_by(|a, b| a.0.cmp(&b.0).reverse()),
+      SizeAsc => paths.sort_by(|a, b| a.1.cmp(&b.1)),
+      SizeDesc => paths.sort_by(|a, b| a.1.cmp(&b.1).reverse()),
+    }
+
+    Ok(Files::dir(
+      self.root,
+      Bytes::from(total_size),
+      paths.into_iter().map(|(path, _)| path).collect(),
+    ))
   }
 
   fn pattern_filter(&self, relative: &Path) -> bool {
