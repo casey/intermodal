@@ -118,27 +118,10 @@ impl Walker {
       true
     };
 
-    let mut paths = Vec::new();
+    let mut file_infos = Vec::new();
     let mut total_size = 0;
-    let forder = self.file_order.clone();
     for result in WalkDir::new(&self.root)
       .follow_links(self.follow_symlinks)
-      .sort_by(move |a, b| match forder {
-        FileOrder::AlphabeticalAsc => a.file_name().cmp(b.file_name()),
-        FileOrder::AlphabeticalDesc => b.file_name().cmp(a.file_name()),
-        FileOrder::SizeAsc => {
-          let size_a = a.metadata().map_or(0, |v| v.len());
-          let size_b = b.metadata().map_or(0, |v| v.len());
-
-          size_a.cmp(&size_b)
-        }
-        FileOrder::SizeDesc => {
-          let size_a = a.metadata().map_or(0, |v| v.len());
-          let size_b = b.metadata().map_or(0, |v| v.len());
-
-          size_b.cmp(&size_a)
-        }
-      })
       .into_iter()
       .filter_entry(filter)
     {
@@ -179,21 +162,21 @@ impl Walker {
       let len = metadata.len();
       total_size += len;
 
-      paths.push((file_path, len));
+      file_infos.push(FileInfo { path: file_path, length: Bytes(len), md5sum: None });
     }
 
-    use FileOrder::*;
-    match self.file_order {
-      AlphabeticalAsc => paths.sort_by(|a, b| a.0.cmp(&b.0)),
-      AlphabeticalDesc => paths.sort_by(|a, b| a.0.cmp(&b.0).reverse()),
-      SizeAsc => paths.sort_by(|a, b| a.1.cmp(&b.1)),
-      SizeDesc => paths.sort_by(|a, b| a.1.cmp(&b.1).reverse()),
-    }
+    file_infos.sort_by(|a, b| self.file_order.compare_file_info(a, b));
+    // match self.file_order {
+      // AlphabeticalAsc => paths.sort_by(|a, b| a.0.cmp(&b.0)),
+      // AlphabeticalDesc => paths.sort_by(|a, b| a.0.cmp(&b.0).reverse()),
+      // SizeAsc => paths.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0))),
+      // SizeDesc => paths.sort_by(|a, b| a.1.cmp(&b.1).reverse().then_with(|| a.0.cmp(&b.0))),
+    // }
 
     Ok(Files::dir(
       self.root,
       Bytes::from(total_size),
-      paths.into_iter().map(|(path, _)| path).collect(),
+      file_infos.into_iter().map(|file_info| file_info.path).collect(),
     ))
   }
 

@@ -28,6 +28,15 @@ impl FileOrder {
       Self::SizeAsc => Self::SIZE_ASC,
     }
   }
+
+  pub(crate) fn compare_file_info(self, a: &FileInfo, b: &FileInfo) -> Ordering {
+    match self {
+      Self::AlphabeticalAsc => a.path.cmp(&b.path),
+      Self::AlphabeticalDesc => a.path.cmp(&b.path).reverse(),
+      Self::SizeAsc => a.length.cmp(&b.length).then_with(|| a.path.cmp(&b.path)),
+      Self::SizeDesc => a.length.cmp(&b.length).reverse().then_with(|| a.path.cmp(&b.path)),
+    }
+  }
 }
 
 impl FromStr for FileOrder {

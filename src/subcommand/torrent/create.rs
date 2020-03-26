@@ -2536,6 +2536,6 @@ Content Size  9 bytes
     assert_matches!(env.run(), Ok(()));
 
     let torrent = env.load_metainfo("foo.torrent");
-    assert_eq!(torrent.file_paths(), &["c", "a", "d/e", "b"]);
+    assert_eq!(torrent.file_paths(), &["c", "a", "b", "d/e"]);
   }
 }

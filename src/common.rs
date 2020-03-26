@@ -2,7 +2,7 @@
 pub(crate) use std::{
   borrow::Cow,
   char,
-  cmp::Reverse,
+  cmp::{Ordering, Reverse},
   collections::{BTreeMap, BTreeSet, HashMap, HashSet},
   convert::{Infallible, TryInto},
   env,
