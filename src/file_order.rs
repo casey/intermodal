@@ -34,7 +34,11 @@ impl FileOrder {
       Self::AlphabeticalAsc => a.path.cmp(&b.path),
       Self::AlphabeticalDesc => a.path.cmp(&b.path).reverse(),
       Self::SizeAsc => a.length.cmp(&b.length).then_with(|| a.path.cmp(&b.path)),
-      Self::SizeDesc => a.length.cmp(&b.length).reverse().then_with(|| a.path.cmp(&b.path)),
+      Self::SizeDesc => a
+        .length
+        .cmp(&b.length)
+        .reverse()
+        .then_with(|| a.path.cmp(&b.path)),
     }
   }
 }
