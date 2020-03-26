@@ -170,12 +170,6 @@ impl Walker {
     }
 
     file_infos.sort_by(|a, b| self.file_order.compare_file_info(a, b));
-    // match self.file_order {
-    // AlphabeticalAsc => paths.sort_by(|a, b| a.0.cmp(&b.0)),
-    // AlphabeticalDesc => paths.sort_by(|a, b| a.0.cmp(&b.0).reverse()),
-    // SizeAsc => paths.sort_by(|a, b| a.1.cmp(&b.1).then_with(|| a.0.cmp(&b.0))),
-    // SizeDesc => paths.sort_by(|a, b| a.1.cmp(&b.1).reverse().then_with(||
-    // a.0.cmp(&b.0))), }
 
     Ok(Files::dir(
       self.root,
