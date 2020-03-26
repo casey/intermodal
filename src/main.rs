@@ -56,6 +56,7 @@ mod env;
 mod error;
 mod file_error;
 mod file_info;
+mod file_order;
 mod file_path;
 mod file_status;
 mod files;

@@ -12,6 +12,7 @@ pub(crate) struct Walker {
   follow_symlinks: bool,
   include_hidden: bool,
   include_junk: bool,
+  file_order: FileOrder,
   patterns: Vec<Pattern>,
   root: PathBuf,
   spinner: Option<ProgressBar>,
@@ -23,6 +24,7 @@ impl Walker {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
+      file_order: FileOrder::AlphabeticalAsc,
       patterns: Vec::new(),
       root: root.to_owned(),
       spinner: None,
@@ -41,6 +43,10 @@ impl Walker {
       include_hidden,
       ..self
     }
+  }
+
+  pub(crate) fn file_order(self, file_order: FileOrder) -> Self {
+    Self { file_order, ..self }
   }
 
   pub(crate) fn globs(mut self, globs: &[String]) -> Result<Self, Error> {
@@ -112,11 +118,10 @@ impl Walker {
       true
     };
 
-    let mut paths = Vec::new();
+    let mut file_infos = Vec::new();
     let mut total_size = 0;
     for result in WalkDir::new(&self.root)
       .follow_links(self.follow_symlinks)
-      .sort_by(|a, b| a.file_name().cmp(b.file_name()))
       .into_iter()
       .filter_entry(filter)
     {
@@ -154,12 +159,26 @@ impl Walker {
         continue;
       }
 
-      total_size += metadata.len();
+      let len = metadata.len();
+      total_size += len;
 
-      paths.push(file_path);
+      file_infos.push(FileInfo {
+        path: file_path,
+        length: Bytes(len),
+        md5sum: None,
+      });
     }
 
-    Ok(Files::dir(self.root, Bytes::from(total_size), paths))
+    file_infos.sort_by(|a, b| self.file_order.compare_file_info(a, b));
+
+    Ok(Files::dir(
+      self.root,
+      Bytes::from(total_size),
+      file_infos
+        .into_iter()
+        .map(|file_info| file_info.path)
+        .collect(),
+    ))
   }
 
   fn pattern_filter(&self, relative: &Path) -> bool {
