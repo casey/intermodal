@@ -57,6 +57,7 @@ changes:
 dev-deps:
 	brew install grip
 	cargo install mdbook
+	cargo install cargo-watch
 
 # update readme table of contents
 update-toc:
