@@ -24,6 +24,8 @@ pub(crate) enum Error {
   FilenameDecode { filename: PathBuf },
   #[snafu(display("Path had no file name: {}", path.display()))]
   FilenameExtract { path: PathBuf },
+  #[snafu(display("Unknown file ordering: {}", text))]
+  FileOrderUnknown { text: String },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },
   #[snafu(display("Invalid glob: {}", source))]

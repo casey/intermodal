@@ -79,6 +79,18 @@ impl Metainfo {
     Self::deserialize(&InputTarget::File("<TEST>".into()), bytes).unwrap()
   }
 
+  #[cfg(test)]
+  pub(crate) fn file_paths(&self) -> Vec<String> {
+    let files = match &self.info.mode {
+      Mode::Single { .. } => panic!(),
+      Mode::Multiple { files } => files,
+    };
+
+    let paths: Vec<String> = files.iter().map(|f| f.path.to_string()).collect();
+
+    paths
+  }
+
   pub(crate) fn verify(&self, base: &Path, progress_bar: Option<ProgressBar>) -> Result<Status> {
     Verifier::verify(self, base, progress_bar)
   }

@@ -154,6 +154,15 @@ pub(crate) struct Create {
   )]
   open: bool,
   #[structopt(
+    long = "order",
+    value_name = "ORDER",
+    possible_values = FileOrder::VALUES,
+    set(ArgSettings::CaseInsensitive),
+    help = "Specify the file order within the torrent. \
+            Defaults to ascending alphabetical order."
+  )]
+  order: Option<FileOrder>,
+  #[structopt(
     long = "output",
     short = "o",
     value_name = "TARGET",
@@ -246,6 +255,7 @@ impl Create {
       .include_junk(self.include_junk)
       .include_hidden(self.include_hidden)
       .follow_symlinks(self.follow_symlinks)
+      .file_order(self.order.unwrap_or(FileOrder::AlphabeticalAsc))
       .globs(&self.globs)?
       .spinner(spinner)
       .files()?;
@@ -2384,5 +2394,148 @@ Content Size  9 bytes
     let torrent = env.resolve("foo.torrent");
     let err = fs::read(torrent).unwrap_err();
     assert_eq!(err.kind(), io::ErrorKind::NotFound);
+  }
+
+  #[test]
+  fn file_ordering_by_default() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            e: "eeee",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["a", "b", "c", "d/e"]);
+  }
+
+  #[test]
+  fn file_ordering_by_alpha_asc() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--order",
+        "alphabetical-asc",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            e: "eeee",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["a", "b", "c", "d/e"]);
+  }
+
+  #[test]
+  fn file_ordering_by_alpha_desc() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--order",
+        "alphabetical-desc",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            a: "aaaa",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["d/a", "c", "b", "a"]);
+  }
+
+  #[test]
+  fn file_ordering_by_size_asc() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--order",
+        "size-asc",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            e: "e",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["b", "d/e", "a", "c"]);
+  }
+
+  #[test]
+  fn file_ordering_by_size_desc() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--order",
+        "size-desc",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            e: "e",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["c", "a", "b", "d/e"]);
   }
 }
