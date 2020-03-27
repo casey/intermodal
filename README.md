@@ -4,7 +4,9 @@
 [![Build](https://github.com/casey/intermodal/workflows/Build/badge.svg)](https://github.com/casey/intermodal/actions)
 [![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord)](https://discord.gg/HaaT5Qz)
 
-Intermodal is a user-friendly and featureful command-line BitTorrent metainfo utility. The binary is called `imdl`. At the moment, creation, viewing, and verification of `.torrent` files is supported.
+Intermodal is a user-friendly and featureful command-line BitTorrent metainfo utility. The binary is called `imdl` and runs on Windows, Linux, and macOS.
+
+At the moment, creation, viewing, and verification of `.torrent` files is supported.
 
 For more about the project and its goals, check out [this post](https://rodarmor.com/blog/intermodal).
 
