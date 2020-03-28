@@ -32,14 +32,15 @@ esac
 
 echo "Copying release files..."
 mkdir dist
-cp \
+cp -r \
   $executable \
-  Cargo.lock \
-  Cargo.toml \
   CHANGELOG.md \
   CONTRIBUTING \
+  Cargo.lock \
+  Cargo.toml \
   LICENSE \
   README.md \
+  completions \
   $dist
 
 cd $dist

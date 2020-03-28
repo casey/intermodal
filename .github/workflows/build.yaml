@@ -62,6 +62,11 @@ jobs:
         components: rustfmt
     - name: Format
       run: cargo +nightly fmt --all -- --check
+    - name: Completion Scripts
+      if: matrix.os != 'windows-latest'
+      run: |
+        ./bin/generate-completions
+        git diff --no-ext-diff --quiet --exit-code
     - name: Readme
       if: matrix.os != 'windows-latest'
       run: |

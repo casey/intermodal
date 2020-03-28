@@ -86,6 +86,7 @@ mod platform_interface;
 mod print;
 mod reckoner;
 mod sha1_digest;
+mod shell;
 mod sort_key;
 mod sort_order;
 mod sort_spec;
