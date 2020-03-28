@@ -10,6 +10,8 @@ At the moment, creation, viewing, and verification of `.torrent` files is suppor
 
 For more about the project and its goals, check out [this post](https://rodarmor.com/blog/intermodal).
 
+![demonstration animation](https://raw.githubusercontent.com/casey/intermodal/master/www/demo.gif)
+
 ## Manual
 
 - [General](#general)
