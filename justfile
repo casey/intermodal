@@ -66,6 +66,19 @@ update-toc:
 generate-completions:
 	./bin/generate-completions
 
+man:
+	cargo build
+	help2man \
+		--name 'BitTorrent metainfo utility' \
+		--manual 'IMDL MANUAL' \
+		--no-info \
+		target/debug/imdl \
+		> man/imdl.1
+	sd '📦 ' "\n" man/imdl.1
+
+check-man: man
+	git diff --no-ext-diff --quiet --exit-code
+
 check-minimal-versions:
 	./bin/check-minimal-versions
 
@@ -78,7 +91,7 @@ check: test clippy lint check-minimal-versions
 pr: push
 	hub pull-request -o
 
-publish-check: check
+publish-check: check check-man
 	cargo outdated --exit-code 1
 	git branch | grep '* master'
 	grep {{version}} CHANGELOG.md
