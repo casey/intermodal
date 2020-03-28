@@ -10,7 +10,7 @@ pub(crate) use std::{
   fmt::{self, Display, Formatter},
   fs::{self, File},
   hash::Hash,
-  io::{self, Read, Write},
+  io::{self, Cursor, Read, Write},
   iter::{self, Sum},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
@@ -64,8 +64,8 @@ pub(crate) use crate::{
   md5_digest::Md5Digest, metainfo::Metainfo, metainfo_error::MetainfoError, mode::Mode,
   options::Options, output_stream::OutputStream, output_target::OutputTarget,
   piece_length_picker::PieceLengthPicker, piece_list::PieceList, platform::Platform,
-  sha1_digest::Sha1Digest, sort_key::SortKey, sort_order::SortOrder, sort_spec::SortSpec,
-  status::Status, style::Style, subcommand::Subcommand, table::Table,
+  sha1_digest::Sha1Digest, shell::Shell, sort_key::SortKey, sort_order::SortOrder,
+  sort_spec::SortSpec, status::Status, style::Style, subcommand::Subcommand, table::Table,
   torrent_summary::TorrentSummary, use_color::UseColor, verifier::Verifier, walker::Walker,
 };
 
@@ -77,7 +77,6 @@ mod test {
   // test stdlib types
   pub(crate) use std::{
     cell::RefCell,
-    io::Cursor,
     ops::{Deref, DerefMut},
     process::Command,
     rc::Rc,

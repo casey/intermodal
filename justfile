@@ -63,6 +63,9 @@ dev-deps:
 update-toc:
 	cargo run --package update-readme toc
 
+generate-completions:
+	./bin/generate-completions
+
 check-minimal-versions:
 	./bin/check-minimal-versions
 
