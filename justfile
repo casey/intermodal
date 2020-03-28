@@ -101,6 +101,17 @@ publish: publish-check
 	git push github {{version}}
 	cargo publish
 
+record:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	cargo build --release --all
+	rm -f tmp/9front.torrent
+	asciinema rec \
+		--command ./target/release/demo \
+		--overwrite \
+		tmp/recording.json
+	asciinema upload tmp/recording.json
+
 # open site index
 www:
 	open www/index.html
