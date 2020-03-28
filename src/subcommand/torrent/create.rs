@@ -61,10 +61,15 @@ pub(crate) struct Create {
     value_name = "NODE",
     help = "Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form `HOST:PORT`, \
             where `HOST` is a domain name, an IPv4 address, or an IPv6 address surrounded by \
-            brackets. May be given more than once to add multiple bootstrap nodes. Examples:
-    `--node router.example.com:1337`
-    `--node 203.0.113.0:2290`
-    `--node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832`"
+            brackets. May be given more than once to add multiple bootstrap nodes.
+
+Examples:
+
+    --node router.example.com:1337
+
+    --node 203.0.113.0:2290
+
+    --node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832"
   )]
   dht_nodes: Vec<HostPort>,
   #[structopt(
@@ -153,14 +158,27 @@ pub(crate) struct Create {
   )]
   open: bool,
   #[structopt(
-    long = "order",
-    value_name = "ORDER",
-    possible_values = FileOrder::VALUES,
-    set(ArgSettings::CaseInsensitive),
-    help = "Specify the file order within the torrent. \
-            Defaults to ascending alphabetical order."
+    long = "sort-by",
+    value_name = "SPEC",
+    help = "Set the order of files within a torrent. `SPEC` should be of the form `KEY:ORDER`, \
+            with `KEY` being one of `path` or `size`, and `ORDER` being `ascending` or \
+            `descending`. `:ORDER` defaults to `ascending` if omitted. The `--sort-by` flag may \
+            be given more than once, with later values being used to break ties. Ties that remain \
+            are broken in ascending path order.
+
+Sort in ascending order by path, the default:
+
+    --sort-by path:ascending
+
+Sort in ascending order by path, more concisely:
+
+    --sort-by path
+
+Sort in ascending order by size, break ties in descending path order:
+
+    --sort-by size:ascending --sort-by path:descending"
   )]
-  order: Option<FileOrder>,
+  sort_by: Vec<SortSpec>,
   #[structopt(
     long = "output",
     short = "o",
@@ -254,7 +272,7 @@ impl Create {
       .include_junk(self.include_junk)
       .include_hidden(self.include_hidden)
       .follow_symlinks(self.follow_symlinks)
-      .file_order(self.order.unwrap_or(FileOrder::AlphabeticalAsc))
+      .sort_by(self.sort_by)
       .globs(&self.globs)?
       .spinner(spinner)
       .files()?;
@@ -2423,15 +2441,15 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn file_ordering_by_alpha_asc() {
+  fn file_ordering_by_path_ascending() {
     let mut env = test_env! {
       args: [
         "torrent",
         "create",
         "--input",
         "foo",
-        "--order",
-        "alphabetical-asc",
+        "--sort-by",
+        "path",
       ],
       tree: {
         foo: {
@@ -2452,15 +2470,15 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn file_ordering_by_alpha_desc() {
+  fn file_ordering_by_path_descending() {
     let mut env = test_env! {
       args: [
         "torrent",
         "create",
         "--input",
         "foo",
-        "--order",
-        "alphabetical-desc",
+        "--sort-by",
+        "path:descending",
       ],
       tree: {
         foo: {
@@ -2481,15 +2499,15 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn file_ordering_by_size_asc() {
+  fn file_ordering_by_size_ascending() {
     let mut env = test_env! {
       args: [
         "torrent",
         "create",
         "--input",
         "foo",
-        "--order",
-        "size-asc",
+        "--sort-by",
+        "size:ascending",
       ],
       tree: {
         foo: {
@@ -2510,15 +2528,15 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn file_ordering_by_size_desc() {
+  fn file_ordering_by_size_descending() {
     let mut env = test_env! {
       args: [
         "torrent",
         "create",
         "--input",
         "foo",
-        "--order",
-        "size-desc",
+        "--sort-by",
+        "size:descending",
       ],
       tree: {
         foo: {
@@ -2536,5 +2554,36 @@ Content Size  9 bytes
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["c", "a", "b", "d/e"]);
+  }
+
+  #[test]
+  fn file_ordering_by_size_ascending_break_ties_path_descending() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--sort-by",
+        "size:ascending",
+        "--sort-by",
+        "path:descending",
+      ],
+      tree: {
+        foo: {
+          a: "aa",
+          b: "b",
+          c: "ccc",
+          d: {
+            e: "e",
+          },
+        },
+      }
+    };
+
+    assert_matches!(env.run(), Ok(()));
+
+    let torrent = env.load_metainfo("foo.torrent");
+    assert_eq!(torrent.file_paths(), &["d/e", "b", "a", "c"]);
   }
 }
