@@ -31,7 +31,7 @@ fn commands() -> Vec<Vec<&'static str>> {
 }
 
 fn print(text: &str) -> Result<()> {
-  stdout().write(text.as_bytes())?;
+  stdout().write_all(text.as_bytes())?;
   stdout().flush()?;
   Ok(())
 }
