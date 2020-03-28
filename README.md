@@ -10,12 +10,6 @@ At the moment, creation, viewing, and verification of `.torrent` files is suppor
 
 For more about the project and its goals, check out [this post](https://rodarmor.com/blog/intermodal).
 
-<script
-  src="https://asciinema.org/a/wuKzaRyWPks5d6uDSP3Sj8Cn7"
-  id="asciicast-wuKzaRyWPks5d6uDSP3Sj8Cn7"
-  async>
-</script>
-
 ## Manual
 
 - [General](#general)

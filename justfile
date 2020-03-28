@@ -58,6 +58,9 @@ dev-deps:
 	brew install grip
 	cargo install mdbook
 	cargo install cargo-watch
+	npm install --global asciicast2gif
+	brew install imagemagick
+	brew install gifsicle
 
 # update readme table of contents
 update-toc:
@@ -109,8 +112,9 @@ record:
 	asciinema rec \
 		--command ./target/release/demo \
 		--overwrite \
-		tmp/recording.json
-	asciinema upload tmp/recording.json
+		tmp/demo.json
+	asciinema upload tmp/demo.json
+	asciicast2gif tmp/demo.json tmp/demo.gif
 
 # open site index
 www:
