@@ -2,6 +2,17 @@ Changelog
 =========
 
 
+[v0.1.1] - 2020-3-27
+--------------------
+
+### Added
+- Generate man page with from `--help` with `help2man` (#301)
+- Add shell completion scripts (#299)
+
+### Misc
+- Remove errant torrent file (#294)
+
+
 [v0.1.0] - 2020-3-27
 --------------------
 
