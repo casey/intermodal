@@ -17,6 +17,7 @@ For more about the project and its goals, check out [this post](https://rodarmor
     - [Supported Operating Systems](#supported-operating-systems)
     - [Pre-built binaries](#pre-built-binaries)
     - [Cargo](#cargo)
+  - [Shell Completion Scripts](#shell-completion-scripts)
   - [Semantic Versioning](#semantic-versioning)
   - [Unstable Features](#unstable-features)
 - [Acknowledgments](#acknowledgments)
@@ -49,6 +50,19 @@ curl --proto '=https' --tlsv1.2 -sSf https://imdl.io/install.sh | bash -s -- --t
 `imdl` is written in [Rust](https://www.rust-lang.org/) and can be built from
 source and installed with `cargo install imdl`. To get Rust, use the
 [rustup installer](https://rustup.rs/).
+
+### Shell Completion Scripts
+
+Shell completion scripts for Bash, Zsh, Fish, PowerShell, and Elvish are
+available in the [completions](completions directory). Please refer to your
+shell's documentation for how to install them.
+
+The `imdl` binary can also generate the same completion scripts at runtime,
+using the `completions` command:
+
+```sh
+$ imdl completions --shell bash > imdl.bash
+```
 
 ### Semantic Versioning
 
