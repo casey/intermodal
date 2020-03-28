@@ -12,7 +12,7 @@ pub(crate) struct Walker {
   follow_symlinks: bool,
   include_hidden: bool,
   include_junk: bool,
-  file_order: FileOrder,
+  sort_by: Vec<SortSpec>,
   patterns: Vec<Pattern>,
   root: PathBuf,
   spinner: Option<ProgressBar>,
@@ -24,7 +24,7 @@ impl Walker {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
-      file_order: FileOrder::AlphabeticalAsc,
+      sort_by: Vec::new(),
       patterns: Vec::new(),
       root: root.to_owned(),
       spinner: None,
@@ -45,8 +45,8 @@ impl Walker {
     }
   }
 
-  pub(crate) fn file_order(self, file_order: FileOrder) -> Self {
-    Self { file_order, ..self }
+  pub(crate) fn sort_by(self, sort_by: Vec<SortSpec>) -> Self {
+    Self { sort_by, ..self }
   }
 
   pub(crate) fn globs(mut self, globs: &[String]) -> Result<Self, Error> {
@@ -169,7 +169,7 @@ impl Walker {
       });
     }
 
-    file_infos.sort_by(|a, b| self.file_order.compare_file_info(a, b));
+    file_infos.sort_by(|a, b| SortSpec::compare(&self.sort_by, a, b));
 
     Ok(Files::dir(
       self.root,
