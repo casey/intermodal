@@ -93,10 +93,10 @@ pr: push
 
 publish-check: check check-man
 	cargo outdated --exit-code 1
-	git branch | grep '* master'
 	grep {{version}} CHANGELOG.md
 
 publish: publish-check
+	git branch | grep '* master'
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 	cargo publish
