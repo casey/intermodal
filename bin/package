@@ -41,6 +41,7 @@ cp -r \
   LICENSE \
   README.md \
   completions \
+  man \
   $dist
 
 cd $dist
