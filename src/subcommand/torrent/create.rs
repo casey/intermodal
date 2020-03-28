@@ -22,8 +22,7 @@ pub(crate) struct Create {
     long = "allow",
     short = "A",
     value_name = "LINT",
-    possible_values = Lint::VALUES,
-    set(ArgSettings::CaseInsensitive),
+    possible_values = Lint::VARIANTS,
     help = "Allow `LINT`. Lints check for conditions which, although permitted, are not usually \
             desirable. For example, piece length can be any non-zero value, but probably \
             shouldn't be below 16 KiB. The lint `small-piece-size` checks for this, and \
@@ -2254,7 +2253,7 @@ Content Size  9 bytes
         "foo",
         "--private",
         "--allow",
-        "private-trackerLESS",
+        "private-trackerless",
       ],
       tree: {
         foo: "",

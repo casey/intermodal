@@ -1,6 +1,9 @@
 use crate::common::*;
 
-#[derive(Eq, PartialEq, Debug, Copy, Clone, Ord, PartialOrd)]
+#[derive(
+  Eq, PartialEq, Debug, Copy, Clone, Ord, PartialOrd, EnumVariantNames, IntoStaticStr, EnumString,
+)]
+#[strum(serialize_all = "kebab-case")]
 pub(crate) enum Lint {
   PrivateTrackerless,
   SmallPieceLength,
@@ -8,36 +11,8 @@ pub(crate) enum Lint {
 }
 
 impl Lint {
-  const PRIVATE_TRACKERLESS: &'static str = "private-trackerless";
-  const SMALL_PIECE_LENGTH: &'static str = "small-piece-length";
-  const UNEVEN_PIECE_LENGTH: &'static str = "uneven-piece-length";
-  pub(crate) const VALUES: &'static [&'static str] = &[
-    Self::PRIVATE_TRACKERLESS,
-    Self::SMALL_PIECE_LENGTH,
-    Self::UNEVEN_PIECE_LENGTH,
-  ];
-
   pub(crate) fn name(self) -> &'static str {
-    match self {
-      Self::PrivateTrackerless => Self::PRIVATE_TRACKERLESS,
-      Self::SmallPieceLength => Self::SMALL_PIECE_LENGTH,
-      Self::UnevenPieceLength => Self::UNEVEN_PIECE_LENGTH,
-    }
-  }
-}
-
-impl FromStr for Lint {
-  type Err = Error;
-
-  fn from_str(text: &str) -> Result<Self, Self::Err> {
-    match text.replace('_', "-").to_lowercase().as_str() {
-      Self::PRIVATE_TRACKERLESS => Ok(Self::PrivateTrackerless),
-      Self::SMALL_PIECE_LENGTH => Ok(Self::SmallPieceLength),
-      Self::UNEVEN_PIECE_LENGTH => Ok(Self::UnevenPieceLength),
-      _ => Err(Error::LintUnknown {
-        text: text.to_string(),
-      }),
-    }
+    self.into()
   }
 }
 
@@ -52,20 +27,22 @@ mod tests {
   use super::*;
 
   #[test]
+  fn variants() {
+    assert_eq!(
+      Lint::VARIANTS,
+      &[
+        "private-trackerless",
+        "small-piece-length",
+        "uneven-piece-length"
+      ]
+    );
+  }
+
+  #[test]
   fn from_str_ok() {
     assert_eq!(
       Lint::UnevenPieceLength,
-      "uneven_piece_length".parse().unwrap()
-    );
-
-    assert_eq!(
-      Lint::UnevenPieceLength,
       "uneven-piece-length".parse().unwrap()
-    );
-
-    assert_eq!(
-      Lint::UnevenPieceLength,
-      "UNEVEN-piece-length".parse().unwrap()
     );
   }
 
@@ -74,6 +51,7 @@ mod tests {
     fn case(text: &str, value: Lint) {
       assert_eq!(value, text.parse().unwrap());
       assert_eq!(value.name(), text);
+      assert_eq!(value.to_string(), value.name());
     }
 
     case("private-trackerless", Lint::PrivateTrackerless);
@@ -85,7 +63,7 @@ mod tests {
   fn from_str_err() {
     assert_matches!(
       "foo".parse::<Lint>(),
-      Err(Error::LintUnknown { text }) if text == "foo"
+      Err(strum::ParseError::VariantNotFound)
     );
   }
 }

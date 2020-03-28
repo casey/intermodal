@@ -4,7 +4,7 @@ pub(crate) use std::{
   char,
   cmp::{Ordering, Reverse},
   collections::{BTreeMap, BTreeSet, HashMap, HashSet},
-  convert::{Infallible, TryInto},
+  convert::TryInto,
   env,
   ffi::{OsStr, OsString},
   fmt::{self, Display, Formatter},
@@ -39,6 +39,8 @@ pub(crate) use structopt::{
   clap::{AppSettings, ArgSettings},
   StructOpt,
 };
+pub(crate) use strum::VariantNames;
+pub(crate) use strum_macros::{EnumString, EnumVariantNames, IntoStaticStr};
 pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;
