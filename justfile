@@ -81,9 +81,9 @@ publish-check: check
 	grep {{version}} CHANGELOG.md
 
 publish: publish-check
-	cargo publish
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
+	cargo publish
 
 # open site index
 www:
