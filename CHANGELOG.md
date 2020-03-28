@@ -2,6 +2,38 @@ Changelog
 =========
 
 
+[v0.1.0] - 2020-3-27
+--------------------
+
+### Added
+- Allow sorting files in torrents (#287)
+
+### Changed
+- Introduce "sort specs" to allow fine-grained sorting of files in torrents (#292)
+- Use `open` crate to open files and URLs (#270)
+
+### Misc
+- Use `strum` crate to derive enum↔string conversions (#291)
+- List supported OSs in readme (#290)
+- Link to blog post in readme (#289)
+- Add `cargo install cargo-watch` to dev-deps recipe (#285)
+- Fix condition in GHA workflow (#284)
+- Only deploy site during linux run of CI build (#282)
+- Go back to sans-serif `I` in site logo (#283)
+- Use serifed `I` for intermodal on site (#281)
+- Add glow to `intermodal` letters on site (#279)
+- Improve readme intro (#278)
+- Add links to site (#277)
+- Rename `www/head` to `www/head.txt` (#275)
+- Record current git revision in `www/head` (#274)
+- Merge Github Actions workflows (#273)
+- Deny warnings in GitHub Actions main workflow build (#272)
+- Improve book (#271)
+- Add GitHub Actions workflow to build book and push to github pages (#269)
+- Fix build errors (#267)
+- Add additional documents to release archive (#266)
+
+
 [v0.0.3] - 2020-3-18
 --------------------
 
