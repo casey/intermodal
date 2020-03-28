@@ -58,6 +58,9 @@ dev-deps:
 	brew install grip
 	cargo install mdbook
 	cargo install cargo-watch
+	npm install --global asciicast2gif
+	brew install imagemagick
+	brew install gifsicle
 
 # update readme table of contents
 update-toc:
@@ -100,6 +103,19 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 	cargo publish
+
+# record demo animation
+record:
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	cargo build --release --all
+	rm -f tmp/9front.torrent
+	asciinema rec \
+		--command ./target/release/demo \
+		--overwrite \
+		tmp/demo.json
+	asciinema upload tmp/demo.json
+	asciicast2gif tmp/demo.json www/demo.gif
 
 # open site index
 www:
