@@ -62,7 +62,7 @@ temptree = "0.0.0"
 
 [workspace]
 members = [
-  # run demo commands
+  # run commands for demo animation
   "bin/demo",
   # generate table of contents and table of supported BEPs in README.md
   "bin/update-readme",

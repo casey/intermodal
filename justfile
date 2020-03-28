@@ -104,6 +104,7 @@ publish: publish-check
 	git push github {{version}}
 	cargo publish
 
+# record demo animation
 record:
 	#!/usr/bin/env bash
 	set -euxo pipefail
@@ -114,7 +115,7 @@ record:
 		--overwrite \
 		tmp/demo.json
 	asciinema upload tmp/demo.json
-	asciicast2gif tmp/demo.json tmp/demo.gif
+	asciicast2gif tmp/demo.json www/demo.gif
 
 # open site index
 www:
