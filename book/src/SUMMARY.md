@@ -3,7 +3,8 @@ Summary
 
 [Intermodal](./introduction.md)
 
-- [BitTorrent BEP Support](./bep-support.md)
-- [Alternatives & Prior Art](./prior-art.md)
-- [BitTorrent References](./bittorrent-references.md)
-- [UDP Tracker Protocol](./udp-tracker-protocol.md)
+- [Bittorrent](./bittorrent.md)
+  - [BEP Support](./bittorrent/bep-support.md)
+  - [Alternatives & Prior Art](./bittorrent/prior-art.md)
+  - [UDP Tracker Protocol](./bittorrent/udp-tracker-protocol.md)
+  - [References](./bittorrent/references.md)
