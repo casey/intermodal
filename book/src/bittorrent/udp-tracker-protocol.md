@@ -24,6 +24,15 @@ table.
 When a message is followed by a structure labeled _repeating:_, the rest of the
 message is zero or more of that structure.
 
+Fields with type `[T; N]` are `N` instances of values of type `T` with no extra
+padding.
+
+Fields with type `[T; NAME]` are `NAME` instances of values of type `T` with no
+extra padding, where `NAME` is an integer field of the same message.
+
+Files with type `[T]` are zero or more instances of values of type `T` with no
+extra padding, which make up any trailing bytes of the message.
+
 
 Actions
 -------
@@ -48,11 +57,11 @@ Events
 Error
 ------
 
-| size | name           | description                               |
+| type | name           | description                               |
 |------|----------------|-------------------------------------------|
 | i32  | action         |                                           |
 | i32  | transaction_id |                                           |
-| i8[] | error_string   | rest of packet is string describing error |
+| [i8] | error_string   | rest of packet is string describing error |
 
 Connect
 -------
@@ -117,7 +126,7 @@ Scrape
 
 ### Request
 
-| size | name           |
+| type | name           |
 |------|----------------|
 | i64  | connection_id  |
 | i32  | action         |
@@ -125,20 +134,20 @@ Scrape
 
 _repeating:_
 
-| size     | name      |
+| type     | name      |
 |----------|-----------|
 | [i8; 20] | info_hash |
 
 ### Response
 
-| size | name           |
+| type | name           |
 |------|----------------|
 | i32  | action         |
 | i32  | transaction_id |
 
 _repeating:_
 
-| size | name       | description                                  |
+| type | name       | description                                  |
 |------|------------|----------------------------------------------|
 | i32  | complete   | peers in swarm that have finished downloding |
 | i32  | downloaded | times torrent has been downloaded            |
@@ -167,11 +176,11 @@ The packet will have authentication information appended to it.
 where `packet` is the bytes of the packet, less the final 8 bytes that are
 `passwd_hash`.
 
-| size  | name            | description                       |
-|-------|-----------------|-----------------------------------|
-| i8    | username_length |                                   |
-| i8[]  | username        | length given by `username_length` |
-| u8[8] | passwd_hash     |                                   |
+| type                   | name            |
+|------------------------|-----------------|
+| i8                     | username_length |
+| [i8; `username_length` | username        |
+| [u8; 8]                | passwd_hash     |
 
 ### Request String
 
@@ -181,10 +190,10 @@ torrent is allowed to be tracked by a tracker for instance. It could also be
 used to authenticate users by generating torrents with unique tokens in the
 tracker URL for each user. The extension body has the following format:
 
-| size | name           | description                      |
-|------|----------------|----------------------------------|
-| i8   | request_length |                                  |
-| i8[] | request_string | length given by `request_length` |
+| type                   | name           |
+|------------------------|----------------|
+| i8                     | request_length |
+| [i8; `request_length`] | request_string |
 
 `request_string` is the string that comes after the hostname and port in the
 UDP tracker URL. Typically this starts with "/announce" The bittorrent client
