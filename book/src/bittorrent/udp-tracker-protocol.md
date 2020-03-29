@@ -1,5 +1,5 @@
-Bittorrent UDP-tracker protocol
-===============================
+UDP Tracker Protocol
+====================
 
 This description of the UDP tracker protocol is adapted from
 [this page](https://libtorrent.org/udp_tracker_protocol.html) by Arvid Norberg.
