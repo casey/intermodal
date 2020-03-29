@@ -7,6 +7,8 @@ BEP Support
 | &#x274C; | Unsupported (link to issue) |
 | &#x2796; | Not Applicable              |
 
+<br>
+
 | BEP                                            | Status                                                     | Title                                                            |
 |:----------------------------------------------:|:----------------------------------------------------------:|:-----------------------------------------------------------------|
 | [00](http://bittorrent.org/beps/bep_0000.html) | &#x2796;                                                   | Index of BitTorrent Enhancement Proposals                        |
