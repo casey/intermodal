@@ -11,25 +11,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         
-        <link rel="stylesheet" href="custom.css">
+        <link rel="stylesheet" href="../custom.css">
         
 
         
@@ -37,7 +37,7 @@
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
         </script>
 
@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div id="sidebar-scrollbox" class="sidebar-scrollbox">
-                <ol class="chapter"><li class="expanded affix "><a href="introduction.html">Intermodal</a></li><li class="expanded "><a href="bep-support.html"><strong aria-hidden="true">1.</strong> BitTorrent BEP Support</a></li><li class="expanded "><a href="prior-art.html"><strong aria-hidden="true">2.</strong> Alternatives &amp; Prior Art</a></li><li class="expanded "><a href="bittorrent-references.html"><strong aria-hidden="true">3.</strong> BitTorrent References</a></li><li class="expanded "><a href="udp-tracker-protocol.html" class="active"><strong aria-hidden="true">4.</strong> UDP Tracker Protocol</a></li></ol>
+                <ol class="chapter"><li class="expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="expanded "><a href="../bittorrent.html"><strong aria-hidden="true">1.</strong> Bittorrent</a></li><li><ol class="section"><li class="expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">1.1.</strong> BEP Support</a></li><li class="expanded "><a href="../bittorrent/prior-art.html"><strong aria-hidden="true">1.2.</strong> Alternatives &amp; Prior Art</a></li><li class="expanded "><a href="../bittorrent/udp-tracker-protocol.html" class="active"><strong aria-hidden="true">1.3.</strong> UDP Tracker Protocol</a></li><li class="expanded "><a href="../bittorrent/references.html"><strong aria-hidden="true">1.4.</strong> References</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -118,7 +118,7 @@
                     <h1 class="menu-title">Intermodal</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
                         
@@ -149,7 +149,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#bittorrent-udp-tracker-protocol" id="bittorrent-udp-tracker-protocol">Bittorrent UDP-tracker protocol</a></h1>
+                        <h1><a class="header" href="#udp-tracker-protocol" id="udp-tracker-protocol">UDP Tracker Protocol</a></h1>
 <p>This description of the UDP tracker protocol is adapted from
 <a href="https://libtorrent.org/udp_tracker_protocol.html">this page</a> by Arvid Norberg.</p>
 <p>A tracker with the protocol &quot;udp://&quot; in its URI is should be contacted with
@@ -165,6 +165,12 @@ shoudl be <code>0x41727101980</code> in network byte order.</p>
 table.</p>
 <p>When a message is followed by a structure labeled <em>repeating:</em>, the rest of the
 message is zero or more of that structure.</p>
+<p>Fields with type <code>[T; N]</code> are <code>N</code> instances of values of type <code>T</code> with no extra
+padding.</p>
+<p>Fields with type <code>[T; NAME]</code> are <code>NAME</code> instances of values of type <code>T</code> with no
+extra padding, where <code>NAME</code> is an integer field of the same message.</p>
+<p>Files with type <code>[T]</code> are zero or more instances of values of type <code>T</code> with no
+extra padding, which make up any trailing bytes of the message.</p>
 <h2><a class="header" href="#actions" id="actions">Actions</a></h2>
 <table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>connect</td><td>0</td></tr>
@@ -180,10 +186,10 @@ message is zero or more of that structure.</p>
 <tr><td>stopped</td><td>3</td></tr>
 </tbody></table>
 <h2><a class="header" href="#error" id="error">Error</a></h2>
-<table><thead><tr><th>size</th><th>name</th><th>description</th></tr></thead><tbody>
+<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
-<tr><td>i8[]</td><td>error_string</td><td>rest of packet is string describing error</td></tr>
+<tr><td>[i8]</td><td>error_string</td><td>rest of packet is string describing error</td></tr>
 </tbody></table>
 <h2><a class="header" href="#connect" id="connect">Connect</a></h2>
 <h3><a class="header" href="#request" id="request">Request</a></h3>
@@ -231,22 +237,22 @@ message is zero or more of that structure.</p>
 </tbody></table>
 <h2><a class="header" href="#scrape" id="scrape">Scrape</a></h2>
 <h3><a class="header" href="#request-2" id="request-2">Request</a></h3>
-<table><thead><tr><th>size</th><th>name</th></tr></thead><tbody>
+<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
 <p><em>repeating:</em></p>
-<table><thead><tr><th>size</th><th>name</th></tr></thead><tbody>
+<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>[i8; 20]</td><td>info_hash</td></tr>
 </tbody></table>
 <h3><a class="header" href="#response-2" id="response-2">Response</a></h3>
-<table><thead><tr><th>size</th><th>name</th></tr></thead><tbody>
+<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
 <p><em>repeating:</em></p>
-<table><thead><tr><th>size</th><th>name</th><th>description</th></tr></thead><tbody>
+<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>complete</td><td>peers in swarm that have finished downloding</td></tr>
 <tr><td>i32</td><td>downloaded</td><td>times torrent has been downloaded</td></tr>
 <tr><td>i32</td><td>incomplete</td><td>peers that have not finished downloading</td></tr>
@@ -266,10 +272,10 @@ first, followed by the extension represented by bit 2.</p>
 <p><code>passwd_hash</code> is the first eight bytes of <code>sha1(packet || sha1(password))</code>,
 where <code>packet</code> is the bytes of the packet, less the final 8 bytes that are
 <code>passwd_hash</code>.</p>
-<table><thead><tr><th>size</th><th>name</th><th>description</th></tr></thead><tbody>
-<tr><td>i8</td><td>username_length</td><td></td></tr>
-<tr><td>i8[]</td><td>username</td><td>length given by <code>username_length</code></td></tr>
-<tr><td>u8[8]</td><td>passwd_hash</td><td></td></tr>
+<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<tr><td>i8</td><td>username_length</td></tr>
+<tr><td>[i8; <code>username_length</code></td><td>username</td></tr>
+<tr><td>[u8; 8]</td><td>passwd_hash</td></tr>
 </tbody></table>
 <h3><a class="header" href="#request-string" id="request-string">Request String</a></h3>
 <p>The request string extension is meant to allow torrent creators pass along
@@ -277,9 +283,9 @@ cookies back to the tracker. This can be useful for authenticating that a
 torrent is allowed to be tracked by a tracker for instance. It could also be
 used to authenticate users by generating torrents with unique tokens in the
 tracker URL for each user. The extension body has the following format:</p>
-<table><thead><tr><th>size</th><th>name</th><th>description</th></tr></thead><tbody>
-<tr><td>i8</td><td>request_length</td><td></td></tr>
-<tr><td>i8[]</td><td>request_string</td><td>length given by <code>request_length</code></td></tr>
+<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<tr><td>i8</td><td>request_length</td></tr>
+<tr><td>[i8; <code>request_length</code>]</td><td>request_string</td></tr>
 </tbody></table>
 <p><code>request_string</code> is the string that comes after the hostname and port in the
 UDP tracker URL. Typically this starts with &quot;/announce&quot; The bittorrent client
@@ -294,11 +300,15 @@ protocol. However, the client is free to add arguments as extensions.|</p>
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="bittorrent-references.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../bittorrent/prior-art.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
+                        
+                            <a rel="next" href="../bittorrent/references.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -308,11 +318,15 @@ protocol. However, the client is free to add arguments as extensions.|</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="bittorrent-references.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../bittorrent/prior-art.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
+                
+                    <a rel="next" href="../bittorrent/references.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 
@@ -333,14 +347,14 @@ protocol. However, the client is free to add arguments as extensions.|</p>
         
 
         
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
         
