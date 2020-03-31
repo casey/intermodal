@@ -2,11 +2,11 @@ default: watch
 
 version := `sed -En 's/version[[:space:]]*=[[:space:]]*"([^"]+)"/v\1/p' Cargo.toml | head -1`
 
-bt := "0"
+bt := '0'
 
 export RUST_BACKTRACE := bt
 
-log := "warn"
+log := 'warn'
 
 export RUST_LOG := log
 
