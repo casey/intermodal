@@ -1,7 +1,5 @@
 use crate::common::*;
 
-use structopt::clap;
-
 #[derive(Debug, Snafu)]
 #[snafu(visibility(pub(crate)))]
 pub(crate) enum Error {

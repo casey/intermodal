@@ -34,8 +34,8 @@ Examples:
 
     --node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s g -l glob -d 'Include or exclude files that match `GLOB`. Multiple glob may be provided, with the last one taking precedence. Precede a glob with `!` to exclude it.'
-complete -c imdl -n "__fish_seen_subcommand_from create" -s i -l input -d 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent, if `PATH` is a directory, torrent will be a multi-file torrent.'
-complete -c imdl -n "__fish_seen_subcommand_from create" -s N -l name -d 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`.'
+complete -c imdl -n "__fish_seen_subcommand_from create" -s i -l input -d 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` is `-`, read from standard input. Piece length defaults to 256KiB when reading from standard input if `--piece-length` is not given.'
+complete -c imdl -n "__fish_seen_subcommand_from create" -s N -l name -d 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`. Required when `--input -`.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -l sort-by -d 'Set the order of files within a torrent. `SPEC` should be of the form `KEY:ORDER`, with `KEY` being one of `path` or `size`, and `ORDER` being `ascending` or `descending`. `:ORDER` defaults to `ascending` if omitted. The `--sort-by` flag may be given more than once, with later values being used to break ties. Ties that remain are broken in ascending path order.
 
 Sort in ascending order by path, the default:
@@ -49,7 +49,7 @@ Sort in ascending order by path, more concisely:
 Sort in ascending order by size, break ties in descending path order:
 
     --sort-by size:ascending --sort-by path:descending'
-complete -c imdl -n "__fish_seen_subcommand_from create" -s o -l output -d 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to `$INPUT.torrent`.'
+complete -c imdl -n "__fish_seen_subcommand_from create" -s o -l output -d 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to the argument to `--input` with an `.torrent` extension appended. Required when `--input -`.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -l peer -d 'Add `PEER` to magnet link.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s p -l piece-length -d 'Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s s -l source -d 'Set torrent source to `TEXT`. Stored under `source` key of info dictionary. This is useful for keeping statistics from being mis-reported when participating in swarms with the same contents, but with different trackers. When source is set to a unique value for torrents with the same contents, torrent clients will treat them as distinct torrents, and not share peers between them, and will correctly report download and upload statistics to multiple trackers.'

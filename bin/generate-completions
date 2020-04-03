@@ -2,7 +2,9 @@
 
 set -euxo pipefail
 
+cargo build
+
 for script in completions/*; do
   shell=${script##*.}
-  cargo run -- completions --shell $shell > $script
+  ./target/debug/imdl completions --shell $shell > $script
 done

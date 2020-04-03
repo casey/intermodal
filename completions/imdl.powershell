@@ -77,10 +77,10 @@ Examples:
     --node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832')
             [CompletionResult]::new('-g', 'g', [CompletionResultType]::ParameterName, 'Include or exclude files that match `GLOB`. Multiple glob may be provided, with the last one taking precedence. Precede a glob with `!` to exclude it.')
             [CompletionResult]::new('--glob', 'glob', [CompletionResultType]::ParameterName, 'Include or exclude files that match `GLOB`. Multiple glob may be provided, with the last one taking precedence. Precede a glob with `!` to exclude it.')
-            [CompletionResult]::new('-i', 'i', [CompletionResultType]::ParameterName, 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent, if `PATH` is a directory, torrent will be a multi-file torrent.')
-            [CompletionResult]::new('--input', 'input', [CompletionResultType]::ParameterName, 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent, if `PATH` is a directory, torrent will be a multi-file torrent.')
-            [CompletionResult]::new('-N', 'N', [CompletionResultType]::ParameterName, 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`.')
-            [CompletionResult]::new('--name', 'name', [CompletionResultType]::ParameterName, 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`.')
+            [CompletionResult]::new('-i', 'i', [CompletionResultType]::ParameterName, 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` is `-`, read from standard input. Piece length defaults to 256KiB when reading from standard input if `--piece-length` is not given.')
+            [CompletionResult]::new('--input', 'input', [CompletionResultType]::ParameterName, 'Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` is `-`, read from standard input. Piece length defaults to 256KiB when reading from standard input if `--piece-length` is not given.')
+            [CompletionResult]::new('-N', 'N', [CompletionResultType]::ParameterName, 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`. Required when `--input -`.')
+            [CompletionResult]::new('--name', 'name', [CompletionResultType]::ParameterName, 'Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`. Required when `--input -`.')
             [CompletionResult]::new('--sort-by', 'sort-by', [CompletionResultType]::ParameterName, 'Set the order of files within a torrent. `SPEC` should be of the form `KEY:ORDER`, with `KEY` being one of `path` or `size`, and `ORDER` being `ascending` or `descending`. `:ORDER` defaults to `ascending` if omitted. The `--sort-by` flag may be given more than once, with later values being used to break ties. Ties that remain are broken in ascending path order.
 
 Sort in ascending order by path, the default:
@@ -94,8 +94,8 @@ Sort in ascending order by path, more concisely:
 Sort in ascending order by size, break ties in descending path order:
 
     --sort-by size:ascending --sort-by path:descending')
-            [CompletionResult]::new('-o', 'o', [CompletionResultType]::ParameterName, 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to `$INPUT.torrent`.')
-            [CompletionResult]::new('--output', 'output', [CompletionResultType]::ParameterName, 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to `$INPUT.torrent`.')
+            [CompletionResult]::new('-o', 'o', [CompletionResultType]::ParameterName, 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to the argument to `--input` with an `.torrent` extension appended. Required when `--input -`.')
+            [CompletionResult]::new('--output', 'output', [CompletionResultType]::ParameterName, 'Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. Defaults to the argument to `--input` with an `.torrent` extension appended. Required when `--input -`.')
             [CompletionResult]::new('--peer', 'peer', [CompletionResultType]::ParameterName, 'Add `PEER` to magnet link.')
             [CompletionResult]::new('-p', 'p', [CompletionResultType]::ParameterName, 'Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib.')
             [CompletionResult]::new('--piece-length', 'piece-length', [CompletionResultType]::ParameterName, 'Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib.')

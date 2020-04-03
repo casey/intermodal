@@ -12,16 +12,7 @@ pub(crate) struct Hasher {
 }
 
 impl Hasher {
-  pub(crate) fn hash(
-    files: &Files,
-    md5sum: bool,
-    piece_length: usize,
-    progress_bar: Option<ProgressBar>,
-  ) -> Result<(Mode, PieceList), Error> {
-    Self::new(md5sum, piece_length, progress_bar).hash_files(files)
-  }
-
-  fn new(md5sum: bool, piece_length: usize, progress_bar: Option<ProgressBar>) -> Self {
+  pub(crate) fn new(md5sum: bool, piece_length: usize, progress_bar: Option<ProgressBar>) -> Self {
     Self {
       buffer: vec![0; piece_length],
       length: 0,
@@ -34,7 +25,7 @@ impl Hasher {
     }
   }
 
-  fn hash_files(mut self, files: &Files) -> Result<(Mode, PieceList), Error> {
+  pub(crate) fn hash_files(mut self, files: &Files) -> Result<(Mode, PieceList), Error> {
     let mode = if let Some(contents) = files.contents() {
       let files = self.hash_contents(&files.root(), contents)?;
 
@@ -42,19 +33,30 @@ impl Hasher {
     } else {
       let (md5sum, length) = self.hash_file(files.root())?;
 
-      Mode::Single {
-        md5sum: md5sum.map(|md5sum| md5sum.into()),
-        length,
-      }
+      Mode::Single { md5sum, length }
     };
 
+    self.finish();
+
+    Ok((mode, self.pieces))
+  }
+
+  pub(crate) fn hash_stdin(mut self, stdin: &mut dyn BufRead) -> Result<(Mode, PieceList), Error> {
+    let (md5sum, length) = self.hash_read_io(stdin).context(error::Stdin)?;
+
+    let mode = Mode::Single { md5sum, length };
+
+    self.finish();
+
+    Ok((mode, self.pieces))
+  }
+
+  fn finish(&mut self) {
     if self.piece_bytes_hashed > 0 {
       self.pieces.push(self.sha1.digest().into());
       self.sha1.reset();
       self.piece_bytes_hashed = 0;
     }
-
-    Ok((mode, self.pieces))
   }
 
   fn hash_contents(
@@ -70,8 +72,8 @@ impl Hasher {
       let (md5sum, length) = self.hash_file(&path)?;
 
       files.push(FileInfo {
-        md5sum: md5sum.map(|md5sum| md5sum.into()),
         path: file_path.clone(),
+        md5sum,
         length,
       });
     }
@@ -79,18 +81,17 @@ impl Hasher {
     Ok(files)
   }
 
-  fn hash_file(&mut self, file: &Path) -> Result<(Option<md5::Digest>, Bytes), Error> {
+  fn hash_file(&mut self, path: &Path) -> Result<(Option<Md5Digest>, Bytes), Error> {
+    let file = File::open(path).context(error::Filesystem { path })?;
+
     self
-      .hash_file_io(file)
-      .context(error::Filesystem { path: file })
+      .hash_read_io(&mut BufReader::new(file))
+      .context(error::Filesystem { path })
   }
 
-  fn hash_file_io(&mut self, file: &Path) -> io::Result<(Option<md5::Digest>, Bytes)> {
-    let length = file.metadata()?.len();
-
-    let mut remaining = length;
-
-    let mut file = File::open(file)?;
+  fn hash_read_io(&mut self, file: &mut dyn BufRead) -> io::Result<(Option<Md5Digest>, Bytes)> {
+    let buffer_len = self.buffer.len();
+    let mut bytes_hashed = 0;
 
     let mut md5 = if self.md5sum {
       Some(md5::Context::new())
@@ -98,17 +99,20 @@ impl Hasher {
       None
     };
 
-    while remaining > 0 {
-      let to_buffer: usize = remaining
-        .min(self.buffer.len().into_u64())
-        .try_into()
-        .unwrap();
+    loop {
+      let buffer = &mut self.buffer[..buffer_len];
 
-      let buffer = &mut self.buffer[0..to_buffer];
+      let bytes_read = file.read(buffer)?;
 
-      file.read_exact(buffer)?;
+      if bytes_read == 0 {
+        break;
+      }
 
-      for byte in buffer.iter().cloned() {
+      bytes_hashed += bytes_read;
+
+      let read = &buffer[0..bytes_read];
+
+      for byte in read.iter().cloned() {
         self.sha1.update(&[byte]);
 
         self.piece_bytes_hashed += 1;
@@ -121,18 +125,19 @@ impl Hasher {
       }
 
       if let Some(md5) = md5.as_mut() {
-        md5.consume(&buffer);
+        md5.consume(read);
       }
 
-      remaining -= buffer.len().into_u64();
-
       if let Some(progress_bar) = &self.progress_bar {
-        progress_bar.inc(to_buffer.into_u64());
+        progress_bar.inc(bytes_read.into_u64());
       }
     }
 
-    self.length += length;
+    self.length += bytes_hashed.into_u64();
 
-    Ok((md5.map(md5::Context::compute), Bytes::from(length)))
+    Ok((
+      md5.map(|context| context.compute().into()),
+      Bytes::from(bytes_hashed.into_u64()),
+    ))
   }
 }

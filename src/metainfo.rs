@@ -76,7 +76,7 @@ impl Metainfo {
 
   #[cfg(test)]
   pub(crate) fn from_bytes(bytes: &[u8]) -> Metainfo {
-    Self::deserialize(&InputTarget::File("<TEST>".into()), bytes).unwrap()
+    Self::deserialize(&InputTarget::Path("<TEST>".into()), bytes).unwrap()
   }
 
   #[cfg(test)]

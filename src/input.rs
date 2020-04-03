@@ -22,7 +22,7 @@ impl Input {
   pub(crate) fn from_path(path: &Path) -> Result<Input> {
     let data = fs::read(path).context(error::Filesystem { path })?;
     Ok(Input {
-      source: InputTarget::File(path.to_owned()),
+      source: InputTarget::Path(path.to_owned()),
       data,
     })
   }
