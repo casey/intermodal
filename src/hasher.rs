@@ -86,11 +86,16 @@ impl Hasher {
   }
 
   fn hash_file_io(&mut self, file: &Path) -> io::Result<(Option<md5::Digest>, Bytes)> {
-    let length = file.metadata()?.len();
+    let stdin = io::stdin();
+    let buffer_len = self.buffer.len();
+    let mut bytes_length = 0;
+    let mut should_hash = true;
 
-    let mut remaining = length;
-
-    let mut file = File::open(file)?;
+    let mut file: Box<dyn Read> = if file == PathBuf::from("-") {
+      Box::new(stdin.lock())
+    } else {
+      Box::new(File::open(file)?)
+    };
 
     let mut md5 = if self.md5sum {
       Some(md5::Context::new())
@@ -98,17 +103,15 @@ impl Hasher {
       None
     };
 
-    while remaining > 0 {
-      let to_buffer: usize = remaining
-        .min(self.buffer.len().into_u64())
-        .try_into()
-        .unwrap();
+    while should_hash {
+      let buffer = &mut self.buffer[0..buffer_len];
 
-      let buffer = &mut self.buffer[0..to_buffer];
+      let read_length = file.read(buffer)?;
+      bytes_length += read_length;
+      should_hash = read_length == 0;
 
-      file.read_exact(buffer)?;
-
-      for byte in buffer.iter().cloned() {
+      for index in 0..read_length {
+        let byte = buffer[index];
         self.sha1.update(&[byte]);
 
         self.piece_bytes_hashed += 1;
@@ -124,15 +127,16 @@ impl Hasher {
         md5.consume(&buffer);
       }
 
-      remaining -= buffer.len().into_u64();
-
       if let Some(progress_bar) = &self.progress_bar {
-        progress_bar.inc(to_buffer.into_u64());
+        progress_bar.inc(read_length.into_u64());
       }
     }
 
-    self.length += length;
+    self.length += bytes_length.into_u64();
 
-    Ok((md5.map(md5::Context::compute), Bytes::from(length)))
+    Ok((
+      md5.map(md5::Context::compute),
+      Bytes::from(bytes_length.into_u64()),
+    ))
   }
 }

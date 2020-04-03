@@ -234,7 +234,13 @@ Sort in ascending order by size, break ties in descending path order:
 
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.resolve(&self.input);
+    let input_from_stdin = self.input == PathBuf::from("-");
+
+    let input = if input_from_stdin {
+      PathBuf::from("-")
+    } else {
+      env.resolve(&self.input)
+    };
 
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
@@ -268,14 +274,18 @@ impl Create {
       None
     };
 
-    let files = Walker::new(&input)
-      .include_junk(self.include_junk)
-      .include_hidden(self.include_hidden)
-      .follow_symlinks(self.follow_symlinks)
-      .sort_by(self.sort_by)
-      .globs(&self.globs)?
-      .spinner(spinner)
-      .files()?;
+    let files = if input_from_stdin {
+      Files::file(input.to_owned(), Bytes::from(0 as u64))
+    } else {
+      Walker::new(&input)
+        .include_junk(self.include_junk)
+        .include_hidden(self.include_hidden)
+        .follow_symlinks(self.follow_symlinks)
+        .sort_by(self.sort_by)
+        .globs(&self.globs)?
+        .spinner(spinner)
+        .files()?
+    };
 
     let piece_length = self
       .piece_length
@@ -295,9 +305,13 @@ impl Create {
       return Err(Error::PieceLengthSmall);
     }
 
-    let filename = input.file_name().ok_or_else(|| Error::FilenameExtract {
-      path: input.clone(),
-    })?;
+    let filename = if input_from_stdin {
+      OsStr::new("stdin")
+    } else {
+      input.file_name().ok_or_else(|| Error::FilenameExtract {
+        path: input.clone(),
+      })?
+    };
 
     let name = match &self.name {
       Some(name) => name.clone(),
