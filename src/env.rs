@@ -3,7 +3,7 @@ use crate::common::*;
 pub(crate) struct Env {
   args: Vec<OsString>,
   dir: PathBuf,
-  input: Box<dyn Read>,
+  input: Box<dyn InputStream>,
   err: OutputStream,
   out: OutputStream,
 }
@@ -79,7 +79,7 @@ impl Env {
   pub(crate) fn new<S, I>(
     dir: PathBuf,
     args: I,
-    input: Box<dyn Read>,
+    input: Box<dyn InputStream>,
     out: OutputStream,
     err: OutputStream,
   ) -> Self
@@ -147,6 +147,10 @@ impl Env {
     &self.err
   }
 
+  pub(crate) fn input<'a>(&'a mut self) -> Box<dyn BufRead + 'a> {
+    self.input.as_mut().buf_read()
+  }
+
   pub(crate) fn err_mut(&mut self) -> &mut OutputStream {
     &mut self.err
   }
@@ -165,13 +169,17 @@ impl Env {
 
   pub(crate) fn read(&mut self, source: InputTarget) -> Result<Input> {
     let data = match &source {
-      InputTarget::File(path) => {
+      InputTarget::Path(path) => {
         let absolute = self.resolve(path);
         fs::read(absolute).context(error::Filesystem { path })?
       }
       InputTarget::Stdin => {
         let mut buffer = Vec::new();
-        self.input.read_to_end(&mut buffer).context(error::Stdin)?;
+        self
+          .input
+          .buf_read()
+          .read_to_end(&mut buffer)
+          .context(error::Stdin)?;
         buffer
       }
     };

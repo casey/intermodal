@@ -77,6 +77,18 @@ impl TestEnv {
     fs::set_permissions(self.env.resolve(path), permissions).unwrap();
   }
 
+  pub(crate) fn assert_ok(&mut self) {
+    match self.run() {
+      Ok(()) => {}
+      Err(err) => {
+        eprintln!("Run failed: {}", err);
+        eprintln!("Std error:\n{}", self.err());
+        eprintln!("Std output:\n{}", self.out());
+        panic!();
+      }
+    }
+  }
+
   pub(crate) fn load_metainfo(&mut self, filename: impl AsRef<Path>) -> Metainfo {
     let input = self.env.read(filename.as_ref().as_os_str().into()).unwrap();
     Metainfo::from_input(&input).unwrap()

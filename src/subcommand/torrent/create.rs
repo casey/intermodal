@@ -117,10 +117,12 @@ Examples:
     short = "i",
     value_name = "PATH",
     help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
-            torrent, if `PATH` is a directory, torrent will be a multi-file torrent.",
+            torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` \
+            is `-`, read from standard input. Piece length defaults to 256KiB when reading from \
+            standard input if `--piece-length` is not given.",
     parse(from_os_str)
   )]
-  input: PathBuf,
+  input: InputTarget,
   #[structopt(
     long = "link",
     help = "Print created torrent `magnet:` URL to standard output"
@@ -137,7 +139,9 @@ Examples:
     long = "name",
     short = "N",
     value_name = "TEXT",
-    help = "Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`."
+    help = "Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`. \
+            Required when `--input -`.",
+    required_if("input", "-")
   )]
   name: Option<String>,
   #[structopt(
@@ -184,7 +188,9 @@ Sort in ascending order by size, break ties in descending path order:
     short = "o",
     value_name = "TARGET",
     help = "Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. \
-            Defaults to `$INPUT.torrent`.",
+            Defaults to the argument to `--input` with an `.torrent` extension appended. Required \
+            when `--input -`.",
+    required_if("input", "-"),
     parse(from_os_str)
   )]
   output: Option<OutputTarget>,
@@ -234,7 +240,8 @@ Sort in ascending order by size, break ties in descending path order:
 
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.resolve(&self.input);
+    let input = self.input.resolve(env);
+    let output = self.output.map(|output| output.resolve(env));
 
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
@@ -268,18 +275,79 @@ impl Create {
       None
     };
 
-    let files = Walker::new(&input)
-      .include_junk(self.include_junk)
-      .include_hidden(self.include_hidden)
-      .follow_symlinks(self.follow_symlinks)
-      .sort_by(self.sort_by)
-      .globs(&self.globs)?
-      .spinner(spinner)
-      .files()?;
+    let files;
+    let piece_length;
+    let progress_bar;
+    let name;
+    let output = match &input {
+      InputTarget::Path(path) => {
+        let files_inner = Walker::new(&path)
+          .include_junk(self.include_junk)
+          .include_hidden(self.include_hidden)
+          .follow_symlinks(self.follow_symlinks)
+          .sort_by(self.sort_by)
+          .globs(&self.globs)?
+          .spinner(spinner)
+          .files()?;
 
-    let piece_length = self
-      .piece_length
-      .unwrap_or_else(|| PieceLengthPicker::from_content_size(files.total_size()));
+        piece_length = self
+          .piece_length
+          .unwrap_or_else(|| PieceLengthPicker::from_content_size(files_inner.total_size()));
+
+        let style = ProgressStyle::default_bar()
+          .template(
+            "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
+             {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
+          )
+          .tick_chars(consts::TICK_CHARS)
+          .progress_chars(consts::PROGRESS_CHARS);
+
+        progress_bar = ProgressBar::new(files_inner.total_size().count()).with_style(style);
+
+        let filename = path
+          .file_name()
+          .ok_or_else(|| Error::FilenameExtract { path: path.clone() })?;
+
+        name = match &self.name {
+          Some(name) => name.clone(),
+          None => filename
+            .to_str()
+            .ok_or_else(|| Error::FilenameDecode {
+              filename: PathBuf::from(filename),
+            })?
+            .to_owned(),
+        };
+
+        files = Some(files_inner);
+
+        output
+          .as_ref()
+          .map(|output| output.resolve(env))
+          .unwrap_or_else(|| {
+            let mut torrent_name = name.to_owned();
+            torrent_name.push_str(".torrent");
+
+            OutputTarget::File(path.parent().unwrap().join(torrent_name))
+          })
+      }
+
+      InputTarget::Stdin => {
+        files = None;
+        piece_length = self.piece_length.unwrap_or(Bytes::kib() * 256);
+
+        let style = ProgressStyle::default_bar()
+          .template("{spinner:.green} ⟪{elapsed_precise}⟫ {binary_bytes} ⟨{binary_bytes_per_sec}⟩")
+          .tick_chars(consts::TICK_CHARS);
+
+        progress_bar = ProgressBar::new_spinner().with_style(style);
+
+        name = self
+          .name
+          .ok_or_else(|| Error::internal("Expected `--name` to be set when `--input -`."))?;
+
+        output.ok_or_else(|| Error::internal("Expected `--output` to be set when `--input -`."))?
+      }
+    };
 
     if piece_length.count() == 0 {
       return Err(Error::PieceLengthZero);
@@ -294,31 +362,6 @@ impl Create {
     if linter.is_denied(Lint::SmallPieceLength) && piece_length.count() < 16 * 1024 {
       return Err(Error::PieceLengthSmall);
     }
-
-    let filename = input.file_name().ok_or_else(|| Error::FilenameExtract {
-      path: input.clone(),
-    })?;
-
-    let name = match &self.name {
-      Some(name) => name.clone(),
-      None => filename
-        .to_str()
-        .ok_or_else(|| Error::FilenameDecode {
-          filename: PathBuf::from(filename),
-        })?
-        .to_owned(),
-    };
-
-    let output = self
-      .output
-      .as_ref()
-      .map(|output| output.resolve(env))
-      .unwrap_or_else(|| {
-        let mut torrent_name = name.to_owned();
-        torrent_name.push_str(".torrent");
-
-        OutputTarget::File(input.parent().unwrap().join(torrent_name))
-      });
 
     if let OutputTarget::File(path) = &output {
       if !self.force && path.exists() {
@@ -348,26 +391,21 @@ impl Create {
 
     CreateStep::Hashing.print(env)?;
 
-    let progress_bar = if env.err().is_styled_term() {
-      let style = ProgressStyle::default_bar()
-        .template(
-          "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
-           {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
-        )
-        .tick_chars(consts::TICK_CHARS)
-        .progress_chars(consts::PROGRESS_CHARS);
-
-      Some(ProgressBar::new(files.total_size().count()).with_style(style))
-    } else {
-      None
-    };
-
-    let (mode, pieces) = Hasher::hash(
-      &files,
+    let hasher = Hasher::new(
       self.md5sum,
       piece_length.as_piece_length()?.into_usize(),
-      progress_bar,
-    )?;
+      if env.err().is_styled_term() {
+        Some(progress_bar)
+      } else {
+        None
+      },
+    );
+
+    let (mode, pieces) = if let Some(files) = files {
+      hasher.hash_files(&files)?
+    } else {
+      hasher.hash_stdin(&mut env.input())?
+    };
 
     CreateStep::Writing { output: &output }.print(env)?;
 
@@ -423,14 +461,18 @@ impl Create {
 
     #[cfg(test)]
     {
-      let deserialized = bendy::serde::de::from_bytes::<Metainfo>(&bytes).unwrap();
+      if let InputTarget::Path(path) = &input {
+        let deserialized = bendy::serde::de::from_bytes::<Metainfo>(&bytes).unwrap();
 
-      assert_eq!(deserialized, metainfo);
+        assert_eq!(deserialized, metainfo);
 
-      let status = metainfo.verify(&input, None)?;
+        let status = metainfo.verify(path, None)?;
 
-      if !status.good() {
-        return Err(Error::Verify);
+        status.print(env)?;
+
+        if !status.good() {
+          return Err(Error::Verify);
+        }
       }
     }
 
@@ -1349,7 +1391,7 @@ mod tests {
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abchijxyz"]));
     match metainfo.info.mode {
@@ -1917,7 +1959,7 @@ Content Size  9 bytes
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2585,5 +2627,76 @@ Content Size  9 bytes
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["d/e", "b", "a", "c"]);
+  }
+
+  #[test]
+  fn name_required_when_input_is_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+        "--announce",
+        "http://bar",
+        "--output",
+        "foo.torrent",
+      ],
+      tree: {},
+    };
+    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+  }
+
+  #[test]
+  fn foo_required_when_input_is_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+        "--announce",
+        "http://bar",
+        "--name",
+        "foo",
+      ],
+      tree: {},
+    };
+    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+  }
+
+  #[test]
+  fn create_from_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+        "--announce",
+        "http://bar",
+        "--name",
+        "foo",
+        "--output",
+        "foo.torrent",
+        "--md5",
+      ],
+      input: "hello",
+      tree: {},
+    };
+
+    env.assert_ok();
+
+    let metainfo = env.load_metainfo("foo.torrent");
+
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["hello"]));
+
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Single {
+        length: Bytes(5),
+        md5sum: Some(Md5Digest::from_data("hello")),
+      }
+    );
   }
 }

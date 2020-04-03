@@ -10,7 +10,7 @@ pub(crate) use std::{
   fmt::{self, Display, Formatter},
   fs::{self, File},
   hash::Hash,
-  io::{self, Cursor, Read, Write},
+  io::{self, BufRead, BufReader, Cursor, Read, Write},
   iter::{self, Sum},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
@@ -35,7 +35,10 @@ pub(crate) use serde_with::rust::unwrap_or_skip;
 pub(crate) use sha1::Sha1;
 pub(crate) use snafu::{ResultExt, Snafu};
 pub(crate) use static_assertions::const_assert;
-pub(crate) use structopt::{clap::AppSettings, StructOpt};
+pub(crate) use structopt::{
+  clap::{self, AppSettings},
+  StructOpt,
+};
 pub(crate) use strum::VariantNames;
 pub(crate) use strum_macros::{EnumString, EnumVariantNames, IntoStaticStr};
 pub(crate) use unicode_width::UnicodeWidthStr;
@@ -51,7 +54,7 @@ pub(crate) use crate::{consts, error, host_port_parse_error};
 
 // traits
 pub(crate) use crate::{
-  into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
+  input_stream::InputStream, into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
   platform_interface::PlatformInterface, print::Print, reckoner::Reckoner, step::Step,
 };
 

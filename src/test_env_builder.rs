@@ -4,7 +4,7 @@ pub(crate) struct TestEnvBuilder {
   args: Vec<OsString>,
   current_dir: Option<PathBuf>,
   err_style: bool,
-  input: Option<Box<dyn Read>>,
+  input: Option<Box<dyn InputStream>>,
   out_is_term: bool,
   tempdir: Option<TempDir>,
   use_color: bool,
