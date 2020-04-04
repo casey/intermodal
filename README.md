@@ -88,7 +88,7 @@ at any time.
 
 ### Source Signatures
 
-All commits to the intermodal master branch, starting with `COMMIT-HASH`, are
+All commits to the intermodal master branch, starting with `97d433e68924f8323bee2429a20e3812d21b20cb`, are
 signed with Casey Rodarmor's PGP key with fingerprint
 `3259DAEDB29636B0E2025A70556186B153EC6FE0`, which can be found
 [on keybase](https://keybase.io/rodarmor/pgp_keys.asc?fingerprint=3259daedb29636b0e2025a70556186b153ec6fe0) and on
