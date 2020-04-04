@@ -93,7 +93,13 @@ check: test clippy lint check-minimal-versions
 	git diff --no-ext-diff --quiet --exit-code
 
 pr: push
+	#!/usr/bin/env bash
+	set -euxo pipefail
 	hub pull-request -o
+	while ! hub ci-status --verbose; do
+		sleep 10
+	done
+	just done
 
 publish-check: check check-man
 	cargo outdated --exit-code 1
