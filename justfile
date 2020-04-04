@@ -25,11 +25,12 @@ push: check
 
 # clean up feature branch BRANCH
 done BRANCH=`git rev-parse --abbrev-ref HEAD`:
-	git checkout master
 	git diff --no-ext-diff --quiet --exit-code
-	git pull --rebase github master
+	git push github {{BRANCH}}:master
+	git checkout master
+	git rebase {{BRANCH}}
 	git diff --no-ext-diff --quiet --exit-code {{BRANCH}} --
-	git branch -D {{BRANCH}}
+	git branch -d {{BRANCH}}
 
 test:
 	cargo test --all
