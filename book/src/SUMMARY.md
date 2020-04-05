@@ -8,3 +8,6 @@ Summary
   - [Alternatives & Prior Art](./bittorrent/prior-art.md)
   - [UDP Tracker Protocol](./bittorrent/udp-tracker-protocol.md)
   - [References](./bittorrent/references.md)
+
+- [Metadata](./metadata.md)
+  - [Prior Art](./metadata/prior-art.md)
