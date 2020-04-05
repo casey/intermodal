@@ -93,11 +93,13 @@ check: test clippy lint check-minimal-versions
 	git diff --no-ext-diff --quiet --exit-code
 
 pr: push
+	hub pull-request -o
+
+merge:
 	#!/usr/bin/env bash
 	set -euxo pipefail
-	hub pull-request -o
 	while ! hub ci-status --verbose; do
-		sleep 10
+		sleep 5
 	done
 	just done
 
