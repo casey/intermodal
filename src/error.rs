@@ -18,11 +18,11 @@ pub(crate) enum Error {
   CommandInvoke { command: String, source: io::Error },
   #[snafu(display("Command `{}` returned bad exit status: {}", command, status))]
   CommandStatus { command: String, status: ExitStatus },
-  #[snafu(display("Filename was not valid unicode: {}", filename.display()))]
+  #[snafu(display("Filename was not valid unicode: `{}`", filename.display()))]
   FilenameDecode { filename: PathBuf },
-  #[snafu(display("Path had no file name: {}", path.display()))]
+  #[snafu(display("Path had no file name: `{}`", path.display()))]
   FilenameExtract { path: PathBuf },
-  #[snafu(display("Unknown file ordering: {}", text))]
+  #[snafu(display("Unknown file ordering: `{}`", text))]
   FileOrderUnknown { text: String },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },

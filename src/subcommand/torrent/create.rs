@@ -1,6 +1,8 @@
 use crate::common::*;
+use create_content::CreateContent;
 use create_step::CreateStep;
 
+mod create_content;
 mod create_step;
 
 #[derive(StructOpt)]
@@ -242,12 +244,6 @@ Sort in ascending order by size, break ties in descending path order:
 
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = self.input.resolve(env)?;
-    let output = match self.output {
-      Some(output) => Some(output.resolve(env)?),
-      None => None,
-    };
-
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
@@ -268,100 +264,24 @@ impl Create {
       return Err(Error::PrivateTrackerless);
     }
 
-    CreateStep::Searching.print(env)?;
+    CreateStep::Searching { input: &self.input }.print(env)?;
 
-    let spinner = if env.err().is_styled_term() {
-      let style = ProgressStyle::default_spinner()
-        .template("{spinner:.green} {msg:.bold}…")
-        .tick_chars(consts::TICK_CHARS);
+    let content = CreateContent::from_create(&self, env)?;
 
-      Some(ProgressBar::new_spinner().with_style(style))
-    } else {
-      None
-    };
+    let output = content.output.resolve(env)?;
 
-    let files;
-    let piece_length;
-    let progress_bar;
-    let name;
-    let output = match &input {
-      InputTarget::Path(path) => {
-        let files_inner = Walker::new(&path)
-          .include_junk(self.include_junk)
-          .include_hidden(self.include_hidden)
-          .follow_symlinks(self.follow_symlinks)
-          .sort_by(self.sort_by)
-          .globs(&self.globs)?
-          .spinner(spinner)
-          .files()?;
-
-        piece_length = self
-          .piece_length
-          .unwrap_or_else(|| PieceLengthPicker::from_content_size(files_inner.total_size()));
-
-        let style = ProgressStyle::default_bar()
-          .template(
-            "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
-             {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
-          )
-          .tick_chars(consts::TICK_CHARS)
-          .progress_chars(consts::PROGRESS_CHARS);
-
-        progress_bar = ProgressBar::new(files_inner.total_size().count()).with_style(style);
-
-        let filename = path
-          .file_name()
-          .ok_or_else(|| Error::FilenameExtract { path: path.clone() })?;
-
-        name = match &self.name {
-          Some(name) => name.clone(),
-          None => filename
-            .to_str()
-            .ok_or_else(|| Error::FilenameDecode {
-              filename: PathBuf::from(filename),
-            })?
-            .to_owned(),
-        };
-
-        files = Some(files_inner);
-
-        output.unwrap_or_else(|| {
-          let mut torrent_name = name.to_owned();
-          torrent_name.push_str(".torrent");
-
-          OutputTarget::Path(path.parent().unwrap().join(torrent_name))
-        })
-      }
-
-      InputTarget::Stdin => {
-        files = None;
-        piece_length = self.piece_length.unwrap_or(Bytes::kib() * 256);
-
-        let style = ProgressStyle::default_bar()
-          .template("{spinner:.green} ⟪{elapsed_precise}⟫ {binary_bytes} ⟨{binary_bytes_per_sec}⟩")
-          .tick_chars(consts::TICK_CHARS);
-
-        progress_bar = ProgressBar::new_spinner().with_style(style);
-
-        name = self
-          .name
-          .ok_or_else(|| Error::internal("Expected `--name` to be set when `--input -`."))?;
-
-        output.ok_or_else(|| Error::internal("Expected `--output` to be set when `--input -`."))?
-      }
-    };
-
-    if piece_length.count() == 0 {
+    if content.piece_length.count() == 0 {
       return Err(Error::PieceLengthZero);
     }
 
-    if linter.is_denied(Lint::UnevenPieceLength) && !piece_length.count().is_power_of_two() {
+    if linter.is_denied(Lint::UnevenPieceLength) && !content.piece_length.count().is_power_of_two()
+    {
       return Err(Error::PieceLengthUneven {
-        bytes: piece_length,
+        bytes: content.piece_length,
       });
     }
 
-    if linter.is_denied(Lint::SmallPieceLength) && piece_length.count() < 16 * 1024 {
+    if linter.is_denied(Lint::SmallPieceLength) && content.piece_length.count() < 16 * 1024 {
       return Err(Error::PieceLengthSmall);
     }
 
@@ -395,28 +315,31 @@ impl Create {
 
     let hasher = Hasher::new(
       self.md5sum,
-      piece_length.as_piece_length()?.into_usize(),
+      content.piece_length.as_piece_length()?.into_usize(),
       if env.err().is_styled_term() {
-        Some(progress_bar)
+        Some(content.progress_bar)
       } else {
         None
       },
     );
 
-    let (mode, pieces) = if let Some(files) = files {
+    let (mode, pieces) = if let Some(files) = content.files {
       hasher.hash_files(&files)?
     } else {
       hasher.hash_stdin(&mut env.input())?
     };
 
-    CreateStep::Writing { output: &output }.print(env)?;
+    CreateStep::Writing {
+      output: &content.output,
+    }
+    .print(env)?;
 
     let info = Info {
       source: self.source,
-      piece_length,
+      piece_length: content.piece_length,
+      name: content.name,
       mode,
       pieces,
-      name,
       private,
     };
 
@@ -463,12 +386,12 @@ impl Create {
 
     #[cfg(test)]
     {
-      if let InputTarget::Path(path) = &input {
+      if let InputTarget::Path(path) = &self.input {
         let deserialized = bendy::serde::de::from_bytes::<Metainfo>(&bytes).unwrap();
 
         assert_eq!(deserialized, metainfo);
 
-        let status = metainfo.verify(path, None)?;
+        let status = metainfo.verify(&env.resolve(path)?, None)?;
 
         status.print(env)?;
 
@@ -562,7 +485,7 @@ mod tests {
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let torrent = env.resolve("foo.torrent")?;
     let bytes = fs::read(torrent).unwrap();
     let value = Value::from_bencode(&bytes).unwrap();
@@ -588,10 +511,11 @@ mod tests {
         },
       }
     };
-    env.run().unwrap();
-    let metainfo = env.load_metainfo("../dir.torrent");
-    assert_eq!(metainfo.info.name, "dir");
-    assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
+    env.assert_ok();
+    // let metainfo = env.load_metainfo("../dir.torrent");
+    // assert_eq!(metainfo.info.name, "dir");
+    // assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len()
+    // == 1);
   }
 
   #[test]
@@ -614,7 +538,7 @@ mod tests {
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("../../a.torrent");
     assert_eq!(metainfo.info.name, "a");
     assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
@@ -628,7 +552,7 @@ mod tests {
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.private, None);
   }
@@ -641,7 +565,7 @@ mod tests {
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.private, Some(true));
   }
@@ -665,7 +589,7 @@ mod tests {
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce, Some("http://bar/".into()));
     assert!(metainfo.announce_list.is_none());
@@ -686,7 +610,7 @@ mod tests {
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.announce.as_deref(),
@@ -710,7 +634,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.announce.as_deref(),
@@ -736,7 +660,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
@@ -764,7 +688,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.announce.as_deref(), Some("http://bar/"));
     assert_eq!(
@@ -791,7 +715,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.comment, None);
   }
@@ -813,7 +737,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.comment.unwrap(), "Hello, world!");
   }
@@ -833,7 +757,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes::from(16 * 2u32.pow(10)));
   }
@@ -855,7 +779,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes(64 * 1024));
   }
@@ -877,7 +801,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.piece_length, Bytes(512 * 1024));
   }
@@ -899,7 +823,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.name, "foo");
   }
@@ -923,7 +847,7 @@ mod tests {
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo/bar.torrent");
     assert_eq!(metainfo.info.name, "bar");
   }
@@ -945,7 +869,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     env.load_metainfo("x.torrent");
   }
 
@@ -964,7 +888,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.created_by.unwrap(), consts::CREATED_BY_DEFAULT);
   }
@@ -985,7 +909,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.created_by, None);
   }
@@ -1005,7 +929,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.encoding, Some("UTF-8".into()));
   }
@@ -1029,7 +953,7 @@ mod tests {
       .duration_since(SystemTime::UNIX_EPOCH)
       .unwrap()
       .as_secs();
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert!(metainfo.creation_date.unwrap() < now + 10);
     assert!(metainfo.creation_date.unwrap() > now - 10);
@@ -1051,7 +975,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.creation_date, None);
   }
@@ -1075,7 +999,7 @@ mod tests {
         foo: "123",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["123"]));
     assert_eq!(
@@ -1106,7 +1030,7 @@ mod tests {
         foo: "1234",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["1234"]));
     assert_eq!(
@@ -1137,7 +1061,7 @@ mod tests {
         foo: "1234",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["12", "34"]));
     assert_eq!(
@@ -1172,7 +1096,7 @@ mod tests {
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("dir.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["56781234"]));
     assert_eq!(
@@ -1209,7 +1133,7 @@ mod tests {
         foo: "bar",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     assert_eq!(
@@ -1240,7 +1164,7 @@ mod tests {
         foo: "bar",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.info.pieces,
@@ -1270,7 +1194,7 @@ mod tests {
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces.count(), 0);
     assert_eq!(
@@ -1297,7 +1221,7 @@ mod tests {
         foo: {},
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces.count(), 0);
     assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
@@ -1321,7 +1245,7 @@ mod tests {
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     match metainfo.info.mode {
@@ -1356,7 +1280,7 @@ mod tests {
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
     match metainfo.info.mode {
@@ -1466,7 +1390,7 @@ mod tests {
         foo: {},
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     env.load_metainfo("foo.torrent");
   }
 
@@ -1529,7 +1453,7 @@ mod tests {
         foo: {},
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     env.load_metainfo("foo.torrent");
   }
 
@@ -1554,7 +1478,7 @@ mod tests {
     fs::write(dir.join("a"), "abc").unwrap();
     fs::write(dir.join("x"), "xyz").unwrap();
     fs::write(dir.join("h"), "hij").unwrap();
-    env.run().unwrap();
+    env.assert_ok();
     assert_eq!(env.out(), "");
     Ok(())
   }
@@ -1581,7 +1505,7 @@ mod tests {
     fs::write(dir.join("a"), "abc").unwrap();
     fs::write(dir.join("x"), "xyz").unwrap();
     fs::write(dir.join("h"), "hij").unwrap();
-    env.run().unwrap();
+    env.assert_ok();
     let have = env.out();
     #[rustfmt::skip]
     let want = format!(
@@ -1624,7 +1548,8 @@ Content Size  9 bytes
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
+
     let bytes = env.out_bytes();
     Metainfo::from_bytes(&bytes);
   }
@@ -1670,7 +1595,7 @@ Content Size  9 bytes
         "foo.torrent": "foo",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     env.load_metainfo("foo.torrent");
   }
 
@@ -1692,7 +1617,7 @@ Content Size  9 bytes
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -1720,7 +1645,7 @@ Content Size  9 bytes
         },
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -1764,7 +1689,7 @@ Content Size  9 bytes
       fs::remove_file(env.resolve("foo/hidden")?).unwrap();
     }
 
-    env.run().unwrap();
+    env.assert_ok();
 
     let metainfo = env.load_metainfo("foo.torrent");
 
@@ -1810,7 +1735,7 @@ Content Size  9 bytes
         .unwrap();
     }
 
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -1867,7 +1792,7 @@ Content Size  9 bytes
       tree: {},
     };
     populate_symlinks(&env)?;
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -1894,7 +1819,7 @@ Content Size  9 bytes
       tree: {},
     };
     populate_symlinks(&env)?;
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     let mut pieces = PieceList::new();
     pieces.push(Sha1::from("barbaz").digest().into());
@@ -2021,7 +1946,7 @@ Content Size  9 bytes
         .unwrap();
     }
 
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2052,7 +1977,7 @@ Content Size  9 bytes
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2085,7 +2010,7 @@ Content Size  9 bytes
       }
     };
 
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2117,7 +2042,7 @@ Content Size  9 bytes
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2149,7 +2074,7 @@ Content Size  9 bytes
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2183,7 +2108,7 @@ Content Size  9 bytes
         },
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
       metainfo.info.mode,
@@ -2207,7 +2132,7 @@ Content Size  9 bytes
         foo: "",
       }
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert!(metainfo.nodes.is_none());
   }
@@ -2253,7 +2178,7 @@ Content Size  9 bytes
         foo: "",
       },
     };
-    env.run().unwrap();
+    env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.nodes,
@@ -2265,34 +2190,6 @@ Content Size  9 bytes
           .unwrap(),
       ]),
     );
-  }
-
-  #[test]
-  fn create_progress_messages() -> Result<()> {
-    let mut env = TestEnvBuilder::new()
-      .arg_slice(&[
-        "imdl",
-        "torrent",
-        "create",
-        "--input",
-        "foo",
-        "--announce",
-        "http://bar",
-      ])
-      .build();
-
-    fs::write(env.resolve("foo")?, "").unwrap();
-
-    let want = format!(
-      "[1/3] \u{1F9FF} Searching for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \u{1F4BE} \
-       Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
-      env.resolve("foo.torrent")?.display()
-    );
-
-    env.run().unwrap();
-
-    assert_eq!(env.err(), want);
-    Ok(())
   }
 
   #[test]
@@ -2713,5 +2610,228 @@ Content Size  9 bytes
         md5sum: Some(Md5Digest::from_data("hello")),
       }
     );
+  }
+
+  #[test]
+  fn create_messages_path() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching `foo` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \
+       \u{1F4BE} Writing metainfo to `foo.torrent`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+    );
+
+    env.assert_ok();
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn create_messages_subdir() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo/bar",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          bar: "",
+        },
+      }
+    };
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching `foo/bar` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \
+       \u{1F4BE} Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      Path::new("foo").join("bar.torrent").display(),
+    );
+
+    env.assert_ok();
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn create_messages_dot() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        ".",
+        "--announce",
+        "https://bar",
+      ],
+      cwd: "dir",
+      tree: {
+        dir: {
+          foo: "",
+        },
+      }
+    };
+
+    env.assert_ok();
+    let metainfo = env.load_metainfo("../dir.torrent");
+    assert_eq!(metainfo.info.name, "dir");
+    assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching `.` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \u{1F4BE} \
+       Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      Path::new("..").join("dir.torrent").display(),
+    );
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn create_messages_dot_dot() -> Result<()> {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "..",
+        "--announce",
+        "https://bar",
+      ],
+      cwd: "a/b",
+      tree: {
+        a: {
+          b: {
+            foo: "",
+          },
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("../../a.torrent");
+    assert_eq!(metainfo.info.name, "a");
+    assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len() == 1);
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching `..` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \
+       \u{1F4BE} Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      Path::new("..").join("..").join("a.torrent").display(),
+    );
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn create_messages_absolute() -> Result<()> {
+    let dir = TempDir::new().unwrap();
+
+    let input = dir.path().join("foo");
+
+    fs::write(&input, "").unwrap();
+
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        &input,
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+      }
+    };
+
+    let torrent = dir.path().join("foo.torrent");
+
+    env.assert_ok();
+
+    let metainfo = env.load_metainfo(&torrent);
+    assert_eq!(metainfo.info.name, "foo");
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Searching `{}` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \
+       \u{1F4BE} Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
+      input.display(),
+      torrent.display(),
+    );
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn create_messages_stdio() -> Result<()> {
+    let dir = TempDir::new().unwrap();
+
+    let input = dir.path().join("foo");
+
+    fs::write(&input, "").unwrap();
+
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+        "--announce",
+        "https://bar",
+        "--name",
+        "foo",
+        "--output",
+        "-",
+        "--md5",
+      ],
+      input: "hello",
+      tree: {
+      }
+    };
+
+    env.assert_ok();
+
+    let bytes = env.out_bytes();
+    let metainfo = Metainfo::from_bytes(&bytes);
+
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["hello"]));
+
+    assert_eq!(
+      metainfo.info.mode,
+      Mode::Single {
+        length: Bytes(5),
+        md5sum: Some(Md5Digest::from_data("hello")),
+      }
+    );
+
+    let want = format!(
+      "[1/3] \u{1F9FF} Creating single-file torrent from standard input…\n[2/3] \u{1F9EE} Hashing \
+       pieces…\n[3/3] \u{1F4BE} Writing metainfo to standard output…\n\u{2728}\u{2728} Done! \
+       \u{2728}\u{2728}\n",
+    );
+
+    assert_eq!(env.err(), want);
+
+    Ok(())
   }
 }
