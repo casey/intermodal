@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub(crate) enum OutputTarget {
   Path(PathBuf),
   Stdout,

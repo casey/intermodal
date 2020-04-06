@@ -7,13 +7,6 @@ pub(crate) enum InputTarget {
 }
 
 impl InputTarget {
-  pub(crate) fn resolve(&self, env: &Env) -> Result<Self> {
-    match self {
-      Self::Path(path) => Ok(Self::Path(env.resolve(path)?)),
-      Self::Stdin => Ok(Self::Stdin),
-    }
-  }
-
   pub(crate) fn try_from_os_str(text: &OsStr) -> Result<Self, OsString> {
     text
       .try_into()
