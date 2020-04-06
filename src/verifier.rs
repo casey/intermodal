@@ -142,7 +142,7 @@ mod tests {
       },
     };
 
-    env.run()?;
+    env.assert_ok();
 
     let metainfo = env.load_metainfo("foo.torrent");
 
@@ -171,7 +171,7 @@ mod tests {
       },
     };
 
-    env.run()?;
+    env.assert_ok();
 
     env.write("foo/a", "xyz");
 

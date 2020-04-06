@@ -68,7 +68,6 @@ impl Link {
 mod tests {
   use super::*;
 
-  use claim::assert_ok;
   use pretty_assertions::assert_eq;
 
   #[test]
@@ -85,7 +84,7 @@ mod tests {
       }
     };
 
-    assert_ok!(env.run());
+    env.assert_ok();
 
     const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 
@@ -114,7 +113,7 @@ mod tests {
       }
     };
 
-    assert_ok!(env.run());
+    env.assert_ok();
 
     const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 
@@ -147,7 +146,7 @@ mod tests {
       }
     };
 
-    assert_ok!(env.run());
+    env.assert_ok();
 
     const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 
@@ -180,7 +179,7 @@ mod tests {
       }
     };
 
-    assert_ok!(env.run());
+    env.assert_ok();
 
     const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 
@@ -209,7 +208,7 @@ mod tests {
       }
     };
 
-    assert_ok!(env.run());
+    env.assert_ok();
 
     const INFO: &str = "d1:ai0e6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 

@@ -119,7 +119,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -133,7 +133,7 @@ mod tests {
       tree: {},
     };
 
-    assert_matches!(verify_env.run(), Ok(()));
+    verify_env.assert_ok();
 
     let want = format!(
       "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
@@ -168,7 +168,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     create_env.write("foo/a", "xyz");
 
@@ -227,7 +227,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -249,7 +249,7 @@ mod tests {
       tree: {},
     };
 
-    assert_matches!(verify_env.run(), Ok(()));
+    verify_env.assert_ok();
 
     let want = format!(
       "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
@@ -284,7 +284,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
     let content = create_env.resolve("foo")?;
@@ -302,7 +302,7 @@ mod tests {
       tree: {},
     };
 
-    assert_matches!(verify_env.run(), Ok(()));
+    verify_env.assert_ok();
 
     let want = format!(
       "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying pieces \
@@ -340,7 +340,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -425,7 +425,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -531,7 +531,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -591,7 +591,7 @@ mod tests {
       },
     };
 
-    create_env.run()?;
+    create_env.assert_ok();
 
     let torrent = create_env.resolve("foo.torrent")?;
 
@@ -610,7 +610,7 @@ mod tests {
 
     fs::rename(create_env.resolve("foo")?, verify_env.resolve("foo")?).unwrap();
 
-    assert_matches!(verify_env.run(), Ok(()));
+    verify_env.assert_ok();
 
     let want = format!(
       "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying pieces \

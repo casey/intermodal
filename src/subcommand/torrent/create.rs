@@ -467,7 +467,7 @@ mod tests {
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
   }
 
   #[test]
@@ -2231,7 +2231,7 @@ Content Size  9 bytes
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
   }
 
   #[test]
@@ -2248,7 +2248,7 @@ Content Size  9 bytes
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
     assert_eq!(env.out(), "");
   }
 
@@ -2267,7 +2267,7 @@ Content Size  9 bytes
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
     assert_eq!(
       env.out(),
       "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo\n"
@@ -2291,7 +2291,7 @@ Content Size  9 bytes
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
     assert_eq!(
       env.out(),
       "magnet:\
@@ -2338,7 +2338,7 @@ Content Size  9 bytes
       },
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
     assert_eq!(
       env.out(),
       "magnet:?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e&dn=foo&x.pe=foo:1337&x.pe=bar:\
@@ -2360,7 +2360,7 @@ Content Size  9 bytes
         foo: "",
       }
     };
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
     let torrent = env.resolve("foo.torrent")?;
     let err = fs::read(torrent).unwrap_err();
     assert_eq!(err.kind(), io::ErrorKind::NotFound);
@@ -2388,7 +2388,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["a", "b", "c", "d/e"]);
@@ -2417,7 +2417,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["a", "b", "c", "d/e"]);
@@ -2446,7 +2446,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["d/a", "c", "b", "a"]);
@@ -2475,7 +2475,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["b", "d/e", "a", "c"]);
@@ -2504,7 +2504,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["c", "a", "b", "d/e"]);
@@ -2535,7 +2535,7 @@ Content Size  9 bytes
       }
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     let torrent = env.load_metainfo("foo.torrent");
     assert_eq!(torrent.file_paths(), &["d/e", "b", "a", "c"]);
