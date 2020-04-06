@@ -11,9 +11,10 @@ pub(crate) struct Link {
     long = "input",
     short = "i",
     value_name = "METAINFO",
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
     help = "Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from \
             standard input.",
-    parse(from_os_str)
   )]
   input: InputTarget,
   #[structopt(

@@ -7,20 +7,32 @@ pub(crate) enum InputTarget {
 }
 
 impl InputTarget {
-  pub(crate) fn resolve(&self, env: &Env) -> Self {
+  pub(crate) fn resolve(&self, env: &Env) -> Result<Self> {
     match self {
-      Self::Path(path) => Self::Path(env.resolve(path)),
-      Self::Stdin => Self::Stdin,
+      Self::Path(path) => Ok(Self::Path(env.resolve(path)?)),
+      Self::Stdin => Ok(Self::Stdin),
     }
+  }
+
+  pub(crate) fn try_from_os_str(text: &OsStr) -> Result<Self, OsString> {
+    text
+      .try_into()
+      .map_err(|err: Error| OsString::from(err.to_string()))
   }
 }
 
-impl From<&OsStr> for InputTarget {
-  fn from(text: &OsStr) -> Self {
+impl TryFrom<&OsStr> for InputTarget {
+  type Error = Error;
+
+  fn try_from(text: &OsStr) -> Result<Self, Self::Error> {
+    if text.is_empty() {
+      return Err(Error::InputTargetEmpty);
+    };
+
     if text == OsStr::new("-") {
-      Self::Stdin
+      Ok(Self::Stdin)
     } else {
-      Self::Path(text.into())
+      Ok(Self::Path(text.into()))
     }
   }
 }
@@ -50,14 +62,17 @@ mod tests {
   #[test]
   fn file() {
     assert_eq!(
-      InputTarget::from(OsStr::new("foo")),
-      InputTarget::Path("foo".into())
+      InputTarget::try_from(OsStr::new("foo")).unwrap(),
+      InputTarget::Path("foo".into()),
     );
   }
 
   #[test]
   fn stdio() {
-    assert_eq!(InputTarget::from(OsStr::new("-")), InputTarget::Stdin);
+    assert_eq!(
+      InputTarget::try_from(OsStr::new("-")).unwrap(),
+      InputTarget::Stdin
+    );
   }
 
   #[test]

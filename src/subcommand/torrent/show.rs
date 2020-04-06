@@ -11,9 +11,10 @@ pub(crate) struct Show {
     long = "input",
     short = "i",
     value_name = "PATH",
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
     help = "Show information about torrent at `PATH`. If `Path` is `-`, read torrent metainfo \
             from standard input.",
-    parse(from_os_str)
   )]
   input: InputTarget,
 }
@@ -34,7 +35,7 @@ mod tests {
   use pretty_assertions::assert_eq;
 
   #[test]
-  fn output() {
+  fn output() -> Result<()> {
     let metainfo = Metainfo {
       announce: Some("announce".into()),
       announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
@@ -66,7 +67,7 @@ mod tests {
         .out_is_term()
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -103,7 +104,7 @@ Announce List  Tier 1: announce
         .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -131,10 +132,12 @@ files\tfoo
 
       assert_eq!(have, want);
     }
+
+    Ok(())
   }
 
   #[test]
-  fn tier_list_with_main() {
+  fn tier_list_with_main() -> Result<()> {
     let metainfo = Metainfo {
       announce: Some("a".into()),
       announce_list: Some(vec![vec!["x".into()], vec!["y".into()], vec!["z".into()]]),
@@ -166,7 +169,7 @@ files\tfoo
         .out_is_term()
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -203,7 +206,7 @@ Announce List  Tier 1: x
         .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -231,10 +234,12 @@ files\tfoo
 
       assert_eq!(have, want);
     }
+
+    Ok(())
   }
 
   #[test]
-  fn tier_list_without_main() {
+  fn tier_list_without_main() -> Result<()> {
     let metainfo = Metainfo {
       announce: Some("a".into()),
       announce_list: Some(vec![vec!["b".into()], vec!["c".into()], vec!["a".into()]]),
@@ -266,7 +271,7 @@ files\tfoo
         .out_is_term()
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -303,7 +308,7 @@ Announce List  Tier 1: b
         .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -331,10 +336,12 @@ files\tfoo
 
       assert_eq!(have, want);
     }
+
+    Ok(())
   }
 
   #[test]
-  fn trackerless() {
+  fn trackerless() -> Result<()> {
     let metainfo = Metainfo {
       announce: None,
       announce_list: None,
@@ -366,7 +373,7 @@ files\tfoo
         .out_is_term()
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -399,7 +406,7 @@ Creation Date  1970-01-01 00:00:01 UTC
         .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
         .build();
 
-      let path = env.resolve("foo.torrent");
+      let path = env.resolve("foo.torrent")?;
 
       metainfo.dump(path).unwrap();
 
@@ -425,5 +432,7 @@ files\tfoo
 
       assert_eq!(have, want);
     }
+
+    Ok(())
   }
 }

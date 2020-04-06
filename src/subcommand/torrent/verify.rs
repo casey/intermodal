@@ -14,18 +14,20 @@ pub(crate) struct Verify {
     long = "input",
     short = "i",
     value_name = "METAINFO",
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
     help = "Verify torrent contents against torrent metainfo in `METAINFO`. If `METAINFO` is `-`, \
             read metainfo from standard input.",
-    parse(from_os_str)
   )]
   metainfo: InputTarget,
   #[structopt(
     long = "content",
     short = "c",
     value_name = "PATH",
+    empty_values(false),
+    parse(from_os_str),
     help = "Verify torrent content at `PATH` against torrent metainfo. Defaults to `name` field \
-            of torrent info dictionary.",
-    parse(from_os_str)
+            of torrent info dictionary."
   )]
   content: Option<PathBuf>,
 }
@@ -66,7 +68,7 @@ impl Verify {
 
     VerifyStep::Verifying { content: &content }.print(env)?;
 
-    let status = metainfo.verify(&env.resolve(content), progress_bar)?;
+    let status = metainfo.verify(&env.resolve(content)?, progress_bar)?;
 
     status.print(env)?;
 
@@ -119,7 +121,7 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     let mut verify_env = test_env! {
       args: [
@@ -137,7 +139,7 @@ mod tests {
       "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
        `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
       torrent.display(),
-      create_env.resolve("foo").display()
+      create_env.resolve("foo")?.display()
     );
 
     assert_eq!(verify_env.err(), want);
@@ -170,7 +172,7 @@ mod tests {
 
     create_env.write("foo/a", "xyz");
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     let mut verify_env = test_env! {
       args: [
@@ -191,7 +193,7 @@ mod tests {
       ),
       &format!(
         "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
-        create_env.resolve("foo").display()
+        create_env.resolve("foo")?.display()
       ),
       "Pieces corrupted.",
       "error: Torrent verification failed.",
@@ -227,11 +229,11 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
-    let foo = create_env.resolve("foo");
+    let foo = create_env.resolve("foo")?;
 
-    let bar = create_env.resolve("bar");
+    let bar = create_env.resolve("bar")?;
 
     fs::rename(&foo, &bar).unwrap();
 
@@ -284,8 +286,8 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
-    let content = create_env.resolve("foo");
+    let torrent = create_env.resolve("foo.torrent")?;
+    let content = create_env.resolve("foo")?;
 
     let mut verify_env = test_env! {
       args: [
@@ -340,7 +342,7 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     create_env.write("foo/a", "xyz");
     create_env.write("foo/d", "efgg");
@@ -377,7 +379,7 @@ mod tests {
       ),
       &format!(
         "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
-        create_env.resolve("foo").display()
+        create_env.resolve("foo")?.display()
       ),
       "a: MD5 checksum mismatch: d16fb36f0911f878998c136191af705e (expected \
        900150983cd24fb0d6963f7d28e17f72)",
@@ -425,7 +427,7 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     create_env.write("foo/a", "xyz");
     create_env.write("foo/d", "efgg");
@@ -482,7 +484,7 @@ mod tests {
         style.dim().paint("[2/2]"),
         style.message().paint(format!(
           "Verifying pieces from `{}`…",
-          create_env.resolve("foo").display()
+          create_env.resolve("foo")?.display()
         ))
       ),
       &format!(
@@ -531,7 +533,7 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     create_env.write("foo", "abcxyz");
 
@@ -554,7 +556,7 @@ mod tests {
       ),
       &format!(
         "[2/2] \u{1F9EE} Verifying pieces from `{}`…",
-        create_env.resolve("foo").display()
+        create_env.resolve("foo")?.display()
       ),
       "3 bytes too long",
       "Pieces corrupted.",
@@ -591,7 +593,7 @@ mod tests {
 
     create_env.run()?;
 
-    let torrent = create_env.resolve("foo.torrent");
+    let torrent = create_env.resolve("foo.torrent")?;
 
     let metainfo = fs::read(torrent).unwrap();
 
@@ -606,7 +608,7 @@ mod tests {
       tree: {},
     };
 
-    fs::rename(create_env.resolve("foo"), verify_env.resolve("foo")).unwrap();
+    fs::rename(create_env.resolve("foo")?, verify_env.resolve("foo")?).unwrap();
 
     assert_matches!(verify_env.run(), Ok(()));
 

@@ -2,25 +2,37 @@ use crate::common::*;
 
 #[derive(PartialEq, Debug)]
 pub(crate) enum OutputTarget {
-  File(PathBuf),
+  Path(PathBuf),
   Stdout,
 }
 
 impl OutputTarget {
-  pub(crate) fn resolve(&self, env: &Env) -> Self {
+  pub(crate) fn resolve(&self, env: &Env) -> Result<Self> {
     match self {
-      Self::File(path) => Self::File(env.resolve(path)),
-      Self::Stdout => Self::Stdout,
+      Self::Path(path) => Ok(Self::Path(env.resolve(path)?)),
+      Self::Stdout => Ok(Self::Stdout),
     }
+  }
+
+  pub(crate) fn try_from_os_str(text: &OsStr) -> Result<Self, OsString> {
+    text
+      .try_into()
+      .map_err(|err: Error| OsString::from(err.to_string()))
   }
 }
 
-impl From<&OsStr> for OutputTarget {
-  fn from(text: &OsStr) -> Self {
+impl TryFrom<&OsStr> for OutputTarget {
+  type Error = Error;
+
+  fn try_from(text: &OsStr) -> Result<Self, Self::Error> {
+    if text.is_empty() {
+      return Err(Error::OutputTargetEmpty);
+    };
+
     if text == OsStr::new("-") {
-      Self::Stdout
+      Ok(Self::Stdout)
     } else {
-      Self::File(text.into())
+      Ok(Self::Path(text.into()))
     }
   }
 }
@@ -29,7 +41,7 @@ impl Display for OutputTarget {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match self {
       Self::Stdout => write!(f, "standard output"),
-      Self::File(path) => write!(f, "`{}`", path.display()),
+      Self::Path(path) => write!(f, "`{}`", path.display()),
     }
   }
 }
@@ -41,20 +53,23 @@ mod tests {
   #[test]
   fn file() {
     assert_eq!(
-      OutputTarget::from(OsStr::new("foo")),
-      OutputTarget::File("foo".into())
+      OutputTarget::try_from(OsStr::new("foo")).unwrap(),
+      OutputTarget::Path("foo".into())
     );
   }
 
   #[test]
   fn stdio() {
-    assert_eq!(OutputTarget::from(OsStr::new("-")), OutputTarget::Stdout);
+    assert_eq!(
+      OutputTarget::try_from(OsStr::new("-")).unwrap(),
+      OutputTarget::Stdout
+    );
   }
 
   #[test]
   fn display_file() {
     let path = PathBuf::from("./path");
-    let have = OutputTarget::File(path).to_string();
+    let have = OutputTarget::Path(path).to_string();
     let want = "`./path`";
     assert_eq!(have, want);
   }

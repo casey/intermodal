@@ -30,6 +30,8 @@ pub(crate) enum Error {
   GlobParse { source: globset::Error },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
   InfoSerialize { source: bendy::serde::Error },
+  #[snafu(display("Input target empty"))]
+  InputTargetEmpty,
   #[snafu(display(
     "Interal error, this may indicate a bug in intermodal: {}\n\
      Consider filing an issue: https://github.com/casey/imdl/issues/new",
@@ -61,6 +63,8 @@ pub(crate) enum Error {
   OpenerExitStatus { exit_status: ExitStatus },
   #[snafu(display("Output path already exists: `{}`", path.display()))]
   OutputExists { path: PathBuf },
+  #[snafu(display("Output target empty"))]
+  OutputTargetEmpty,
   #[snafu(display(
     "Path `{}` contains non-normal component: {}",
     path.display(),
