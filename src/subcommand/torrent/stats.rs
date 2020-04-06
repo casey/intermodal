@@ -19,6 +19,7 @@ pub(crate) struct Stats {
     long = "extract-pattern",
     short = "e",
     value_name = "REGEX",
+    empty_values(false),
     help = "Extract and display values under key paths that match `REGEX`. Subkeys of a \
             bencodeded dictionary are delimited by `/`, and values of a bencoded list are \
             delmited by `*`. For example, given the following bencoded dictionary `{\"foo\": \
@@ -31,8 +32,9 @@ pub(crate) struct Stats {
     long = "input",
     short = "i",
     value_name = "PATH",
-    help = "Search `PATH` for torrents. May be a directory or a single torrent file.",
-    parse(from_os_str)
+    empty_values(false),
+    parse(from_os_str),
+    help = "Search `PATH` for torrents. May be a directory or a single torrent file."
   )]
   input: PathBuf,
   #[structopt(
@@ -47,7 +49,7 @@ impl Stats {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
     options.require_unstable("torrent stats subcommand")?;
 
-    let path = env.resolve(self.input);
+    let path = env.resolve(self.input)?;
 
     let mut extractor = Extractor::new(self.print, &self.extract_patterns);
 

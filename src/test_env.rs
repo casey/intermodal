@@ -56,25 +56,25 @@ impl TestEnv {
   }
 
   pub(crate) fn write(&self, path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) {
-    fs::write(self.env.resolve(path), bytes.as_ref()).unwrap();
+    fs::write(self.env.resolve(path).unwrap(), bytes.as_ref()).unwrap();
   }
 
   pub(crate) fn remove_file(&self, path: impl AsRef<Path>) {
-    fs::remove_file(self.env.resolve(path)).unwrap();
+    fs::remove_file(self.env.resolve(path).unwrap()).unwrap();
   }
 
   pub(crate) fn create_dir(&self, path: impl AsRef<Path>) {
-    fs::create_dir(self.env.resolve(path)).unwrap();
+    fs::create_dir(self.env.resolve(path).unwrap()).unwrap();
   }
 
   #[cfg(unix)]
   pub(crate) fn metadata(&self, path: impl AsRef<Path>) -> fs::Metadata {
-    fs::metadata(self.env.resolve(path)).unwrap()
+    fs::metadata(self.env.resolve(path).unwrap()).unwrap()
   }
 
   #[cfg(unix)]
   pub(crate) fn set_permissions(&self, path: impl AsRef<Path>, permissions: fs::Permissions) {
-    fs::set_permissions(self.env.resolve(path), permissions).unwrap();
+    fs::set_permissions(self.env.resolve(path).unwrap(), permissions).unwrap();
   }
 
   pub(crate) fn assert_ok(&mut self) {
@@ -90,7 +90,9 @@ impl TestEnv {
   }
 
   pub(crate) fn load_metainfo(&mut self, filename: impl AsRef<Path>) -> Metainfo {
-    let input = self.env.read(filename.as_ref().as_os_str().into()).unwrap();
+    let path = filename.as_ref();
+    let target = InputTarget::try_from(path.as_os_str()).unwrap();
+    let input = self.env.read(target).unwrap();
     Metainfo::from_input(&input).unwrap()
   }
 }

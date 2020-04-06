@@ -146,7 +146,7 @@ mod tests {
 
     let metainfo = env.load_metainfo("foo.torrent");
 
-    assert!(metainfo.verify(&env.resolve("foo"), None)?.good());
+    assert!(metainfo.verify(&env.resolve("foo")?, None)?.good());
 
     Ok(())
   }
@@ -177,7 +177,7 @@ mod tests {
 
     let metainfo = env.load_metainfo("foo.torrent");
 
-    let status = metainfo.verify(&env.resolve("foo"), None)?;
+    let status = metainfo.verify(&env.resolve("foo")?, None)?;
 
     assert_eq!(status.count_bad(), 0);
 

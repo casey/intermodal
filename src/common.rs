@@ -4,7 +4,7 @@ pub(crate) use std::{
   char,
   cmp::{Ordering, Reverse},
   collections::{BTreeMap, BTreeSet, HashMap, HashSet},
-  convert::TryInto,
+  convert::{TryFrom, TryInto},
   env,
   ffi::{OsStr, OsString},
   fmt::{self, Display, Formatter},

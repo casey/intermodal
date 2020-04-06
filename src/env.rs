@@ -163,14 +163,20 @@ impl Env {
     &mut self.out
   }
 
-  pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> PathBuf {
-    self.dir().join(path).clean()
+  pub(crate) fn resolve(&self, path: impl AsRef<Path>) -> Result<PathBuf> {
+    let path = path.as_ref();
+
+    if path.components().count() == 0 {
+      return Err(Error::internal("Empty path passed to resolve"));
+    }
+
+    Ok(self.dir().join(path).clean())
   }
 
   pub(crate) fn read(&mut self, source: InputTarget) -> Result<Input> {
     let data = match &source {
       InputTarget::Path(path) => {
-        let absolute = self.resolve(path);
+        let absolute = self.resolve(path)?;
         fs::read(absolute).context(error::Filesystem { path })?
       }
       InputTarget::Stdin => {

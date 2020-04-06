@@ -116,11 +116,12 @@ Examples:
     long = "input",
     short = "i",
     value_name = "PATH",
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
     help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
             torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` \
             is `-`, read from standard input. Piece length defaults to 256KiB when reading from \
             standard input if `--piece-length` is not given.",
-    parse(from_os_str)
   )]
   input: InputTarget,
   #[structopt(
@@ -187,11 +188,12 @@ Sort in ascending order by size, break ties in descending path order:
     long = "output",
     short = "o",
     value_name = "TARGET",
+    empty_values(false),
+    parse(try_from_os_str = OutputTarget::try_from_os_str),
+    required_if("input", "-"),
     help = "Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. \
             Defaults to the argument to `--input` with an `.torrent` extension appended. Required \
             when `--input -`.",
-    required_if("input", "-"),
-    parse(from_os_str)
   )]
   output: Option<OutputTarget>,
   #[structopt(
@@ -240,8 +242,11 @@ Sort in ascending order by size, break ties in descending path order:
 
 impl Create {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = self.input.resolve(env);
-    let output = self.output.map(|output| output.resolve(env));
+    let input = self.input.resolve(env)?;
+    let output = match self.output {
+      Some(output) => Some(output.resolve(env)?),
+      None => None,
+    };
 
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
@@ -320,15 +325,12 @@ impl Create {
 
         files = Some(files_inner);
 
-        output
-          .as_ref()
-          .map(|output| output.resolve(env))
-          .unwrap_or_else(|| {
-            let mut torrent_name = name.to_owned();
-            torrent_name.push_str(".torrent");
+        output.unwrap_or_else(|| {
+          let mut torrent_name = name.to_owned();
+          torrent_name.push_str(".torrent");
 
-            OutputTarget::File(path.parent().unwrap().join(torrent_name))
-          })
+          OutputTarget::Path(path.parent().unwrap().join(torrent_name))
+        })
       }
 
       InputTarget::Stdin => {
@@ -363,7 +365,7 @@ impl Create {
       return Err(Error::PieceLengthSmall);
     }
 
-    if let OutputTarget::File(path) = &output {
+    if let OutputTarget::Path(path) = &output {
       if !self.force && path.exists() {
         return Err(Error::OutputExists {
           path: path.to_owned(),
@@ -441,7 +443,7 @@ impl Create {
 
     if !self.dry_run {
       match &output {
-        OutputTarget::File(path) => {
+        OutputTarget::Path(path) => {
           let mut open_options = fs::OpenOptions::new();
 
           if self.force {
@@ -490,7 +492,7 @@ impl Create {
       outln!(env, "{}", link)?;
     }
 
-    if let OutputTarget::File(path) = output {
+    if let OutputTarget::Path(path) = output {
       if self.open {
         Platform::open_file(&path)?;
       }
@@ -546,7 +548,7 @@ mod tests {
   }
 
   #[test]
-  fn torrent_file_is_bencode_dict() {
+  fn torrent_file_is_bencode_dict() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -561,10 +563,11 @@ mod tests {
       }
     };
     env.run().unwrap();
-    let torrent = env.resolve("foo.torrent");
+    let torrent = env.resolve("foo.torrent")?;
     let bytes = fs::read(torrent).unwrap();
     let value = Value::from_bencode(&bytes).unwrap();
     assert!(matches!(value, Value::Dict(_)));
+    Ok(())
   }
 
   #[test]
@@ -1531,7 +1534,7 @@ mod tests {
   }
 
   #[test]
-  fn output() {
+  fn output() -> Result<()> {
     let mut env = TestEnvBuilder::new()
       .arg_slice(&[
         "imdl",
@@ -1546,17 +1549,18 @@ mod tests {
       .out_is_term()
       .build();
 
-    let dir = env.resolve("foo");
+    let dir = env.resolve("foo")?;
     fs::create_dir(&dir).unwrap();
     fs::write(dir.join("a"), "abc").unwrap();
     fs::write(dir.join("x"), "xyz").unwrap();
     fs::write(dir.join("h"), "hij").unwrap();
     env.run().unwrap();
     assert_eq!(env.out(), "");
+    Ok(())
   }
 
   #[test]
-  fn show() {
+  fn show() -> Result<()> {
     let mut env = TestEnvBuilder::new()
       .arg_slice(&[
         "imdl",
@@ -1572,7 +1576,7 @@ mod tests {
       .out_is_term()
       .build();
 
-    let dir = env.resolve("foo");
+    let dir = env.resolve("foo")?;
     fs::create_dir(&dir).unwrap();
     fs::write(dir.join("a"), "abc").unwrap();
     fs::write(dir.join("x"), "xyz").unwrap();
@@ -1600,6 +1604,7 @@ Content Size  9 bytes
       212 + consts::CREATED_BY_DEFAULT.len()
     );
     assert_eq!(have, want);
+    Ok(())
   }
 
   #[test]
@@ -1625,7 +1630,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn force_default() {
+  fn force_default() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1643,8 +1648,9 @@ Content Size  9 bytes
     assert_matches!(
       env.run().unwrap_err(),
       Error::OutputExists {path}
-      if path == env.resolve("foo.torrent")
-    )
+      if path == env.resolve("foo.torrent")?
+    );
+    Ok(())
   }
 
   #[test]
@@ -1724,7 +1730,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn skip_hidden() {
+  fn skip_hidden() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1745,17 +1751,17 @@ Content Size  9 bytes
     if cfg!(target_os = "windows") {
       Command::new("attrib")
         .arg("+h")
-        .arg(env.resolve("foo/hidden"))
+        .arg(env.resolve("foo/hidden")?)
         .status()
         .unwrap();
     } else if cfg!(target_os = "macos") {
       Command::new("chflags")
         .arg("hidden")
-        .arg(env.resolve("foo/hidden"))
+        .arg(env.resolve("foo/hidden")?)
         .status()
         .unwrap();
     } else {
-      fs::remove_file(env.resolve("foo/hidden")).unwrap();
+      fs::remove_file(env.resolve("foo/hidden")?).unwrap();
     }
 
     env.run().unwrap();
@@ -1767,10 +1773,11 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.len() == 0
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
+    Ok(())
   }
 
   #[test]
-  fn include_hidden() {
+  fn include_hidden() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1792,13 +1799,13 @@ Content Size  9 bytes
     if cfg!(target_os = "windows") {
       Command::new("attrib")
         .arg("+h")
-        .arg(env.resolve("foo/hidden"))
+        .arg(env.resolve("foo/hidden")?)
         .status()
         .unwrap();
     } else if cfg!(target_os = "macos") {
       Command::new("chflags")
         .arg("hidden")
-        .arg(env.resolve("foo/hidden"))
+        .arg(env.resolve("foo/hidden")?)
         .status()
         .unwrap();
     }
@@ -1810,12 +1817,13 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.len() == 2
     );
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
+    Ok(())
   }
 
-  fn populate_symlinks(env: &Env) {
-    let dir = env.resolve("foo");
-    let file_src = env.resolve("bar");
-    let dir_src = env.resolve("dir-src");
+  fn populate_symlinks(env: &Env) -> Result<()> {
+    let dir = env.resolve("foo")?;
+    let file_src = env.resolve("bar")?;
+    let dir_src = env.resolve("dir-src")?;
     let dir_contents = dir_src.join("baz");
     fs::create_dir(&dir_src).unwrap();
     fs::write(dir_contents, "baz").unwrap();
@@ -1824,8 +1832,8 @@ Content Size  9 bytes
     fs::write(file_src, "bar").unwrap();
     #[cfg(unix)]
     {
-      let file_link = env.resolve("foo/bar");
-      let dir_link = env.resolve("foo/dir");
+      let file_link = env.resolve("foo/bar")?;
+      let dir_link = env.resolve("foo/dir")?;
       Command::new("ln")
         .arg("-s")
         .arg("../bar")
@@ -1840,10 +1848,12 @@ Content Size  9 bytes
         .status()
         .unwrap();
     }
+
+    Ok(())
   }
 
   #[test]
-  fn skip_symlinks() {
+  fn skip_symlinks() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1856,7 +1866,7 @@ Content Size  9 bytes
       ],
       tree: {},
     };
-    populate_symlinks(&env);
+    populate_symlinks(&env)?;
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_matches!(
@@ -1864,11 +1874,12 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.is_empty()
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
+    Ok(())
   }
 
   #[test]
   #[cfg(unix)]
-  fn follow_symlinks() {
+  fn follow_symlinks() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1882,7 +1893,7 @@ Content Size  9 bytes
       ],
       tree: {},
     };
-    populate_symlinks(&env);
+    populate_symlinks(&env)?;
     env.run().unwrap();
     let metainfo = env.load_metainfo("foo.torrent");
     let mut pieces = PieceList::new();
@@ -1908,11 +1919,12 @@ Content Size  9 bytes
       }
       _ => panic!("Expected multi-file torrent"),
     }
+    Ok(())
   }
 
   #[test]
   #[cfg(unix)]
-  fn symlink_root() {
+  fn symlink_root() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1926,8 +1938,8 @@ Content Size  9 bytes
       tree: {},
     };
 
-    let file_src = env.resolve("bar");
-    let file_link = env.resolve("foo");
+    let file_src = env.resolve("bar")?;
+    let file_link = env.resolve("foo")?;
 
     Command::new("ln")
       .arg("-s")
@@ -1937,6 +1949,7 @@ Content Size  9 bytes
       .unwrap();
 
     assert_matches!(env.run().unwrap_err(), Error::SymlinkRoot { root } if root == file_link);
+    Ok(())
   }
 
   #[test]
@@ -1967,9 +1980,8 @@ Content Size  9 bytes
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
   }
-
   #[test]
-  fn skip_hidden_attribute_dir_contents() {
+  fn skip_hidden_attribute_dir_contents() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -1990,7 +2002,7 @@ Content Size  9 bytes
     #[cfg(target_os = "windows")]
     {
       env.write("foo/bar/baz", "baz");
-      let path = env.resolve("foo/bar");
+      let path = env.resolve("foo/bar")?;
       Command::new("attrib")
         .arg("+h")
         .arg(&path)
@@ -2001,7 +2013,7 @@ Content Size  9 bytes
     #[cfg(target_os = "macos")]
     {
       env.write("foo/bar/baz", "baz");
-      let path = env.resolve("foo/bar");
+      let path = env.resolve("foo/bar")?;
       Command::new("chflags")
         .arg("hidden")
         .arg(&path)
@@ -2016,6 +2028,7 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.is_empty()
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
+    Ok(())
   }
 
   #[test]
@@ -2255,7 +2268,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn create_progress_messages() {
+  fn create_progress_messages() -> Result<()> {
     let mut env = TestEnvBuilder::new()
       .arg_slice(&[
         "imdl",
@@ -2268,17 +2281,18 @@ Content Size  9 bytes
       ])
       .build();
 
-    fs::write(env.resolve("foo"), "").unwrap();
+    fs::write(env.resolve("foo")?, "").unwrap();
 
     let want = format!(
       "[1/3] \u{1F9FF} Searching for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \u{1F4BE} \
        Writing metainfo to `{}`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
-      env.resolve("foo.torrent").display()
+      env.resolve("foo.torrent")?.display()
     );
 
     env.run().unwrap();
 
     assert_eq!(env.err(), want);
+    Ok(())
   }
 
   #[test]
@@ -2436,7 +2450,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn dry_run_skips_torrent_file_creation() {
+  fn dry_run_skips_torrent_file_creation() -> Result<()> {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -2450,9 +2464,10 @@ Content Size  9 bytes
       }
     };
     assert_matches!(env.run(), Ok(()));
-    let torrent = env.resolve("foo.torrent");
+    let torrent = env.resolve("foo.torrent")?;
     let err = fs::read(torrent).unwrap_err();
     assert_eq!(err.kind(), io::ErrorKind::NotFound);
+    Ok(())
   }
 
   #[test]
