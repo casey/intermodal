@@ -71,7 +71,7 @@ mod tests {
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "         Name  foo
@@ -108,7 +108,7 @@ Announce List  Tier 1: announce
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "\
@@ -173,7 +173,7 @@ files\tfoo
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "         Name  foo
@@ -210,7 +210,7 @@ Announce List  Tier 1: x
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "\
@@ -275,7 +275,7 @@ files\tfoo
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "         Name  foo
@@ -312,7 +312,7 @@ Announce List  Tier 1: b
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "\
@@ -377,7 +377,7 @@ files\tfoo
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "         Name  foo
@@ -410,7 +410,7 @@ Creation Date  1970-01-01 00:00:01 UTC
 
       metainfo.dump(path).unwrap();
 
-      env.run().unwrap();
+      env.assert_ok();
 
       let have = env.out();
       let want = "\

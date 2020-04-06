@@ -49,7 +49,7 @@ mod tests {
       tree: {},
     };
 
-    assert_matches!(env.run(), Ok(()));
+    env.assert_ok();
 
     assert!(env.out().starts_with("_imdl() {"));
   }
