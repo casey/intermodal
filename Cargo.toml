@@ -37,7 +37,7 @@ strum_macros      = "0.18.0"
 syn               = "1.0.14"
 tempfile          = "3.0.0"
 unicode-width     = "0.1.0"
-url               = "2.0.0"
+url               = "2.1.1"
 walkdir           = "2.1.0"
 
 [dependencies.bendy]
@@ -64,6 +64,10 @@ temptree = "0.0.0"
 members = [
   # run commands for demo animation
   "bin/demo",
+
   # generate table of contents and table of supported BEPs in README.md
   "bin/update-readme",
+
+  # generate the changelog from git commits
+  "bin/changelog",
 ]
