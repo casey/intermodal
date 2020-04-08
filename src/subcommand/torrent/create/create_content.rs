@@ -38,10 +38,7 @@ impl CreateContent {
           .unwrap_or_else(|| PieceLengthPicker::from_content_size(files.total_size()));
 
         let style = ProgressStyle::default_bar()
-          .template(
-            "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
-             {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
-          )
+          .template(consts::PROGRESS_STYLE)
           .tick_chars(consts::TICK_CHARS)
           .progress_chars(consts::PROGRESS_CHARS);
 

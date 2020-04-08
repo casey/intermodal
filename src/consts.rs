@@ -61,6 +61,10 @@ pub(crate) const TICK_CHARS: &str = concat!(
   "⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿", // 0b1111----
 );
 
+pub(crate) const PROGRESS_STYLE: &str = "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:.cyan}⟧ \
+                                         {binary_bytes}/{binary_total_bytes} \
+                                         ⟨{binary_bytes_per_sec}, {eta}⟩";
+
 pub(crate) const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
 
 pub(crate) const VERSION_MESSAGE: &str = "Print version number.";

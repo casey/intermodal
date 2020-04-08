@@ -54,10 +54,7 @@ impl Verify {
 
     let progress_bar = if env.err().is_styled_term() {
       let style = ProgressStyle::default_bar()
-        .template(
-          "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:40.cyan}⟧ \
-           {binary_bytes}/{binary_total_bytes} ⟨{binary_bytes_per_sec}, {eta}⟩",
-        )
+        .template(consts::PROGRESS_STYLE)
         .tick_chars(consts::TICK_CHARS)
         .progress_chars(consts::PROGRESS_CHARS);
 
