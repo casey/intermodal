@@ -119,17 +119,24 @@ publish: publish-check
 changelog:
 	cargo run --package changelog update
 
-# record demo animation
-record:
+# record, upload, and render demo animation
+demo: demo-record demo-upload demo-render
+
+demo-record:
 	#!/usr/bin/env bash
 	set -euxo pipefail
 	cargo build --release --all
 	rm -f tmp/9front.torrent
 	asciinema rec \
+		--title "Intermodal {{version}} Demo" \
 		--command ./target/release/demo \
 		--overwrite \
 		tmp/demo.json
+
+demo-upload:
 	asciinema upload tmp/demo.json
+
+demo-render:
 	asciicast2gif tmp/demo.json www/demo.gif
 
 # open site index
