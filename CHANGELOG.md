@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-08
------------------------
-- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Skip fixup commits in changelog - _Casey Rodarmor <casey@rodarmor.com>_
+[v0.1.2](https://github.com/casey/intermodal/releases/tag/v0.1.2) - 2020-04-08
+------------------------------------------------------------------------------
+- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.2 - _Casey Rodarmor <casey@rodarmor.com>_
+- :wrench: [`03a993516481`](https://github.com/casey/intermodal/commit/03a99351648173aa12def1a8f9b9d9ddfe45bbc9) Skip fixup commits in changelog - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`a395052f7c22`](https://github.com/casey/intermodal/commit/a395052f7c226a934cf1b0d75294b1a3146cbeae) Deduplicate progress style string - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`db2a2ac4f556`](https://github.com/casey/intermodal/commit/db2a2ac4f556e7a1a450f9a18d212f082d18fb9d) Refactor demo recipe in justfile into multiple recipes - _Casey Rodarmor <casey@rodarmor.com>_
 - :zap: [`92748f9fd4e6`](https://github.com/casey/intermodal/commit/92748f9fd4e6e65c25e82f2a6e41a0b9b82cf4dd) Make changelog generator strict ([#341](https://github.com/casey/intermodal/pull/341)) - _Casey Rodarmor <casey@rodarmor.com>_

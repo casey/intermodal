@@ -111,10 +111,15 @@ publish-check: check check-man
 	grep {{version}} CHANGELOG.md
 
 publish: publish-check
-	git branch | grep '* master'
+	#!/usr/bin/env bash
+	set -euxo pipefail
+	while ! hub ci-status --verbose; do
+		sleep 5
+	done
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 	cargo publish
+	just done
 
 changelog-update:
 	cargo run --package changelog update
