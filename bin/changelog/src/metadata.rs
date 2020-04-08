@@ -27,21 +27,6 @@ impl Metadata {
 
     metadata
   }
-
-  pub(crate) fn emoji(&self) -> &'static str {
-    match self.kind {
-      Kind::Added => ":sparkles:",
-      Kind::Breaking => ":boom:",
-      Kind::Changed => ":zap:",
-      Kind::Development => ":wrench:",
-      Kind::Distribution => ":package:",
-      Kind::Documentation => ":books:",
-      Kind::Fixed => ":bug:",
-      Kind::Reform => ":art:",
-      Kind::Release => ":bookmark:",
-      Kind::Testing => ":white_check_mark:",
-    }
-  }
 }
 
 impl Default for Metadata {

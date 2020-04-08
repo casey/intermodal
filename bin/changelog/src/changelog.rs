@@ -14,27 +14,35 @@ impl Changelog {
     let mut head = true;
 
     loop {
-      let manifest_bytes = current
-        .tree()?
-        .get_path("Cargo.toml".as_ref())?
-        .to_object(&repo)?
-        .as_blob()
-        .unwrap()
-        .content()
-        .to_vec();
+      let summary_bytes = current
+        .summary_bytes()
+        .ok_or_else(|| anyhow!("Commit had no summary"))?;
 
-      let manifest = Manifest::from_slice(&manifest_bytes)?;
+      let summary = String::from_utf8_lossy(summary_bytes);
 
-      let entry = Entry::new(&current, manifest.package.unwrap().version.as_ref(), head)?;
+      if !summary.starts_with("fixup!") {
+        let manifest_bytes = current
+          .tree()?
+          .get_path("Cargo.toml".as_ref())?
+          .to_object(&repo)?
+          .as_blob()
+          .unwrap()
+          .content()
+          .to_vec();
+
+        let manifest = Manifest::from_slice(&manifest_bytes)?;
+
+        let entry = Entry::new(&current, manifest.package.unwrap().version.as_ref(), head)?;
+
+        entries.push(entry);
+      }
 
       head = false;
-
-      entries.push(entry);
 
       match current.parent_count() {
         0 => break,
         1 => current = current.parent(0)?,
-        count => panic!("Commit has {} parents", count),
+        _ => throw!(anyhow!("Commit had multiple parents!")),
       }
     }
 

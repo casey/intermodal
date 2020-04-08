@@ -58,7 +58,7 @@ impl Display for Entry {
     write!(
       f,
       "{} [`{}`]({}) {}",
-      self.metadata.emoji(),
+      self.metadata.kind.emoji(),
       shorthash,
       url,
       self.summary

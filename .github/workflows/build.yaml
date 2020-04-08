@@ -90,20 +90,20 @@ jobs:
         profile: minimal
         components: rustfmt
 
-    - name: Format
+    - name: Check Formatting
       run: cargo +nightly fmt --all -- --check
 
-    - name: Completion Scripts
+    - name: Check Completion Scripts
       if: matrix.os != 'windows-latest'
       run: |
         ./bin/generate-completions
-        git diff --no-ext-diff --quiet --exit-code
+        git diff --no-ext-diff --exit-code
 
-    - name: Readme
+    - name: Check Readme Table of Contents
       if: matrix.os != 'windows-latest'
       run: |
         cargo run --package update-readme toc
-        git diff --no-ext-diff --quiet --exit-code
+        git diff --no-ext-diff --exit-code
 
     - name: Install `mdbook`
       uses: peaceiris/actions-mdbook@v1

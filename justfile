@@ -86,7 +86,7 @@ check-man: man
 check-minimal-versions:
 	./bin/check-minimal-versions
 
-check: test clippy lint check-minimal-versions changelog
+check: test clippy lint check-minimal-versions changelog-update
 	git diff --no-ext-diff --quiet --exit-code
 	cargo +nightly fmt --all -- --check
 	cargo run --package update-readme toc
@@ -116,8 +116,14 @@ publish: publish-check
 	git push github {{version}}
 	cargo publish
 
-changelog:
+changelog-update:
 	cargo run --package changelog update
+
+changelog-types:
+	cargo run --package changelog types
+
+changelog-issue-template:
+	cargo run --package changelog issue-template
 
 # record, upload, and render demo animation
 demo: demo-record demo-upload demo-render
