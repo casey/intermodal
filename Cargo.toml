@@ -70,4 +70,7 @@ members = [
 
   # generate the changelog from git commits
   "bin/changelog",
+
+  # generate man page
+  "bin/man"
 ]

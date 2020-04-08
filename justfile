@@ -36,7 +36,7 @@ test:
 	cargo test --all
 
 clippy:
-	cargo clippy --all
+	RUSTFLAGS="-D warnings" cargo clippy --all
 
 fmt:
 	cargo +nightly fmt --all
@@ -70,15 +70,18 @@ update-toc:
 generate-completions:
 	./bin/generate-completions
 
+man-watch:
+	cargo build
+	cargo watch \
+		--ignore '/man' \
+		--ignore '/man/*' \
+		--ignore '/book/src/commands' \
+		--ignore '/book/src/commands/*' \
+		--clear --exec 'run --package man'
+
 man:
 	cargo build
-	help2man \
-		--name 'BitTorrent metainfo utility' \
-		--manual 'IMDL MANUAL' \
-		--no-info \
-		target/debug/imdl \
-		> man/imdl.1
-	sd '📦 ' "\n" man/imdl.1
+	cargo run --package man
 
 check-man: man
 	git diff --no-ext-diff --quiet --exit-code

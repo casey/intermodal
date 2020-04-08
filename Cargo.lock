@@ -533,6 +533,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "man"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "fehler",
+ "regex",
+ "tempfile",
+]
+
+[[package]]
 name = "matches"
 version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"

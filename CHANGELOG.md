@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-08
+UNRELEASED - 2020-04-09
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Make smaller demo for readme (#346) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add `bin/man` command for generating man pages - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`14fff1d888a3`](https://github.com/casey/intermodal/commit/14fff1d888a3d4aebd88059feacde5c665019f30) Make smaller demo for readme - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`4f8b6a212e80`](https://github.com/casey/intermodal/commit/4f8b6a212e8099ebfcf14600ce92863583758231) Improve demo GIF - _Casey Rodarmor <casey@rodarmor.com>_
 
 
