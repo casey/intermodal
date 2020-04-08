@@ -18,7 +18,7 @@ impl Entry {
       Utc,
     );
 
-    let metadata = Metadata::from_commit(commit).unwrap_or_default();
+    let metadata = Metadata::from_commit(commit)?;
 
     Entry {
       version: version.into(),

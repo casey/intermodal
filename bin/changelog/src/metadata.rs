@@ -2,8 +2,8 @@ use crate::common::*;
 
 #[derive(Deserialize, Serialize)]
 pub(crate) struct Metadata {
-  #[serde(default, rename = "type")]
-  pub(crate) kind: Option<Kind>,
+  #[serde(rename = "type")]
+  pub(crate) kind: Kind,
   #[serde(default)]
   pub(crate) pr: Option<Url>,
   #[serde(default)]
@@ -11,37 +11,35 @@ pub(crate) struct Metadata {
 }
 
 impl Metadata {
-  #[throws(as Option)]
+  #[throws]
   pub(crate) fn from_commit(commit: &Commit) -> Metadata {
     const BLANK: &str = "\n\n";
 
     let message = String::from_utf8_lossy(commit.message_bytes());
 
-    let blank = message.rfind(BLANK)?;
+    let blank = message
+      .rfind(BLANK)
+      .ok_or_else(|| anyhow!("Commit message missing metadata: {}", message))?;
 
     let yaml = &message[blank + BLANK.len()..];
 
-    let metadata = serde_yaml::from_str(yaml).ok()?;
+    let metadata = serde_yaml::from_str(yaml)?;
 
     metadata
   }
 
   pub(crate) fn emoji(&self) -> &'static str {
-    if let Some(kind) = self.kind {
-      match kind {
-        Kind::Added => ":sparkles:",
-        Kind::Breaking => ":boom:",
-        Kind::Changed => ":zap:",
-        Kind::Development => ":wrench:",
-        Kind::Distribution => ":package:",
-        Kind::Documentation => ":books:",
-        Kind::Fixed => ":bug:",
-        Kind::Reform => ":art:",
-        Kind::Release => ":bookmark:",
-        Kind::Testing => ":white_check_mark:",
-      }
-    } else {
-      ":construction:"
+    match self.kind {
+      Kind::Added => ":sparkles:",
+      Kind::Breaking => ":boom:",
+      Kind::Changed => ":zap:",
+      Kind::Development => ":wrench:",
+      Kind::Distribution => ":package:",
+      Kind::Documentation => ":books:",
+      Kind::Fixed => ":bug:",
+      Kind::Reform => ":art:",
+      Kind::Release => ":bookmark:",
+      Kind::Testing => ":white_check_mark:",
     }
   }
 }
@@ -49,7 +47,7 @@ impl Metadata {
 impl Default for Metadata {
   fn default() -> Metadata {
     Metadata {
-      kind: None,
+      kind: Kind::Changed,
       pr: None,
       fixes: Vec::new(),
     }

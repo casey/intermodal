@@ -5,7 +5,7 @@ pub(crate) use std::{
   fs, str,
 };
 
-pub(crate) use anyhow::Error;
+pub(crate) use anyhow::{anyhow, Error};
 pub(crate) use cargo_toml::Manifest;
 pub(crate) use chrono::{DateTime, NaiveDateTime, Utc};
 pub(crate) use fehler::throws;

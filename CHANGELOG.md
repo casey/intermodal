@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-08
 -----------------------
-- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Generate changelog from git history ([#337](https://github.com/casey/intermodal/pull/337)) - Fixes [#336](https://github.com/casey/intermodal/issues/336) - _Casey Rodarmor <casey@rodarmor.com>_
+- :zap: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Make changelog generator strict ([#341](https://github.com/casey/intermodal/pull/341)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :wrench: [`c33446b48135`](https://github.com/casey/intermodal/commit/c33446b481351009fc16335cbcd66ff2c2b7985e) Generate changelog from git history ([#337](https://github.com/casey/intermodal/pull/337)) - Fixes [#336](https://github.com/casey/intermodal/issues/336) - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`6edab1fa3fa8`](https://github.com/casey/intermodal/commit/6edab1fa3fa8461ac4ca02466a04b0f14e42dfc0) Use `TestEnv::assert_ok` everywhere - Fixes [#330](https://github.com/casey/intermodal/issues/330) - _Casey Rodarmor <casey@rodarmor.com>_
 - :zap: [`8e3f5516aff8`](https://github.com/casey/intermodal/commit/8e3f5516aff8c89289203a2bc1b46505410c5f1f) Use attractive paths in user-facing messages - Fixes [#252](https://github.com/casey/intermodal/issues/252), [#332](https://github.com/casey/intermodal/issues/332) - _Casey Rodarmor <casey@rodarmor.com>_
 - :bug: [`1cfc0214536c`](https://github.com/casey/intermodal/commit/1cfc0214536c607fff7c29d9e878cbcd7f3a9ffc) Forbid empty input, output, and path targets - _Casey Rodarmor <casey@rodarmor.com>_

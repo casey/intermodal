@@ -1,7 +1,3 @@
-// TODO:
-// - parse URL in fixed:
-// - figure out how to check labels before merge
-
 use crate::common::*;
 
 mod changelog;

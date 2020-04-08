@@ -24,7 +24,7 @@ push: check
 	git push github
 
 # clean up feature branch BRANCH
-done BRANCH=`git rev-parse --abbrev-ref HEAD`:
+done BRANCH=`git rev-parse --abbrev-ref HEAD`: check
 	git diff --no-ext-diff --quiet --exit-code
 	git push github {{BRANCH}}:master
 	git checkout master
@@ -86,16 +86,19 @@ check-man: man
 check-minimal-versions:
 	./bin/check-minimal-versions
 
-check: test clippy lint check-minimal-versions
+check: test clippy lint check-minimal-versions changelog
 	git diff --no-ext-diff --quiet --exit-code
 	cargo +nightly fmt --all -- --check
 	cargo run --package update-readme toc
 	git diff --no-ext-diff --quiet --exit-code
 
+draft: push
+	hub pull-request -o --draft
+
 pr: push
 	hub pull-request -o
 
-merge:
+merge: check
 	#!/usr/bin/env bash
 	set -euxo pipefail
 	while ! hub ci-status --verbose; do
@@ -112,6 +115,9 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 	cargo publish
+
+changelog:
+	cargo run --package changelog update
 
 # record demo animation
 record:
