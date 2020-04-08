@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-08
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve demo GIF - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Make smaller demo for readme (#346) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`4f8b6a212e80`](https://github.com/casey/intermodal/commit/4f8b6a212e8099ebfcf14600ce92863583758231) Improve demo GIF - _Casey Rodarmor <casey@rodarmor.com>_
 
 
 [v0.1.2](https://github.com/casey/intermodal/releases/tag/v0.1.2) - 2020-04-08
