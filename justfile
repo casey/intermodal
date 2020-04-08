@@ -148,7 +148,7 @@ demo-upload:
 	asciinema upload tmp/demo.json
 
 demo-render:
-	asciicast2gif tmp/demo.json www/demo.gif
+	../asciicast2gif/asciicast2gif -S4 tmp/demo.json www/demo.gif
 
 # open site index
 www:

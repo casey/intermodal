@@ -19,7 +19,7 @@ const SCRIPT: &str = "
 
 const PROMPT: &str = "\x1b[0;34m$\x1b[0m ";
 
-const CPM: u64 = 600;
+const CPM: u64 = 1000;
 
 fn commands() -> Vec<Vec<&'static str>> {
   SCRIPT
@@ -55,6 +55,7 @@ fn run(command: &[&str]) -> Result<()> {
 fn main() -> Result<()> {
   let char_delay = Duration::from_millis(1000 * 60 / CPM);
   let line_delay = char_delay * 7;
+  let enter_delay = char_delay * 5;
 
   for (i, command) in commands().iter().enumerate() {
     print(PROMPT)?;
@@ -63,13 +64,15 @@ fn main() -> Result<()> {
       sleep(line_delay);
     }
 
-    let mut line = command.join(" ");
-    line.push('\n');
+    let line = command.join(" ");
 
     for c in line.chars() {
       sleep(char_delay);
       print(&c.to_string())?;
     }
+
+    sleep(enter_delay);
+    print("\n")?;
 
     run(&command)?;
   }
