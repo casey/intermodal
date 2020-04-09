@@ -101,13 +101,16 @@ draft: push
 pr: push
 	hub pull-request -o
 
-merge: check
+merge:
 	#!/usr/bin/env bash
 	set -euxo pipefail
 	while ! hub ci-status --verbose; do
 		sleep 5
 	done
 	just done
+
+update: man changelog-update update-toc
+	cargo update
 
 publish-check: check check-man
 	cargo outdated --exit-code 1

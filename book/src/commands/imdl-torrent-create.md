@@ -1,6 +1,6 @@
 # `imdl torrent create`
 ```
-imdl-torrent-create 0.1.2
+imdl-torrent-create 0.1.3
 Create a `.torrent` file.
 
 USAGE:
