@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>imdl torrent create - Intermodal</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="../custom.css">
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../commands.html"><strong aria-hidden="true">1.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../commands/imdl.html"><strong aria-hidden="true">1.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="../commands/imdl-completions.html"><strong aria-hidden="true">1.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent.html"><strong aria-hidden="true">1.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-create.html" class="active"><strong aria-hidden="true">1.4.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-link.html"><strong aria-hidden="true">1.5.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">1.6.</strong> imdl torrent piece length</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-show.html"><strong aria-hidden="true">1.7.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-stats.html"><strong aria-hidden="true">1.8.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-verify.html"><strong aria-hidden="true">1.9.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">2.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">2.1.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/prior-art.html"><strong aria-hidden="true">2.2.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">2.3.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="../bittorrent/references.html"><strong aria-hidden="true">2.4.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="../metadata.html"><strong aria-hidden="true">3.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metadata/prior-art.html"><strong aria-hidden="true">3.1.</strong> Prior Art</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Intermodal</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        <a href="https://github.com/casey/intermodal" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#imdl-torrent-create" id="imdl-torrent-create"><code>imdl torrent create</code></a></h1>
+<pre><code>imdl-torrent-create 0.1.2
+Create a `.torrent` file.
+
+USAGE:
+    imdl torrent create [FLAGS] [OPTIONS] --input &lt;PATH&gt;
+
+FLAGS:
+    -n, --dry-run             Skip writing `.torrent` file to disk.
+    -F, --follow-symlinks     Follow symlinks in torrent input. By default, symlinks to files and directories are not
+                              included in torrent contents.
+    -f, --force               Overwrite the destination `.torrent` file, if it exists.
+        --help                Print help message.
+    -h, --include-hidden      Include hidden files that would otherwise be skipped, such as files that start with a `.`,
+                              and files hidden by file attributes on macOS and Windows.
+    -j, --include-junk        Include junk files that would otherwise be skipped.
+    -M, --md5                 Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and
+                              only suitable for checking for accidental corruption.
+        --no-created-by       Do not populate `created by` key of generated torrent with imdl version information.
+        --no-creation-date    Do not populate `creation date` key of generated torrent with current time.
+    -O, --open                Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on
+                              Linux; `open` on macOS; and `cmd /C start` on Windows
+        --link                Print created torrent `magnet:` URL to standard output
+    -P, --private             Set the `private` flag. Torrent clients that understand the flag and participate in the
+                              swarm of a torrent with the flag set will only announce themselves to the announce URLs
+                              included in the torrent, and will not use other peer discovery mechanisms, such as the DHT
+                              or local peer discovery. See BEP 27: Private Torrents for more information.
+    -S, --show                Display information about created torrent file.
+    -V, --version             Print version number.
+
+OPTIONS:
+    -A, --allow &lt;LINT&gt;...                Allow `LINT`. Lints check for conditions which, although permitted, are not
+                                         usually desirable. For example, piece length can be any non-zero value, but
+                                         probably shouldn't be below 16 KiB. The lint `small-piece-size` checks for
+                                         this, and `--allow small-piece-size` can be used to disable this check.
+                                         [possible values: private-trackerless, small-piece-length, uneven-piece-length]
+    -a, --announce &lt;URL&gt;                 Use `URL` as the primary tracker announce URL. To supply multiple announce
+                                         URLs, also use `--announce-tier`.
+    -t, --announce-tier &lt;URL-LIST&gt;...    Use `URL-LIST` as a tracker announce tier. Each instance adds a new tier. To
+                                         add multiple trackers to a given tier, separate their announce URLs with
+                                         commas:
+                                         
+                                         `--announce-tier
+                                         udp://example.com:80/announce,https://example.net:443/announce`
+                                                     
+                                         Announce tiers are stored in the `announce-list` key of the top-level metainfo
+                                         dictionary as a list of lists of strings, as defined by BEP 12: Multitracker
+                                         Metadata Extension.
+                                                     
+                                         Note: Many BitTorrent clients do not implement the behavior described in BEP
+                                         12. See the discussion here for more details:
+                                         https://github.com/bittorrent/bittorrent.org/issues/82
+    -c, --comment &lt;TEXT&gt;                 Include `TEXT` as the comment for generated `.torrent` file. Stored under
+                                         `comment` key of top-level metainfo dictionary.
+        --node &lt;NODE&gt;...                 Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form
+                                         `HOST:PORT`, where `HOST` is a domain name, an IPv4 address, or an IPv6 address
+                                         surrounded by brackets. May be given more than once to add multiple bootstrap
+                                         nodes.
+                                         
+                                         Examples:
+                                         
+                                             --node router.example.com:1337
+                                         
+                                             --node 203.0.113.0:2290
+                                         
+                                             --node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832
+    -g, --glob &lt;GLOB&gt;...                 Include or exclude files that match `GLOB`. Multiple glob may be provided, with
+                                         the last one taking precedence. Precede a glob with `!` to exclude it.
+    -i, --input &lt;PATH&gt;                   Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a
+                                         single-file torrent.  If `PATH` is a directory, torrent will be a multi-file
+                                         torrent.  If `PATH` is `-`, read from standard input. Piece length defaults to
+                                         256KiB when reading from standard input if `--piece-length` is not given.
+    -N, --name &lt;TEXT&gt;                    Set name of torrent to `TEXT`. Defaults to the filename of the argument to
+                                         `--input`. Required when `--input -`.
+    -o, --output &lt;TARGET&gt;                Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is
+                                         `-`. Defaults to the argument to `--input` with an `.torrent` extension
+                                         appended. Required when `--input -`.
+        --peer &lt;PEER&gt;...                 Add `PEER` to magnet link.
+    -p, --piece-length &lt;BYTES&gt;           Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib.
+        --sort-by &lt;SPEC&gt;...              Set the order of files within a torrent. `SPEC` should be of the form
+                                         `KEY:ORDER`, with `KEY` being one of `path` or `size`, and `ORDER` being
+                                         `ascending` or `descending`. `:ORDER` defaults to `ascending` if omitted. The
+                                         `--sort-by` flag may be given more than once, with later values being used to
+                                         break ties. Ties that remain are broken in ascending path order.
+                                         
+                                         Sort in ascending order by path, the default:
+                                         
+                                             --sort-by path:ascending
+                                         
+                                         Sort in ascending order by path, more concisely:
+                                         
+                                             --sort-by path
+                                         
+                                         Sort in ascending order by size, break ties in descending path order:
+                                         
+                                             --sort-by size:ascending --sort-by path:descending
+    -s, --source &lt;TEXT&gt;                  Set torrent source to `TEXT`. Stored under `source` key of info dictionary.
+                                         This is useful for keeping statistics from being mis-reported when
+                                         participating in swarms with the same contents, but with different trackers.
+                                         When source is set to a unique value for torrents with the same contents,
+                                         torrent clients will treat them as distinct torrents, and not share peers
+                                         between them, and will correctly report download and upload statistics to
+                                         multiple trackers.
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../commands/imdl-torrent.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../commands/imdl-torrent-link.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="../commands/imdl-torrent.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="../commands/imdl-torrent-link.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

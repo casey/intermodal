@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js ayu">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -38,7 +38,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "../";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -64,7 +64,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('ayu')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -83,7 +83,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">1.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">1.1.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/prior-art.html"><strong aria-hidden="true">1.2.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html" class="active"><strong aria-hidden="true">1.3.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="../bittorrent/references.html"><strong aria-hidden="true">1.4.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="../metadata.html"><strong aria-hidden="true">2.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metadata/prior-art.html"><strong aria-hidden="true">2.1.</strong> Prior Art</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../commands.html"><strong aria-hidden="true">1.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../commands/imdl.html"><strong aria-hidden="true">1.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="../commands/imdl-completions.html"><strong aria-hidden="true">1.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent.html"><strong aria-hidden="true">1.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-create.html"><strong aria-hidden="true">1.4.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-link.html"><strong aria-hidden="true">1.5.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">1.6.</strong> imdl torrent piece length</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-show.html"><strong aria-hidden="true">1.7.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-stats.html"><strong aria-hidden="true">1.8.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-verify.html"><strong aria-hidden="true">1.9.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">2.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">2.1.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/prior-art.html"><strong aria-hidden="true">2.2.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html" class="active"><strong aria-hidden="true">2.3.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="../bittorrent/references.html"><strong aria-hidden="true">2.4.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="../metadata.html"><strong aria-hidden="true">3.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metadata/prior-art.html"><strong aria-hidden="true">3.1.</strong> Prior Art</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -102,11 +102,11 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
                         </ul>
                         
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
@@ -120,6 +120,10 @@
                     <div class="right-buttons">
                         <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        <a href="https://github.com/casey/intermodal" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
                     </div>
@@ -152,7 +156,7 @@
                         <h1><a class="header" href="#udp-tracker-protocol" id="udp-tracker-protocol">UDP Tracker Protocol</a></h1>
 <p>This description of the UDP tracker protocol is adapted from
 <a href="https://libtorrent.org/udp_tracker_protocol.html">this page</a> by Arvid Norberg.</p>
-<p>A tracker with the protocol &quot;udp://&quot; in its URI is should be contacted with
+<p>A tracker with the protocol “udp://” in its URI is should be contacted with
 this protocol.</p>
 <p>All values are sent in network byte order (big-endian).</p>
 <p>If no response to a request is received within 15 seconds, resend the request.
@@ -288,9 +292,9 @@ tracker URL for each user. The extension body has the following format:</p>
 <tr><td>[i8; <code>request_length</code>]</td><td>request_string</td></tr>
 </tbody></table>
 <p><code>request_string</code> is the string that comes after the hostname and port in the
-UDP tracker URL. Typically this starts with &quot;/announce&quot; The bittorrent client
+UDP tracker URL. Typically this starts with “/announce” The bittorrent client
 is not expected to append query string arguments for stats reporting, like
-&quot;uploaded&quot; and &quot;downloaded&quot; since this is already reported in the UDP tracker
+“uploaded” and “downloaded” since this is already reported in the UDP tracker
 protocol. However, the client is free to add arguments as extensions.|</p>
 <h2><a class="header" href="#credits" id="credits">Credits</a></h2>
 <p>Protocol designed by Olaf van der Spek and extended by Arvid Norberg</p>

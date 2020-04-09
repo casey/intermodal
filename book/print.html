@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible no-js light">
+<html lang="en" class="sidebar-visible no-js ayu">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -40,7 +40,7 @@
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
             var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "light";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
         </script>
 
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
@@ -66,7 +66,7 @@
             if (theme === null || theme === undefined) { theme = default_theme; }
             var html = document.querySelector('html');
             html.classList.remove('no-js')
-            html.classList.remove('light')
+            html.classList.remove('ayu')
             html.classList.add(theme);
             html.classList.add('js');
         </script>
@@ -85,7 +85,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="bittorrent.html"><strong aria-hidden="true">1.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="bittorrent/bep-support.html"><strong aria-hidden="true">1.1.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="bittorrent/prior-art.html"><strong aria-hidden="true">1.2.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">1.3.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="bittorrent/references.html"><strong aria-hidden="true">1.4.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="metadata.html"><strong aria-hidden="true">2.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metadata/prior-art.html"><strong aria-hidden="true">2.1.</strong> Prior Art</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="commands.html"><strong aria-hidden="true">1.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="commands/imdl.html"><strong aria-hidden="true">1.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="commands/imdl-completions.html"><strong aria-hidden="true">1.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent.html"><strong aria-hidden="true">1.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-create.html"><strong aria-hidden="true">1.4.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-link.html"><strong aria-hidden="true">1.5.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">1.6.</strong> imdl torrent piece length</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-show.html"><strong aria-hidden="true">1.7.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-stats.html"><strong aria-hidden="true">1.8.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="commands/imdl-torrent-verify.html"><strong aria-hidden="true">1.9.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="bittorrent.html"><strong aria-hidden="true">2.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="bittorrent/bep-support.html"><strong aria-hidden="true">2.1.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="bittorrent/prior-art.html"><strong aria-hidden="true">2.2.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">2.3.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="bittorrent/references.html"><strong aria-hidden="true">2.4.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="metadata.html"><strong aria-hidden="true">3.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="metadata/prior-art.html"><strong aria-hidden="true">3.1.</strong> Prior Art</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -104,11 +104,11 @@
                             <i class="fa fa-paint-brush"></i>
                         </button>
                         <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                             <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
                         </ul>
                         
                         <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
@@ -122,6 +122,10 @@
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        <a href="https://github.com/casey/intermodal" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
                         
                     </div>
@@ -171,6 +175,265 @@
 <pre><code>$ imdl --unstable torrent stats --input dir
 </code></pre>
 <p>Happy sharing!</p>
+<h1><a class="header" href="#commands" id="commands">Commands</a></h1>
+<p>This page intentionally left blank.</p>
+<h1><a class="header" href="#imdl" id="imdl"><code>imdl</code></a></h1>
+<pre><code>imdl v0.1.2
+Casey Rodarmor &lt;casey@rodarmor.com&gt;
+📦 A 40' shipping container for the internet - https://github.com/casey/intermodal
+
+USAGE:
+    imdl [FLAGS] [OPTIONS] &lt;SUBCOMMAND&gt;
+
+FLAGS:
+    -h, --help        Print help message.
+    -u, --unstable    Enable unstable features. To avoid premature stabilization and excessive version churn, unstable
+                      features are unavailable unless this flag is set. Unstable features are not bound by semantic
+                      versioning stability guarantees, and may be changed or removed at any time.
+    -V, --version     Print version number.
+
+OPTIONS:
+        --color &lt;WHEN&gt;    Print colorful output according to `WHEN`. When `auto`, the default, colored output is only
+                          enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment
+                          variable is not set, and the `TERM` environment variable is not set to `dumb`. [default: auto]
+                          [possible values: auto, always, never]
+
+SUBCOMMANDS:
+    completions    Print shell completion scripts to standard output.
+    help           Prints this message or the help of the given subcommand(s)
+    torrent        Subcommands related to the BitTorrent protocol.
+
+</code></pre>
+<h1><a class="header" href="#imdl-completions" id="imdl-completions"><code>imdl completions</code></a></h1>
+<pre><code>imdl-completions 0.1.2
+Print shell completion scripts to standard output.
+
+USAGE:
+    imdl completions --shell &lt;SHELL&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -V, --version    Print version number.
+
+OPTIONS:
+    -s, --shell &lt;SHELL&gt;    Print completions for `SHELL`. [possible values: zsh, bash, fish, powershell, elvish]
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent" id="imdl-torrent"><code>imdl torrent</code></a></h1>
+<pre><code>imdl-torrent 0.1.2
+Subcommands related to the BitTorrent protocol.
+
+USAGE:
+    imdl torrent &lt;SUBCOMMAND&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -V, --version    Print version number.
+
+SUBCOMMANDS:
+    create          Create a `.torrent` file.
+    help            Prints this message or the help of the given subcommand(s)
+    link            Generate a magnet link from a `.torrent` file.
+    piece-length    Display information about automatic piece length selection.
+    show            Display information about a `.torrent` file.
+    stats           Show statistics about a collection of `.torrent` files.
+    verify          Verify files against a `.torrent` file.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-create" id="imdl-torrent-create"><code>imdl torrent create</code></a></h1>
+<pre><code>imdl-torrent-create 0.1.2
+Create a `.torrent` file.
+
+USAGE:
+    imdl torrent create [FLAGS] [OPTIONS] --input &lt;PATH&gt;
+
+FLAGS:
+    -n, --dry-run             Skip writing `.torrent` file to disk.
+    -F, --follow-symlinks     Follow symlinks in torrent input. By default, symlinks to files and directories are not
+                              included in torrent contents.
+    -f, --force               Overwrite the destination `.torrent` file, if it exists.
+        --help                Print help message.
+    -h, --include-hidden      Include hidden files that would otherwise be skipped, such as files that start with a `.`,
+                              and files hidden by file attributes on macOS and Windows.
+    -j, --include-junk        Include junk files that would otherwise be skipped.
+    -M, --md5                 Include MD5 checksum of each file in the torrent. N.B. MD5 is cryptographically broken and
+                              only suitable for checking for accidental corruption.
+        --no-created-by       Do not populate `created by` key of generated torrent with imdl version information.
+        --no-creation-date    Do not populate `creation date` key of generated torrent with current time.
+    -O, --open                Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on
+                              Linux; `open` on macOS; and `cmd /C start` on Windows
+        --link                Print created torrent `magnet:` URL to standard output
+    -P, --private             Set the `private` flag. Torrent clients that understand the flag and participate in the
+                              swarm of a torrent with the flag set will only announce themselves to the announce URLs
+                              included in the torrent, and will not use other peer discovery mechanisms, such as the DHT
+                              or local peer discovery. See BEP 27: Private Torrents for more information.
+    -S, --show                Display information about created torrent file.
+    -V, --version             Print version number.
+
+OPTIONS:
+    -A, --allow &lt;LINT&gt;...                Allow `LINT`. Lints check for conditions which, although permitted, are not
+                                         usually desirable. For example, piece length can be any non-zero value, but
+                                         probably shouldn't be below 16 KiB. The lint `small-piece-size` checks for
+                                         this, and `--allow small-piece-size` can be used to disable this check.
+                                         [possible values: private-trackerless, small-piece-length, uneven-piece-length]
+    -a, --announce &lt;URL&gt;                 Use `URL` as the primary tracker announce URL. To supply multiple announce
+                                         URLs, also use `--announce-tier`.
+    -t, --announce-tier &lt;URL-LIST&gt;...    Use `URL-LIST` as a tracker announce tier. Each instance adds a new tier. To
+                                         add multiple trackers to a given tier, separate their announce URLs with
+                                         commas:
+                                         
+                                         `--announce-tier
+                                         udp://example.com:80/announce,https://example.net:443/announce`
+                                                     
+                                         Announce tiers are stored in the `announce-list` key of the top-level metainfo
+                                         dictionary as a list of lists of strings, as defined by BEP 12: Multitracker
+                                         Metadata Extension.
+                                                     
+                                         Note: Many BitTorrent clients do not implement the behavior described in BEP
+                                         12. See the discussion here for more details:
+                                         https://github.com/bittorrent/bittorrent.org/issues/82
+    -c, --comment &lt;TEXT&gt;                 Include `TEXT` as the comment for generated `.torrent` file. Stored under
+                                         `comment` key of top-level metainfo dictionary.
+        --node &lt;NODE&gt;...                 Add DHT bootstrap node `NODE` to torrent. `NODE` should be in the form
+                                         `HOST:PORT`, where `HOST` is a domain name, an IPv4 address, or an IPv6 address
+                                         surrounded by brackets. May be given more than once to add multiple bootstrap
+                                         nodes.
+                                         
+                                         Examples:
+                                         
+                                             --node router.example.com:1337
+                                         
+                                             --node 203.0.113.0:2290
+                                         
+                                             --node [2001:db8:4275:7920:6269:7463:6f69:6e21]:8832
+    -g, --glob &lt;GLOB&gt;...                 Include or exclude files that match `GLOB`. Multiple glob may be provided, with
+                                         the last one taking precedence. Precede a glob with `!` to exclude it.
+    -i, --input &lt;PATH&gt;                   Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a
+                                         single-file torrent.  If `PATH` is a directory, torrent will be a multi-file
+                                         torrent.  If `PATH` is `-`, read from standard input. Piece length defaults to
+                                         256KiB when reading from standard input if `--piece-length` is not given.
+    -N, --name &lt;TEXT&gt;                    Set name of torrent to `TEXT`. Defaults to the filename of the argument to
+                                         `--input`. Required when `--input -`.
+    -o, --output &lt;TARGET&gt;                Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is
+                                         `-`. Defaults to the argument to `--input` with an `.torrent` extension
+                                         appended. Required when `--input -`.
+        --peer &lt;PEER&gt;...                 Add `PEER` to magnet link.
+    -p, --piece-length &lt;BYTES&gt;           Set piece length to `BYTES`. Accepts SI units, e.g. kib, mib, and gib.
+        --sort-by &lt;SPEC&gt;...              Set the order of files within a torrent. `SPEC` should be of the form
+                                         `KEY:ORDER`, with `KEY` being one of `path` or `size`, and `ORDER` being
+                                         `ascending` or `descending`. `:ORDER` defaults to `ascending` if omitted. The
+                                         `--sort-by` flag may be given more than once, with later values being used to
+                                         break ties. Ties that remain are broken in ascending path order.
+                                         
+                                         Sort in ascending order by path, the default:
+                                         
+                                             --sort-by path:ascending
+                                         
+                                         Sort in ascending order by path, more concisely:
+                                         
+                                             --sort-by path
+                                         
+                                         Sort in ascending order by size, break ties in descending path order:
+                                         
+                                             --sort-by size:ascending --sort-by path:descending
+    -s, --source &lt;TEXT&gt;                  Set torrent source to `TEXT`. Stored under `source` key of info dictionary.
+                                         This is useful for keeping statistics from being mis-reported when
+                                         participating in swarms with the same contents, but with different trackers.
+                                         When source is set to a unique value for torrents with the same contents,
+                                         torrent clients will treat them as distinct torrents, and not share peers
+                                         between them, and will correctly report download and upload statistics to
+                                         multiple trackers.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-link" id="imdl-torrent-link"><code>imdl torrent link</code></a></h1>
+<pre><code>imdl-torrent-link 0.1.2
+Generate a magnet link from a `.torrent` file.
+
+USAGE:
+    imdl torrent link [FLAGS] [OPTIONS] --input &lt;METAINFO&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -O, --open       Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS;
+                     and `cmd /C start` on Windows
+    -V, --version    Print version number.
+
+OPTIONS:
+    -i, --input &lt;METAINFO&gt;    Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from
+                              standard input.
+    -p, --peer &lt;PEER&gt;...      Add `PEER` to magnet link.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-piece-length" id="imdl-torrent-piece-length"><code>imdl torrent piece length</code></a></h1>
+<pre><code>imdl-torrent-piece-length 0.1.2
+Display information about automatic piece length selection.
+
+USAGE:
+    imdl torrent piece-length
+
+FLAGS:
+    -h, --help       Print help message.
+    -V, --version    Print version number.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-show" id="imdl-torrent-show"><code>imdl torrent show</code></a></h1>
+<pre><code>imdl-torrent-show 0.1.2
+Display information about a `.torrent` file.
+
+USAGE:
+    imdl torrent show --input &lt;PATH&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -V, --version    Print version number.
+
+OPTIONS:
+    -i, --input &lt;PATH&gt;    Show information about torrent at `PATH`. If `Path` is `-`, read torrent metainfo from
+                          standard input.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-stats" id="imdl-torrent-stats"><code>imdl torrent stats</code></a></h1>
+<pre><code>imdl-torrent-stats 0.1.2
+Show statistics about a collection of `.torrent` files.
+
+USAGE:
+    imdl torrent stats [FLAGS] [OPTIONS] --input &lt;PATH&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -p, --print      Pretty print the contents of each torrent as it is processed.
+    -V, --version    Print version number.
+
+OPTIONS:
+    -e, --extract-pattern &lt;REGEX&gt;...    Extract and display values under key paths that match `REGEX`. Subkeys of a
+                                        bencodeded dictionary are delimited by `/`, and values of a bencoded list are
+                                        delmited by `*`. For example, given the following bencoded dictionary `{&quot;foo&quot;:
+                                        [{&quot;bar&quot;: {&quot;baz&quot;: 2}}]}`, the value `2`'s key path will be `foo*bar/baz`. The
+                                        value `2` would be displayed if any of `bar`, `foo[*]bar/baz`, or `foo.*baz`
+                                        were passed to `--extract-pattern.
+    -i, --input &lt;PATH&gt;                  Search `PATH` for torrents. May be a directory or a single torrent file.
+    -l, --limit &lt;N&gt;                     Stop after processing `N` torrents. Useful when processing large collections of
+                                        `.torrent` files.
+
+</code></pre>
+<h1><a class="header" href="#imdl-torrent-verify" id="imdl-torrent-verify"><code>imdl torrent verify</code></a></h1>
+<pre><code>imdl-torrent-verify 0.1.2
+Verify files against a `.torrent` file.
+
+USAGE:
+    imdl torrent verify [OPTIONS] --input &lt;METAINFO&gt;
+
+FLAGS:
+    -h, --help       Print help message.
+    -V, --version    Print version number.
+
+OPTIONS:
+    -c, --content &lt;PATH&gt;      Verify torrent content at `PATH` against torrent metainfo. Defaults to `name` field of
+                              torrent info dictionary.
+    -i, --input &lt;METAINFO&gt;    Verify torrent contents against torrent metainfo in `METAINFO`. If `METAINFO` is `-`, read
+                              metainfo from standard input.
+
+</code></pre>
 <h1><a class="header" href="#bittorrent" id="bittorrent">Bittorrent</a></h1>
 <p>This page intentionally left blank.</p>
 <h1><a class="header" href="#bep-support" id="bep-support">BEP Support</a></h1>
@@ -257,7 +520,7 @@
 <h1><a class="header" href="#udp-tracker-protocol" id="udp-tracker-protocol">UDP Tracker Protocol</a></h1>
 <p>This description of the UDP tracker protocol is adapted from
 <a href="https://libtorrent.org/udp_tracker_protocol.html">this page</a> by Arvid Norberg.</p>
-<p>A tracker with the protocol &quot;udp://&quot; in its URI is should be contacted with
+<p>A tracker with the protocol “udp://” in its URI is should be contacted with
 this protocol.</p>
 <p>All values are sent in network byte order (big-endian).</p>
 <p>If no response to a request is received within 15 seconds, resend the request.
@@ -393,9 +656,9 @@ tracker URL for each user. The extension body has the following format:</p>
 <tr><td>[i8; <code>request_length</code>]</td><td>request_string</td></tr>
 </tbody></table>
 <p><code>request_string</code> is the string that comes after the hostname and port in the
-UDP tracker URL. Typically this starts with &quot;/announce&quot; The bittorrent client
+UDP tracker URL. Typically this starts with “/announce” The bittorrent client
 is not expected to append query string arguments for stats reporting, like
-&quot;uploaded&quot; and &quot;downloaded&quot; since this is already reported in the UDP tracker
+“uploaded” and “downloaded” since this is already reported in the UDP tracker
 protocol. However, the client is free to add arguments as extensions.|</p>
 <h2><a class="header" href="#credits" id="credits">Credits</a></h2>
 <p>Protocol designed by Olaf van der Spek and extended by Arvid Norberg</p>
@@ -405,7 +668,7 @@ protocol. However, the client is free to add arguments as extensions.|</p>
 <tr><td align="left">https://www.bittorrent.org</td><td align="left">Official web site site hosting BEPs and other information about the protocol.</td></tr>
 <tr><td align="left">https://wiki.theory.org/index.php/Main_Page</td><td align="left">Wiki with lots of information about all aspects of the BitTorrent protocol and implementations.</td></tr>
 <tr><td align="left">https://archive.org/details/2014_torrent_archive_organized)</td><td align="left">Massive 158 GiB archive containing 5.5 million torrents, assembled in 2014.</td></tr>
-<tr><td align="left">https://github.com/internetarchive/dweb-transport</td><td align="left">Github repository hosting The Internet Archive's distributed web and BitTorrent-related software.</td></tr>
+<tr><td align="left">https://github.com/internetarchive/dweb-transport</td><td align="left">Github repository hosting The Internet Archive’s distributed web and BitTorrent-related software.</td></tr>
 <tr><td align="left">https://libtorrent.org/udp_tracker_protocol.html</td><td align="left">UDP tracker protocol description.</td></tr>
 </tbody></table>
 <h1><a class="header" href="#metadata" id="metadata">Metadata</a></h1>
