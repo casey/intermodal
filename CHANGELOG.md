@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-10
 -----------------------
-- :package: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve install.sh and documentation ([#352](https://github.com/casey/intermodal/pull/352)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :bug: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Prevent progress bar from overflowing ([#353](https://github.com/casey/intermodal/pull/353)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :package: [`a67eb72848c9`](https://github.com/casey/intermodal/commit/a67eb72848c9f30513fde2849e1f07a332931e6c) Improve install.sh and documentation ([#352](https://github.com/casey/intermodal/pull/352)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`e54bdeb95d93`](https://github.com/casey/intermodal/commit/e54bdeb95d932bd5f81870f34999de37b615a69d) Remove use of unreachable in favor of internal errors ([#351](https://github.com/casey/intermodal/pull/351)) - Fixes [#188](https://github.com/casey/intermodal/issues/188) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`52b78b90f675`](https://github.com/casey/intermodal/commit/52b78b90f6751a72a64074619fbf19df2988ac14) Improve badges ([#350](https://github.com/casey/intermodal/pull/350)) - _Casey Rodarmor <casey@rodarmor.com>_
 

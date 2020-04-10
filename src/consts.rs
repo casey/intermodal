@@ -61,7 +61,7 @@ pub(crate) const TICK_CHARS: &str = concat!(
   "⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿", // 0b1111----
 );
 
-pub(crate) const PROGRESS_STYLE: &str = "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{bar:.cyan}⟧ \
+pub(crate) const PROGRESS_STYLE: &str = "{spinner:.green} ⟪{elapsed_precise}⟫ ⟦{wide_bar:.cyan}⟧ \
                                          {binary_bytes}/{binary_total_bytes} \
                                          ⟨{binary_bytes_per_sec}, {eta}⟩";
 
