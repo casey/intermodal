@@ -1,6 +1,6 @@
 # `imdl completions`
 ```
-imdl-completions 0.1.3
+imdl-completions 0.1.4
 Print shell completion scripts to standard output.
 
 USAGE:
