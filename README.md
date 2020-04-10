@@ -32,9 +32,8 @@ For more about the project and its goals, check out [this post](https://rodarmor
 
 #### Supported Operating Systems
 
-`imdl` supports both unix and Windows. It is tested on Linux, MacOS, and
-Windows, but should work on other unix OSs. If it does not, please open an
-issue!
+`imdl` supports Linux, MacOS, and Windows, and should work on other unix OSes.
+If it does not, please open an issue!
 
 #### Pre-built binaries
 
@@ -42,11 +41,34 @@ Pre-built binaries for Linux, macOS, and Windows can be found on
 [the releases page](https://github.com/casey/intermodal/releases).
 
 You can use the following command to download the latest binary for Linux,
-MacOS or Windows, just replace `DEST` with the directory where you'd like to
+MacOS, or Windows, just replace `DEST` with the directory where you'd like to
 install the `imdl` binary:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://imdl.io/install.sh | bash -s -- --to DEST
+```
+
+A good place to install personal binaries is `~/bin`, which `install.sh` uses
+when `--to` is not supplied. To create the `~/bin` directory and install `imdl`
+there, do:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://imdl.io/install.sh | bash
+```
+
+Additionally, you'll have to add `~/bin` to the `PATH` environment variable,
+which the system uses to find executables. How to do this depends on the shell.
+
+For `sh`, `bash`, and `zsh`, it should be done in `~/.profile`:
+
+```sh
+echo 'export PATH=$HOME/bin:$PATH' >> ~/.profile
+```
+
+For `fish`, it should be done in `~/.config/fish/config.fish`:
+
+```fish
+echo 'set -gx PATH ~/bin $PATH' >> ~/.config/fish/config.fish
 ```
 
 #### Cargo
