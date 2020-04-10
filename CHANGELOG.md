@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-10
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve badges - _Casey Rodarmor <casey@rodarmor.com>_
+- :art: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Remove use of unreachable in favor of internal errors ([#351](https://github.com/casey/intermodal/pull/351)) - Fixes [#188](https://github.com/casey/intermodal/issues/188) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`52b78b90f675`](https://github.com/casey/intermodal/commit/52b78b90f6751a72a64074619fbf19df2988ac14) Improve badges ([#350](https://github.com/casey/intermodal/pull/350)) - _Casey Rodarmor <casey@rodarmor.com>_
 
 
 [v0.1.3](https://github.com/casey/intermodal/releases/tag/v0.1.3) - 2020-04-10

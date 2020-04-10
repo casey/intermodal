@@ -17,7 +17,7 @@ impl PieceLength {
       "Content".into(),
       "Piece Length".into(),
       "Count".into(),
-      "Metainfo Size".into(),
+      "Piece List Size".into(),
     ));
 
     for i in 14..51 {

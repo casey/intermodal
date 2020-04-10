@@ -19,7 +19,7 @@ stats PATH:
 	cargo build --release
 	time ./target/release/imdl --unstable torrent stats --input {{PATH}}
 
-push: check
+push:
 	! git branch | grep '* master'
 	git push github
 
@@ -36,7 +36,7 @@ test:
 	cargo test --all
 
 clippy:
-	RUSTFLAGS="-D warnings" cargo clippy --all
+	cargo clippy --all
 
 fmt:
 	cargo +nightly fmt --all
@@ -98,7 +98,7 @@ check: test clippy lint check-minimal-versions changelog-update
 draft: push
 	hub pull-request -o --draft
 
-pr: push
+pr: check push
 	hub pull-request -o
 
 merge:
@@ -110,7 +110,6 @@ merge:
 	just done
 
 update: man changelog-update update-toc
-	cargo update
 
 publish-check: check check-man
 	cargo outdated --exit-code 1

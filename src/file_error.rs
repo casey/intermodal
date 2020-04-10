@@ -88,7 +88,12 @@ impl Print for FileError {
       Self::Directory => write!(stream, "Expected file but found directory")?,
       Self::Surfeit(difference) => write!(stream, "{} too long", difference)?,
       Self::Dearth(difference) => write!(stream, "{} too short", difference)?,
-      Self::Md5 { .. } => unreachable!(),
+      Self::Md5 { .. } => {
+        return Err(io::Error::new(
+          io::ErrorKind::Other,
+          Error::internal("Reached unreachable branch").to_string(),
+        ))
+      }
     }
 
     Ok(())

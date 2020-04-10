@@ -176,7 +176,7 @@ impl From<walkdir::Error> for Error {
     if let Some(source) = walkdir_error.into_io_error() {
       Self::Filesystem { source, path }
     } else {
-      unreachable!("Encountered unexpected walkdir error")
+      Self::internal("Encountered walkdir error without source")
     }
   }
 }
