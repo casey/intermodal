@@ -2,9 +2,14 @@ Changelog
 =========
 
 
+UNRELEASED - 2020-04-10
+-----------------------
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve badges - _Casey Rodarmor <casey@rodarmor.com>_
+
+
 [v0.1.3](https://github.com/casey/intermodal/releases/tag/v0.1.3) - 2020-04-10
 ------------------------------------------------------------------------------
-- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.3 - _Casey Rodarmor <casey@rodarmor.com>_
+- :bookmark: [`8e6a2b0034de`](https://github.com/casey/intermodal/commit/8e6a2b0034debaf60a13f1cea3fa75d92f5d9b50) Release v0.1.3 - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`268c62b66d46`](https://github.com/casey/intermodal/commit/268c62b66d46e033786612ce1e85c3c8ee21933a) Add `bin/man` command for generating man pages - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`14fff1d888a3`](https://github.com/casey/intermodal/commit/14fff1d888a3d4aebd88059feacde5c665019f30) Make smaller demo for readme - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`4f8b6a212e80`](https://github.com/casey/intermodal/commit/4f8b6a212e8099ebfcf14600ce92863583758231) Improve demo GIF - _Casey Rodarmor <casey@rodarmor.com>_

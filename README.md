@@ -1,8 +1,9 @@
 # intermodal: a 40' shipping container for the Internet
 
-[![Crate](https://img.shields.io/crates/v/imdl.svg)](https://crates.io/crates/imdl)
+[![Crate](https://img.shields.io/crates/v/imdl.svg?logo=rust)](https://crates.io/crates/imdl)
 [![Build](https://github.com/casey/intermodal/workflows/Build/badge.svg)](https://github.com/casey/intermodal/actions)
-[![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord)](https://discord.gg/HaaT5Qz)
+[![Book](https://img.shields.io/static/v1?logo=read-the-docs&label=book&message=imdl.io&color=informational)](https://imdl.io/book/)
+[![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord&color=7289da)](https://discord.gg/HaaT5Qz)
 
 Intermodal is a user-friendly and featureful command-line BitTorrent metainfo utility. The binary is called `imdl` and runs on Linux, Windows, and macOS.
 
