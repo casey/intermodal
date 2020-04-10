@@ -4,7 +4,7 @@ set -eu
 
 help() {
   cat <<'EOF'
-Install a binary release of a imdl hosted on GitHub
+Install a binary release of `imdl` hosted on GitHub
 
 Usage:
     install [options]
@@ -12,13 +12,14 @@ Usage:
 Options:
     -h, --help      Display this message
     -f, --force     Force overwriting an existing binary
-    --tag TAG       Tag (version) of the crate to install (default <latest release>)
-    --to LOCATION   Where to install the binary (default ~/.cargo/bin)
+    --tag TAG       Tag (version) to install (default <latest release>)
+    --to LOCATION   Where to install the binary (default ~/bin)
 EOF
 }
 
 git=casey/intermodal
 crate=imdl
+bin=imdl
 url=https://github.com/casey/intermodal
 releases=$url/releases
 
@@ -66,7 +67,7 @@ while test $# -gt 0; do
       shift
       ;;
     --to)
-      dest=$2
+      dst=$2
       shift
       ;;
     *)
@@ -89,8 +90,8 @@ if [ -z ${tag-} ]; then
   need rev
 fi
 
-if [ -z ${dest-} ]; then
-  dest="$HOME/.cargo/bin"
+if [ -z ${dst-} ]; then
+  dst="$HOME/bin"
 fi
 
 if [ -z ${tag-} ]; then
@@ -103,21 +104,17 @@ say_err "Repository:  $url"
 say_err "Crate:       $crate"
 say_err "Tag:         $tag"
 say_err "Target:      $target"
-say_err "Destination: $dest"
+say_err "Destination: $dst"
 say_err "Archive:     $archive"
 
 td=$(mktemp -d || mktemp -d -t tmp)
 curl -sL $archive | tar -C $td -xz
 
-for f in $(ls $td); do
-  test -x $td/$f || continue
-
-  if [ -e "$dest/$f" ] && [ $force = false ]; then
-    err "$f already exists in $dest"
-  else
-    mkdir -p $dest
-    install -m 755 $td/$f $dest
-  fi
-done
+if [ -e "$dst/$bin" ] && [ $force = false ]; then
+  err "$bin already exists in $dst"
+else
+  mkdir -p $dst
+  install -m 755 $td/$bin $dst
+fi
 
 rm -rf $td
