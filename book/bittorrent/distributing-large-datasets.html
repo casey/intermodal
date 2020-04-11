@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Distributing Large Datasets - Intermodal</title>
+        
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+        <link rel="stylesheet" href="../custom.css">
+        
+
+        
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../commands.html"><strong aria-hidden="true">1.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../commands/imdl.html"><strong aria-hidden="true">1.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="../commands/imdl-completions.html"><strong aria-hidden="true">1.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent.html"><strong aria-hidden="true">1.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-create.html"><strong aria-hidden="true">1.4.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-link.html"><strong aria-hidden="true">1.5.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">1.6.</strong> imdl torrent piece length</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-show.html"><strong aria-hidden="true">1.7.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-stats.html"><strong aria-hidden="true">1.8.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-verify.html"><strong aria-hidden="true">1.9.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">2.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/distributing-large-datasets.html" class="active"><strong aria-hidden="true">2.1.</strong> Distributing Large Datasets</a></li><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">2.2.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/prior-art.html"><strong aria-hidden="true">2.3.</strong> Alternatives &amp; Prior Art</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">2.4.</strong> UDP Tracker Protocol</a></li><li class="chapter-item expanded "><a href="../bittorrent/references.html"><strong aria-hidden="true">2.5.</strong> References</a></li></ol></li><li class="chapter-item expanded "><a href="../metadata.html"><strong aria-hidden="true">3.</strong> Metadata</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../metadata/prior-art.html"><strong aria-hidden="true">3.1.</strong> Prior Art</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        
+                    </div>
+
+                    <h1 class="menu-title">Intermodal</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        
+                        <a href="https://github.com/casey/intermodal" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1><a class="header" href="#distributing-large-data-sets" id="distributing-large-data-sets">Distributing Large Data Sets</a></h1>
+<p>Even though BitTorrent is well-suited for distributing large amounts of data,
+very large torrents can still cause problems. Here are some of the problems you
+might encounter, as well as suggestions for how to avoid or ameliorate those
+issues.</p>
+<p>Intermodal currently uses a single-threaded piece hashing algorithm. If you’re
+distributing a large data set and hashing time is a problem, please open an
+issue! I’m eager to improve hashing performance, but want to make sure I do it
+in such a way that real workloads benefit.</p>
+<h2><a class="header" href="#background" id="background">Background</a></h2>
+<p>In order to support incremental download and verification, as well as
+resumption of partial downloads, the contents of a torrent are broken into
+pieces.</p>
+<p>The length of pieces varies is configurable, and the ideal choice of piece
+length depends on many factors, but values between 16KiB and 256KiB are common.
+Very large torrents may use much larger piece lengths, like 16MiB.</p>
+<p>Each piece is hashed, and <code>.torrent</code> files, also referred to as metainfo,
+contain a list of those hashes.</p>
+<p>For all the example commands, I’ll be using <code>dir</code> for the directory containing
+the data set you want to share.</p>
+<h2><a class="header" href="#issues" id="issues">Issues</a></h2>
+<h3><a class="header" href="#torrent-file-too-large" id="torrent-file-too-large"><code>.torrent</code> file too large</a></h3>
+<p>When the amount of data is large, or the piece length is small, the number of
+pieces can make the <code>.torrent</code> file very big.</p>
+<p>To avoid this, you can either break the data into multiple torrents, or make
+the piece length larger, so the <code>.torrent</code> file contains fewer pieces.</p>
+<h4><a class="header" href="#breaking-data-into-multiple-torrents" id="breaking-data-into-multiple-torrents">Breaking data into multiple torrents</a></h4>
+<p><code>imdl torrent create</code> has a <code>--glob</code> option that can be used to control which
+files are included in a torrent. If your data set is divided into multiple
+files, ideally with a consistent naming scheme, this can be used to easily
+create multiple torrents with different subsets of the data.</p>
+<p>The name of the created torrent is usually derived from the name of the input,
+so the output torrent name should be given manually to avoid conflicts:</p>
+<pre><code>$ imdl torrent create -i dir -o a.torrent --glob 'dir/0*'
+$ imdl torrent create -i dir -o b.torrent --glob 'dir/1*'
+$ imdl torrent create -i dir -o c.torrent --glob 'dir/2*'
+# etc…
+</code></pre>
+<h4><a class="header" href="#making-the-piece-length-larger" id="making-the-piece-length-larger">Making the piece length larger</a></h4>
+<p><code>imdl</code> has an automatic piece length picker, which should choose a good piece
+length. You can see what choices it makes for different torrent sizes with:</p>
+<pre><code>$ imdl torrrent piece-length
+</code></pre>
+<p>Some torrent clients don’t do well with piece lengths over 16 MiB, so the piece
+length picker will never pick piece lengths over 16 MiB. This can be
+overridden by specifying <code>--piece-length</code> manually. <code>--piece-length</code> takes
+SI units, like <code>KiB</code>, <code>MiB</code>, and <code>KiB</code>:</p>
+<pre><code>$ imdl torrent create -i dir --piece-length 128mib
+</code></pre>
+<h3><a class="header" href="#too-many-files" id="too-many-files">Too many files</a></h3>
+<p>Torrents containing a large number of separate files can cause performance
+issues. It’s not clear if these performance issues are due to BitTorrent client
+implementations, host OS file system issues, or both.</p>
+<h4><a class="header" href="#distributing-your-data-set-as-an-iso-image" id="distributing-your-data-set-as-an-iso-image">Distributing your data set as an ISO image</a></h4>
+<p>By distributing your data set as an ISO image, all the files in your torrent
+will be packed into a single <code>.iso</code> file. Additionally, recipients of the ISO
+won’t have to decompress the whole data set to browse or extract individual
+files.</p>
+<p>You can create an ISO with <code>genisoimage</code>, which can be installed on Debian or
+Ubuntu with:</p>
+<pre><code>$ sudo apt install genisoimage
+</code></pre>
+<p>To create a compressed ISO containing your data set:</p>
+<pre><code>$ genisoimage                \
+    -transparent-compression \ # compress data in the ISO
+    -untranslated-filenames  \ # don't mangle filenames
+    -verbose                 \ # verbose output
+    -output data.iso         \ # output path
+    -V DATA_SET_NAME         \ # volume name
+    dir                      \ # input path
+</code></pre>
+<p>The same command, but with short flags:</p>
+<pre><code>$ genisoimage -zUvo data.iso -V DATA_SET_NAME dir
+</code></pre>
+<p>A torrent can then be created containing the ISO:</p>
+<pre><code>$ imdl torrent create --input data.iso
+</code></pre>
+<p>Users can mount and unmount the ISO on Linux:</p>
+<pre><code>$ sudo mkdir -p /mnt                   # create mount point
+$ sudo mount --read-only data.iso /mnt # mount ISO
+$ sudo umount /mnt                     # unmount when finished
+</code></pre>
+<p>Or MacOS:</p>
+<pre><code>$ hdiutil mount data.iso                 # mount ISO
+# hdiutil unmount /Volumes/DATA_SET_NAME # unmount when finished
+</code></pre>
+<p>On Windows, MacOS, and some Linux desktop environments, ISOs can also be
+mounted by double-clicking the file.</p>
+<h3><a class="header" href="#torrent-client-issues" id="torrent-client-issues">Torrent Client Issues</a></h3>
+<p>Some torrent clients don’t do well with torrents with large piece sizes, many
+files, or a large amount of data.</p>
+<h4><a class="header" href="#switch-to-a-libtorrent-based-client" id="switch-to-a-libtorrent-based-client">Switch to a <code>libtorrent</code>-based client</a></h4>
+<p>If you’re experiencing issues downloading a large data set, switching torrent
+clients may help.</p>
+<p>In my personal experience, torrent clients that use Arvid Norberg’s
+<code>libtorrent</code> have done well with large amounts of data.</p>
+<p><code>libtorrent</code>‘s <a href="https://en.wikipedia.org/wiki/Libtorrent">Wikipedia page</a> has a
+<a href="https://en.wikipedia.org/wiki/Libtorrent#Applications">list</a> of torrent
+clients that use <code>libtorrent</code>.</p>
+<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<p>If you have suggestions for this guide, please don’t hesitate to open an
+<a href="https://github.com/casey/intermodal/issues">issue</a>.</p>
+<p>In particular, if you’ve found particular torrent clients to be good or bad at
+downloading large data sets, or have run into issues or found solutions not
+covered by this guide, I would love to know!</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="../bittorrent.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="../bittorrent/bep-support.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a rel="prev" href="../bittorrent.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="../bittorrent/bep-support.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+        
+        
+        <script type="text/javascript">
+            window.playpen_copyable = true;
+        </script>
+        
+
+        
+
+        
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
