@@ -36,7 +36,21 @@ impl Env {
 
     Self::initialize_logging();
 
-    let args = Arguments::from_iter_safe(&self.args)?;
+    let app = Arguments::clap();
+
+    let width = env::var("IMDL_TERM_WIDTH")
+      .ok()
+      .and_then(|width| width.parse::<usize>().ok());
+
+    let app = if let Some(width) = width {
+      app.set_term_width(width)
+    } else {
+      app
+    };
+
+    let matches = app.get_matches_from_safe(&self.args)?;
+
+    let args = Arguments::from_clap(&matches);
 
     let use_color = args.options().use_color;
     self.err.set_use_color(use_color);

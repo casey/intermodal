@@ -32,8 +32,9 @@ impl CommandExt for Command {
 impl Subcommand {
   #[throws]
   pub(crate) fn new(bin: &str, command: Vec<String>) -> Self {
-    let help = Command::new(bin)
+    let wide_help = Command::new(bin)
       .args(command.as_slice())
+      .env("IMDL_TERM_WIDTH", "200")
       .arg("--help")
       .out()?;
 
@@ -41,8 +42,8 @@ impl Subcommand {
 
     let mut subcommands = Vec::new();
 
-    if let Some(marker) = help.find(MARKER) {
-      let block = &help[marker + MARKER.len()..];
+    if let Some(marker) = wide_help.find(MARKER) {
+      let block = &wide_help[marker + MARKER.len()..];
 
       for line in block.lines() {
         let name = line.trim().split_whitespace().next().unwrap();
@@ -62,7 +63,7 @@ impl Subcommand {
     let description = if command.is_empty() {
       "A 40' shipping container for the Internet".to_string()
     } else {
-      help.lines().nth(1).unwrap().into()
+      wide_help.lines().nth(1).unwrap().into()
     };
 
     let include = format!(
@@ -119,10 +120,16 @@ impl Subcommand {
 
     let man = re.replace(&man, ".SH").into_owned();
 
+    let narrow_help = Command::new(bin)
+      .args(command.as_slice())
+      .env("IMDL_TERM_WIDTH", "80")
+      .arg("--help")
+      .out()?;
+
     Self {
       bin: bin.into(),
+      help: narrow_help,
       command,
-      help,
       man,
       subcommands,
     }

@@ -11,6 +11,7 @@ FLAGS:
     -V, --version    Print version number.
 
 OPTIONS:
-    -s, --shell <SHELL>    Print completions for `SHELL`. [possible values: zsh, bash, fish, powershell, elvish]
+    -s, --shell <SHELL>    Print completions for `SHELL`. [possible values: zsh,
+                           bash, fish, powershell, elvish]
 
 ```
