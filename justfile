@@ -124,7 +124,7 @@ publish: publish-check
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
 	cargo publish
-	just done
+	just merge
 
 changelog-update:
 	cargo run --package changelog update

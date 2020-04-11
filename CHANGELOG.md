@@ -2,9 +2,14 @@ Changelog
 =========
 
 
+UNRELEASED - 2020-04-11
+-----------------------
+- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Fix `publish` recipe ([#368](https://github.com/casey/intermodal/pull/368)) - _Casey Rodarmor <casey@rodarmor.com>_
+
+
 [v0.1.5](https://github.com/casey/intermodal/releases/tag/v0.1.5) - 2020-04-11
 ------------------------------------------------------------------------------
-- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.5 ([#366](https://github.com/casey/intermodal/pull/366)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :bookmark: [`707fdea21d61`](https://github.com/casey/intermodal/commit/707fdea21d61b776640950fc84228a2271da02e5) Release v0.1.5 ([#366](https://github.com/casey/intermodal/pull/366)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :bug: [`727d5c102840`](https://github.com/casey/intermodal/commit/727d5c102840de552822afb82de7475a5183d1f5) Fix Z Shell completions ([#365](https://github.com/casey/intermodal/pull/365)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`f05807290b31`](https://github.com/casey/intermodal/commit/f05807290b314cd68e8679a9aba92e5cd3c5403d) Render command help text in book to avoid wrapping ([#364](https://github.com/casey/intermodal/pull/364)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`ed34ff48a740`](https://github.com/casey/intermodal/commit/ed34ff48a7406adb8b4cdb523b5dc1bf9435e1bc) Add `fuchsi/maketorrent` to prior art table ([#362](https://github.com/casey/intermodal/pull/362)) - _Casey Rodarmor <casey@rodarmor.com>_
