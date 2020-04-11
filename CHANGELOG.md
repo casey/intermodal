@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-11
 -----------------------
-- :white_check_mark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Test that `--glob`s match entire file paths ([#357](https://github.com/casey/intermodal/pull/357)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add suggestions for distributing large datasets to book ([#360](https://github.com/casey/intermodal/pull/360)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :white_check_mark: [`ff6f6d4c3de1`](https://github.com/casey/intermodal/commit/ff6f6d4c3de1a14c6b2ebef270c0ec542300f0de) Test that `--glob`s match entire file paths ([#357](https://github.com/casey/intermodal/pull/357)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`b914c175949f`](https://github.com/casey/intermodal/commit/b914c175949fa6063b6fb0428f4ebd66a51fdda3) Add buildtorretn to prior art section of book ([#355](https://github.com/casey/intermodal/pull/355)) - _Casey Rodarmor <casey@rodarmor.com>_
 
 
