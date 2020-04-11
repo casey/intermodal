@@ -2,9 +2,15 @@ Changelog
 =========
 
 
+UNRELEASED - 2020-04-11
+-----------------------
+- :white_check_mark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Test that `--glob`s match entire file paths ([#357](https://github.com/casey/intermodal/pull/357)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`b914c175949f`](https://github.com/casey/intermodal/commit/b914c175949fa6063b6fb0428f4ebd66a51fdda3) Add buildtorretn to prior art section of book ([#355](https://github.com/casey/intermodal/pull/355)) - _Casey Rodarmor <casey@rodarmor.com>_
+
+
 [v0.1.4](https://github.com/casey/intermodal/releases/tag/v0.1.4) - 2020-04-10
 ------------------------------------------------------------------------------
-- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.4 ([#354](https://github.com/casey/intermodal/pull/354)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :bookmark: [`f070c62b12f5`](https://github.com/casey/intermodal/commit/f070c62b12f55909c62d461095605f096715b475) Release v0.1.4 ([#354](https://github.com/casey/intermodal/pull/354)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :bug: [`4dfe537fa515`](https://github.com/casey/intermodal/commit/4dfe537fa515186a6fc65485c6bea16ccd611231) Prevent progress bar from overflowing ([#353](https://github.com/casey/intermodal/pull/353)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :package: [`a67eb72848c9`](https://github.com/casey/intermodal/commit/a67eb72848c9f30513fde2849e1f07a332931e6c) Improve install.sh and documentation ([#352](https://github.com/casey/intermodal/pull/352)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`e54bdeb95d93`](https://github.com/casey/intermodal/commit/e54bdeb95d932bd5f81870f34999de37b615a69d) Remove use of unreachable in favor of internal errors ([#351](https://github.com/casey/intermodal/pull/351)) - Fixes [#188](https://github.com/casey/intermodal/issues/188) - _Casey Rodarmor <casey@rodarmor.com>_

@@ -2084,6 +2084,38 @@ Content Size  9 bytes
   }
 
   #[test]
+  fn glob_entire_path() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "http://bar",
+        "--glob",
+        "x*",
+      ],
+      tree: {
+        foo: {
+          a: "a",
+          x: {
+            y: "yyy",
+          },
+          c: "c",
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["yyy"]));
+  }
+
+  #[test]
   fn glob_precedence() {
     let mut env = test_env! {
       args: [
