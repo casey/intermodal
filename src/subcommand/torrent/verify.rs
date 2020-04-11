@@ -7,7 +7,7 @@ mod verify_step;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Verify files against a `.torrent` file.")
+  about("Verify files against a .torrent file.")
 )]
 pub(crate) struct Verify {
   #[structopt(

@@ -9,7 +9,7 @@ mod create_step;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Create a `.torrent` file.")
+  about("Create a .torrent file.")
 )]
 pub(crate) struct Create {
   #[structopt(

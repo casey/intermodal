@@ -4,7 +4,7 @@ use crate::common::*;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Display information about a `.torrent` file.")
+  about("Display information about a .torrent file.")
 )]
 pub(crate) struct Show {
   #[structopt(

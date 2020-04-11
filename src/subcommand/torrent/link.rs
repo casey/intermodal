@@ -4,7 +4,7 @@ use crate::common::*;
 #[structopt(
   help_message(consts::HELP_MESSAGE),
   version_message(consts::VERSION_MESSAGE),
-  about("Generate a magnet link from a `.torrent` file.")
+  about("Generate a magnet link from a .torrent file.")
 )]
 pub(crate) struct Link {
   #[structopt(

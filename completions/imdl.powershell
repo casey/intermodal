@@ -36,12 +36,12 @@ Register-ArgumentCompleter -Native -CommandName 'imdl' -ScriptBlock {
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Print version number.')
             [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Print version number.')
-            [CompletionResult]::new('create', 'create', [CompletionResultType]::ParameterValue, 'Create a `.torrent` file.')
-            [CompletionResult]::new('link', 'link', [CompletionResultType]::ParameterValue, 'Generate a magnet link from a `.torrent` file.')
+            [CompletionResult]::new('create', 'create', [CompletionResultType]::ParameterValue, 'Create a .torrent file.')
+            [CompletionResult]::new('link', 'link', [CompletionResultType]::ParameterValue, 'Generate a magnet link from a .torrent file.')
             [CompletionResult]::new('piece-length', 'piece-length', [CompletionResultType]::ParameterValue, 'Display information about automatic piece length selection.')
-            [CompletionResult]::new('show', 'show', [CompletionResultType]::ParameterValue, 'Display information about a `.torrent` file.')
-            [CompletionResult]::new('stats', 'stats', [CompletionResultType]::ParameterValue, 'Show statistics about a collection of `.torrent` files.')
-            [CompletionResult]::new('verify', 'verify', [CompletionResultType]::ParameterValue, 'Verify files against a `.torrent` file.')
+            [CompletionResult]::new('show', 'show', [CompletionResultType]::ParameterValue, 'Display information about a .torrent file.')
+            [CompletionResult]::new('stats', 'stats', [CompletionResultType]::ParameterValue, 'Show statistics about a collection of .torrent files.')
+            [CompletionResult]::new('verify', 'verify', [CompletionResultType]::ParameterValue, 'Verify files against a .torrent file.')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Prints this message or the help of the given subcommand(s)')
             break
         }

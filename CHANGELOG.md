@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-11
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Render command help text in book to avoid wrapping ([#364](https://github.com/casey/intermodal/pull/364)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :bug: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Fix Z Shell completions ([#365](https://github.com/casey/intermodal/pull/365)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`f05807290b31`](https://github.com/casey/intermodal/commit/f05807290b314cd68e8679a9aba92e5cd3c5403d) Render command help text in book to avoid wrapping ([#364](https://github.com/casey/intermodal/pull/364)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`ed34ff48a740`](https://github.com/casey/intermodal/commit/ed34ff48a7406adb8b4cdb523b5dc1bf9435e1bc) Add `fuchsi/maketorrent` to prior art table ([#362](https://github.com/casey/intermodal/pull/362)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`a3f46187229f`](https://github.com/casey/intermodal/commit/a3f46187229f499e7a13ec5ce656408ba95d1dcc) Rename distributing large datasets ([#361](https://github.com/casey/intermodal/pull/361)) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`1c9ff0cde491`](https://github.com/casey/intermodal/commit/1c9ff0cde4910f369e75930257ce92a8cf4c6cd5) Add suggestions for distributing large datasets to book ([#360](https://github.com/casey/intermodal/pull/360)) - _Casey Rodarmor <casey@rodarmor.com>_

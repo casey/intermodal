@@ -1,7 +1,7 @@
 # `imdl torrent show`
 ```
 imdl-torrent-show 0.1.4
-Display information about a `.torrent` file.
+Display information about a .torrent file.
 
 USAGE:
     imdl torrent show --input <PATH>

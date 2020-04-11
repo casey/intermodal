@@ -30,12 +30,12 @@ edit:completion:arg-completer[imdl] = [@words]{
             cand --help 'Print help message.'
             cand -V 'Print version number.'
             cand --version 'Print version number.'
-            cand create 'Create a `.torrent` file.'
-            cand link 'Generate a magnet link from a `.torrent` file.'
+            cand create 'Create a .torrent file.'
+            cand link 'Generate a magnet link from a .torrent file.'
             cand piece-length 'Display information about automatic piece length selection.'
-            cand show 'Display information about a `.torrent` file.'
-            cand stats 'Show statistics about a collection of `.torrent` files.'
-            cand verify 'Verify files against a `.torrent` file.'
+            cand show 'Display information about a .torrent file.'
+            cand stats 'Show statistics about a collection of .torrent files.'
+            cand verify 'Verify files against a .torrent file.'
             cand help 'Prints this message or the help of the given subcommand(s)'
         }
         &'imdl;torrent;create'= {

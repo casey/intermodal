@@ -1,7 +1,7 @@
 # `imdl torrent stats`
 ```
 imdl-torrent-stats 0.1.4
-Show statistics about a collection of `.torrent` files.
+Show statistics about a collection of .torrent files.
 
 USAGE:
     imdl torrent stats [FLAGS] [OPTIONS] --input <PATH>

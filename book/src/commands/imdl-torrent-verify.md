@@ -1,7 +1,7 @@
 # `imdl torrent verify`
 ```
 imdl-torrent-verify 0.1.4
-Verify files against a `.torrent` file.
+Verify files against a .torrent file.
 
 USAGE:
     imdl torrent verify [OPTIONS] --input <METAINFO>

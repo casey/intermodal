@@ -1,7 +1,7 @@
 # `imdl torrent link`
 ```
 imdl-torrent-link 0.1.4
-Generate a magnet link from a `.torrent` file.
+Generate a magnet link from a .torrent file.
 
 USAGE:
     imdl torrent link [FLAGS] [OPTIONS] --input <METAINFO>
