@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-11
+UNRELEASED - 2020-04-12
 -----------------------
-- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Fix `publish` recipe ([#368](https://github.com/casey/intermodal/pull/368)) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add table of packages to readme ([#372](https://github.com/casey/intermodal/pull/372)) - Fixes [#369](https://github.com/casey/intermodal/issues/369) - _Casey Rodarmor <casey@rodarmor.com>_
+- :wrench: [`ddf097c83690`](https://github.com/casey/intermodal/commit/ddf097c8369002748992165f81e9a1bdbe6eff98) Fix `publish` recipe ([#368](https://github.com/casey/intermodal/pull/368)) - _Casey Rodarmor <casey@rodarmor.com>_
 
 
 [v0.1.5](https://github.com/casey/intermodal/releases/tag/v0.1.5) - 2020-04-11

@@ -18,6 +18,7 @@ For more about the project and its goals, check out [this post](https://rodarmor
 - [General](#general)
   - [Installation](#installation)
     - [Supported Operating Systems](#supported-operating-systems)
+    - [Packages](#packages)
     - [Pre-built binaries](#pre-built-binaries)
     - [Cargo](#cargo)
   - [Shell Completion Scripts](#shell-completion-scripts)
@@ -34,6 +35,13 @@ For more about the project and its goals, check out [this post](https://rodarmor
 
 `imdl` supports Linux, MacOS, and Windows, and should work on other unix OSes.
 If it does not, please open an issue!
+
+#### Packages
+
+| Operating System                                                     | Package Manager                     | Package                                                                   | Command              |
+|:--------------------------------------------------------------------:|:-----------------------------------:|:-------------------------------------------------------------------------:|---------------------:|
+| [Various](https://forge.rust-lang.org/release/platform-support.html) | [Cargo](https://www.rust-lang.org)  | [imdl](https://crates.io/crates/imdl)                                     | `cargo install imdl` |
+| [Arch Linux](https://www.archlinux.org)                              | [Yay](https://github.com/Jguer/yay) | [intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup> | `yay -S intermodal`  |
 
 #### Pre-built binaries
 
