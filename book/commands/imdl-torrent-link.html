@@ -168,9 +168,13 @@ FLAGS:
     -V, --version    Print version number.
 
 OPTIONS:
-    -i, --input &lt;METAINFO&gt;    Generate magnet link from metainfo at `PATH`. If
-                              `PATH` is `-`, read metainfo from standard input.
-    -p, --peer &lt;PEER&gt;...      Add `PEER` to magnet link.
+    -s, --select-only &lt;INDICES&gt;...
+            Specify files that torrent clients select for download. Values are
+            indices into the info.files list. e.g. `--select-only 1,2,3`
+    -i, --input &lt;METAINFO&gt;
+            Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read
+            metainfo from standard input.
+    -p, --peer &lt;PEER&gt;...              Add `PEER` to magnet link.
 
 </code></pre>
 
