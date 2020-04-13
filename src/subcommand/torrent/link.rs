@@ -21,7 +21,7 @@ pub(crate) struct Link {
     long = "open",
     short = "O",
     help = "Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; \
-            `open` on macOS; and `cmd /C start` on Windows"
+            `open` on macOS; and `cmd /C start` on Windows."
   )]
   open: bool,
   #[structopt(
@@ -31,6 +31,15 @@ pub(crate) struct Link {
     help = "Add `PEER` to magnet link."
   )]
   peers: Vec<HostPort>,
+  #[structopt(
+    long = "select-only",
+    short = "s",
+    value_name = "INDICES",
+    use_delimiter = true,
+    help = "Select files to download. Values are indices into the `info.files` list, e.g. \
+            `--select-only 1,2,3`."
+  )]
+  indices: Vec<u64>,
 }
 
 impl Link {
@@ -50,6 +59,10 @@ impl Link {
 
     for peer in self.peers {
       link.add_peer(peer);
+    }
+
+    for index in self.indices {
+      link.add_index(index);
     }
 
     let url = link.to_url();
@@ -189,6 +202,42 @@ mod tests {
       env.out(),
       format!(
         "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce&x.pe=foo.com:1337\n",
+        infohash
+      ),
+    );
+  }
+
+  #[test]
+  fn with_indices() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "link",
+        "--input",
+        "foo.torrent",
+        "--select-only",
+        "2,4",
+        "--select-only",
+        "4,6",
+      ],
+      tree: {
+        "foo.torrent": "d\
+          8:announce24:https://foo.com/announce\
+          4:infod6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e\
+        e",
+      }
+    };
+
+    env.assert_ok();
+
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
+    let infohash = Sha1Digest::from_data(INFO.as_bytes());
+
+    assert_eq!(
+      env.out(),
+      format!(
+        "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce&so=2,4,6\n",
         infohash
       ),
     );

@@ -19,6 +19,10 @@ and `cmd \fI\,/C\/\fP start` on Windows
 Print version number.
 .SH "OPTIONS:"
 .TP
+\fB\-s\fR, \fB\-\-select\-only\fR <INDICES>...
+Specify files that torrent clients select for download. Values are indices into
+the info.files list. e.g. `\-\-select\-only 1,2,3`
+.TP
 \fB\-i\fR, \fB\-\-input\fR <METAINFO>
 Generate magnet link from metainfo at `PATH`. If `PATH` is `\-`, read metainfo from
 standard input.

@@ -5,6 +5,7 @@ pub(crate) struct MagnetLink {
   name: Option<String>,
   peers: Vec<HostPort>,
   trackers: Vec<Url>,
+  indices: BTreeSet<u64>,
 }
 
 impl MagnetLink {
@@ -26,6 +27,7 @@ impl MagnetLink {
       name: None,
       peers: Vec::new(),
       trackers: Vec::new(),
+      indices: BTreeSet::new(),
     }
   }
 
@@ -41,6 +43,10 @@ impl MagnetLink {
 
   pub(crate) fn add_tracker(&mut self, tracker: Url) {
     self.trackers.push(tracker);
+  }
+
+  pub(crate) fn add_index(&mut self, index: u64) {
+    self.indices.insert(index);
   }
 
   pub(crate) fn to_url(&self) -> Url {
@@ -61,6 +67,16 @@ impl MagnetLink {
     for peer in &self.peers {
       query.push_str("&x.pe=");
       query.push_str(&peer.to_string());
+    }
+
+    if !self.indices.is_empty() {
+      query.push_str("&so=");
+      for (i, selection_index) in self.indices.iter().enumerate() {
+        if i > 0 {
+          query.push(',');
+        }
+        query.push_str(&selection_index.to_string());
+      }
     }
 
     url.set_query(Some(&query));
@@ -126,6 +142,19 @@ mod tests {
     assert_eq!(
       link.to_url().as_str(),
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
+    );
+  }
+
+  #[test]
+  fn with_indices() {
+    let mut link = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
+    link.add_index(4);
+    link.add_index(6);
+    link.add_index(6);
+    link.add_index(2);
+    assert_eq!(
+      link.to_url().as_str(),
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&so=2,4,6"
     );
   }
 

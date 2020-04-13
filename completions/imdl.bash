@@ -245,7 +245,7 @@ _imdl() {
             return 0
             ;;
         imdl__torrent__link)
-            opts=" -O -h -V -i -p  --open --help --version --input --peer  "
+            opts=" -O -h -V -i -p -s  --open --help --version --input --peer --select-only  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -265,6 +265,14 @@ _imdl() {
                     return 0
                     ;;
                     -p)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --select-only)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                    -s)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;

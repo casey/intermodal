@@ -135,8 +135,10 @@ _arguments "${_arguments_options[@]}" \
 '--input=[Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from standard input.]' \
 '*-p+[Add `PEER` to magnet link.]' \
 '*--peer=[Add `PEER` to magnet link.]' \
-'-O[Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start` on Windows]' \
-'--open[Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start` on Windows]' \
+'*-s+[Select files to download. Values are indices into the `info.files` list, e.g. `--select-only 1,2,3`.]' \
+'*--select-only=[Select files to download. Values are indices into the `info.files` list, e.g. `--select-only 1,2,3`.]' \
+'-O[Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start` on Windows.]' \
+'--open[Open generated magnet link. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start` on Windows.]' \
 '-h[Print help message.]' \
 '--help[Print help message.]' \
 '-V[Print version number.]' \
