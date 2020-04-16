@@ -264,6 +264,16 @@ impl Create {
       return Err(Error::PrivateTrackerless);
     }
 
+    let creation_date = if self.no_creation_date {
+      None
+    } else {
+      Some(
+        SystemTime::now()
+          .duration_since(SystemTime::UNIX_EPOCH)?
+          .as_secs(),
+      )
+    };
+
     CreateStep::Searching { input: &self.input }.print(env)?;
 
     let content = CreateContent::from_create(&self, env)?;
@@ -294,16 +304,6 @@ impl Create {
     }
 
     let private = if self.private { Some(true) } else { None };
-
-    let creation_date = if self.no_creation_date {
-      None
-    } else {
-      Some(
-        SystemTime::now()
-          .duration_since(SystemTime::UNIX_EPOCH)?
-          .as_secs(),
-      )
-    };
 
     let created_by = if self.no_created_by {
       None
