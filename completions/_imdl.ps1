@@ -125,6 +125,7 @@ Sort in ascending order by size, break ties in descending path order:
             [CompletionResult]::new('--private', 'private', [CompletionResultType]::ParameterName, 'Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information.')
             [CompletionResult]::new('-S', 'S', [CompletionResultType]::ParameterName, 'Display information about created torrent file.')
             [CompletionResult]::new('--show', 'show', [CompletionResultType]::ParameterName, 'Display information about created torrent file.')
+            [CompletionResult]::new('--ignore', 'ignore', [CompletionResultType]::ParameterName, 'Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config --get core.excludesFile`.')
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Print version number.')
             [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Print version number.')

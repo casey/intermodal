@@ -26,6 +26,8 @@ pub(crate) enum Error {
   FileOrderUnknown { text: String },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { source: io::Error, path: PathBuf },
+  #[snafu(display("Error searching for files: {}", source))]
+  FileSearch { source: ignore::Error },
   #[snafu(display("Invalid glob: {}", source))]
   GlobParse { source: globset::Error },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
@@ -171,17 +173,10 @@ impl From<SystemTimeError> for Error {
   }
 }
 
-impl From<walkdir::Error> for Error {
-  fn from(walkdir_error: walkdir::Error) -> Self {
-    let path = walkdir_error
-      .path()
-      .invariant_unwrap("Walkdir errors always have path")
-      .to_owned();
-
-    if let Some(source) = walkdir_error.into_io_error() {
-      Self::Filesystem { source, path }
-    } else {
-      Self::internal("Encountered walkdir error without source")
+impl From<ignore::Error> for Error {
+  fn from(ignore_error: ignore::Error) -> Self {
+    Self::FileSearch {
+      source: ignore_error,
     }
   }
 }

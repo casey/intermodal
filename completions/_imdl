@@ -127,6 +127,7 @@ Sort in ascending order by size, break ties in descending path order:
 '--private[Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information.]' \
 '-S[Display information about created torrent file.]' \
 '--show[Display information about created torrent file.]' \
+'--ignore[Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config --get core.excludesFile`.]' \
 '--help[Print help message.]' \
 '-V[Print version number.]' \
 '--version[Print version number.]' \

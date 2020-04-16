@@ -14,6 +14,9 @@ FLAGS:
     -f, --force               Overwrite the destination `.torrent` file, if it
                               exists.
         --help                Print help message.
+        --ignore              Skip files listed in `.gitignore`, `.ignore`,
+                              `.git/info/exclude`, and `git config --get
+                              core.excludesFile`.
     -h, --include-hidden      Include hidden files that would otherwise be
                               skipped, such as files that start with a `.`, and
                               files hidden by file attributes on macOS and

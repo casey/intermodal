@@ -66,6 +66,7 @@ complete -c imdl -n "__fish_seen_subcommand_from create" -l no-creation-date -d 
 complete -c imdl -n "__fish_seen_subcommand_from create" -s O -l open -d 'Open `.torrent` file after creation. Uses `xdg-open`, `gnome-open`, or `kde-open` on Linux; `open` on macOS; and `cmd /C start` on Windows'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s P -l private -d 'Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s S -l show -d 'Display information about created torrent file.'
+complete -c imdl -n "__fish_seen_subcommand_from create" -l ignore -d 'Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config --get core.excludesFile`.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -l help -d 'Print help message.'
 complete -c imdl -n "__fish_seen_subcommand_from create" -s V -l version -d 'Print version number.'
 complete -c imdl -n "__fish_seen_subcommand_from link" -s i -l input -d 'Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from standard input.'

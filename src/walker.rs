@@ -12,6 +12,7 @@ pub(crate) struct Walker {
   follow_symlinks: bool,
   include_hidden: bool,
   include_junk: bool,
+  ignore: bool,
   sort_by: Vec<SortSpec>,
   patterns: Vec<Pattern>,
   root: PathBuf,
@@ -24,6 +25,7 @@ impl Walker {
       follow_symlinks: false,
       include_hidden: false,
       include_junk: false,
+      ignore: false,
       sort_by: Vec::new(),
       patterns: Vec::new(),
       root: root.to_owned(),
@@ -43,6 +45,10 @@ impl Walker {
       include_hidden,
       ..self
     }
+  }
+
+  pub(crate) fn ignore(self, ignore: bool) -> Self {
+    Self { ignore, ..self }
   }
 
   pub(crate) fn sort_by(self, sort_by: Vec<SortSpec>) -> Self {
@@ -94,7 +100,17 @@ impl Walker {
       return Ok(Files::file(self.root, Bytes::from(root_metadata.len())));
     }
 
-    let filter = |entry: &walkdir::DirEntry| {
+    let mut file_infos = Vec::new();
+    let mut total_size = 0;
+
+    let mut walk_builder = WalkBuilder::new(&self.root);
+    walk_builder
+      .follow_links(self.follow_symlinks)
+      .standard_filters(self.ignore)
+      .require_git(false)
+      .hidden(!self.include_hidden);
+    for result in walk_builder.build() {
+      let entry = result?;
       let path = entry.path();
 
       if let Some(s) = &self.spinner {
@@ -102,32 +118,6 @@ impl Walker {
         s.set_message(&display_path.display().to_string());
         s.tick();
       }
-
-      let file_name = entry.file_name();
-
-      if !self.include_hidden && file_name.to_string_lossy().starts_with('.') {
-        return false;
-      }
-
-      let hidden = Platform::hidden(path).unwrap_or(true);
-
-      if !self.include_hidden && hidden {
-        return false;
-      }
-
-      true
-    };
-
-    let mut file_infos = Vec::new();
-    let mut total_size = 0;
-    for result in WalkDir::new(&self.root)
-      .follow_links(self.follow_symlinks)
-      .into_iter()
-      .filter_entry(filter)
-    {
-      let entry = result?;
-
-      let path = entry.path();
 
       let metadata = entry.metadata()?;
 

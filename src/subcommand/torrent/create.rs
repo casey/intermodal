@@ -240,6 +240,12 @@ Sort in ascending order by size, break ties in descending path order:
             download and upload statistics to multiple trackers."
   )]
   source: Option<String>,
+  #[structopt(
+    long = "ignore",
+    help = "Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config \
+            --get core.excludesFile`."
+  )]
+  ignore: bool,
 }
 
 impl Create {
@@ -1679,12 +1685,6 @@ Content Size  9 bytes
         .arg(env.resolve("foo/hidden")?)
         .status()
         .unwrap();
-    } else if cfg!(target_os = "macos") {
-      Command::new("chflags")
-        .arg("hidden")
-        .arg(env.resolve("foo/hidden")?)
-        .status()
-        .unwrap();
     } else {
       fs::remove_file(env.resolve("foo/hidden")?).unwrap();
     }
@@ -1905,6 +1905,7 @@ Content Size  9 bytes
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
   }
+
   #[test]
   fn skip_hidden_attribute_dir_contents() -> Result<()> {
     let mut env = test_env! {
@@ -1930,17 +1931,6 @@ Content Size  9 bytes
       let path = env.resolve("foo/bar")?;
       Command::new("attrib")
         .arg("+h")
-        .arg(&path)
-        .status()
-        .unwrap();
-    }
-
-    #[cfg(target_os = "macos")]
-    {
-      env.write("foo/bar/baz", "baz");
-      let path = env.resolve("foo/bar")?;
-      Command::new("chflags")
-        .arg("hidden")
         .arg(&path)
         .status()
         .unwrap();
@@ -2179,6 +2169,88 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.len() == 1
     );
     assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["a"]));
+  }
+
+  #[test]
+  fn ignore_files_in_gitignore() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--ignore",
+      ],
+      tree: {
+        foo: {
+          ".gitignore": "a",
+          a: "a",
+          b: "b",
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+  }
+
+  #[test]
+  fn ignore_files_in_ignore() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--ignore",
+      ],
+      tree: {
+        foo: {
+          ".ignore": "a",
+          a: "a",
+          b: "b",
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
+  }
+
+  #[test]
+  fn ignore_files_in_git_exclude() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--ignore",
+      ],
+      tree: {
+        foo: {
+          ".git": {
+            info: {
+              exclude: "a",
+            },
+          },
+          a: "a",
+          b: "b",
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple { files } if files.len() == 1
+    );
   }
 
   #[test]

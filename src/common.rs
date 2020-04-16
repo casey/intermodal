@@ -27,6 +27,7 @@ pub(crate) use std::{
 pub(crate) use bendy::{decoding::FromBencode, encoding::ToBencode, value::Value};
 pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
+pub(crate) use ignore::WalkBuilder;
 pub(crate) use indicatif::{ProgressBar, ProgressStyle};
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
@@ -44,7 +45,6 @@ pub(crate) use strum::{IntoEnumIterator, VariantNames};
 pub(crate) use strum_macros::{EnumIter, EnumString, EnumVariantNames, IntoStaticStr};
 pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::{Host, Url};
-pub(crate) use walkdir::WalkDir;
 
 // logging functions
 #[allow(unused_imports)]

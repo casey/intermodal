@@ -135,7 +135,7 @@ _imdl() {
             return 0
             ;;
         imdl__torrent__create)
-            opts=" -n -F -f -h -j -M -O -P -S -V -a -A -t -c -g -i -N -o -p -s  --dry-run --follow-symlinks --force --include-hidden --include-junk --link --md5 --no-created-by --no-creation-date --open --private --show --help --version --announce --allow --announce-tier --comment --node --glob --input --name --sort-by --output --peer --piece-length --source  "
+            opts=" -n -F -f -h -j -M -O -P -S -V -a -A -t -c -g -i -N -o -p -s  --dry-run --follow-symlinks --force --include-hidden --include-junk --link --md5 --no-created-by --no-creation-date --open --private --show --ignore --help --version --announce --allow --announce-tier --comment --node --glob --input --name --sort-by --output --peer --piece-length --source  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

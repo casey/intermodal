@@ -27,6 +27,7 @@ impl CreateContent {
         let files = Walker::new(&env.resolve(path)?)
           .include_junk(create.include_junk)
           .include_hidden(create.include_hidden)
+          .ignore(create.ignore)
           .follow_symlinks(create.follow_symlinks)
           .sort_by(create.sort_by.clone())
           .globs(&create.globs)?

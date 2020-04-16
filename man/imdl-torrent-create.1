@@ -21,6 +21,10 @@ Overwrite the destination `.torrent` file, if it exists.
 \fB\-\-help\fR
 Print help message.
 .TP
+\fB\-\-ignore\fR
+Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config \fB\-\-get\fR
+core.excludesFile`.
+.TP
 \fB\-h\fR, \fB\-\-include\-hidden\fR
 Include hidden files that would otherwise be skipped, such as files that start with a `.`,
 and files hidden by file attributes on macOS and Windows.

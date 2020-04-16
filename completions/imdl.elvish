@@ -118,6 +118,7 @@ Sort in ascending order by size, break ties in descending path order:
             cand --private 'Set the `private` flag. Torrent clients that understand the flag and participate in the swarm of a torrent with the flag set will only announce themselves to the announce URLs included in the torrent, and will not use other peer discovery mechanisms, such as the DHT or local peer discovery. See BEP 27: Private Torrents for more information.'
             cand -S 'Display information about created torrent file.'
             cand --show 'Display information about created torrent file.'
+            cand --ignore 'Skip files listed in `.gitignore`, `.ignore`, `.git/info/exclude`, and `git config --get core.excludesFile`.'
             cand --help 'Print help message.'
             cand -V 'Print version number.'
             cand --version 'Print version number.'

@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-20
+UNRELEASED - 2020-04-21
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve FAQ template - _Casey Rodarmor <casey@rodarmor.com>_
+- :sparkles: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Optionally respect `.gitignore` in `imdl torrent create` - Fixes [#378](https://github.com/casey/intermodal/issues/378) - _Celeo <celeodor@gmail.com>_
+- :books: [`9f480624616b`](https://github.com/casey/intermodal/commit/9f480624616b77995befec722effda22cc2d06ad) Improve FAQ template - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`1380290eb8e2`](https://github.com/casey/intermodal/commit/1380290eb8e222605f368bc8346a1e63c83d9af7) Make `publish-check` recipe stricter - _Casey Rodarmor <casey@rodarmor.com>_
 
 

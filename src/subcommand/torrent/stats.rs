@@ -53,7 +53,12 @@ impl Stats {
 
     let mut extractor = Extractor::new(self.print, &self.extract_patterns);
 
-    for result in WalkDir::new(path).sort_by(|a, b| a.file_name().cmp(b.file_name())) {
+    for result in WalkBuilder::new(path)
+      .standard_filters(false)
+      .hidden(true)
+      .sort_by_file_name(|a, b| a.cmp(b))
+      .build()
+    {
       if extractor.torrents >= self.limit.unwrap_or(u64::max_value()) {
         break;
       }
