@@ -2,4 +2,7 @@
 
 set -euxo pipefail
 
-! grep --color -REni 'FIXME|TODO|XXX|todo!|#\[ignore]' src book/src
+! rg \
+  --glob !bin/lint \
+  --ignore-case \
+  'FIXME|TODO|XXX|todo!|#\[ignore\]'

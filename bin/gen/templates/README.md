@@ -15,16 +15,7 @@ For more about the project and its goals, check out [this post](https://rodarmor
 
 ## Table of Contents
 
-- [Installation](#installation)
-  - [Supported Operating Systems](#supported-operating-systems)
-  - [Packages](#packages)
-  - [Pre-built binaries](#pre-built-binaries)
-  - [Cargo](#cargo)
-- [Shell Completion Scripts](#shell-completion-scripts)
-- [Semantic Versioning](#semantic-versioning)
-- [Unstable Features](#unstable-features)
-- [Source Signatures](#source-signatures)
-- [Acknowledgments](#acknowledgments)
+{{table_of_contents}}
 
 ## Installation
 

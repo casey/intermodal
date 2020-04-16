@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub(crate) struct Metadata {
   #[serde(rename = "type")]
   pub(crate) kind: Kind,

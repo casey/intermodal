@@ -10,13 +10,13 @@ FLAGS:
     -h, --help       Print help message.
     -O, --open       Open generated magnet link. Uses `xdg-open`, `gnome-open`,
                      or `kde-open` on Linux; `open` on macOS; and `cmd /C start`
-                     on Windows
+                     on Windows.
     -V, --version    Print version number.
 
 OPTIONS:
     -s, --select-only <INDICES>...
-            Specify files that torrent clients select for download. Values are
-            indices into the info.files list. e.g. `--select-only 1,2,3`
+            Select files to download. Values are indices into the `info.files`
+            list, e.g. `--select-only 1,2,3`.
     -i, --input <METAINFO>
             Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read
             metainfo from standard input.

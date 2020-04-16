@@ -12,24 +12,48 @@ pub(crate) struct Completions {
     short = "s",
     value_name = "SHELL",
     possible_values = Shell::VARIANTS,
-    help = "Print completions for `SHELL`.",
+    required_unless = "dir",
+    help = "Print completion script for `SHELL`.",
   )]
-  shell: Shell,
+  shell: Option<Shell>,
+  #[structopt(
+    long = "dir",
+    short = "d",
+    value_name = "DIR",
+    empty_values = false,
+    parse(from_os_str),
+    help = "Write completion script to `DIR` with an appropriate filename. If `--shell` is not \
+            given, write all completion scripts."
+  )]
+  dir: Option<PathBuf>,
 }
 
 impl Completions {
-  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let buffer = Vec::new();
-    let mut cursor = Cursor::new(buffer);
+  pub(crate) fn run(self, env: &mut Env) -> Result<()> {
+    if let Some(shell) = self.shell {
+      if let Some(dir) = self.dir {
+        Self::write(env, &dir, shell)?;
+      } else {
+        let script = shell.completion_script()?;
+        out!(env, "{}", script)?;
+      }
+    } else {
+      let dir = self
+        .dir
+        .ok_or_else(|| Error::internal("Expected `--dir` to be set"))?;
 
-    Arguments::clap().gen_completions_to(env!("CARGO_PKG_NAME"), self.shell.into(), &mut cursor);
+      for shell in Shell::iter() {
+        Self::write(env, &dir, shell)?;
+      }
+    }
 
-    let buffer = cursor.into_inner();
+    Ok(())
+  }
 
-    let script = String::from_utf8(buffer).expect("Clap completion not UTF-8");
-
-    outln!(env, "{}", script.trim())?;
-
+  fn write(env: &mut Env, dir: &Path, shell: Shell) -> Result<()> {
+    let script = shell.completion_script()?;
+    let dst = dir.join(shell.completion_script_filename());
+    env.write(dst, script)?;
     Ok(())
   }
 }
@@ -52,5 +76,45 @@ mod tests {
     env.assert_ok();
 
     assert!(env.out().starts_with("_imdl() {"));
+  }
+
+  #[test]
+  fn single_dir() {
+    let mut env = test_env! {
+      args: [
+        "completions",
+        "--shell",
+        "bash",
+        "--dir",
+        ".",
+      ],
+      tree: {},
+    };
+
+    env.assert_ok();
+
+    let script = env.read_to_string("imdl.bash");
+
+    assert!(script.starts_with("_imdl() {"));
+  }
+
+  #[test]
+  fn all_dir() {
+    let mut env = test_env! {
+      args: [
+        "completions",
+        "--dir",
+        ".",
+      ],
+      tree: {},
+    };
+
+    env.assert_ok();
+
+    let script = env.read_to_string("imdl.bash");
+    assert!(script.starts_with("_imdl() {"));
+
+    let script = env.read_to_string("_imdl.ps1");
+    assert!(script.starts_with("using namespace"));
   }
 }

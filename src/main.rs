@@ -35,6 +35,9 @@ mod errln;
 mod err;
 
 #[macro_use]
+mod out;
+
+#[macro_use]
 mod outln;
 
 #[cfg(test)]

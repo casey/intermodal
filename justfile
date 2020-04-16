@@ -51,10 +51,6 @@ preview-readme:
 book:
 	mdbook serve book --open --dest-dir ../www/book
 
-# add git log messages to changelog
-changes:
-	git log --pretty=format:%s >> CHANGELOG.md
-
 dev-deps:
 	brew install grip
 	cargo install mdbook
@@ -63,37 +59,16 @@ dev-deps:
 	brew install imagemagick
 	brew install gifsicle
 
-# update readme table of contents
-update-toc:
-	cargo run --package update-readme toc
-
-generate-completions:
-	./bin/generate-completions
-
-man-watch:
-	cargo build
-	cargo watch \
-		--ignore '/man' \
-		--ignore '/man/*' \
-		--ignore '/book/src/commands' \
-		--ignore '/book/src/commands/*' \
-		--clear --exec 'run --package man'
-
-man:
-	cargo build
-	cargo run --package man
-
-check-man: man
-	git diff --no-ext-diff --quiet --exit-code
+# update generated documentation
+gen:
+	cargo run --package gen all
 
 check-minimal-versions:
 	./bin/check-minimal-versions
 
-check: test clippy lint check-minimal-versions changelog-update
+check: test clippy lint check-minimal-versions gen
 	git diff --no-ext-diff --quiet --exit-code
 	cargo +nightly fmt --all -- --check
-	cargo run --package update-readme toc
-	git diff --no-ext-diff --quiet --exit-code
 
 draft: push
 	hub pull-request -o --draft
@@ -109,9 +84,7 @@ merge:
 	done
 	just done
 
-update: man changelog-update update-toc
-
-publish-check: check check-man
+publish-check: check
 	cargo outdated --exit-code 1
 	grep {{version}} CHANGELOG.md
 
@@ -125,15 +98,6 @@ publish: publish-check
 	git push github {{version}}
 	cargo publish
 	just merge
-
-changelog-update:
-	cargo run --package changelog update
-
-changelog-types:
-	cargo run --package changelog types
-
-changelog-issue-template:
-	cargo run --package changelog issue-template
 
 # record, upload, and render demo animation
 demo: demo-record demo-upload demo-render

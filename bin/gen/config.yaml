@@ -1,0 +1,41 @@
+changelog:
+  1f8023d13a399e381176c20bbb6a71763b7c352a:
+    type: documentation
+
+examples:
+- command: imdl
+  text:    "The binary is called `imdl`:"
+  code:    "imdl --help"
+
+- command: imdl torrent
+  text:    "BitTorrent metainfo related functionality is under the `torrent` subcommand:"
+  code:    "imdl torrent --help"
+
+- command: imdl torrent create
+  text:    "Intermodal can be used to create `.torrent` files:"
+  code:    "imdl torrent create --input foo"
+
+- command: imdl torrent show
+  text:    "Print information about existing `.torrent` files:"
+  code:    "imdl torrent show --input foo.torrent"
+
+- command: imdl torrent verify
+  text:    "Verify downloaded torrents:"
+  code:    "imdl torrent verify --input foo.torrent --content foo"
+
+- command: imdl torrent link
+  text:    "Generate magnet links from `.torrent` files:"
+  code:    "imdl torrent link --input foo.torrent"
+
+- command: imdl torrent piece-length
+  text:    "Show infromation about the piece length picker:"
+  code:    "imdl torrent piece-length"
+
+- command: imdl completions
+  text:    "Print completion scripts for the `imdl` binary:"
+  code:    "imdl completions --shell zsh"
+
+- command:  imdl torrent stats
+  unstable: true
+  text:     "Print information about a collection of torrents:"
+  code:     "imdl --unstable torrent stats --input dir"

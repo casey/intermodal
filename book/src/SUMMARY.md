@@ -9,7 +9,7 @@ Summary
   - [`imdl torrent`](./commands/imdl-torrent.md)
   - [`imdl torrent create`](./commands/imdl-torrent-create.md)
   - [`imdl torrent link`](./commands/imdl-torrent-link.md)
-  - [`imdl torrent piece length`](./commands/imdl-torrent-piece-length.md)
+  - [`imdl torrent piece-length`](./commands/imdl-torrent-piece-length.md)
   - [`imdl torrent show`](./commands/imdl-torrent-show.md)
   - [`imdl torrent stats`](./commands/imdl-torrent-stats.md)
   - [`imdl torrent verify`](./commands/imdl-torrent-verify.md)

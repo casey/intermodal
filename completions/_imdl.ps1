@@ -192,8 +192,10 @@ Sort in ascending order by size, break ties in descending path order:
             break
         }
         'imdl;completions' {
-            [CompletionResult]::new('-s', 's', [CompletionResultType]::ParameterName, 'Print completions for `SHELL`.')
-            [CompletionResult]::new('--shell', 'shell', [CompletionResultType]::ParameterName, 'Print completions for `SHELL`.')
+            [CompletionResult]::new('-s', 's', [CompletionResultType]::ParameterName, 'Print completion script for `SHELL`.')
+            [CompletionResult]::new('--shell', 'shell', [CompletionResultType]::ParameterName, 'Print completion script for `SHELL`.')
+            [CompletionResult]::new('-d', 'd', [CompletionResultType]::ParameterName, 'Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.')
+            [CompletionResult]::new('--dir', 'dir', [CompletionResultType]::ParameterName, 'Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.')
             [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Print version number.')

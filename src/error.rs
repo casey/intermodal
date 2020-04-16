@@ -111,6 +111,8 @@ pub(crate) enum Error {
   PieceLengthZero,
   #[snafu(display("Private torrents must have tracker"))]
   PrivateTrackerless,
+  #[snafu(display("Completion script for shell `{}` not UTF-8: {}", shell.name(), source))]
+  ShellDecode { shell: Shell, source: FromUtf8Error },
   #[snafu(display("Failed to write to standard error: {}", source))]
   Stderr { source: io::Error },
   #[snafu(display("Failed to read from standard input: {}", source))]

@@ -17,6 +17,7 @@ pub(crate) use std::{
   path::{self, Path, PathBuf},
   process::{self, ExitStatus},
   str::{self, FromStr},
+  string::FromUtf8Error,
   sync::Once,
   time::{SystemTime, SystemTimeError},
   usize,
@@ -39,8 +40,8 @@ pub(crate) use structopt::{
   clap::{self, AppSettings},
   StructOpt,
 };
-pub(crate) use strum::VariantNames;
-pub(crate) use strum_macros::{EnumString, EnumVariantNames, IntoStaticStr};
+pub(crate) use strum::{IntoEnumIterator, VariantNames};
+pub(crate) use strum_macros::{EnumIter, EnumString, EnumVariantNames, IntoStaticStr};
 pub(crate) use unicode_width::UnicodeWidthStr;
 pub(crate) use url::{Host, Url};
 pub(crate) use walkdir::WalkDir;

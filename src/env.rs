@@ -187,6 +187,11 @@ impl Env {
     Ok(self.dir().join(path).clean())
   }
 
+  pub(crate) fn write(&mut self, path: impl AsRef<Path>, contents: impl AsRef<[u8]>) -> Result<()> {
+    let path = path.as_ref();
+    fs::write(self.resolve(path)?, contents).context(error::Filesystem { path })
+  }
+
   pub(crate) fn read(&mut self, source: InputTarget) -> Result<Input> {
     let data = match &source {
       InputTarget::Path(path) => {

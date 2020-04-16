@@ -213,8 +213,10 @@ esac
 ;;
 (completions)
 _arguments "${_arguments_options[@]}" \
-'-s+[Print completions for `SHELL`.]: :(zsh bash fish powershell elvish)' \
-'--shell=[Print completions for `SHELL`.]: :(zsh bash fish powershell elvish)' \
+'-s+[Print completion script for `SHELL`.]: :(zsh bash fish powershell elvish)' \
+'--shell=[Print completion script for `SHELL`.]: :(zsh bash fish powershell elvish)' \
+'-d+[Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.]' \
+'--dir=[Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.]' \
 '-h[Print help message.]' \
 '--help[Print help message.]' \
 '-V[Print version number.]' \

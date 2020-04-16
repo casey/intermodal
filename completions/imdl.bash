@@ -70,7 +70,7 @@ _imdl() {
             ;;
         
         imdl__completions)
-            opts=" -h -V -s  --help --version --shell  "
+            opts=" -h -V -s -d  --help --version --shell --dir  "
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -83,6 +83,14 @@ _imdl() {
                     ;;
                     -s)
                     COMPREPLY=($(compgen -W "zsh bash fish powershell elvish" -- "${cur}"))
+                    return 0
+                    ;;
+                --dir)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                    -d)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)

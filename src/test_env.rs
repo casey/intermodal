@@ -67,6 +67,10 @@ impl TestEnv {
     fs::create_dir(self.env.resolve(path).unwrap()).unwrap();
   }
 
+  pub(crate) fn read_to_string(&self, path: impl AsRef<Path>) -> String {
+    fs::read_to_string(self.env.resolve(path).unwrap()).unwrap()
+  }
+
   #[cfg(unix)]
   pub(crate) fn metadata(&self, path: impl AsRef<Path>) -> fs::Metadata {
     fs::metadata(self.env.resolve(path).unwrap()).unwrap()

@@ -178,8 +178,10 @@ Sort in ascending order by size, break ties in descending path order:
             cand --version 'Prints version information'
         }
         &'imdl;completions'= {
-            cand -s 'Print completions for `SHELL`.'
-            cand --shell 'Print completions for `SHELL`.'
+            cand -s 'Print completion script for `SHELL`.'
+            cand --shell 'Print completion script for `SHELL`.'
+            cand -d 'Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.'
+            cand --dir 'Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.'
             cand -h 'Print help message.'
             cand --help 'Print help message.'
             cand -V 'Print version number.'

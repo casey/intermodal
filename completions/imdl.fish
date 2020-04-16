@@ -90,7 +90,8 @@ complete -c imdl -n "__fish_seen_subcommand_from verify" -s h -l help -d 'Print 
 complete -c imdl -n "__fish_seen_subcommand_from verify" -s V -l version -d 'Print version number.'
 complete -c imdl -n "__fish_seen_subcommand_from help" -s h -l help -d 'Prints help information'
 complete -c imdl -n "__fish_seen_subcommand_from help" -s V -l version -d 'Prints version information'
-complete -c imdl -n "__fish_seen_subcommand_from completions" -s s -l shell -d 'Print completions for `SHELL`.' -r -f -a "zsh bash fish powershell elvish"
+complete -c imdl -n "__fish_seen_subcommand_from completions" -s s -l shell -d 'Print completion script for `SHELL`.' -r -f -a "zsh bash fish powershell elvish"
+complete -c imdl -n "__fish_seen_subcommand_from completions" -s d -l dir -d 'Write completion script to `DIR` with an appropriate filename. If `--shell` is not given, write all completion scripts.'
 complete -c imdl -n "__fish_seen_subcommand_from completions" -s h -l help -d 'Print help message.'
 complete -c imdl -n "__fish_seen_subcommand_from completions" -s V -l version -d 'Print version number.'
 complete -c imdl -n "__fish_seen_subcommand_from help" -s h -l help -d 'Prints help information'

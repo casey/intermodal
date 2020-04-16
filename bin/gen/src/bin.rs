@@ -1,16 +1,15 @@
 use crate::common::*;
 
-#[derive(Debug)]
 pub(crate) struct Bin {
-  pub(crate) bin: String,
+  path: PathBuf,
   pub(crate) subcommands: Vec<Subcommand>,
 }
 
 impl Bin {
   #[throws]
-  pub(crate) fn new(bin: &str) -> Self {
+  pub(crate) fn new(path: &Path) -> Bin {
     let mut bin = Bin {
-      bin: bin.into(),
+      path: path.into(),
       subcommands: Vec::new(),
     };
 
@@ -23,7 +22,7 @@ impl Bin {
 
   #[throws]
   fn add_subcommands(&mut self, command: &mut Vec<String>) {
-    let subcommand = Subcommand::new(&self.bin, command.clone())?;
+    let subcommand = Subcommand::new(&self.path, command.clone())?;
 
     for name in &subcommand.subcommands {
       command.push(name.into());

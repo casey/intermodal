@@ -12,13 +12,17 @@ pub(crate) struct Entry {
 
 impl Entry {
   #[throws]
-  pub(crate) fn new(commit: &Commit, version: &str, head: bool) -> Self {
+  pub(crate) fn new(commit: &Commit, version: &str, head: bool, config: &Config) -> Self {
     let time = DateTime::<Utc>::from_utc(
       NaiveDateTime::from_timestamp(commit.time().seconds(), 0),
       Utc,
     );
 
-    let metadata = Metadata::from_commit(commit)?;
+    let metadata = if let Some(metadata) = config.changelog.get(&commit.id().to_string()) {
+      metadata.clone()
+    } else {
+      Metadata::from_commit(commit)?
+    };
 
     Entry {
       version: version.into(),

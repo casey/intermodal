@@ -62,15 +62,9 @@ temptree = "0.0.0"
 
 [workspace]
 members = [
+  # generate documentation
+  "bin/gen",
+
   # run commands for demo animation
   "bin/demo",
-
-  # generate table of contents and table of supported BEPs in README.md
-  "bin/update-readme",
-
-  # generate the changelog from git commits
-  "bin/changelog",
-
-  # generate man page
-  "bin/man"
 ]

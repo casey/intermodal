@@ -6,8 +6,8 @@ pub(crate) struct Changelog {
 
 impl Changelog {
   #[throws]
-  pub(crate) fn new(repo: &Repository) -> Self {
-    let mut current = repo.head()?.peel_to_commit()?;
+  pub(crate) fn new(project: &Project) -> Self {
+    let mut current = project.repo.head()?.peel_to_commit()?;
 
     let mut entries = Vec::new();
 
@@ -24,7 +24,7 @@ impl Changelog {
         let manifest_bytes = current
           .tree()?
           .get_path("Cargo.toml".as_ref())?
-          .to_object(&repo)?
+          .to_object(&project.repo)?
           .as_blob()
           .unwrap()
           .content()
@@ -32,7 +32,12 @@ impl Changelog {
 
         let manifest = Manifest::from_slice(&manifest_bytes)?;
 
-        let entry = Entry::new(&current, manifest.package.unwrap().version.as_ref(), head)?;
+        let entry = Entry::new(
+          &current,
+          manifest.package.unwrap().version.as_ref(),
+          head,
+          &project.config,
+        )?;
 
         entries.push(entry);
       }
