@@ -55,3 +55,8 @@ packages:
   package-manager:  '[Yay](https://github.com/Jguer/yay)'
   package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
   command:          '`yay -S intermodal`'
+
+- operating-system: '[Arch Linux](https://www.archlinux.org)'
+  package-manager:  'Manual Installation'
+  package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
+  command:          '[wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)'

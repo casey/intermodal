@@ -41,11 +41,12 @@ If it does not, please open an issue!
 
 ### Packages
 
-| Operating System                                                     | Package Manager                     | Package                                                                           | Command                 |
-|:--------------------------------------------------------------------:|:-----------------------------------:|:---------------------------------------------------------------------------------:|:-----------------------:|
-| [Various](https://forge.rust-lang.org/release/platform-support.html) | [Cargo](https://www.rust-lang.org)  | [imdl](https://crates.io/crates/imdl)                                             | `cargo install imdl`    |
-| [Arch Linux](https://www.archlinux.org)                              | [Yay](https://github.com/Jguer/yay) | [intermodal-bin](https://aur.archlinux.org/packages/intermodal-bin)<sup>AUR</sup> | `yay -S intermodal-bin` |
-| [Arch Linux](https://www.archlinux.org)                              | [Yay](https://github.com/Jguer/yay) | [intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>         | `yay -S intermodal`     |
+| Operating System                                                     | Package Manager                     | Package                                                                           | Command                                                                               |
+|:--------------------------------------------------------------------:|:-----------------------------------:|:---------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------:|
+| [Various](https://forge.rust-lang.org/release/platform-support.html) | [Cargo](https://www.rust-lang.org)  | [imdl](https://crates.io/crates/imdl)                                             | `cargo install imdl`                                                                  |
+| [Arch Linux](https://www.archlinux.org)                              | [Yay](https://github.com/Jguer/yay) | [intermodal-bin](https://aur.archlinux.org/packages/intermodal-bin)<sup>AUR</sup> | `yay -S intermodal-bin`                                                               |
+| [Arch Linux](https://www.archlinux.org)                              | [Yay](https://github.com/Jguer/yay) | [intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>         | `yay -S intermodal`                                                                   |
+| [Arch Linux](https://www.archlinux.org)                              | Manual Installation                 | [intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>         | [wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages) |
 
 ### Pre-built binaries
 

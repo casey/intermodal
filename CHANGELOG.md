@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-18
 -----------------------
-- :art: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Get current time early when creating torrents - Fixes [#207](https://github.com/casey/intermodal/issues/207) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add manual Arch install link - Fixes [#373](https://github.com/casey/intermodal/issues/373) - _Casey Rodarmor <casey@rodarmor.com>_
+- :art: [`0a870ed2ee2c`](https://github.com/casey/intermodal/commit/0a870ed2ee2cca79fddb9940fb879354468deb4d) Get current time early when creating torrents - Fixes [#207](https://github.com/casey/intermodal/issues/207) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`9098d3684032`](https://github.com/casey/intermodal/commit/9098d368403232a07684cae8c0b9b1f1383dd2ce) Readme improvements - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`04338e3501af`](https://github.com/casey/intermodal/commit/04338e3501afd155af47d0c4bda2c680d2a7a519) Merge documentation and changelog generation - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`1f8023d13a39`](https://github.com/casey/intermodal/commit/1f8023d13a399e381176c20bbb6a71763b7c352a) Fix directory link in README - _Matt Boulanger <Celeo@users.noreply.github.com>_
