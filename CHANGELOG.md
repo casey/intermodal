@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-18
 -----------------------
-- :white_check_mark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Test that globs match torrent contents - Fixes [#377](https://github.com/casey/intermodal/issues/377) - _Casey Rodarmor <casey@rodarmor.com>_
+- :art: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Use `invariant` instead of `unwrap` and `expect` - Fixes [#167](https://github.com/casey/intermodal/issues/167) - _Casey Rodarmor <casey@rodarmor.com>_
+- :white_check_mark: [`faf46c0f0e6f`](https://github.com/casey/intermodal/commit/faf46c0f0e6fd4e4f8b504d414a3bf02d7d68e4a) Test that globs match torrent contents - Fixes [#377](https://github.com/casey/intermodal/issues/377) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`0a754d0bcfcf`](https://github.com/casey/intermodal/commit/0a754d0bcfcfd65127d7b6e78d41852df78d3ea2) Add manual Arch install link - Fixes [#373](https://github.com/casey/intermodal/issues/373) - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`0a870ed2ee2c`](https://github.com/casey/intermodal/commit/0a870ed2ee2cca79fddb9940fb879354468deb4d) Get current time early when creating torrents - Fixes [#207](https://github.com/casey/intermodal/issues/207) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`9098d3684032`](https://github.com/casey/intermodal/commit/9098d368403232a07684cae8c0b9b1f1383dd2ce) Readme improvements - _Casey Rodarmor <casey@rodarmor.com>_

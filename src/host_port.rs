@@ -19,11 +19,18 @@ impl FromStr for HostPort {
       $
       ",
     )
-    .unwrap();
+    .invariant_unwrap("regex is valid");
 
     if let Some(captures) = socket_address_re.captures(text) {
-      let host_text = captures.name("host").unwrap().as_str();
-      let port_text = captures.name("port").unwrap().as_str();
+      let host_text = captures
+        .name("host")
+        .invariant_unwrap("Capture group `host` always present")
+        .as_str();
+
+      let port_text = captures
+        .name("port")
+        .invariant_unwrap("Capture group `port` always present")
+        .as_str();
 
       let host = Host::parse(&host_text).context(host_port_parse_error::Host {
         text: text.to_owned(),

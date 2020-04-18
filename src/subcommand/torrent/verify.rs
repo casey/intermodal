@@ -47,7 +47,7 @@ impl Verify {
       content.clone()
     } else {
       match &self.metainfo {
-        InputTarget::Path(path) => path.parent().unwrap().join(&metainfo.info.name),
+        InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).clean(),
         InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
       }
     };

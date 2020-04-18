@@ -55,8 +55,9 @@ pub(crate) use crate::{consts, error, host_port_parse_error};
 
 // traits
 pub(crate) use crate::{
-  input_stream::InputStream, into_u64::IntoU64, into_usize::IntoUsize, path_ext::PathExt,
-  platform_interface::PlatformInterface, print::Print, reckoner::Reckoner, step::Step,
+  input_stream::InputStream, into_u64::IntoU64, into_usize::IntoUsize, invariant::Invariant,
+  path_ext::PathExt, platform_interface::PlatformInterface, print::Print, reckoner::Reckoner,
+  step::Step,
 };
 
 // structs and enums

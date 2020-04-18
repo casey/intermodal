@@ -23,7 +23,12 @@ impl PlatformInterface for Platform {
 
     let mut stat: libc::stat = unsafe { mem::zeroed() };
 
-    let cpath = CString::new(path.as_os_str().as_bytes()).expect("Path contained null character.");
+    let cpath = if let Ok(cstr) = CString::new(path.as_os_str().as_bytes()) {
+      cstr
+    } else {
+      // Consider paths containing null bytes to be hidden
+      return Ok(true);
+    };
 
     let error_code = unsafe { libc::stat(cpath.as_ptr(), &mut stat) };
 

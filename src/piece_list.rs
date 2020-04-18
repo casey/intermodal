@@ -67,7 +67,13 @@ impl<'de> Deserialize<'de> for PieceList {
 
     let piece_hashes = bytes
       .chunks_exact(Sha1Digest::LENGTH)
-      .map(|chunk| Sha1Digest::from_bytes(chunk.try_into().unwrap()))
+      .map(|chunk| {
+        Sha1Digest::from_bytes(
+          chunk
+            .try_into()
+            .invariant_unwrap("chunks are all Sha1Digest::LENGTH"),
+        )
+      })
       .collect();
 
     Ok(Self { piece_hashes })

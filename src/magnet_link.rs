@@ -50,7 +50,7 @@ impl MagnetLink {
   }
 
   pub(crate) fn to_url(&self) -> Url {
-    let mut url = Url::parse("magnet:").unwrap();
+    let mut url = Url::parse("magnet:").invariant_unwrap("`magnet:` is valid URL");
 
     let mut query = format!("xt=urn:btih:{}", self.infohash);
 

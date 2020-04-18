@@ -173,7 +173,10 @@ impl From<SystemTimeError> for Error {
 
 impl From<walkdir::Error> for Error {
   fn from(walkdir_error: walkdir::Error) -> Self {
-    let path = walkdir_error.path().unwrap().to_owned();
+    let path = walkdir_error
+      .path()
+      .invariant_unwrap("Walkdir errors always have path")
+      .to_owned();
 
     if let Some(source) = walkdir_error.into_io_error() {
       Self::Filesystem { source, path }

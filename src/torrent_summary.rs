@@ -62,7 +62,7 @@ impl TorrentSummary {
           creation_date
             .min(i64::max_value() as u64)
             .try_into()
-            .unwrap(),
+            .invariant_unwrap("min with i64 is always valid i64"),
           0,
         ),
       );

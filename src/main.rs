@@ -13,9 +13,6 @@
   clippy::needless_pass_by_value,
   clippy::non_ascii_literal,
   clippy::option_map_unwrap_or_else,
-  clippy::option_unwrap_used,
-  clippy::result_expect_used,
-  clippy::result_unwrap_used,
   clippy::shadow_reuse,
   clippy::too_many_lines,
   clippy::unseparated_literal_suffix,
@@ -71,6 +68,7 @@ mod input_stream;
 mod input_target;
 mod into_u64;
 mod into_usize;
+mod invariant;
 mod lint;
 mod linter;
 mod magnet_link;

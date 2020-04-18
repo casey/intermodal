@@ -128,7 +128,7 @@ struct Extractor {
 impl Extractor {
   fn new(print: bool, regexes: &[Regex]) -> Self {
     let regex_set = RegexSet::new(regexes.iter().map(Regex::as_str))
-      .expect("Validated regex pattern failed to recompile in regex set");
+      .invariant_unwrap("Regexes already validated by compilation");
 
     Self {
       bencode_decode_errors: 0,

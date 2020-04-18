@@ -79,7 +79,7 @@ impl<'a> Verifier<'a> {
       let to_buffer: usize = remaining
         .min(self.buffer.len().into_u64())
         .try_into()
-        .unwrap();
+        .invariant_unwrap("min with usize should fit in usize");
 
       let buffer = &mut self.buffer[0..to_buffer];
 
