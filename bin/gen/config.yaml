@@ -39,3 +39,19 @@ examples:
   unstable: true
   text:     "Print information about a collection of torrents:"
   code:     "imdl --unstable torrent stats --input dir"
+
+packages:
+- operating-system: '[Various](https://forge.rust-lang.org/release/platform-support.html)'
+  package-manager:  '[Cargo](https://www.rust-lang.org)'
+  package:          '[imdl](https://crates.io/crates/imdl)'
+  command:          '`cargo install imdl`'
+
+- operating-system: '[Arch Linux](https://www.archlinux.org)'
+  package-manager:  '[Yay](https://github.com/Jguer/yay)'
+  package:          '[intermodal-bin](https://aur.archlinux.org/packages/intermodal-bin)<sup>AUR</sup>'
+  command:          '`yay -S intermodal-bin`'
+
+- operating-system: '[Arch Linux](https://www.archlinux.org)'
+  package-manager:  '[Yay](https://github.com/Jguer/yay)'
+  package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
+  command:          '`yay -S intermodal`'

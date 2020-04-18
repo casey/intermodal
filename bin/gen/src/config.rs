@@ -6,6 +6,7 @@ const PATH: &str = "bin/gen/config.yaml";
 pub(crate) struct Config {
   pub(crate) changelog: BTreeMap<String, Metadata>,
   pub(crate) examples: Vec<Example>,
+  pub(crate) packages: Vec<Package>,
 }
 
 impl Config {

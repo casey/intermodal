@@ -15,11 +15,14 @@ mod introduction;
 mod kind;
 mod metadata;
 mod opt;
+mod package;
 mod project;
 mod readme;
 mod release;
+mod row;
 mod subcommand;
 mod summary;
+mod table;
 
 #[throws]
 fn main() {

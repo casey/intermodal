@@ -95,7 +95,7 @@ impl Opt {
     eprintln!("Generating readme…");
     let template = project.root.join("bin/gen/templates/README.md");
 
-    let readme = Readme::load(&template)?;
+    let readme = Readme::load(&project.config, &template)?;
 
     let mut text = readme.render()?;
     text.push('\n');

@@ -22,9 +22,13 @@ pub(crate) use strum::VariantNames;
 pub(crate) use strum_macros::{EnumVariantNames, IntoStaticStr};
 pub(crate) use url::Url;
 
+// traits
+pub(crate) use crate::{command_ext::CommandExt, exit_status_ext::ExitStatusExt, row::Row};
+
+// structs and enums
 pub(crate) use crate::{
-  bin::Bin, changelog::Changelog, command_ext::CommandExt, config::Config, entry::Entry,
-  example::Example, exit_status_ext::ExitStatusExt, introduction::Introduction, kind::Kind,
-  metadata::Metadata, opt::Opt, project::Project, readme::Readme, release::Release,
-  subcommand::Subcommand, summary::Summary,
+  bin::Bin, changelog::Changelog, config::Config, entry::Entry, example::Example,
+  introduction::Introduction, kind::Kind, metadata::Metadata, opt::Opt, package::Package,
+  project::Project, readme::Readme, release::Release, subcommand::Subcommand, summary::Summary,
+  table::Table,
 };

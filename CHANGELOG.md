@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-18
 -----------------------
-- :art: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Merge documentation and changelog generation - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Readme improvements - _Casey Rodarmor <casey@rodarmor.com>_
+- :art: [`04338e3501af`](https://github.com/casey/intermodal/commit/04338e3501afd155af47d0c4bda2c680d2a7a519) Merge documentation and changelog generation - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`1f8023d13a39`](https://github.com/casey/intermodal/commit/1f8023d13a399e381176c20bbb6a71763b7c352a) Fix directory link in README - _Matt Boulanger <Celeo@users.noreply.github.com>_
 - :sparkles: [`cb8b5a691945`](https://github.com/casey/intermodal/commit/cb8b5a691945b8108676f95d2888774263be8cc8) Partially implement BEP 53 - Fixes [#245](https://github.com/casey/intermodal/issues/245) - _strickinato <aaronstrick@gmail.com>_
 - :books: [`6185d6c8a27c`](https://github.com/casey/intermodal/commit/6185d6c8a27c0d603f0434e98000c8e4a868dcc8) Add table of packages to readme ([#372](https://github.com/casey/intermodal/pull/372)) - Fixes [#369](https://github.com/casey/intermodal/issues/369) - _Casey Rodarmor <casey@rodarmor.com>_

@@ -4,13 +4,14 @@ use crate::common::*;
 #[template(path = "README.md")]
 pub(crate) struct Readme {
   pub(crate) table_of_contents: String,
+  pub(crate) packages: Table<Package>,
 }
 
 const HEADING_PATTERN: &str = "(?m)^(?P<MARKER>#+) (?P<TEXT>.*)$";
 
 impl Readme {
   #[throws]
-  pub(crate) fn load(template: &Path) -> Readme {
+  pub(crate) fn load(config: &Config, template: &Path) -> Readme {
     let text = fs::read_to_string(template)?;
 
     let header_re = Regex::new(HEADING_PATTERN)?;
@@ -32,6 +33,7 @@ impl Readme {
 
     Readme {
       table_of_contents: lines.join("\n"),
+      packages: Table::new(config.packages.clone()),
     }
   }
 }
