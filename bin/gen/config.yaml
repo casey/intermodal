@@ -60,3 +60,64 @@ packages:
   package-manager:  'Manual Installation'
   package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
   command:          '[wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)'
+
+references:
+  - title: BitTorrent
+    entries:
+    - url: https://github.com/bittorrent/bittorrent.org
+      description: >-
+        GitHub repository hosting protocol development discussion and contents of
+        bittorrent.org.
+
+    - url: https://www.bittorrent.org
+      description: >-
+        Official web site site hosting BEPs and other information about the
+        protocol.
+
+    - url: https://wiki.theory.org/index.php/Main_Page
+      description: >-
+        Wiki with lots of information about all aspects of the BitTorrent
+        protocol and implementations.
+
+    - url: https://archive.org/details/2014_torrent_archive_organized)
+      description: >-
+        Massive 158 GiB archive containing 5.5 million torrents, assembled in
+        2014.
+
+    - url: https://github.com/internetarchive/dweb-transport
+      description: >-
+        Github repository hosting The Internet Archive's distributed web and
+        BitTorrent-related software.
+
+    - url: https://libtorrent.org/udp_tracker_protocol.html
+      description: UDP tracker protocol description.
+
+  - title: Metadata
+    entries:
+    - title: Media RSS Specification
+      url: http://www.rssboard.org/media-rss
+      description: >-
+        _Media RSS is a new RSS module that supplements the <enclosure>
+        capabilities of RSS 2.0. RSS enclosures are already being used to
+        syndicate audio files and images. Media RSS extends enclosures to handle
+        other media types, such as short films or TV, as well as provide
+        additional metadata with the media. Media RSS enables content publishers
+        and bloggers to syndicate multimedia content such as TV and video clips,
+        movies, images and audio._
+
+  - title: Cryptography
+    entries:
+    - url: https://ssbc.github.io/scuttlebutt-protocol-guide/
+      description: Secure Scuttlebutt Protocol guide
+
+    - url: https://github.com/lightningnetwork/lightning-rfc/blob/master/08-transport.md
+      description: 'Lightning Network Encrypted and Authenticated Transport'
+
+    - url: http://noiseprotocol.org/noise.html
+      description: 'Noise Protocol'
+
+    - url: https://github.com/handshake-org/hsd/blob/master/lib/net/brontide.js
+      description: 'Handshake P2P Encryption Protocol'
+
+    - url: https://github.com/j01tz/grin-rfcs/blob/slate-serialization/text/0000-slate-serialization.md
+      description: 'Grin Slate Serialization'

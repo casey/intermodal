@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(rename_all = "kebab-case")]
 pub(crate) struct Package {
   operating_system: String,

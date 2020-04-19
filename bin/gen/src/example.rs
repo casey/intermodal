@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub(crate) struct Example {
   pub(crate) command: String,
   #[serde(default)]

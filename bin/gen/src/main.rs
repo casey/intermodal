@@ -18,11 +18,15 @@ mod opt;
 mod package;
 mod project;
 mod readme;
+mod reference;
+mod reference_section;
 mod release;
 mod row;
+mod slug;
 mod subcommand;
 mod summary;
 mod table;
+mod template_ext;
 
 #[throws]
 fn main() {

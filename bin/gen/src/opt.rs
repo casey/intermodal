@@ -21,10 +21,28 @@ pub(crate) enum Opt {
 }
 
 #[throws]
+fn blank(path: impl AsRef<Path>, title: &str) {
+  let path = path.as_ref();
+
+  info!("Writing blank page to `{}`…", path.display());
+
+  let text = format!(
+    "
+  # {}
+
+  This page intentionally left blank.
+  ",
+    title
+  );
+
+  fs::write(path, text)?;
+}
+
+#[throws]
 fn clean_dir(dir: impl AsRef<Path>) {
   let dir = dir.as_ref();
 
-  eprintln!("Cleaning `{}`…", dir.display());
+  info!("Cleaning `{}`…", dir.display());
 
   if dir.is_dir() {
     fs::remove_dir_all(dir)?;
@@ -62,7 +80,7 @@ impl Opt {
 
   #[throws]
   pub(crate) fn changelog(project: &Project) {
-    eprintln!("Generating changelog…");
+    info!("Generating changelog…");
     let changelog = Changelog::new(&project)?;
 
     let dst = project.root.join("CHANGELOG.md");
@@ -72,7 +90,7 @@ impl Opt {
 
   #[throws]
   pub(crate) fn completion_scripts(project: &Project) {
-    eprintln!("Generating completion scripts…");
+    info!("Generating completion scripts…");
     let completions = project.root.join("completions");
 
     clean_dir(&completions)?;
@@ -92,20 +110,24 @@ impl Opt {
 
   #[throws]
   pub(crate) fn readme(project: &Project) {
-    eprintln!("Generating readme…");
+    info!("Generating readme…");
     let template = project.root.join("bin/gen/templates/README.md");
 
     let readme = Readme::load(&project.config, &template)?;
 
-    let mut text = readme.render()?;
-    text.push('\n');
+    let text = readme.render_newline()?;
 
     fs::write(project.root.join("README.md"), text)?;
   }
 
   #[throws]
   pub(crate) fn book(project: &Project) {
-    eprintln!("Generating book…");
+    info!("Generating book…");
+
+    blank(project.root.join("book/src/commands.md"), "Commands")?;
+    blank(project.root.join("book/src/bittorrent.md"), "BitTorrent")?;
+    blank(project.root.join("book/src/references.md"), "References")?;
+
     let commands = project.root.join("book/src/commands/");
 
     clean_dir(&commands)?;
@@ -118,24 +140,33 @@ impl Opt {
       fs::write(dst, page)?;
     }
 
-    let summary = Summary::new(&project.bin);
+    let references = project.root.join("book/src/references/");
+    clean_dir(&references)?;
 
-    let mut text = summary.render()?;
-    text.push('\n');
+    for section in &project.config.references {
+      let text = section.render_newline()?;
+
+      let path = project.root.join("book/src").join(section.path());
+
+      fs::write(path, text)?;
+    }
+
+    let summary = Summary::new(project);
+
+    let text = summary.render_newline()?;
 
     fs::write(project.root.join("book/src/SUMMARY.md"), text)?;
 
     let introduction = Introduction::new(&project.config);
 
-    let mut text = introduction.render()?;
-    text.push('\n');
+    let text = introduction.render_newline()?;
 
     fs::write(project.root.join("book/src/introduction.md"), text)?;
   }
 
   #[throws]
   pub(crate) fn man(project: &Project) {
-    eprintln!("Generating man pages…");
+    info!("Generating man pages…");
     let mans = project.root.join("man");
 
     clean_dir(&mans)?;
@@ -145,7 +176,7 @@ impl Opt {
 
       let dst = mans.join(format!("{}.1", subcommand.slug()));
 
-      eprintln!("Writing man page to `{}`", dst.display());
+      info!("Writing man page to `{}`", dst.display());
 
       fs::write(dst, man)?;
     }

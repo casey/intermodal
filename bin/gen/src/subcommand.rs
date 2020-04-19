@@ -38,7 +38,7 @@ impl Subcommand {
 
   #[throws]
   fn help(&self) -> String {
-    eprintln!("Getting help for `{}`", self.command_line());
+    info!("Getting help for `{}`", self.command_line());
 
     Command::new(&self.bin)
       .args(self.command.as_slice())
@@ -51,7 +51,7 @@ impl Subcommand {
   pub(crate) fn man(&self) -> String {
     let command_line = self.command_line();
 
-    eprintln!("Generating man page for `{}`", command_line);
+    info!("Generating man page for `{}`", command_line);
 
     let name = command_line.replace(" ", "\\ ");
 
@@ -85,7 +85,7 @@ impl Subcommand {
       .unwrap()
       .to_owned();
 
-    eprintln!("Running help2man for `{}`", command_line);
+    info!("Running help2man for `{}`", command_line);
 
     let mut command = self.bin.as_os_str().to_owned();
     for arg in &self.command {
