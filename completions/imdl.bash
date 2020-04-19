@@ -50,7 +50,7 @@ _imdl() {
 
     case "${cmd}" in
         imdl)
-            opts=" -u -t -h -V -c  --unstable --terminal --help --version --color   torrent completions help"
+            opts=" -q -u -t -h -V -c  --quiet --unstable --terminal --help --version --color   torrent completions help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

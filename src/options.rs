@@ -2,6 +2,8 @@ use crate::common::*;
 
 #[derive(StructOpt)]
 pub(crate) struct Options {
+  #[structopt(long = "quiet", short = "q", help = "Suppress normal output.")]
+  pub(crate) quiet: bool,
   #[structopt(
     long = "unstable",
     short = "u",

@@ -1,4 +1,5 @@
 complete -c imdl -n "__fish_use_subcommand" -s c -l color -d 'Print colorful output according to `WHEN`. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set to `dumb`.' -r -f -a "auto always never"
+complete -c imdl -n "__fish_use_subcommand" -s q -l quiet -d 'Suppress normal output.'
 complete -c imdl -n "__fish_use_subcommand" -s u -l unstable -d 'Enable unstable features. To avoid premature stabilization and excessive version churn, unstable features are unavailable unless this flag is set. Unstable features are not bound by semantic versioning stability guarantees, and may be changed or removed at any time.'
 complete -c imdl -n "__fish_use_subcommand" -s t -l terminal -d 'Disable automatic terminal detection and behave as if both standard output and standard error are connected to a terminal.'
 complete -c imdl -n "__fish_use_subcommand" -s h -l help -d 'Print help message.'

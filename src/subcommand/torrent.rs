@@ -26,12 +26,12 @@ pub(crate) enum Torrent {
 impl Torrent {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
     match self {
-      Self::Create(create) => create.run(env),
+      Self::Create(create) => create.run(env, options),
       Self::Link(link) => link.run(env),
       Self::PieceLength(piece_length) => piece_length.run(env),
       Self::Show(show) => show.run(env),
       Self::Stats(stats) => stats.run(env, options),
-      Self::Verify(verify) => verify.run(env),
+      Self::Verify(verify) => verify.run(env, options),
     }
   }
 }

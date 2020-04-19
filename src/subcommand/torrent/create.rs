@@ -249,7 +249,7 @@ Sort in ascending order by size, break ties in descending path order:
 }
 
 impl Create {
-  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
+  pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
@@ -280,7 +280,9 @@ impl Create {
       )
     };
 
-    CreateStep::Searching { input: &self.input }.print(env)?;
+    if !options.quiet {
+      CreateStep::Searching { input: &self.input }.print(env)?;
+    }
 
     let content = CreateContent::from_create(&self, env)?;
 
@@ -317,12 +319,14 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    CreateStep::Hashing.print(env)?;
+    if !options.quiet {
+      CreateStep::Hashing.print(env)?;
+    }
 
     let hasher = Hasher::new(
       self.md5sum,
       content.piece_length.as_piece_length()?.into_usize(),
-      if env.err().is_styled_term() {
+      if env.err().is_styled_term() && !options.quiet {
         Some(content.progress_bar)
       } else {
         None
@@ -335,10 +339,12 @@ impl Create {
       hasher.hash_stdin(&mut env.input())?
     };
 
-    CreateStep::Writing {
-      output: &content.output,
+    if !options.quiet {
+      CreateStep::Writing {
+        output: &content.output,
+      }
+      .print(env)?;
     }
-    .print(env)?;
 
     let info = Info {
       source: self.source,
@@ -407,7 +413,9 @@ impl Create {
       }
     }
 
-    errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
+    if !options.quiet {
+      errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
+    }
 
     if self.show {
       TorrentSummary::from_metainfo(metainfo.clone())?.write(env)?;
@@ -2969,5 +2977,24 @@ Content Size  9 bytes
     assert_eq!(env.err(), want);
 
     Ok(())
+  }
+
+  #[test]
+  fn no_output_when_quiet() {
+    let mut env = test_env! {
+      args: [
+        "--quiet",
+        "torrent",
+        "create",
+        "--input",
+        "foo"
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    env.assert_ok();
+    assert_eq!(env.out(), "");
+    assert_eq!(env.err(), "");
   }
 }

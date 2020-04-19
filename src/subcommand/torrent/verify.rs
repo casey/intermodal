@@ -33,11 +33,13 @@ pub(crate) struct Verify {
 }
 
 impl Verify {
-  pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    VerifyStep::Loading {
-      metainfo: &self.metainfo,
+  pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
+    if !options.quiet {
+      VerifyStep::Loading {
+        metainfo: &self.metainfo,
+      }
+      .print(env)?;
     }
-    .print(env)?;
 
     let input = env.read(self.metainfo.clone())?;
 
@@ -52,7 +54,7 @@ impl Verify {
       }
     };
 
-    let progress_bar = if env.err().is_styled_term() {
+    let progress_bar = if env.err().is_styled_term() && !options.quiet {
       let style = ProgressStyle::default_bar()
         .template(consts::PROGRESS_STYLE)
         .tick_chars(consts::TICK_CHARS)
@@ -63,17 +65,21 @@ impl Verify {
       None
     };
 
-    VerifyStep::Verifying { content: &content }.print(env)?;
+    if !options.quiet {
+      VerifyStep::Verifying { content: &content }.print(env)?;
+    }
 
     let status = metainfo.verify(&env.resolve(content)?, progress_bar)?;
 
     status.print(env)?;
 
     if status.good() {
-      errln!(
-        env,
-        "\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}"
-      )?;
+      if !options.quiet {
+        errln!(
+          env,
+          "\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}"
+        )?;
+      }
       Ok(())
     } else {
       Err(Error::Verify)
@@ -615,6 +621,41 @@ mod tests {
     );
 
     assert_eq!(verify_env.err(), want);
+
+    Ok(())
+  }
+
+  #[test]
+  fn no_output_when_quiet() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo"
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    create_env.assert_ok();
+
+    let torrent = create_env.resolve("foo.torrent")?;
+
+    let mut verify_env = test_env! {
+      args: [
+        "--quiet",
+        "torrent",
+        "verify",
+        "--input",
+        &torrent,
+      ],
+      tree: {},
+    };
+    verify_env.assert_ok();
+
+    assert_eq!(verify_env.out(), "");
+    assert_eq!(verify_env.err(), "");
 
     Ok(())
   }
