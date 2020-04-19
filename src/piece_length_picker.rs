@@ -1,5 +1,6 @@
-//! See [the book](https://imdl.io/book/bittorrent/piece-length.html) for more
-//! information on Intermodal's automatic piece length selection algorithm.
+//! See [the book](https://imdl.io/book/bittorrent/piece-length-selection.html)
+//! for more information on Intermodal's automatic piece length selection
+//! algorithm.
 
 use crate::common::*;
 
