@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-19
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Generate reference sections with `bin/gen` - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Document piece length selection algorithm ([#392](https://github.com/casey/intermodal/pull/392)) - Fixes [#367](https://github.com/casey/intermodal/issues/367) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`3ed449ce9325`](https://github.com/casey/intermodal/commit/3ed449ce932509ac88bd4837d74c9cbbb0729da9) Generate reference sections with `bin/gen` - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`a6bf75279181`](https://github.com/casey/intermodal/commit/a6bf7527918178821e080db10e65b057f427200d) Use `invariant` instead of `unwrap` and `expect` - Fixes [#167](https://github.com/casey/intermodal/issues/167) - _Casey Rodarmor <casey@rodarmor.com>_
 - :white_check_mark: [`faf46c0f0e6f`](https://github.com/casey/intermodal/commit/faf46c0f0e6fd4e4f8b504d414a3bf02d7d68e4a) Test that globs match torrent contents - Fixes [#377](https://github.com/casey/intermodal/issues/377) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`0a754d0bcfcf`](https://github.com/casey/intermodal/commit/0a754d0bcfcfd65127d7b6e78d41852df78d3ea2) Add manual Arch install link - Fixes [#373](https://github.com/casey/intermodal/issues/373) - _Casey Rodarmor <casey@rodarmor.com>_

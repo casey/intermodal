@@ -15,9 +15,10 @@ Summary
   - [`imdl torrent verify`](./commands/imdl-torrent-verify.md)
 
 - [Bittorrent](./bittorrent.md)
-  - [Distributing Large Data Sets](./bittorrent/distributing-large-data-sets.md)
+  - [Piece Length Selection](./bittorrent/piece-length-selection.md)
   - [BEP Support](./bittorrent/bep-support.md)
   - [Metainfo Utilities](./bittorrent/metainfo-utilities.md)
+  - [Distributing Large Data Sets](./bittorrent/distributing-large-data-sets.md)
   - [UDP Tracker Protocol](./bittorrent/udp-tracker-protocol.md)
 
 - [References](./references.md)
