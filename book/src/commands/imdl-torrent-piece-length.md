@@ -1,6 +1,6 @@
 # `imdl torrent piece-length`
 ```
-imdl-torrent-piece-length 0.1.5
+imdl-torrent-piece-length 0.1.6
 Display information about automatic piece length selection.
 
 USAGE:

@@ -1,6 +1,6 @@
 # `imdl torrent`
 ```
-imdl-torrent 0.1.5
+imdl-torrent 0.1.6
 Subcommands related to the BitTorrent protocol.
 
 USAGE:

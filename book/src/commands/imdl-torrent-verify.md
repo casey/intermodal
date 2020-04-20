@@ -1,6 +1,6 @@
 # `imdl torrent verify`
 ```
-imdl-torrent-verify 0.1.5
+imdl-torrent-verify 0.1.6
 Verify files against a .torrent file.
 
 USAGE:

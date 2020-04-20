@@ -1,6 +1,6 @@
 # `imdl`
 ```
-imdl v0.1.5
+imdl v0.1.6
 Casey Rodarmor <casey@rodarmor.com>
 📦 A 40' shipping container for the internet -
 https://github.com/casey/intermodal

@@ -1,6 +1,6 @@
 # `imdl torrent show`
 ```
-imdl-torrent-show 0.1.5
+imdl-torrent-show 0.1.6
 Display information about a .torrent file.
 
 USAGE:
