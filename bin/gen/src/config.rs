@@ -8,6 +8,7 @@ pub(crate) struct Config {
   pub(crate) examples: Vec<Example>,
   pub(crate) packages: Vec<Package>,
   pub(crate) references: Vec<ReferenceSection>,
+  pub(crate) faq: Vec<FaqEntry>,
 }
 
 impl Config {

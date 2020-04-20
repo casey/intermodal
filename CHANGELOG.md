@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-20
 -----------------------
-- :sparkles: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add `--terminal` override terminal autodetection - Fixes [#398](https://github.com/casey/intermodal/issues/398) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Create FAQ - Fixes [#397](https://github.com/casey/intermodal/issues/397) - _Casey Rodarmor <casey@rodarmor.com>_
+- :sparkles: [`65597c98510b`](https://github.com/casey/intermodal/commit/65597c98510b0536247c58a4cead559d3b3817be) Add `--terminal` override terminal autodetection - Fixes [#398](https://github.com/casey/intermodal/issues/398) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`70dbe93c6ab0`](https://github.com/casey/intermodal/commit/70dbe93c6ab01408dfc42e1b75664de13de16a51) Note install script only works on Linux and MacOS - Fixes [#371](https://github.com/casey/intermodal/issues/371) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`b67a2f1885c9`](https://github.com/casey/intermodal/commit/b67a2f1885c9445c08411457809f8893ebfa2045) Fix 404.css link - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`87687f4decbb`](https://github.com/casey/intermodal/commit/87687f4decbbd216b32ea3c9001122c56d5a93fc) Add custom 404 page to site - _Casey Rodarmor <casey@rodarmor.com>_

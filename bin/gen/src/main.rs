@@ -11,6 +11,8 @@ mod config;
 mod entry;
 mod example;
 mod exit_status_ext;
+mod faq;
+mod faq_entry;
 mod introduction;
 mod kind;
 mod metadata;

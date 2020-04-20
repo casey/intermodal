@@ -3,6 +3,8 @@ Summary
 
 [Intermodal](./introduction.md)
 
+- [FAQ](./faq.md)
+
 {{commands}}
 
 - [Bittorrent](./bittorrent.md)

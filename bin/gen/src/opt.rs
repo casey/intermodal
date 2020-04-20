@@ -151,6 +151,10 @@ impl Opt {
       fs::write(path, text)?;
     }
 
+    let faq = Faq::new(&project.config.faq);
+
+    fs::write(project.root.join("book/src/faq.md"), faq.render_newline()?)?;
+
     let summary = Summary::new(project);
 
     let text = summary.render_newline()?;

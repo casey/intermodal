@@ -3,6 +3,8 @@ Summary
 
 [Intermodal](./introduction.md)
 
+- [FAQ](./faq.md)
+
 - [Commands](./commands.md)
   - [`imdl`](./commands/imdl.md)
   - [`imdl completions`](./commands/imdl-completions.md)

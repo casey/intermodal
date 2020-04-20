@@ -121,3 +121,17 @@ references:
 
     - url: https://github.com/j01tz/grin-rfcs/blob/slate-serialization/text/0000-slate-serialization.md
       description: 'Grin Slate Serialization'
+
+faq:
+- title: Can intermodal be used to preview torrents with `fzf`?
+  anchor: fzf-preview
+  text: |-
+    Yes! [@mustaqimM](https://github.com/mustaqimM) came up with the following:
+
+        fzf --preview='imdl --color always --terminal torrent show --input {}
+
+    _Note the use of `--color always` and `--terminal` to force colored, human readable output._
+
+    This can be used to, for example, preview the torrents in a directory:
+
+        find . -name '*.torrent' | fzf --preview='imdl -c always -t torrent show -i {}'

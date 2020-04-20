@@ -31,8 +31,9 @@ pub(crate) use crate::{
 
 // structs and enums
 pub(crate) use crate::{
-  bin::Bin, changelog::Changelog, config::Config, entry::Entry, example::Example,
-  introduction::Introduction, kind::Kind, metadata::Metadata, opt::Opt, package::Package,
-  project::Project, readme::Readme, reference::Reference, reference_section::ReferenceSection,
-  release::Release, subcommand::Subcommand, summary::Summary, table::Table,
+  bin::Bin, changelog::Changelog, config::Config, entry::Entry, example::Example, faq::Faq,
+  faq_entry::FaqEntry, introduction::Introduction, kind::Kind, metadata::Metadata, opt::Opt,
+  package::Package, project::Project, readme::Readme, reference::Reference,
+  reference_section::ReferenceSection, release::Release, subcommand::Subcommand, summary::Summary,
+  table::Table,
 };
