@@ -13,6 +13,7 @@ pub(crate) struct Options {
   unstable: bool,
   #[structopt(
     long = "color",
+    short = "c",
     value_name = "WHEN",
     default_value = UseColor::Auto.into(),
     possible_values = UseColor::VARIANTS,
@@ -22,6 +23,13 @@ pub(crate) struct Options {
             `dumb`.",
   )]
   pub(crate) use_color: UseColor,
+  #[structopt(
+    long = "terminal",
+    short = "t",
+    help = "Disable automatic terminal detection and behave as if both standard output and \
+            standard error are connected to a terminal."
+  )]
+  pub(crate) terminal: bool,
 }
 
 impl Options {

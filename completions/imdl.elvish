@@ -14,9 +14,12 @@ edit:completion:arg-completer[imdl] = [@words]{
     }
     completions = [
         &'imdl'= {
+            cand -c 'Print colorful output according to `WHEN`. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set to `dumb`.'
             cand --color 'Print colorful output according to `WHEN`. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set to `dumb`.'
             cand -u 'Enable unstable features. To avoid premature stabilization and excessive version churn, unstable features are unavailable unless this flag is set. Unstable features are not bound by semantic versioning stability guarantees, and may be changed or removed at any time.'
             cand --unstable 'Enable unstable features. To avoid premature stabilization and excessive version churn, unstable features are unavailable unless this flag is set. Unstable features are not bound by semantic versioning stability guarantees, and may be changed or removed at any time.'
+            cand -t 'Disable automatic terminal detection and behave as if both standard output and standard error are connected to a terminal.'
+            cand --terminal 'Disable automatic terminal detection and behave as if both standard output and standard error are connected to a terminal.'
             cand -h 'Print help message.'
             cand --help 'Print help message.'
             cand -V 'Print version number.'

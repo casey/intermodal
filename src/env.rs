@@ -56,6 +56,11 @@ impl Env {
     self.err.set_use_color(use_color);
     self.out.set_use_color(use_color);
 
+    if args.options().terminal {
+      self.err.set_is_term(true);
+      self.out.set_is_term(true);
+    }
+
     args.run(self)
   }
 
@@ -241,5 +246,43 @@ mod tests {
     }
 
     assert_eq!(env.out(), "");
+  }
+
+  #[test]
+  fn terminal() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "udp:bar.com",
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+
+    create_env.assert_ok();
+
+    let mut env = test_env! {
+      args: [
+        "--terminal",
+        "torrent",
+        "show",
+        "--input",
+        create_env.resolve("foo.torrent")?,
+      ],
+      tree: {
+      }
+    };
+
+    env.assert_ok();
+
+    assert_eq!(env.err(), "");
+    assert!(env.out().starts_with("         Name"));
+
+    Ok(())
   }
 }

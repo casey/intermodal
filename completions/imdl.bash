@@ -50,7 +50,7 @@ _imdl() {
 
     case "${cmd}" in
         imdl)
-            opts=" -u -h -V  --unstable --help --version --color   torrent completions help"
+            opts=" -u -t -h -V -c  --unstable --terminal --help --version --color   torrent completions help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -58,6 +58,10 @@ _imdl() {
             case "${prev}" in
                 
                 --color)
+                    COMPREPLY=($(compgen -W "auto always never" -- "${cur}"))
+                    return 0
+                    ;;
+                    -c)
                     COMPREPLY=($(compgen -W "auto always never" -- "${cur}"))
                     return 0
                     ;;

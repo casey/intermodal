@@ -41,6 +41,10 @@ impl OutputStream {
     }
   }
 
+  pub(crate) fn set_is_term(&mut self, term: bool) {
+    self.term = term;
+  }
+
   pub(crate) fn is_term(&self) -> bool {
     self.term
   }

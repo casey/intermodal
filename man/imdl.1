@@ -11,6 +11,10 @@ imdl [FLAGS] [OPTIONS] <SUBCOMMAND>
 \fB\-h\fR, \fB\-\-help\fR
 Print help message.
 .TP
+\fB\-t\fR, \fB\-\-terminal\fR
+Disable automatic terminal detection and behave as if both standard output and standard error are
+connected to a terminal.
+.TP
 \fB\-u\fR, \fB\-\-unstable\fR
 Enable unstable features. To avoid premature stabilization and excessive version churn, unstable
 features are unavailable unless this flag is set. Unstable features are not bound by semantic
@@ -20,7 +24,7 @@ versioning stability guarantees, and may be changed or removed at any time.
 Print version number.
 .SH "OPTIONS:"
 .TP
-\fB\-\-color\fR <WHEN>
+\fB\-c\fR, \fB\-\-color\fR <WHEN>
 Print colorful output according to `WHEN`. When `auto`, the default, colored output is only
 enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment
 variable is not set, and the `TERM` environment variable is not set to `dumb`. [default: auto]

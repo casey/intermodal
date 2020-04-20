@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-20
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Note install script only works on Linux and MacOS - Fixes [#371](https://github.com/casey/intermodal/issues/371) - _Casey Rodarmor <casey@rodarmor.com>_
+- :sparkles: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add `--terminal` override terminal autodetection - Fixes [#398](https://github.com/casey/intermodal/issues/398) - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`70dbe93c6ab0`](https://github.com/casey/intermodal/commit/70dbe93c6ab01408dfc42e1b75664de13de16a51) Note install script only works on Linux and MacOS - Fixes [#371](https://github.com/casey/intermodal/issues/371) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`b67a2f1885c9`](https://github.com/casey/intermodal/commit/b67a2f1885c9445c08411457809f8893ebfa2045) Fix 404.css link - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`87687f4decbb`](https://github.com/casey/intermodal/commit/87687f4decbbd216b32ea3c9001122c56d5a93fc) Add custom 404 page to site - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`09b0ee316c03`](https://github.com/casey/intermodal/commit/09b0ee316c034848c3b50966e7b5e3ed720aef2b) Document piece length selection algorithm ([#392](https://github.com/casey/intermodal/pull/392)) - Fixes [#367](https://github.com/casey/intermodal/issues/367) - _Casey Rodarmor <casey@rodarmor.com>_

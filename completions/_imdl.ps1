@@ -19,9 +19,12 @@ Register-ArgumentCompleter -Native -CommandName 'imdl' -ScriptBlock {
 
     $completions = @(switch ($command) {
         'imdl' {
+            [CompletionResult]::new('-c', 'c', [CompletionResultType]::ParameterName, 'Print colorful output according to `WHEN`. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set to `dumb`.')
             [CompletionResult]::new('--color', 'color', [CompletionResultType]::ParameterName, 'Print colorful output according to `WHEN`. When `auto`, the default, colored output is only enabled if imdl detects that it is connected to a terminal, the `NO_COLOR` environment variable is not set, and the `TERM` environment variable is not set to `dumb`.')
             [CompletionResult]::new('-u', 'u', [CompletionResultType]::ParameterName, 'Enable unstable features. To avoid premature stabilization and excessive version churn, unstable features are unavailable unless this flag is set. Unstable features are not bound by semantic versioning stability guarantees, and may be changed or removed at any time.')
             [CompletionResult]::new('--unstable', 'unstable', [CompletionResultType]::ParameterName, 'Enable unstable features. To avoid premature stabilization and excessive version churn, unstable features are unavailable unless this flag is set. Unstable features are not bound by semantic versioning stability guarantees, and may be changed or removed at any time.')
+            [CompletionResult]::new('-t', 't', [CompletionResultType]::ParameterName, 'Disable automatic terminal detection and behave as if both standard output and standard error are connected to a terminal.')
+            [CompletionResult]::new('--terminal', 'terminal', [CompletionResultType]::ParameterName, 'Disable automatic terminal detection and behave as if both standard output and standard error are connected to a terminal.')
             [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help message.')
             [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Print version number.')
