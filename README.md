@@ -23,6 +23,7 @@ For more about the project and its goals, check out
   - [Supported Operating Systems](#supported-operating-systems)
   - [Packages](#packages)
   - [Pre-built binaries](#pre-built-binaries)
+  - [Linux and MacOS Install Script](#linux-and-macos-install-script)
   - [Cargo](#cargo)
 - [Shell Completion Scripts](#shell-completion-scripts)
 - [Chat](#chat)
@@ -53,9 +54,11 @@ If it does not, please open an issue!
 Pre-built binaries for Linux, macOS, and Windows can be found on
 [the releases page](https://github.com/casey/intermodal/releases).
 
-You can use the following command to download the latest binary for Linux,
-MacOS, or Windows, just replace `DEST` with the directory where you'd like to
-install the `imdl` binary:
+### Linux and MacOS Install Script
+
+You can use the following command on Linux and MacOS to download the latest
+binary, just replace `DEST` with the directory where you'd like to install the
+`imdl` binary:
 
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://imdl.io/install.sh | bash -s -- --to DEST
