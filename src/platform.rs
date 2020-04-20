@@ -17,29 +17,13 @@ impl PlatformInterface for Platform {
 #[cfg(target_os = "macos")]
 impl PlatformInterface for Platform {
   fn hidden(path: &Path) -> Result<bool, Error> {
-    use std::{ffi::CString, mem, os::unix::ffi::OsStrExt};
+    use std::os::macos::fs::MetadataExt;
 
     const HIDDEN_MASK_MAC: u32 = 0x0000_8000;
 
-    let mut stat: libc::stat = unsafe { mem::zeroed() };
+    let metadata = path.metadata().context(error::Filesystem { path })?;
 
-    let cpath = if let Ok(cstr) = CString::new(path.as_os_str().as_bytes()) {
-      cstr
-    } else {
-      // Consider paths containing null bytes to be hidden
-      return Ok(true);
-    };
-
-    let error_code = unsafe { libc::stat(cpath.as_ptr(), &mut stat) };
-
-    if error_code != 0 {
-      return Err(Error::Filesystem {
-        source: io::Error::from_raw_os_error(error_code),
-        path: path.to_owned(),
-      });
-    }
-
-    Ok(stat.st_flags & HIDDEN_MASK_MAC != 0)
+    Ok(metadata.st_flags() & HIDDEN_MASK_MAC != 0)
   }
 }
 
@@ -47,5 +31,37 @@ impl PlatformInterface for Platform {
 impl PlatformInterface for Platform {
   fn hidden(_path: &Path) -> Result<bool, Error> {
     Ok(false)
+  }
+}
+
+#[cfg(tests)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn hidden() {
+    let tmp = tempdir().unwrap();
+
+    let file = tmp.path().join("file");
+
+    assert!(!Platform::hidden(&file));
+
+    if cfg!(target_os = "windows") {
+      Command::new("attrib")
+        .arg("+h")
+        .arg(&file)
+        .status()
+        .unwrap();
+    } else if cfg!(target_os = "macos") {
+      Command::new("chflags")
+        .arg("hidden")
+        .arg(&file)
+        .status()
+        .unwrap();
+    } else {
+      return;
+    }
+
+    assert!(Platform::hidden(&file));
   }
 }
