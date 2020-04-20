@@ -200,6 +200,9 @@ USAGE:
 
 FLAGS:
     -h, --help        Print help message.
+    -t, --terminal    Disable automatic terminal detection and behave as if both
+                      standard output and standard error are connected to a
+                      terminal.
     -u, --unstable    Enable unstable features. To avoid premature stabilization
                       and excessive version churn, unstable features are
                       unavailable unless this flag is set. Unstable features are
@@ -208,7 +211,7 @@ FLAGS:
     -V, --version     Print version number.
 
 OPTIONS:
-        --color &lt;WHEN&gt;    Print colorful output according to `WHEN`. When
+    -c, --color &lt;WHEN&gt;    Print colorful output according to `WHEN`. When
                           `auto`, the default, colored output is only enabled if
                           imdl detects that it is connected to a terminal, the
                           `NO_COLOR` environment variable is not set, and the
