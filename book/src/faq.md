@@ -6,8 +6,8 @@ FAQ
 
 
 
-<h2 name="fzf-preview">
-Can intermodal be used to preview torrents with `fzf`?
+<a name="fzf-preview"></a>
+## Can intermodal be used to preview torrents with `fzf`?
 </h2>
 
 Yes! [@mustaqimM](https://github.com/mustaqimM) came up with the following:

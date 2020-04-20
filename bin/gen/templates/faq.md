@@ -6,8 +6,8 @@ FAQ
 {% endfor %}
 
 {% for entry in entries %}
-<h2 name="{{entry.anchor}}">
-{{entry.title}}
+<a name="{{entry.anchor}}"></a>
+## {{entry.title}}
 </h2>
 
 {{entry.text}}
