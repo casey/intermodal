@@ -86,7 +86,7 @@ merge:
 
 publish-check: check
 	cargo outdated --exit-code 1
-	grep {{version}} CHANGELOG.md
+	grep '^\[{{version}}\]' CHANGELOG.md
 
 publish: publish-check
 	#!/usr/bin/env bash

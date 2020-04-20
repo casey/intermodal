@@ -2,9 +2,14 @@ Changelog
 =========
 
 
+UNRELEASED - 2020-04-20
+-----------------------
+- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Make `publish-check` recipe stricter - _Casey Rodarmor <casey@rodarmor.com>_
+
+
 [v0.1.6](https://github.com/casey/intermodal/releases/tag/v0.1.6) - 2020-04-20
 ------------------------------------------------------------------------------
-- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.6 - _Casey Rodarmor <casey@rodarmor.com>_
+- :bookmark: [`85246d816c93`](https://github.com/casey/intermodal/commit/85246d816c93bef9973d6ab2c0e5aac07ba8c88d) Release v0.1.6 - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`1cb11786724a`](https://github.com/casey/intermodal/commit/1cb11786724acef844b41e7ab3b339841f5d920e) Create FAQ - Fixes [#397](https://github.com/casey/intermodal/issues/397) - _Casey Rodarmor <casey@rodarmor.com>_
 - :sparkles: [`65597c98510b`](https://github.com/casey/intermodal/commit/65597c98510b0536247c58a4cead559d3b3817be) Add `--terminal` override terminal autodetection - Fixes [#398](https://github.com/casey/intermodal/issues/398) - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`70dbe93c6ab0`](https://github.com/casey/intermodal/commit/70dbe93c6ab01408dfc42e1b75664de13de16a51) Note install script only works on Linux and MacOS - Fixes [#371](https://github.com/casey/intermodal/issues/371) - _Casey Rodarmor <casey@rodarmor.com>_
