@@ -1,6 +1,14 @@
-/target
 **/*.rs.bk
-/www/book
 /book/book
-/wiki
+/book/src/SUMMARY.md
+/book/src/bittorrent.md
+/book/src/commands.md
+/book/src/commands/
+/book/src/faq.md
+/book/src/introduction.md
+/book/src/references
+/book/src/references.md
 /completions
+/target
+/wiki
+/www/book

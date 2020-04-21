@@ -117,7 +117,9 @@ jobs:
         mdbook-version: latest
 
     - name: Build Book
-      run: mdbook build book --dest-dir ../www/book
+      run: |
+        cargo run --package gen book
+        mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
       if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
