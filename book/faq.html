@@ -155,7 +155,12 @@
                     <main>
                         <h1><a class="header" href="#faq" id="faq">FAQ</a></h1>
 <ul>
-<li><a href="#fzf-preview">Can intermodal be used to preview torrents with <code>fzf</code>?</a></li>
+<li>
+<p><a href="#fzf-preview">Can intermodal be used to preview torrents with <code>fzf</code>?</a></p>
+</li>
+<li>
+<p><a href="#git-repo">Can intermodal be used to create a torrent from a Git repo?</a></p>
+</li>
 </ul>
 <p><a name="fzf-preview"></a></p>
 <h2><a class="header" href="#can-intermodal-be-used-to-preview-torrents-with-fzf" id="can-intermodal-be-used-to-preview-torrents-with-fzf">Can intermodal be used to preview torrents with <code>fzf</code>?</a></h2>
@@ -166,6 +171,19 @@
 <p><em>Note the use of <code>--color always</code> and <code>--terminal</code> to force colored, human readable output.</em></p>
 <p>This can be used to, for example, preview the torrents in a directory:</p>
 <pre><code>find . -name '*.torrent' | fzf --preview='imdl -c always -t torrent show -i {}'
+</code></pre>
+<p><a name="git-repo"></a></p>
+<h2><a class="header" href="#can-intermodal-be-used-to-create-a-torrent-from-a-git-repo" id="can-intermodal-be-used-to-create-a-torrent-from-a-git-repo">Can intermodal be used to create a torrent from a Git repo?</a></h2>
+</h2>
+<p>Yes! The <code>--ignore</code> flag, contributed by <a href="https://github.com/Celeo">@Celeo</a>, can be used
+to make <code>imdl torrent create</code> respect <code>.gitignore</code> files:</p>
+<pre><code>imdl torrent create --ignore --include-hidden --include-junk --glob '!.git/*' --input .
+</code></pre>
+<p>In addition to <code>--ignore</code>, <code>--include-hidden</code>, <code>--include-junk</code>, and <code>--glob '!.git/*'</code>
+are used to include files, like <code>.gitignore</code>, that are present in the repo but would
+otherwise be skipped, and to skip the contents of the <code>.git</code> directory.</p>
+<p>Equivalently, with short flags:</p>
+<pre><code>imdl torrent create --ignore -hjg '!.git/*' -i .
 </code></pre>
 
                     </main>
