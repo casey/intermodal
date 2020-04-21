@@ -15,9 +15,17 @@ test -f Cargo.lock || cargo generate-lockfile
 
 echo "Building $bin..."
 
-if [ "$os" = "ubuntu-latest" ]; then
-  sudo apt-get install musl-tools
-fi
+case $os in
+  ubuntu-latest)
+    sudo apt-get help2man install musl-tools
+    ;;
+  macos-latest)
+    brew install help2man
+    ;;
+  windows-latest)
+    choco install gnuwin
+    ;;
+esac
 
 case $os in
   ubuntu-latest | macos-latest)
@@ -34,6 +42,11 @@ echo "Building completions..."
 rm -rf completions
 mkdir completions
 $executable completions --dir completions
+
+echo "Building man pages..."
+rm -rf man
+mkdir man
+cargo run --package gen man
 
 echo "Copying release files..."
 mkdir dist
