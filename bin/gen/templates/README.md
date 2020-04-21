@@ -79,8 +79,7 @@ source and installed with `cargo install imdl`. To get Rust, use the
 ## Shell Completion Scripts
 
 Shell completion scripts for Bash, Zsh, Fish, PowerShell, and Elvish are
-available in the [completions directory](./completions), included in all
-[binary releases](https://github.com/casey/imdl/releases).
+included in all [binary releases](https://github.com/casey/imdl/releases).
 
 For Bash, move `imdl.bash` to `$XDG_CONFIG_HOME/bash_completion` or
 `/etc/bash_completion.d/`.

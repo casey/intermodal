@@ -30,6 +30,11 @@ case $os in
     ;;
 esac
 
+echo "Building completions..."
+rm -rf completions
+mkdir completions
+$executable completions --dir completions
+
 echo "Copying release files..."
 mkdir dist
 cp -r \
