@@ -264,7 +264,7 @@ SUBCOMMANDS:
 Print shell completion scripts to standard output.
 
 USAGE:
-    imdl completions [OPTIONS] --shell &lt;SHELL&gt;
+    imdl completions [OPTIONS] &lt;SHELL&gt;
 
 FLAGS:
     -h, --help       Print help message.
@@ -276,6 +276,10 @@ OPTIONS:
                            completion scripts.
     -s, --shell &lt;SHELL&gt;    Print completion script for `SHELL`. [possible
                            values: zsh, bash, fish, powershell, elvish]
+
+ARGS:
+    &lt;SHELL&gt;    Print completion script for `SHELL`. [possible values: zsh,
+               bash, fish, powershell, elvish]
 
 </code></pre>
 <h1><a class="header" href="#imdl-torrent" id="imdl-torrent"><code>imdl torrent</code></a></h1>
@@ -394,12 +398,12 @@ OPTIONS:
             Include or exclude files that match `GLOB`. Multiple glob may be
             provided, with the last one taking precedence. Precede a glob with
             `!` to exclude it.
-    -i, --input &lt;PATH&gt;
-            Read torrent contents from `PATH`. If `PATH` is a file, torrent will
-            be a single-file torrent.  If `PATH` is a directory, torrent will be
-            a multi-file torrent.  If `PATH` is `-`, read from standard input.
-            Piece length defaults to 256KiB when reading from standard input if
-            `--piece-length` is not given.
+    -i, --input &lt;INPUT&gt;
+            Read torrent contents from `INPUT`. If `INPUT` is a file, torrent
+            will be a single-file torrent.  If `INPUT` is a directory, torrent
+            will be a multi-file torrent.  If `INPUT` is `-`, read from standard
+            input. Piece length defaults to 256KiB when reading from standard
+            input if `--piece-length` is not given.
     -N, --name &lt;TEXT&gt;
             Set name of torrent to `TEXT`. Defaults to the filename of the
             argument to `--input`. Required when `--input -`.
@@ -442,9 +446,9 @@ OPTIONS:
             trackers.
 
 ARGS:
-    &lt;INPUT&gt;    Read torrent contents from `PATH`. If `PATH` is a file,
-               torrent will be a single-file torrent.  If `PATH` is a
-               directory, torrent will be a multi-file torrent.  If `PATH`
+    &lt;INPUT&gt;    Read torrent contents from `INPUT`. If `INPUT` is a file,
+               torrent will be a single-file torrent.  If `INPUT` is a
+               directory, torrent will be a multi-file torrent.  If `INPUT`
                is `-`, read from standard input. Piece length defaults to
                256KiB when reading from standard input if `--piece-length`
                is not given.
@@ -455,7 +459,7 @@ ARGS:
 Generate a magnet link from a .torrent file.
 
 USAGE:
-    imdl torrent link [FLAGS] [OPTIONS] --input &lt;METAINFO&gt;
+    imdl torrent link [FLAGS] [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
@@ -468,10 +472,14 @@ OPTIONS:
     -s, --select-only &lt;INDICES&gt;...
             Select files to download. Values are indices into the `info.files`
             list, e.g. `--select-only 1,2,3`.
-    -i, --input &lt;METAINFO&gt;
-            Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read
-            metainfo from standard input.
+    -i, --input &lt;INPUT&gt;
+            Generate magnet link from metainfo at `INPUT`. If `INPUT` is `-`,
+            read metainfo from standard input.
     -p, --peer &lt;PEER&gt;...              Add `PEER` to magnet link.
+
+ARGS:
+    &lt;INPUT&gt;    Generate magnet link from metainfo at `INPUT`. If `INPUT` is
+               `-`, read metainfo from standard input.
 
 </code></pre>
 <h1><a class="header" href="#imdl-torrent-piece-length" id="imdl-torrent-piece-length"><code>imdl torrent piece-length</code></a></h1>
@@ -491,15 +499,19 @@ FLAGS:
 Display information about a .torrent file.
 
 USAGE:
-    imdl torrent show --input &lt;PATH&gt;
+    imdl torrent show [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
     -V, --version    Print version number.
 
 OPTIONS:
-    -i, --input &lt;PATH&gt;    Show information about torrent at `PATH`. If `Path` is
-                          `-`, read torrent metainfo from standard input.
+    -i, --input &lt;INPUT&gt;    Show information about torrent at `INPUT`. If `INPUT`
+                           is `-`, read torrent metainfo from standard input.
+
+ARGS:
+    &lt;INPUT&gt;    Show information about torrent at `INPUT`. If `INPUT` is `-`,
+               read torrent metainfo from standard input.
 
 </code></pre>
 <h1><a class="header" href="#imdl-torrent-stats" id="imdl-torrent-stats"><code>imdl torrent stats</code></a></h1>
@@ -544,17 +556,16 @@ FLAGS:
     -V, --version    Print version number.
 
 OPTIONS:
-    -c, --content &lt;PATH&gt;      Verify torrent content at `PATH` against torrent
-                              metainfo. Defaults to `name` field of torrent info
-                              dictionary.
-    -i, --input &lt;METAINFO&gt;    Verify torrent contents against torrent metainfo
-                              in `METAINFO`. If `METAINFO` is `-`, read metainfo
-                              from standard input.
+    -c, --content &lt;PATH&gt;    Verify torrent content at `PATH` against torrent
+                            metainfo. Defaults to `name` field of torrent info
+                            dictionary.
+    -i, --input &lt;INPUT&gt;     Verify torrent contents against torrent metainfo in
+                            `INPUT`. If `INPUT` is `-`, read metainfo from
+                            standard input.
 
 ARGS:
-    &lt;INPUT&gt;    Verify torrent contents against torrent metainfo in
-               `METAINFO`. If `METAINFO` is `-`, read metainfo from standard
-               input.
+    &lt;INPUT&gt;    Verify torrent contents against torrent metainfo in `INPUT`.
+               If `INPUT` is `-`, read metainfo from standard input.
 
 </code></pre>
 <h1><a class="header" href="#bittorrent" id="bittorrent">BitTorrent</a></h1>

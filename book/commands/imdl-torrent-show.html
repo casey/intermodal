@@ -158,15 +158,19 @@
 Display information about a .torrent file.
 
 USAGE:
-    imdl torrent show --input &lt;PATH&gt;
+    imdl torrent show [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
     -V, --version    Print version number.
 
 OPTIONS:
-    -i, --input &lt;PATH&gt;    Show information about torrent at `PATH`. If `Path` is
-                          `-`, read torrent metainfo from standard input.
+    -i, --input &lt;INPUT&gt;    Show information about torrent at `INPUT`. If `INPUT`
+                           is `-`, read torrent metainfo from standard input.
+
+ARGS:
+    &lt;INPUT&gt;    Show information about torrent at `INPUT`. If `INPUT` is `-`,
+               read torrent metainfo from standard input.
 
 </code></pre>
 

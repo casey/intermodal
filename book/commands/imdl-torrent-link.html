@@ -158,7 +158,7 @@
 Generate a magnet link from a .torrent file.
 
 USAGE:
-    imdl torrent link [FLAGS] [OPTIONS] --input &lt;METAINFO&gt;
+    imdl torrent link [FLAGS] [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
@@ -171,10 +171,14 @@ OPTIONS:
     -s, --select-only &lt;INDICES&gt;...
             Select files to download. Values are indices into the `info.files`
             list, e.g. `--select-only 1,2,3`.
-    -i, --input &lt;METAINFO&gt;
-            Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read
-            metainfo from standard input.
+    -i, --input &lt;INPUT&gt;
+            Generate magnet link from metainfo at `INPUT`. If `INPUT` is `-`,
+            read metainfo from standard input.
     -p, --peer &lt;PEER&gt;...              Add `PEER` to magnet link.
+
+ARGS:
+    &lt;INPUT&gt;    Generate magnet link from metainfo at `INPUT`. If `INPUT` is
+               `-`, read metainfo from standard input.
 
 </code></pre>
 

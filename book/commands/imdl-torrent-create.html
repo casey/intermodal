@@ -246,12 +246,12 @@ OPTIONS:
             Include or exclude files that match `GLOB`. Multiple glob may be
             provided, with the last one taking precedence. Precede a glob with
             `!` to exclude it.
-    -i, --input &lt;PATH&gt;
-            Read torrent contents from `PATH`. If `PATH` is a file, torrent will
-            be a single-file torrent.  If `PATH` is a directory, torrent will be
-            a multi-file torrent.  If `PATH` is `-`, read from standard input.
-            Piece length defaults to 256KiB when reading from standard input if
-            `--piece-length` is not given.
+    -i, --input &lt;INPUT&gt;
+            Read torrent contents from `INPUT`. If `INPUT` is a file, torrent
+            will be a single-file torrent.  If `INPUT` is a directory, torrent
+            will be a multi-file torrent.  If `INPUT` is `-`, read from standard
+            input. Piece length defaults to 256KiB when reading from standard
+            input if `--piece-length` is not given.
     -N, --name &lt;TEXT&gt;
             Set name of torrent to `TEXT`. Defaults to the filename of the
             argument to `--input`. Required when `--input -`.
@@ -294,9 +294,9 @@ OPTIONS:
             trackers.
 
 ARGS:
-    &lt;INPUT&gt;    Read torrent contents from `PATH`. If `PATH` is a file,
-               torrent will be a single-file torrent.  If `PATH` is a
-               directory, torrent will be a multi-file torrent.  If `PATH`
+    &lt;INPUT&gt;    Read torrent contents from `INPUT`. If `INPUT` is a file,
+               torrent will be a single-file torrent.  If `INPUT` is a
+               directory, torrent will be a multi-file torrent.  If `INPUT`
                is `-`, read from standard input. Piece length defaults to
                256KiB when reading from standard input if `--piece-length`
                is not given.
