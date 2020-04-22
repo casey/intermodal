@@ -158,7 +158,7 @@
 Create a .torrent file.
 
 USAGE:
-    imdl torrent create [FLAGS] [OPTIONS] --input &lt;PATH&gt;
+    imdl torrent create [FLAGS] [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -n, --dry-run             Skip writing `.torrent` file to disk.
@@ -292,6 +292,14 @@ OPTIONS:
             as distinct torrents, and not share peers between them, and will
             correctly report download and upload statistics to multiple
             trackers.
+
+ARGS:
+    &lt;INPUT&gt;    Read torrent contents from `PATH`. If `PATH` is a file,
+               torrent will be a single-file torrent.  If `PATH` is a
+               directory, torrent will be a multi-file torrent.  If `PATH`
+               is `-`, read from standard input. Piece length defaults to
+               256KiB when reading from standard input if `--piece-length`
+               is not given.
 
 </code></pre>
 

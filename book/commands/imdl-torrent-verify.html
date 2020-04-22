@@ -158,7 +158,7 @@
 Verify files against a .torrent file.
 
 USAGE:
-    imdl torrent verify [OPTIONS] --input &lt;METAINFO&gt;
+    imdl torrent verify [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
@@ -171,6 +171,11 @@ OPTIONS:
     -i, --input &lt;METAINFO&gt;    Verify torrent contents against torrent metainfo
                               in `METAINFO`. If `METAINFO` is `-`, read metainfo
                               from standard input.
+
+ARGS:
+    &lt;INPUT&gt;    Verify torrent contents against torrent metainfo in
+               `METAINFO`. If `METAINFO` is `-`, read metainfo from standard
+               input.
 
 </code></pre>
 

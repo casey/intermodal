@@ -306,7 +306,7 @@ SUBCOMMANDS:
 Create a .torrent file.
 
 USAGE:
-    imdl torrent create [FLAGS] [OPTIONS] --input &lt;PATH&gt;
+    imdl torrent create [FLAGS] [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -n, --dry-run             Skip writing `.torrent` file to disk.
@@ -441,6 +441,14 @@ OPTIONS:
             correctly report download and upload statistics to multiple
             trackers.
 
+ARGS:
+    &lt;INPUT&gt;    Read torrent contents from `PATH`. If `PATH` is a file,
+               torrent will be a single-file torrent.  If `PATH` is a
+               directory, torrent will be a multi-file torrent.  If `PATH`
+               is `-`, read from standard input. Piece length defaults to
+               256KiB when reading from standard input if `--piece-length`
+               is not given.
+
 </code></pre>
 <h1><a class="header" href="#imdl-torrent-link" id="imdl-torrent-link"><code>imdl torrent link</code></a></h1>
 <pre><code>imdl-torrent-link 0.1.6
@@ -529,7 +537,7 @@ OPTIONS:
 Verify files against a .torrent file.
 
 USAGE:
-    imdl torrent verify [OPTIONS] --input &lt;METAINFO&gt;
+    imdl torrent verify [OPTIONS] &lt;INPUT&gt;
 
 FLAGS:
     -h, --help       Print help message.
@@ -542,6 +550,11 @@ OPTIONS:
     -i, --input &lt;METAINFO&gt;    Verify torrent contents against torrent metainfo
                               in `METAINFO`. If `METAINFO` is `-`, read metainfo
                               from standard input.
+
+ARGS:
+    &lt;INPUT&gt;    Verify torrent contents against torrent metainfo in
+               `METAINFO`. If `METAINFO` is `-`, read metainfo from standard
+               input.
 
 </code></pre>
 <h1><a class="header" href="#bittorrent" id="bittorrent">BitTorrent</a></h1>
