@@ -17,13 +17,12 @@ echo "Building $bin..."
 
 case $os in
   ubuntu-latest)
-    sudo apt-get help2man install musl-tools
+    sudo apt install help2man musl-tools
     ;;
   macos-latest)
     brew install help2man
     ;;
   windows-latest)
-    choco install gnuwin
     ;;
 esac
 
@@ -43,11 +42,6 @@ rm -rf completions
 mkdir completions
 $executable completions --dir completions
 
-echo "Building man pages..."
-rm -rf man
-mkdir man
-cargo run --package gen man
-
 echo "Copying release files..."
 mkdir dist
 cp -r \
@@ -59,8 +53,15 @@ cp -r \
   LICENSE \
   README.md \
   completions \
-  man \
   $dist
+
+if [[ $os != windows-latest ]]; then
+  echo "Building man pages..."
+  rm -rf man
+  mkdir man
+  cargo run --package gen man
+  cp -r man $dist/man
+fi
 
 cd $dist
 echo "Creating release archive..."

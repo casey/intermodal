@@ -8,6 +8,8 @@ pub(crate) trait CommandExt {
 impl CommandExt for Command {
   #[throws]
   fn out(&mut self) -> String {
+    info!("Running {:?}…", self);
+
     let output = self
       .stdout(Stdio::piped())
       .stderr(Stdio::inherit())

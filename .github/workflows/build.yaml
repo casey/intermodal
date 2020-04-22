@@ -5,7 +5,7 @@ on:
     branches:
     - master
     tags:
-    - v*.*.*
+    - '*'
   pull_request:
     branches:
     - master
@@ -135,13 +135,13 @@ jobs:
 
     - name: Package
       id: package
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/')
       shell: bash
       run: ./bin/package ${{github.ref}} ${{matrix.os}} ${{matrix.target}}
 
     - name: Publish
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         draft: false
         files: ${{steps.package.outputs.archive}}
