@@ -189,7 +189,7 @@ impl Env {
       return Err(Error::internal("Empty path passed to resolve"));
     }
 
-    Ok(self.dir().join(path).clean())
+    Ok(self.dir().join(path).lexiclean())
   }
 
   pub(crate) fn write(&mut self, path: impl AsRef<Path>, contents: impl AsRef<[u8]>) -> Result<()> {

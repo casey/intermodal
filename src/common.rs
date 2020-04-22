@@ -29,6 +29,7 @@ pub(crate) use chrono::{TimeZone, Utc};
 pub(crate) use globset::{Glob, GlobMatcher};
 pub(crate) use ignore::WalkBuilder;
 pub(crate) use indicatif::{ProgressBar, ProgressStyle};
+pub(crate) use lexiclean::Lexiclean;
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
@@ -59,8 +60,7 @@ pub(crate) use crate::xor_args::xor_args;
 // traits
 pub(crate) use crate::{
   input_stream::InputStream, into_u64::IntoU64, into_usize::IntoUsize, invariant::Invariant,
-  path_ext::PathExt, platform_interface::PlatformInterface, print::Print, reckoner::Reckoner,
-  step::Step,
+  platform_interface::PlatformInterface, print::Print, reckoner::Reckoner, step::Step,
 };
 
 // structs and enums

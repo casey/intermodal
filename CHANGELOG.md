@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-22
 -----------------------
-- :zap: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Allow positional input to `imdl torrent verify` - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
+- :art: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Use `lexiclean` crate for lexical path cleaning - _Casey Rodarmor <casey@rodarmor.com>_
+- :zap: [`323434d0aa21`](https://github.com/casey/intermodal/commit/323434d0aa21ebfda5be85ecd4a38a55ed3fec0a) Allow positional input to `imdl torrent verify` - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
 - :zap: [`5ba885dbc4f2`](https://github.com/casey/intermodal/commit/5ba885dbc4f24781d6a3240ddfc0c03177b12f1e) Take input to `imdl torrent create` as positional - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`c22df5a08326`](https://github.com/casey/intermodal/commit/c22df5a083265b03abd5531b1f5b2aad60aa68cd) Don't commit man pages - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`4d67d3a10d17`](https://github.com/casey/intermodal/commit/4d67d3a10d17db3c63af092a936eb5994ee107b1) Don't commit the book - _Casey Rodarmor <casey@rodarmor.com>_

@@ -70,7 +70,7 @@ impl Verify {
       content.clone()
     } else {
       match target {
-        InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).clean(),
+        InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).lexiclean(),
         InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
       }
     };
