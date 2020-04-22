@@ -3,6 +3,13 @@ use verify_step::VerifyStep;
 
 mod verify_step;
 
+const METAINFO_HELP: &str = "Verify torrent contents against torrent metainfo in `METAINFO`. If \
+                             `METAINFO` is `-`, read metainfo from standard input.";
+
+const INPUT_POSITIONAL: &str = "<INPUT>";
+
+const INPUT_FLAG: &str = "input-flag";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -10,16 +17,6 @@ mod verify_step;
   about("Verify files against a .torrent file.")
 )]
 pub(crate) struct Verify {
-  #[structopt(
-    long = "input",
-    short = "i",
-    value_name = "METAINFO",
-    empty_values(false),
-    parse(try_from_os_str = InputTarget::try_from_os_str),
-    help = "Verify torrent contents against torrent metainfo in `METAINFO`. If `METAINFO` is `-`, \
-            read metainfo from standard input.",
-  )]
-  metainfo: InputTarget,
   #[structopt(
     long = "content",
     short = "c",
@@ -30,25 +27,49 @@ pub(crate) struct Verify {
             of torrent info dictionary."
   )]
   content: Option<PathBuf>,
+  #[structopt(
+    name = INPUT_POSITIONAL,
+    value_name = "INPUT",
+    empty_values = false,
+    required_unless = INPUT_FLAG,
+    conflicts_with = INPUT_FLAG,
+    parse(try_from_os_str = InputTarget::try_from_os_str),
+    help = METAINFO_HELP,
+  )]
+  input_positional: Option<InputTarget>,
+  #[structopt(
+    name = INPUT_FLAG,
+    long = "input",
+    short = "i",
+    value_name = "METAINFO",
+    empty_values = false,
+    parse(try_from_os_str = InputTarget::try_from_os_str),
+    help = METAINFO_HELP,
+  )]
+  input_flag: Option<InputTarget>,
 }
 
 impl Verify {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
+    let target = xor_args(
+      "input_positional",
+      &self.input_positional,
+      "input_flag",
+      &self.input_flag,
+    )?;
+
     if !options.quiet {
-      VerifyStep::Loading {
-        metainfo: &self.metainfo,
-      }
-      .print(env)?;
+      VerifyStep::Loading { metainfo: &target }.print(env)?;
     }
 
-    let input = env.read(self.metainfo.clone())?;
+    let input = env.read(target.clone())?;
 
     let metainfo = Metainfo::from_input(&input)?;
 
     let content = if let Some(content) = &self.content {
       content.clone()
     } else {
-      match &self.metainfo {
+      match target {
         InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).clean(),
         InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
       }
@@ -94,12 +115,33 @@ mod tests {
   use pretty_assertions::assert_eq;
 
   #[test]
-  fn require_metainfo_argument() {
+  fn require_input() {
     let mut env = test_env! {
-      args: [],
+      args: ["torrent", "verify"],
       tree: {},
     };
-    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+
+    // flag is ok
+    let mut env = test_env! {
+      args: ["torrent", "verify", "--input", "foo"],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Filesystem { .. }));
+
+    // positional is ok
+    let mut env = test_env! {
+      args: ["torrent", "verify", "foo"],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Filesystem { .. }));
+
+    // both are fail
+    let mut env = test_env! {
+      args: ["torrent", "verify", "--input", "foo", "foo"],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]
@@ -131,6 +173,27 @@ mod tests {
         "torrent",
         "verify",
         "--input",
+        &torrent,
+      ],
+      tree: {},
+    };
+
+    verify_env.assert_ok();
+
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
+       `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+      torrent.display(),
+      create_env.resolve("foo")?.display()
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
         &torrent,
       ],
       tree: {},
