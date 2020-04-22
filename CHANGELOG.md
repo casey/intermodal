@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-22
------------------------
-- :zap: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Allow positional input to `imdl torrent show` - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
+[v0.1.7](https://github.com/casey/intermodal/releases/tag/v0.1.7) - 2020-04-22
+------------------------------------------------------------------------------
+- :bookmark: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Release v0.1.7 - _Casey Rodarmor <casey@rodarmor.com>_
+- :zap: [`25ac072985f8`](https://github.com/casey/intermodal/commit/25ac072985f8799474298e6922043746888c0c06) Allow positional input to `imdl torrent show` - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
 - :bug: [`cecd2f66a5d6`](https://github.com/casey/intermodal/commit/cecd2f66a5d6a6b44f27f8ca499e359d82d29ab7) Fix help strings - _Casey Rodarmor <casey@rodarmor.com>_
 - :zap: [`ebec2d591a7a`](https://github.com/casey/intermodal/commit/ebec2d591a7a0e2a2c4cd55217db4ba46b5dd9ed) Allow positional shell to `imdl completions` - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`134c241ae7f8`](https://github.com/casey/intermodal/commit/134c241ae7f8e374d8a9266e7eb0c4a9c3844c30) Use `lexiclean` crate for lexical path cleaning - _Casey Rodarmor <casey@rodarmor.com>_
