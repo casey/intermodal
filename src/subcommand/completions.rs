@@ -1,5 +1,11 @@
 use crate::common::*;
 
+const SHELL_FLAG: &str = "shell-flag";
+
+const SHELL_POSITIONAL: &str = "<SHELL>";
+
+const SHELL_HELP: &str = "Print completion script for `SHELL`.";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -8,14 +14,24 @@ use crate::common::*;
 )]
 pub(crate) struct Completions {
   #[structopt(
+    name = SHELL_FLAG,
     long = "shell",
     short = "s",
     value_name = "SHELL",
     possible_values = Shell::VARIANTS,
-    required_unless = "dir",
-    help = "Print completion script for `SHELL`.",
+    help = SHELL_HELP,
   )]
-  shell: Option<Shell>,
+  shell_flag: Option<Shell>,
+  #[structopt(
+    name = SHELL_POSITIONAL,
+    value_name = "SHELL",
+    possible_values = Shell::VARIANTS,
+    required_unless = "dir",
+    required_unless = SHELL_FLAG,
+    conflicts_with = SHELL_FLAG,
+    help = SHELL_HELP,
+  )]
+  shell_positional: Option<Shell>,
   #[structopt(
     long = "dir",
     short = "d",
@@ -30,7 +46,14 @@ pub(crate) struct Completions {
 
 impl Completions {
   pub(crate) fn run(self, env: &mut Env) -> Result<()> {
-    if let Some(shell) = self.shell {
+    if self.shell_flag.is_some() || self.shell_positional.is_some() {
+      let shell = xor_args(
+        "shell_flag",
+        &self.shell_flag,
+        "shell_positional",
+        &self.shell_positional,
+      )?;
+
       if let Some(dir) = self.dir {
         Self::write(env, &dir, shell)?;
       } else {
@@ -63,6 +86,18 @@ mod tests {
   use super::*;
 
   #[test]
+  fn shell_required() {
+    let mut env = test_env! {
+      args: [
+        "completions",
+      ],
+      tree: {},
+    };
+
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
   fn output() {
     let mut env = test_env! {
       args: [
@@ -79,11 +114,45 @@ mod tests {
   }
 
   #[test]
+  fn output_positional() {
+    let mut env = test_env! {
+      args: [
+        "completions",
+        "bash",
+      ],
+      tree: {},
+    };
+
+    env.assert_ok();
+
+    assert!(env.out().starts_with("_imdl() {"));
+  }
+
+  #[test]
   fn single_dir() {
     let mut env = test_env! {
       args: [
         "completions",
         "--shell",
+        "bash",
+        "--dir",
+        ".",
+      ],
+      tree: {},
+    };
+
+    env.assert_ok();
+
+    let script = env.read_to_string("imdl.bash");
+
+    assert!(script.starts_with("_imdl() {"));
+  }
+
+  #[test]
+  fn single_positional() {
+    let mut env = test_env! {
+      args: [
+        "completions",
         "bash",
         "--dir",
         ".",
