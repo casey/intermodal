@@ -3,8 +3,8 @@ use verify_step::VerifyStep;
 
 mod verify_step;
 
-const METAINFO_HELP: &str = "Verify torrent contents against torrent metainfo in `METAINFO`. If \
-                             `METAINFO` is `-`, read metainfo from standard input.";
+const METAINFO_HELP: &str = "Verify torrent contents against torrent metainfo in `INPUT`. If \
+                             `INPUT` is `-`, read metainfo from standard input.";
 
 const INPUT_POSITIONAL: &str = "<INPUT>";
 
@@ -41,7 +41,7 @@ pub(crate) struct Verify {
     name = INPUT_FLAG,
     long = "input",
     short = "i",
-    value_name = "METAINFO",
+    value_name = "INPUT",
     empty_values = false,
     parse(try_from_os_str = InputTarget::try_from_os_str),
     help = METAINFO_HELP,

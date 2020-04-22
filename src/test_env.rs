@@ -8,19 +8,29 @@ macro_rules! test_env {
     $(err_style: $err_style:expr,)?
     tree: {
       $($tree:tt)*
-    } $(,)?
+    }
+    $(, matches: $result:pat)?
+
+    $(,)?
   } => {
     {
       let tempdir = temptree! { $($tree)* };
 
-      TestEnvBuilder::new()
+      let env = TestEnvBuilder::new()
         $(.current_dir(tempdir.path().join($cwd)))?
         $(.err_style($err_style))?
         $(.input($input))?
         .tempdir(tempdir)
         .arg("imdl")
         $(.arg($arg))*
-        .build()
+        .build();
+
+      $(
+        let mut env = env;
+        assert_matches!(env.run(), $result);
+      )?
+
+      env
     }
   }
 }

@@ -5,9 +5,9 @@ use create_step::CreateStep;
 mod create_content;
 mod create_step;
 
-const INPUT_HELP: &str = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be \
-                          a single-file torrent.  If `PATH` is a directory, torrent will be a \
-                          multi-file torrent.  If `PATH` is `-`, read from standard input. Piece \
+const INPUT_HELP: &str = "Read torrent contents from `INPUT`. If `INPUT` is a file, torrent will \
+                          be a single-file torrent.  If `INPUT` is a directory, torrent will be a \
+                          multi-file torrent.  If `INPUT` is `-`, read from standard input. Piece \
                           length defaults to 256KiB when reading from standard input if \
                           `--piece-length` is not given.";
 
@@ -138,7 +138,7 @@ Examples:
     name = INPUT_FLAG,
     long = "input",
     short = "i",
-    value_name = "PATH",
+    value_name = "INPUT",
     empty_values = false,
     parse(try_from_os_str = InputTarget::try_from_os_str),
     help = INPUT_HELP,

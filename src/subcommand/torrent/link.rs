@@ -1,5 +1,12 @@
 use crate::common::*;
 
+const INPUT_HELP: &str = "Generate magnet link from metainfo at `INPUT`. If `INPUT` is `-`, read \
+                          metainfo from standard input.";
+
+const INPUT_FLAG: &str = "input-flag";
+
+const INPUT_POSITIONAL: &str = "<INPUT>";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -8,15 +15,25 @@ use crate::common::*;
 )]
 pub(crate) struct Link {
   #[structopt(
+    name = INPUT_FLAG,
     long = "input",
     short = "i",
-    value_name = "METAINFO",
+    value_name = "INPUT",
     empty_values(false),
     parse(try_from_os_str = InputTarget::try_from_os_str),
-    help = "Generate magnet link from metainfo at `PATH`. If `PATH` is `-`, read metainfo from \
-            standard input.",
+    help = INPUT_HELP,
   )]
-  input: InputTarget,
+  input_flag: Option<InputTarget>,
+  #[structopt(
+    name = INPUT_POSITIONAL,
+    value_name = "INPUT",
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
+    required_unless = INPUT_FLAG,
+    conflicts_with = INPUT_FLAG,
+    help = INPUT_HELP,
+  )]
+  input_positional: Option<InputTarget>,
   #[structopt(
     long = "open",
     short = "O",
@@ -44,7 +61,14 @@ pub(crate) struct Link {
 
 impl Link {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.read(self.input.clone())?;
+    let input = xor_args(
+      "input_flag",
+      &self.input_flag,
+      "input_positional",
+      &self.input_positional,
+    )?;
+
+    let input = env.read(input.clone())?;
 
     let infohash = Infohash::from_input(&input)?;
     let metainfo = Metainfo::from_input(&input)?;
@@ -84,12 +108,86 @@ mod tests {
   use pretty_assertions::assert_eq;
 
   #[test]
-  fn no_announce() {
+  fn input_required() {
+    test_env! {
+      args: [
+        "torrent",
+        "link",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Clap { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "link",
+        "--input",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Filesystem { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "link",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Filesystem { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "link",
+        "--input",
+        "foo",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Clap { .. }),
+    };
+  }
+
+  #[test]
+  fn no_announce_flag() {
     let mut env = test_env! {
       args: [
         "torrent",
         "link",
         "--input",
+        "foo.torrent",
+      ],
+      tree: {
+        "foo.torrent": "d4:infod6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:ee",
+      }
+    };
+
+    env.assert_ok();
+
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
+    let infohash = Sha1Digest::from_data(INFO.as_bytes());
+
+    assert_eq!(
+      env.out(),
+      format!("magnet:?xt=urn:btih:{}&dn=foo\n", infohash),
+    );
+  }
+
+  #[test]
+  fn no_announce_positional() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "link",
         "foo.torrent",
       ],
       tree: {
