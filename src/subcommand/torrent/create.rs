@@ -5,6 +5,16 @@ use create_step::CreateStep;
 mod create_content;
 mod create_step;
 
+const INPUT_HELP: &str = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be \
+                          a single-file torrent.  If `PATH` is a directory, torrent will be a \
+                          multi-file torrent.  If `PATH` is `-`, read from standard input. Piece \
+                          length defaults to 256KiB when reading from standard input if \
+                          `--piece-length` is not given.";
+
+const INPUT_FLAG: &str = "input-flag";
+
+const INPUT_POSITIONAL: &str = "<INPUT>";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -115,17 +125,25 @@ Examples:
   )]
   include_junk: bool,
   #[structopt(
+    name = INPUT_POSITIONAL,
+    value_name = "INPUT",
+    empty_values = false,
+    required_unless = INPUT_FLAG,
+    conflicts_with = INPUT_FLAG,
+    parse(try_from_os_str = InputTarget::try_from_os_str),
+    help = INPUT_HELP,
+  )]
+  input_positional: Option<InputTarget>,
+  #[structopt(
+    name = INPUT_FLAG,
     long = "input",
     short = "i",
     value_name = "PATH",
-    empty_values(false),
+    empty_values = false,
     parse(try_from_os_str = InputTarget::try_from_os_str),
-    help = "Read torrent contents from `PATH`. If `PATH` is a file, torrent will be a single-file \
-            torrent.  If `PATH` is a directory, torrent will be a multi-file torrent.  If `PATH` \
-            is `-`, read from standard input. Piece length defaults to 256KiB when reading from \
-            standard input if `--piece-length` is not given.",
+    help = INPUT_HELP,
   )]
-  input: InputTarget,
+  input_flag: Option<InputTarget>,
   #[structopt(
     long = "link",
     help = "Print created torrent `magnet:` URL to standard output"
@@ -144,7 +162,8 @@ Examples:
     value_name = "TEXT",
     help = "Set name of torrent to `TEXT`. Defaults to the filename of the argument to `--input`. \
             Required when `--input -`.",
-    required_if("input", "-")
+    required_if(INPUT_FLAG, "-"),
+    required_if(INPUT_POSITIONAL, "-")
   )]
   name: Option<String>,
   #[structopt(
@@ -192,7 +211,8 @@ Sort in ascending order by size, break ties in descending path order:
     value_name = "TARGET",
     empty_values(false),
     parse(try_from_os_str = OutputTarget::try_from_os_str),
-    required_if("input", "-"),
+    required_if(INPUT_FLAG, "-"),
+    required_if(INPUT_POSITIONAL, "-"),
     help = "Save `.torrent` file to `TARGET`, or print to standard output if `TARGET` is `-`. \
             Defaults to the argument to `--input` with an `.torrent` extension appended. Required \
             when `--input -`.",
@@ -250,6 +270,13 @@ Sort in ascending order by size, break ties in descending path order:
 
 impl Create {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
+    let input = xor_args(
+      "input_positional",
+      &self.input_positional,
+      "input_flag",
+      &self.input_flag,
+    )?;
+
     let mut linter = Linter::new();
     linter.allow(self.allowed_lints.iter().cloned());
 
@@ -281,10 +308,10 @@ impl Create {
     };
 
     if !options.quiet {
-      CreateStep::Searching { input: &self.input }.print(env)?;
+      CreateStep::Searching { input: &input }.print(env)?;
     }
 
-    let content = CreateContent::from_create(&self, env)?;
+    let content = CreateContent::from_create(&self, &input, env)?;
 
     let output = content.output.resolve(env)?;
 
@@ -398,7 +425,7 @@ impl Create {
 
     #[cfg(test)]
     {
-      if let InputTarget::Path(path) = &self.input {
+      if let InputTarget::Path(path) = &input {
         let deserialized = bendy::serde::de::from_bytes::<Metainfo>(&bytes).unwrap();
 
         assert_eq!(deserialized, metainfo);
@@ -449,6 +476,79 @@ mod tests {
   fn require_input_argument() {
     let mut env = test_env! { args: [], tree: {} };
     assert!(matches!(env.run(), Err(Error::Clap { .. })));
+  }
+
+  #[test]
+  fn input_arguments_conflict() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "bar",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn require_name_if_input_flag_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn require_name_if_input_positional_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "-",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn require_output_if_input_flag_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "-",
+        "--name",
+        "foo",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn require_output_if_input_positional_stdin() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "-",
+        "--name",
+        "foo",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]
@@ -508,6 +608,30 @@ mod tests {
   }
 
   #[test]
+  fn input_positional() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "foo",
+      ],
+      tree: {
+        foo: {
+          bar: "",
+          baz: "",
+        },
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_eq!(metainfo.info.name, "foo");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple{files} if files.len() == 2
+    );
+  }
+
+  #[test]
   fn input_dot() {
     let mut env = test_env! {
       args: [
@@ -526,10 +650,12 @@ mod tests {
       }
     };
     env.assert_ok();
-    // let metainfo = env.load_metainfo("../dir.torrent");
-    // assert_eq!(metainfo.info.name, "dir");
-    // assert_matches!(metainfo.info.mode, Mode::Multiple{files} if files.len()
-    // == 1);
+    let metainfo = env.load_metainfo("../dir.torrent");
+    assert_eq!(metainfo.info.name, "dir");
+    assert_matches!(
+      metainfo.info.mode,
+      Mode::Multiple{files} if files.len() == 1
+    );
   }
 
   #[test]
@@ -2700,7 +2826,7 @@ Content Size  9 bytes
       ],
       tree: {},
     };
-    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]
@@ -2718,7 +2844,7 @@ Content Size  9 bytes
       ],
       tree: {},
     };
-    assert!(matches!(env.run(), Err(Error::Clap { .. })));
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 
   #[test]

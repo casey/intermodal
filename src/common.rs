@@ -53,6 +53,9 @@ pub(crate) use log::trace;
 // modules
 pub(crate) use crate::{consts, error, host_port_parse_error};
 
+// functions
+pub(crate) use crate::xor_args::xor_args;
+
 // traits
 pub(crate) use crate::{
   input_stream::InputStream, into_u64::IntoU64, into_usize::IntoUsize, invariant::Invariant,

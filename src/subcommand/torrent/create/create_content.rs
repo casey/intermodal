@@ -11,8 +11,8 @@ pub(crate) struct CreateContent {
 }
 
 impl CreateContent {
-  pub(crate) fn from_create(create: &Create, env: &mut Env) -> Result<Self> {
-    match &create.input {
+  pub(crate) fn from_create(create: &Create, input: &InputTarget, env: &mut Env) -> Result<Self> {
+    match input {
       InputTarget::Path(path) => {
         let spinner = if env.err().is_styled_term() {
           let style = ProgressStyle::default_spinner()

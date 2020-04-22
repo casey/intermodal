@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-21
+UNRELEASED - 2020-04-22
 -----------------------
-- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Don't commit man pages - _Casey Rodarmor <casey@rodarmor.com>_
+- :zap: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Take input to `imdl torrent create` as positional - Fixes [#375](https://github.com/casey/intermodal/issues/375) - _Casey Rodarmor <casey@rodarmor.com>_
+- :wrench: [`c22df5a08326`](https://github.com/casey/intermodal/commit/c22df5a083265b03abd5531b1f5b2aad60aa68cd) Don't commit man pages - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`4d67d3a10d17`](https://github.com/casey/intermodal/commit/4d67d3a10d17db3c63af092a936eb5994ee107b1) Don't commit the book - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`28114c3d64dd`](https://github.com/casey/intermodal/commit/28114c3d64dde5e0275c936b0019eaf4760ba559) Don't commit shell completion scripts - _Casey Rodarmor <casey@rodarmor.com>_
 - :art: [`4f4464e3a2a7`](https://github.com/casey/intermodal/commit/4f4464e3a2a7f4aaffea8dbe38dd110ad9be4393) Get `st_flags` from `MetadataExt` on MacOS - _Casey Rodarmor <casey@rodarmor.com>_

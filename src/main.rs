@@ -100,6 +100,7 @@ mod torrent_summary;
 mod use_color;
 mod verifier;
 mod walker;
+mod xor_args;
 
 fn main() {
   if let Err(code) = Env::main().status() {
