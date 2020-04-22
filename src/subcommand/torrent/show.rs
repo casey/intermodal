@@ -1,5 +1,14 @@
 use crate::common::*;
 
+const INPUT_HELP: &str = "Show information about torrent at `INPUT`. If `INPUT` is `-`, read \
+                          torrent metainfo from standard input.";
+
+const INPUT_FLAG: &str = "input-flag";
+
+const INPUT_POSITIONAL: &str = "<INPUT>";
+
+const INPUT_VALUE: &str = "INPUT";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -8,20 +17,37 @@ use crate::common::*;
 )]
 pub(crate) struct Show {
   #[structopt(
+    name = INPUT_FLAG,
     long = "input",
     short = "i",
-    value_name = "PATH",
+    value_name = INPUT_VALUE,
     empty_values(false),
     parse(try_from_os_str = InputTarget::try_from_os_str),
-    help = "Show information about torrent at `PATH`. If `Path` is `-`, read torrent metainfo \
-            from standard input.",
+    help = INPUT_HELP,
   )]
-  input: InputTarget,
+  input_flag: Option<InputTarget>,
+  #[structopt(
+    name = INPUT_POSITIONAL,
+    value_name = INPUT_VALUE,
+    empty_values(false),
+    parse(try_from_os_str = InputTarget::try_from_os_str),
+    required_unless = INPUT_FLAG,
+    conflicts_with = INPUT_FLAG,
+    help = INPUT_HELP,
+  )]
+  input_positional: Option<InputTarget>,
 }
 
 impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let input = env.read(self.input)?;
+    let target = xor_args(
+      "input_flag",
+      &self.input_flag,
+      "input_positional",
+      &self.input_positional,
+    )?;
+
+    let input = env.read(target)?;
     let summary = TorrentSummary::from_input(&input)?;
     summary.write(env)?;
     Ok(())
@@ -33,6 +59,55 @@ mod tests {
   use super::*;
 
   use pretty_assertions::assert_eq;
+
+  #[test]
+  fn input_required() {
+    test_env! {
+      args: [
+        "torrent",
+        "show",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Clap { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "show",
+        "--input",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Filesystem { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "show",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Filesystem { .. }),
+    };
+
+    test_env! {
+      args: [
+        "torrent",
+        "show",
+        "--input",
+        "foo",
+        "foo",
+      ],
+      tree: {
+      },
+      matches: Err(Error::Clap { .. }),
+    };
+  }
 
   #[test]
   fn output() -> Result<()> {
@@ -64,6 +139,44 @@ mod tests {
     {
       let mut env = TestEnvBuilder::new()
         .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
+        .out_is_term()
+        .build();
+
+      let path = env.resolve("foo.torrent")?;
+
+      metainfo.dump(path).unwrap();
+
+      env.assert_ok();
+
+      let have = env.out();
+      let want = "         Name  foo
+      Comment  comment
+Creation Date  1970-01-01 00:00:01 UTC
+   Created By  created by
+       Source  source
+    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
+ Torrent Size  339 bytes
+ Content Size  20 bytes
+      Private  yes
+      Tracker  announce
+Announce List  Tier 1: announce
+                       b
+               Tier 2: c
+    DHT Nodes  x:12
+               1.1.1.1:16
+               [2001:db8:85a3::8a2e:370]:7334
+   Piece Size  16 KiB
+  Piece Count  2
+   File Count  1
+        Files  foo
+";
+
+      assert_eq!(have, want);
+    }
+
+    {
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&["imdl", "torrent", "show", "foo.torrent"])
         .out_is_term()
         .build();
 

@@ -68,7 +68,7 @@ impl Link {
       &self.input_positional,
     )?;
 
-    let input = env.read(input.clone())?;
+    let input = env.read(input)?;
 
     let infohash = Infohash::from_input(&input)?;
     let metainfo = Metainfo::from_input(&input)?;
