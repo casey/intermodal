@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-24
+UNRELEASED - 2020-04-25
 -----------------------
-- :wrench: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve the done and merge recipes - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve documentation - _Casey Rodarmor <casey@rodarmor.com>_
+- :wrench: [`f8711a79a3d9`](https://github.com/casey/intermodal/commit/f8711a79a3d92da5b30fd3e8b7bba7a5e2d73766) Improve the done and merge recipes - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`97ee5684f8e0`](https://github.com/casey/intermodal/commit/97ee5684f8e0f8de7dbdb4f930018c8df0f012b1) Don't invalid build cache when `Cargo.lock` changes - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`c75ec39b14bb`](https://github.com/casey/intermodal/commit/c75ec39b14bb4375a875d2d2c73718b44eb54e12) Remove watch dropdown image from readme - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`8fbe39726fe6`](https://github.com/casey/intermodal/commit/8fbe39726fe6c5bdc342dbd0764f8052ddd03597) Add notes for packagers to readme - _Casey Rodarmor <casey@rodarmor.com>_

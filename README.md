@@ -26,6 +26,10 @@ For more about the project and its goals, check out
   - [Linux and MacOS Install Script](#linux-and-macos-install-script)
   - [Cargo](#cargo)
   - [Shell Completion Scripts](#shell-completion-scripts)
+- [Usage](#usage)
+  - [Commands](#commands)
+  - [Examples](#examples)
+  - [FAQ](#faq)
 - [Notes for Packagers](#notes-for-packagers)
   - [Package Artifacts](#package-artifacts)
     - [Binary](#binary)
@@ -130,6 +134,36 @@ command will write the Z shell completion script to `$fpath[0]/_imdl`:
 ```sh
 $ imdl completions --shell zsh --dir $fpath[0]
 ```
+
+
+## Usage
+
+Online documentation is available in the book, hosted
+[here](https://imdl.io/book/).
+
+### Commands
+
+Adding `--help` to any command will print help text about how to use that
+command, including detailed information about any command-line arguments it
+accepts.
+
+So, to get information about `imdl torrent create`, run `imdl torrent create
+--help`.
+
+Additionally, the same help text is available online in
+[the book](https://imdl.io/book/).
+
+### Examples
+
+The intro to [the book](https://imdl.io/book/) has a few simple examples. Check
+[the FAQ](https://imdl.io/book/faq.html) for more complex usage examples.
+
+### FAQ
+
+The [FAQ](https://imdl.io/book/faq.html) covers a variety of specific
+use-cases. If there's a use case you think should be covered, feel free to open
+[an issue](https://github.com/casey/intermodal/issues/new).
+
 
 ## Notes for Packagers
 
