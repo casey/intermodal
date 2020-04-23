@@ -25,11 +25,8 @@ push:
 
 # clean up feature branch BRANCH
 done BRANCH=`git rev-parse --abbrev-ref HEAD`:
-	git diff --no-ext-diff --quiet --exit-code
 	git push github {{BRANCH}}:master
-	git checkout master
-	git rebase {{BRANCH}}
-	git diff --no-ext-diff --quiet --exit-code {{BRANCH}} --
+	git rebase github/master master
 	git branch -d {{BRANCH}}
 
 test:
@@ -76,13 +73,13 @@ draft: push
 pr: check push
 	hub pull-request -o
 
-merge:
+merge BRANCH=`git rev-parse --abbrev-ref HEAD`:
 	#!/usr/bin/env bash
 	set -euxo pipefail
-	while ! hub ci-status --verbose; do
+	while ! hub ci-status --verbose {{BRANCH}}; do
 		sleep 5
 	done
-	just done
+	just done {{BRANCH}}
 
 publish-check: check
 	cargo outdated --exit-code 1
