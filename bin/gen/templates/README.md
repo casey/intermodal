@@ -126,8 +126,8 @@ identifier of the CC0 is [CC0-1.0](https://spdx.org/licenses/CC0-1.0.html).
 
 ### Package Artifacts
 
-There are three primary build artifacts: the binary, the man pages, and shell
-completion scripts.
+There are three primary build artifacts: the binary, the man pages, and the
+shell completion scripts.
 
 #### Binary
 
@@ -167,10 +167,8 @@ After running, the completion scripts will be available in `completions`.
 
 ### Release Updates
 
-If you'd like to receive updates whenever a new version is released, you can
-watch the intermodal repository in "Releases only" mode:
-
-![GitHub Watch options dropdown showing "Releases only" highlighted](rsc/watch-releases.png)
+If you'd like to receive an update whenever a new version is released, you can
+watch the intermodal repository in "Releases only" mode.
 
 ## Chat
 
