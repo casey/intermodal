@@ -76,7 +76,7 @@ echo 'set -gx PATH ~/bin $PATH' >> ~/.config/fish/config.fish
 source and installed with `cargo install imdl`. To get Rust, use the
 [rustup installer](https://rustup.rs/).
 
-## Shell Completion Scripts
+### Shell Completion Scripts
 
 Shell completion scripts for Bash, Zsh, Fish, PowerShell, and Elvish are
 included in all [binary releases](https://github.com/casey/imdl/releases).
@@ -107,6 +107,70 @@ command will write the Z shell completion script to `$fpath[0]/_imdl`:
 ```sh
 $ imdl completions --shell zsh --dir $fpath[0]
 ```
+
+## Notes for Packagers
+
+First off, thank you very much! If I can do anything to make packaging
+Intermodal easier, please don't hesistate to open
+[an issue](https://github.com/casey/intermodal/issues/new).
+
+The Intermodal binary is called `imdl`, and the suggested name for the package
+is `intermodal`.
+
+Intermodal is written in Rust, and can be built with `cargo build --release`.
+
+Intermodal is distributed under the
+[Creative Commons Zero](https://creativecommons.org/share-your-work/public-domain/cc0/),
+a public domain dedication with a fallback all-permissive license. The SPDX
+identifier of the CC0 is [CC0-1.0](https://spdx.org/licenses/CC0-1.0.html).
+
+### Package Artifacts
+
+There are three primary build artifacts: the binary, the man pages, and shell
+completion scripts.
+
+#### Binary
+
+The binary is called `imdl`, and can be built with:
+
+```
+cargo build --release
+```
+
+After building, the binary will be present at `target/release/imdl`.
+
+#### Man Pages
+
+Intermodal has a number of subcommands, each of which has a man page. The man
+pages are generated from the `--help` text using
+[`help2man`](https://www.gnu.org/software/help2man/).
+
+To generate the man pages, ensure `help2man` is available, and run:
+
+```
+mkdir -p man
+cargo run --package gen man
+```
+
+After building, the man pages will be available in `man`.
+
+#### Completion Scripts
+
+Completion scripts are available for a number of shells. To generate them, run:
+
+```
+mkdir -p completions
+cargo run --release completions --dir completions
+```
+
+After running, the completion scripts will be available in `completions`.
+
+### Release Updates
+
+If you'd like to receive updates whenever a new version is released, you can
+watch the intermodal repository in "Releases only" mode:
+
+![GitHub Watch options dropdown showing "Releases only" highlighted](rsc/watch-releases.png)
 
 ## Chat
 

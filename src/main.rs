@@ -16,7 +16,9 @@
   clippy::shadow_reuse,
   clippy::too_many_lines,
   clippy::unseparated_literal_suffix,
-  clippy::wildcard_enum_match_arm
+  clippy::wildcard_enum_match_arm,
+  clippy::wildcard_imports,
+  clippy::struct_excessive_bools
 )]
 
 use crate::common::*;

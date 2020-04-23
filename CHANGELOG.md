@@ -4,7 +4,8 @@ Changelog
 
 UNRELEASED - 2020-04-23
 -----------------------
-- :bug: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Fix `bin/package` - _Casey Rodarmor <casey@rodarmor.com>_
+- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add notes for packagers to readme - _Casey Rodarmor <casey@rodarmor.com>_
+- :bug: [`43788cac9a0c`](https://github.com/casey/intermodal/commit/43788cac9a0cb957605fbd16299d04d36a7e0411) Fix `bin/package` - _Casey Rodarmor <casey@rodarmor.com>_
 
 
 [v0.1.7](https://github.com/casey/intermodal/releases/tag/v0.1.7) - 2020-04-22
