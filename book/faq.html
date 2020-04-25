@@ -156,14 +156,17 @@
                         <h1><a class="header" href="#faq" id="faq">FAQ</a></h1>
 <ul>
 <li>
-<p><a href="#fzf-preview">Can intermodal be used to preview torrents with <code>fzf</code>?</a></p>
+<p><a href="#fzf-preview">Can Intermodal be used to preview torrents with <code>fzf</code>?</a></p>
 </li>
 <li>
-<p><a href="#git-repo">Can intermodal be used to create a torrent from a Git repo?</a></p>
+<p><a href="#git-repo">Can Intermodal be used to create a torrent from a Git repo?</a></p>
+</li>
+<li>
+<p><a href="#include">How do I include and exclude files when creating a torrent?</a></p>
 </li>
 </ul>
 <p><a name="fzf-preview"></a></p>
-<h2><a class="header" href="#can-intermodal-be-used-to-preview-torrents-with-fzf" id="can-intermodal-be-used-to-preview-torrents-with-fzf">Can intermodal be used to preview torrents with <code>fzf</code>?</a></h2>
+<h2><a class="header" href="#can-intermodal-be-used-to-preview-torrents-with-fzf" id="can-intermodal-be-used-to-preview-torrents-with-fzf">Can Intermodal be used to preview torrents with <code>fzf</code>?</a></h2>
 </h2>
 <p>Yes! <a href="https://github.com/mustaqimM">@mustaqimM</a> came up with the following:</p>
 <pre><code>fzf --preview='imdl --color always --terminal torrent show --input {}
@@ -173,7 +176,7 @@
 <pre><code>find . -name '*.torrent' | fzf --preview='imdl -c always -t torrent show -i {}'
 </code></pre>
 <p><a name="git-repo"></a></p>
-<h2><a class="header" href="#can-intermodal-be-used-to-create-a-torrent-from-a-git-repo" id="can-intermodal-be-used-to-create-a-torrent-from-a-git-repo">Can intermodal be used to create a torrent from a Git repo?</a></h2>
+<h2><a class="header" href="#can-intermodal-be-used-to-create-a-torrent-from-a-git-repo" id="can-intermodal-be-used-to-create-a-torrent-from-a-git-repo">Can Intermodal be used to create a torrent from a Git repo?</a></h2>
 </h2>
 <p>Yes! The <code>--ignore</code> flag, contributed by <a href="https://github.com/Celeo">@Celeo</a>, can be used
 to make <code>imdl torrent create</code> respect <code>.gitignore</code> files:</p>
@@ -185,6 +188,34 @@ otherwise be skipped, and to skip the contents of the <code>.git</code> director
 <p>Equivalently, with short flags:</p>
 <pre><code>imdl torrent create --ignore -hjg '!.git/*' -i .
 </code></pre>
+<p><a name="include"></a></p>
+<h2><a class="header" href="#how-do-i-include-and-exclude-files-when-creating-a-torrent" id="how-do-i-include-and-exclude-files-when-creating-a-torrent">How do I include and exclude files when creating a torrent?</a></h2>
+</h2>
+<p>There are a few ways to control which files are included when you create a torrent.</p>
+<p>By default, symlinks, hidden files, and common “junk” files are excluded. To include these files, use:</p>
+<ul>
+<li><code>--follow-symlinks</code> to include files pointed to by a symlink.</li>
+<li><code>--include-hidden</code> to include files with names that start with <code>.</code> or are hidden by a file attribute.</li>
+<li><code>--include-junk</code> to include “junk” files like <code>.DS_Store</code>.</li>
+</ul>
+<p>The <code>--ignore</code> flag makes Intermodal respect <code>.gitignore</code> and <code>.ignore</code> files.</p>
+<p>This can be used to <a href="#git-repo">create a torrent from a Git repository</a>, or to exclude files by creating a file called <code>.ignore</code>, adding patterns with the same syntax as <code>.gitignore</code> that match those files, and using <code>--ignore</code> when you create the torrent.</p>
+<p>Additionally, you can use <code>--glob PATTERN</code> to both include and exclude files.</p>
+<p>If <code>PATTERN</code> does not start with <code>!</code>, only those files that match <code>PATTERN</code> will be included.</p>
+<p>If <code>PATTERN</code> starts with <code>!</code>, those files that match <code>PATTERN</code> will be excluded.</p>
+<p><code>--glob</code> can be passed multiple times, to include multiple subsets of files:</p>
+<pre><code># only include `foo/bar` and `foo/bob`
+imdl torrent create --input foo --glob bar/ --glob bob/
+</code></pre>
+<p>To exclude multiple subsets of files:</p>
+<pre><code># don't include `foo/bar` and `foo/bob`
+imdl torrent create --input foo --glob '!bar/' --glob '!bob/'
+</code></pre>
+<p>Or to refine a pattern:</p>
+<pre><code># include everything in `foo/bar` but not anything in `foo/bar/baz`
+imdl torrent create --input foo --glob `bar/` --glob `!bar/baz/`
+</code></pre>
+<p><code>--glob</code> can be passed any number of times. If multiple <code>PATTERN</code>s match a path, the last one on the command line takes precedence.</p>
 
                     </main>
 
