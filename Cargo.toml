@@ -71,4 +71,10 @@ members = [
 
   # run commands for demo animation
   "bin/demo",
+
+  # data description language
+  "crates/data",
+
+  # data description language proc macros
+  "crates/data-macros",
 ]
