@@ -143,6 +143,7 @@ mod tests {
           length: Bytes(20),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -176,6 +177,7 @@ mod tests {
             md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
           }],
         },
+        update_url: None,
       },
     };
 
@@ -224,6 +226,7 @@ mod tests {
           length: Bytes(5),
           md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
         },
+        update_url: None,
       },
     };
 
@@ -279,6 +282,7 @@ mod tests {
           length: Bytes(5),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -321,6 +325,7 @@ mod tests {
             path: FilePath::from_components(&["a", "b"]),
           }],
         },
+        update_url: None,
       },
     };
 
@@ -369,6 +374,7 @@ mod tests {
             path: FilePath::from_components(&["a", "b"]),
           }],
         },
+        update_url: None,
       },
     };
 
@@ -413,6 +419,7 @@ mod tests {
           length: Bytes(5),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -453,6 +460,7 @@ mod tests {
           length: Bytes(5),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 

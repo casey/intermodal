@@ -266,6 +266,14 @@ Sort in ascending order by size, break ties in descending path order:
             --get core.excludesFile`."
   )]
   ignore: bool,
+  #[structopt(
+    long = "update-url",
+    value_name = "URL",
+    help = "Set torrent feed URL to `URL`, stored in the `update-url` key of the info dictionary. \
+            Clients that support BEP 39 will use the update URL to download revised versions of \
+            the torret's metainfo. Note that BEP 39 is not widely supported."
+  )]
+  update_url: Option<Url>,
 }
 
 impl Create {
@@ -380,6 +388,7 @@ impl Create {
       mode,
       pieces,
       private,
+      update_url: self.update_url.map(|url| url.to_string()),
     };
 
     let metainfo = Metainfo {
@@ -3122,5 +3131,64 @@ Content Size  9 bytes
     env.assert_ok();
     assert_eq!(env.out(), "");
     assert_eq!(env.err(), "");
+  }
+
+  #[test]
+  fn test_update_url_invalid_url_fails() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--update-url",
+        "not-a-URL",
+        "--input",
+        "foo"
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn test_update_url_valid_url_succeeds() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--update-url",
+        "https://www.a_real_url.com",
+        "--input",
+        "foo"
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    env.assert_ok();
+  }
+
+  #[test]
+  fn test_update_url() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--update-url",
+        "https://www.a_real_url.com",
+        "--input",
+        "foo",
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    env.assert_ok();
+    let metainfo = env.load_metainfo("foo.torrent");
+    assert_eq!(
+      metainfo.info.update_url.as_deref(),
+      Some("https://www.a_real_url.com/")
+    );
   }
 }

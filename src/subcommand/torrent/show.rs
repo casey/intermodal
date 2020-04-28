@@ -133,6 +133,7 @@ mod tests {
           length: Bytes(20),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -273,6 +274,7 @@ files\tfoo
           length: Bytes(20),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -375,6 +377,7 @@ files\tfoo
           length: Bytes(20),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 
@@ -477,6 +480,7 @@ files\tfoo
           length: Bytes(20),
           md5sum: None,
         },
+        update_url: None,
       },
     };
 

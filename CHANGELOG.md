@@ -2,9 +2,10 @@ Changelog
 =========
 
 
-UNRELEASED - 2020-04-25
+UNRELEASED - 2020-04-28
 -----------------------
-- :books: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Improve documentation - _Casey Rodarmor <casey@rodarmor.com>_
+- :sparkles: [`xxxxxxxxxxxx`](https://github.com/casey/intermodal/commits/master) Add support for BEP 39. - Fixes [#98](https://github.com/casey/intermodal/issues/98) - _Annie Cherkaev <annie.cherk@gmail.com>_
+- :books: [`d077da405e1f`](https://github.com/casey/intermodal/commit/d077da405e1f50e4b1f2dc78cf821105640c9110) Improve documentation - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`f8711a79a3d9`](https://github.com/casey/intermodal/commit/f8711a79a3d92da5b30fd3e8b7bba7a5e2d73766) Improve the done and merge recipes - _Casey Rodarmor <casey@rodarmor.com>_
 - :wrench: [`97ee5684f8e0`](https://github.com/casey/intermodal/commit/97ee5684f8e0f8de7dbdb4f930018c8df0f012b1) Don't invalid build cache when `Cargo.lock` changes - _Casey Rodarmor <casey@rodarmor.com>_
 - :books: [`c75ec39b14bb`](https://github.com/casey/intermodal/commit/c75ec39b14bb4375a875d2d2c73718b44eb54e12) Remove watch dropdown image from readme - _Casey Rodarmor <casey@rodarmor.com>_

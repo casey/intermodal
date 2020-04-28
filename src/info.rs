@@ -20,6 +20,13 @@ pub(crate) struct Info {
   pub(crate) pieces: PieceList,
   #[serde(flatten)]
   pub(crate) mode: Mode,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip",
+    rename = "update-url"
+  )]
+  pub(crate) update_url: Option<String>,
 }
 
 impl Info {
