@@ -475,6 +475,11 @@ OPTIONS:
             as distinct torrents, and not share peers between them, and will
             correctly report download and upload statistics to multiple
             trackers.
+        --update-url &lt;URL&gt;
+            Set torrent feed URL to `URL`, stored in the `update-url` key of the
+            info dictionary. Clients that support BEP 39 will use the update URL
+            to download revised versions of the torret's metainfo. Note that BEP
+            39 is not widely supported.
 
 ARGS:
     &lt;INPUT&gt;    Read torrent contents from `INPUT`. If `INPUT` is a file,
