@@ -12,7 +12,7 @@ const HEADING_PATTERN: &str = "(?m)^(?P<MARKER>#+) (?P<TEXT>.*)$";
 impl Readme {
   #[throws]
   pub(crate) fn load(config: &Config, template: &Path) -> Readme {
-    let text = fs::read_to_string(template)?;
+    let text = fs::read_to_string(template).context(error::Filesystem { path: template })?;
 
     let header_re = Regex::new(HEADING_PATTERN)?;
 

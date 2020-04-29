@@ -1,8 +1,12 @@
 use crate::common::*;
 
+#[allow(redundant_semicolons)]
 pub(crate) trait CommandExt {
   #[throws]
   fn out(&mut self) -> String;
+
+  #[throws]
+  fn status_into_result(&mut self);
 }
 
 impl CommandExt for Command {
@@ -13,12 +17,36 @@ impl CommandExt for Command {
     let output = self
       .stdout(Stdio::piped())
       .stderr(Stdio::inherit())
-      .output()?;
+      .output()
+      .context(error::CommandInvoke {
+        command: format!("{:?}", self),
+      })?;
 
-    output.status.into_result()?;
+    if !output.status.success() {
+      throw!(Error::CommandStatus {
+        command: format!("{:?}", self),
+        exit_status: output.status,
+      });
+    }
 
-    let text = String::from_utf8(output.stdout)?;
+    let text = String::from_utf8(output.stdout).context(error::CommandDecode {
+      command: format!("{:?}", self),
+    })?;
 
     text
+  }
+
+  #[throws]
+  fn status_into_result(&mut self) {
+    let status = self.status().context(error::CommandInvoke {
+      command: format!("{:?}", self),
+    })?;
+
+    if !status.success() {
+      throw!(Error::CommandStatus {
+        command: format!("{:?}", self),
+        exit_status: status
+      });
+    }
   }
 }

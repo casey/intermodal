@@ -9,8 +9,8 @@ mod command_ext;
 mod common;
 mod config;
 mod entry;
+mod error;
 mod example;
-mod exit_status_ext;
 mod faq;
 mod faq_entry;
 mod introduction;
@@ -30,11 +30,11 @@ mod summary;
 mod table;
 mod template_ext;
 
-#[throws]
 fn main() {
   pretty_env_logger::init();
 
-  let project = Project::load()?;
-
-  Opt::from_args().run(&project)?;
+  if let Err(error) = Opt::from_args().run() {
+    eprintln!("{}", error);
+    process::exit(EXIT_FAILURE);
+  }
 }

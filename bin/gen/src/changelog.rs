@@ -16,7 +16,7 @@ impl Changelog {
     loop {
       let summary_bytes = current
         .summary_bytes()
-        .ok_or_else(|| anyhow!("Commit had no summary"))?;
+        .ok_or_else(|| Error::CommitSummery { hash: current.id() })?;
 
       let summary = String::from_utf8_lossy(summary_bytes);
 
@@ -47,7 +47,10 @@ impl Changelog {
       match current.parent_count() {
         0 => break,
         1 => current = current.parent(0)?,
-        _ => throw!(anyhow!("Commit had multiple parents!")),
+        other => throw!(Error::CommitParents {
+          hash: current.id(),
+          parents: other
+        }),
       }
     }
 

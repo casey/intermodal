@@ -14,7 +14,8 @@ pub(crate) struct Config {
 impl Config {
   #[throws]
   pub(crate) fn load(root: &Path) -> Config {
-    let file = File::open(root.join(PATH))?;
-    serde_yaml::from_reader(file)?
+    let path = root.join(PATH);
+    let file = File::open(&path).context(error::Filesystem { path: &path })?;
+    serde_yaml::from_reader(file).context(error::ConfigDeserialize { path })?
   }
 }

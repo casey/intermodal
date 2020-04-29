@@ -72,11 +72,13 @@ impl Subcommand {
       name, description
     );
 
-    let tmp = tempfile::tempdir()?;
+    let tmp = tempfile::tempdir().context(error::Tempdir)?;
 
     let include_path = tmp.path().join("include");
 
-    fs::write(&include_path, include)?;
+    fs::write(&include_path, include).context(error::Filesystem {
+      path: &include_path,
+    })?;
 
     let version = cmd!(&self.bin, "--version")
       .out()?

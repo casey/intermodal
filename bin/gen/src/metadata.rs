@@ -19,11 +19,17 @@ impl Metadata {
 
     let blank = message
       .rfind(BLANK)
-      .ok_or_else(|| anyhow!("Commit message missing metadata: {}", message))?;
+      .ok_or_else(|| Error::CommitMetadataMissing {
+        hash: commit.id(),
+        message: message.to_string(),
+      })?;
 
     let yaml = &message[blank + BLANK.len()..];
 
-    let metadata = serde_yaml::from_str(yaml)?;
+    let metadata = serde_yaml::from_str(yaml).context(error::CommitMetadataDeserialize {
+      hash: commit.id(),
+      message,
+    })?;
 
     metadata
   }

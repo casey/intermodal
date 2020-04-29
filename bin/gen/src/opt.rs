@@ -35,27 +35,29 @@ fn blank(path: impl AsRef<Path>, title: &str) {
     title
   );
 
-  fs::write(path, text)?;
+  fs::write(&path, text).context(error::Filesystem { path })?;
 }
 
 #[throws]
-fn clean_dir(dir: impl AsRef<Path>) {
-  let dir = dir.as_ref();
+fn clean_dir(path: impl AsRef<Path>) {
+  let path = path.as_ref();
 
-  info!("Cleaning `{}`…", dir.display());
+  info!("Cleaning `{}`…", path.display());
 
-  if dir.is_dir() {
-    fs::remove_dir_all(dir)?;
+  if path.is_dir() {
+    fs::remove_dir_all(path).context(error::Filesystem { path: &path })?;
   }
 
-  fs::create_dir_all(dir)?;
+  fs::create_dir_all(path).context(error::Filesystem { path: &path })?;
 }
 
 impl Opt {
   #[throws]
-  pub(crate) fn run(self, project: &Project) {
+  pub(crate) fn run(self) {
+    let project = Project::load()?;
+
     match self {
-      Self::Changelog => Self::changelog(project)?,
+      Self::Changelog => Self::changelog(&project)?,
       Self::CommitTemplate => {
         println!("{}", Metadata::default().to_string());
       }
@@ -64,16 +66,16 @@ impl Opt {
           println!("{}", kind)
         }
       }
-      Self::CompletionScripts => Self::completion_scripts(project)?,
-      Self::Readme => Self::readme(project)?,
-      Self::Book => Self::book(project)?,
-      Self::Man => Self::man(project)?,
+      Self::CompletionScripts => Self::completion_scripts(&project)?,
+      Self::Readme => Self::readme(&project)?,
+      Self::Book => Self::book(&project)?,
+      Self::Man => Self::man(&project)?,
       Self::All => {
-        Self::changelog(project)?;
-        Self::completion_scripts(project)?;
-        Self::readme(project)?;
-        Self::book(project)?;
-        Self::man(project)?;
+        Self::changelog(&project)?;
+        Self::completion_scripts(&project)?;
+        Self::readme(&project)?;
+        Self::book(&project)?;
+        Self::man(&project)?;
       }
     }
   }
@@ -83,9 +85,9 @@ impl Opt {
     info!("Generating changelog…");
     let changelog = Changelog::new(&project)?;
 
-    let dst = project.root.join("CHANGELOG.md");
+    let path = project.root.join("CHANGELOG.md");
 
-    fs::write(dst, changelog.to_string())?;
+    fs::write(&path, changelog.to_string()).context(error::Filesystem { path })?;
   }
 
   #[throws]
@@ -104,20 +106,21 @@ impl Opt {
       "--dir",
       completions
     )
-    .status()?
-    .into_result()?;
+    .status_into_result()?
   }
 
   #[throws]
   pub(crate) fn readme(project: &Project) {
     info!("Generating readme…");
+
     let template = project.root.join("bin/gen/templates/README.md");
 
     let readme = Readme::load(&project.config, &template)?;
 
     let text = readme.render_newline()?;
 
-    fs::write(project.root.join("README.md"), text)?;
+    let path = project.root.join("README.md");
+    fs::write(&path, text).context(error::Filesystem { path })?;
   }
 
   #[throws]
@@ -137,35 +140,20 @@ impl Opt {
 
       let dst = commands.join(format!("{}.md", subcommand.slug()));
 
-      fs::write(dst, page)?;
+      fs::write(&dst, page).context(error::Filesystem { path: dst })?;
     }
 
-    let references = project.root.join("book/src/references/");
-    clean_dir(&references)?;
+    clean_dir(&project.root.join("book/src/references/"))?;
 
     for section in &project.config.references {
-      let text = section.render_newline()?;
-
-      let path = project.root.join("book/src").join(section.path());
-
-      fs::write(path, text)?;
+      section.render_to(project.root.join("book/src").join(section.path()))?;
     }
 
-    let faq = Faq::new(&project.config.faq);
+    Faq::new(&project.config.faq).render_to(project.root.join("book/src/faq.md"))?;
 
-    fs::write(project.root.join("book/src/faq.md"), faq.render_newline()?)?;
+    Summary::new(project).render_to(project.root.join("book/src/SUMMARY.md"))?;
 
-    let summary = Summary::new(project);
-
-    let text = summary.render_newline()?;
-
-    fs::write(project.root.join("book/src/SUMMARY.md"), text)?;
-
-    let introduction = Introduction::new(&project.config);
-
-    let text = introduction.render_newline()?;
-
-    fs::write(project.root.join("book/src/introduction.md"), text)?;
+    Introduction::new(&project.config).render_to(project.root.join("book/src/introduction.md"))?;
   }
 
   #[throws]
@@ -182,7 +170,7 @@ impl Opt {
 
       info!("Writing man page to `{}`", dst.display());
 
-      fs::write(dst, man)?;
+      fs::write(&dst, man).context(error::Filesystem { path: dst })?;
     }
   }
 }

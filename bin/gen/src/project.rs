@@ -10,11 +10,15 @@ pub(crate) struct Project {
 impl Project {
   #[throws]
   pub(crate) fn load() -> Self {
-    let repo = Repository::discover(env::current_dir()?)?;
+    let start_dir = env::current_dir().context(error::CurrentDir)?;
+
+    let repo = Repository::discover(&start_dir).context(error::RepositoryDiscover { start_dir })?;
 
     let root = repo
       .workdir()
-      .ok_or_else(|| anyhow!("Repository at `{}` had no workdir", repo.path().display()))?
+      .ok_or_else(|| Error::Workdir {
+        repo: repo.path().to_owned(),
+      })?
       .to_owned();
 
     let config = Config::load(&root)?;
@@ -34,17 +38,10 @@ impl Project {
       .collect::<BTreeSet<String>>();
 
     if example_commands != bin_commands {
-      println!("Example commands:");
-      for command in example_commands {
-        println!("{}", command);
-      }
-
-      println!("…don't match bin commands:");
-      for command in bin_commands {
-        println!("{}", command);
-      }
-
-      throw!(anyhow!(""));
+      throw!(Error::ExampleCommands {
+        example: example_commands,
+        bin: bin_commands
+      });
     }
 
     Project {
