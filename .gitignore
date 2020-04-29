@@ -1,4 +1,5 @@
 **/*.rs.bk
+/CHANGELOG.md
 /book/book
 /book/src/SUMMARY.md
 /book/src/bittorrent.md

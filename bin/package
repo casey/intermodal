@@ -42,6 +42,9 @@ rm -rf completions
 mkdir completions
 $executable completions --dir completions
 
+echo "Generating changelog..."
+cargo run --package gen changelog
+
 echo "Copying release files..."
 mkdir dist
 cp -r \
