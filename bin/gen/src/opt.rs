@@ -4,6 +4,8 @@ use crate::common::*;
 pub(crate) enum Opt {
   #[structopt(about("Update all generated docs"))]
   All,
+  #[structopt(about("Generate book"))]
+  Book,
   #[structopt(about("Generate the changelog"))]
   Changelog,
   #[structopt(about("Print a commit template to standard output"))]
@@ -12,10 +14,10 @@ pub(crate) enum Opt {
   CommitTypes,
   #[structopt(about("Generate completion scripts"))]
   CompletionScripts,
+  #[structopt(about("Diff generated content between commits"))]
+  Diff,
   #[structopt(about("Generate readme"))]
   Readme,
-  #[structopt(about("Generate book"))]
-  Book,
   #[structopt(about("Generate man pages"))]
   Man,
 }
@@ -70,14 +72,18 @@ impl Opt {
       Self::Readme => Self::readme(&project)?,
       Self::Book => Self::book(&project)?,
       Self::Man => Self::man(&project)?,
-      Self::All => {
-        Self::changelog(&project)?;
-        Self::completion_scripts(&project)?;
-        Self::readme(&project)?;
-        Self::book(&project)?;
-        Self::man(&project)?;
-      }
+      Self::Diff => Self::diff(&project)?,
+      Self::All => Self::all(&project)?,
     }
+  }
+
+  #[throws]
+  pub(crate) fn all(project: &Project) {
+    Self::changelog(&project)?;
+    Self::completion_scripts(&project)?;
+    Self::readme(&project)?;
+    Self::book(&project)?;
+    Self::man(&project)?;
   }
 
   #[throws]
@@ -107,6 +113,91 @@ impl Opt {
       completions
     )
     .status_into_result()?
+  }
+
+  #[throws]
+  pub(crate) fn diff(project: &Project) {
+    let tmp = tempfile::tempdir().context(error::Tempdir)?;
+
+    let generated = &[
+      "/CHANGELOG.md",
+      "/README.md",
+      "/book/src/SUMMARY.md",
+      "/book/src/bittorrent.md",
+      "/book/src/commands.md",
+      "/book/src/commands/*",
+      "/book/src/faq.md",
+      "/book/src/introduction.md",
+      "/book/src/references.md",
+      "/book/src/references/*",
+      "/completions/*",
+      "/man/*",
+    ];
+
+    let gen = |name: &str| -> Result<(), Error> {
+      cmd!("cargo", "run", "--package", "gen", "all").status_into_result()?;
+
+      let dir = tmp.path().join(name);
+
+      fs::create_dir(&dir).context(error::Filesystem { path: &dir })?;
+
+      let mut builder = OverrideBuilder::new(&project.root);
+
+      for pattern in generated {
+        builder.add(pattern)?;
+      }
+
+      let overrides = builder.build()?;
+
+      for result in WalkDir::new(&project.root) {
+        let entry = result?;
+
+        let src = entry.path();
+
+        if src.is_dir() {
+          continue;
+        }
+
+        if !overrides.matched(&src, false).is_whitelist() {
+          continue;
+        }
+
+        let relative = src
+          .strip_prefix(&project.root)
+          .context(error::StripPrefix)?;
+
+        let dst = dir.join(relative);
+
+        let dst_dir = dst.join("..").lexiclean();
+
+        fs::create_dir_all(&dst_dir).context(error::Filesystem { path: dst_dir })?;
+
+        fs::copy(&src, &dst).context(error::FilesystemCopy { src, dst })?;
+      }
+
+      Ok(())
+    };
+
+    const HEAD: &str = "HEAD";
+
+    gen(HEAD)?;
+
+    let head = project.repo.head()?.peel_to_commit()?;
+
+    let parent = head.parent(0)?;
+
+    let parent_hash = parent.id().to_string();
+
+    cmd!("git", "checkout", &parent_hash).status_into_result()?;
+
+    gen(&parent_hash)?;
+
+    cmd!("diff", "-r", parent_hash, HEAD)
+      .current_dir(tmp.path())
+      .status_into_result()
+      .ok();
+
+    cmd!("git", "checkout", &head.id().to_string()).status_into_result()?;
   }
 
   #[throws]

@@ -6,7 +6,7 @@ pub(crate) use std::{
   fs::{self, File},
   io,
   ops::Deref,
-  path::{Path, PathBuf},
+  path::{Path, PathBuf, StripPrefixError},
   process::{self, Command, ExitStatus, Stdio},
   str,
 };
@@ -16,6 +16,8 @@ pub(crate) use cargo_toml::Manifest;
 pub(crate) use chrono::{DateTime, NaiveDateTime, Utc};
 pub(crate) use fehler::{throw, throws};
 pub(crate) use git2::{Commit, Oid, Repository};
+pub(crate) use ignore::overrides::OverrideBuilder;
+pub(crate) use lexiclean::Lexiclean;
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use log::info;
 pub(crate) use regex::Regex;
@@ -26,6 +28,7 @@ pub(crate) use structopt::StructOpt;
 pub(crate) use strum::VariantNames;
 pub(crate) use strum_macros::{EnumVariantNames, IntoStaticStr};
 pub(crate) use url::Url;
+pub(crate) use walkdir::WalkDir;
 
 // modules
 pub(crate) use crate::error;

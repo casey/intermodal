@@ -52,6 +52,12 @@ pub(crate) enum Error {
   },
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { path: PathBuf, source: io::Error },
+  #[snafu(display("I/O error copying `{}` to `{}`: {}", src.display(), dst.display(), source))]
+  FilesystemCopy {
+    src: PathBuf,
+    dst: PathBuf,
+    source: io::Error,
+  },
   #[snafu(display("Git error: {}", source))]
   Git { source: git2::Error },
   #[snafu(display("Regex compilation error: {}", source))]
@@ -67,6 +73,12 @@ pub(crate) enum Error {
   TemplateRender { source: askama::Error },
   #[snafu(display("Failed to get workdir for repo at `{}`", repo.display()))]
   Workdir { repo: PathBuf },
+  #[snafu(display("Failed to build overrides: {}", source))]
+  Ignore { source: ignore::Error },
+  #[snafu(display("Failed to traverse worktree: {}", source))]
+  Walkdir { source: walkdir::Error },
+  #[snafu(display("Failed to strip path prefix: {}", source))]
+  StripPrefix { source: StripPrefixError },
 }
 
 impl From<regex::Error> for Error {
@@ -84,5 +96,17 @@ impl From<git2::Error> for Error {
 impl From<cargo_toml::Error> for Error {
   fn from(source: cargo_toml::Error) -> Self {
     Self::CargoToml { source }
+  }
+}
+
+impl From<ignore::Error> for Error {
+  fn from(source: ignore::Error) -> Self {
+    Self::Ignore { source }
+  }
+}
+
+impl From<walkdir::Error> for Error {
+  fn from(source: walkdir::Error) -> Self {
+    Self::Walkdir { source }
   }
 }

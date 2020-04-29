@@ -364,6 +364,8 @@ dependencies = [
  "fehler",
  "git2",
  "globset",
+ "ignore",
+ "lexiclean",
  "libc",
  "log",
  "pretty_env_logger",
@@ -376,6 +378,7 @@ dependencies = [
  "strum_macros",
  "tempfile",
  "url",
+ "walkdir",
 ]
 
 [[package]]
