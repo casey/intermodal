@@ -43,48 +43,47 @@ impl Entry {
     }
   }
 
-  fn permanent_shorthash(&self) -> String {
-    if self.head {
-      "x".repeat(12)
-    } else {
-      self.hash[..12].into()
-    }
+  fn shorthash(&self) -> String {
+    self.hash[..12].into()
   }
-}
 
-impl Display for Entry {
-  #[throws(fmt::Error)]
-  fn fmt(&self, f: &mut Formatter) {
+  #[throws]
+  pub(crate) fn render(&self, lines: &mut Vec<String>, book: bool) {
+    let mut line = "- ".to_string();
+
     let url = self.url();
 
-    let shorthash = self.permanent_shorthash();
-
-    write!(
-      f,
+    line.push_str(&format!(
       "{} [`{}`]({}) {}",
-      self.metadata.kind.emoji(),
-      shorthash,
+      if book {
+        self.metadata.kind.emoji_character()
+      } else {
+        self.metadata.kind.emoji_name()
+      },
+      self.shorthash(),
       url,
       self.summary
-    )?;
+    ));
 
     if let Some(pr) = &self.metadata.pr {
       let n = pr.path_segments().unwrap().last().unwrap();
-      write!(f, " ([#{}]({}))", n, pr)?;
+      line.push_str(&format!(" ([#{}]({}))", n, pr));
     }
 
     if !self.metadata.fixes.is_empty() {
-      write!(f, " - Fixes ")?;
+      line.push_str(" - Fixes ");
 
       for (i, issue) in self.metadata.fixes.iter().enumerate() {
         if i > 0 {
-          write!(f, ", ")?;
+          line.push_str(", ");
         }
         let n = issue.path_segments().unwrap().last().unwrap();
-        write!(f, "[#{}]({})", n, issue)?;
+        line.push_str(&format!("[#{}]({})", n, issue));
       }
     }
 
-    write!(f, " - _{}_", self.author)?;
+    line.push_str(&format!(" - _{}_", self.author));
+
+    lines.push(line);
   }
 }

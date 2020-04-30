@@ -30,7 +30,23 @@ pub(crate) enum Kind {
 }
 
 impl Kind {
-  pub(crate) fn emoji(self) -> &'static str {
+  pub(crate) fn emoji_character(self) -> &'static str {
+    match self {
+      Self::Added => "✨",
+      Self::Breaking => "💥",
+      Self::Changed => "⚡️",
+      Self::Dependencies => "⬆️",
+      Self::Development => "🔧",
+      Self::Distribution => "📦",
+      Self::Documentation => "📚",
+      Self::Fixed => "🐛",
+      Self::Reform => "🎨",
+      Self::Release => "🔖",
+      Self::Testing => "✅",
+    }
+  }
+
+  pub(crate) fn emoji_name(self) -> &'static str {
     match self {
       Self::Added => ":sparkles:",
       Self::Breaking => ":boom:",

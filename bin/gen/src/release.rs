@@ -6,9 +6,9 @@ pub(crate) struct Release {
   pub(crate) entries: Vec<Entry>,
 }
 
-impl Display for Release {
-  #[throws(fmt::Error)]
-  fn fmt(&self, f: &mut Formatter) {
+impl Release {
+  #[throws]
+  pub(crate) fn render(&self, lines: &mut Vec<String>, book: bool) {
     let time = self.time.format("%Y-%m-%d");
 
     let header = match &self.version {
@@ -19,11 +19,11 @@ impl Display for Release {
       None => format!("UNRELEASED - {}", time),
     };
 
-    writeln!(f, "{}", header)?;
-    writeln!(f, "{}", "-".repeat(header.len()))?;
+    lines.push(header.clone());
+    lines.push("-".repeat(header.len()));
 
     for entry in &self.entries {
-      writeln!(f, "- {}", entry)?;
+      entry.render(lines, book)?;
     }
   }
 }

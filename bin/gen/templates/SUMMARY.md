@@ -5,6 +5,8 @@ Summary
 
 - [FAQ](./faq.md)
 
+- [Changelog](./changelog.md)
+
 {{commands}}
 
 - [Bittorrent](./bittorrent.md)

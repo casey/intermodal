@@ -93,7 +93,7 @@ impl Opt {
 
     let path = project.root.join("CHANGELOG.md");
 
-    fs::write(&path, changelog.to_string()).context(error::Filesystem { path })?;
+    fs::write(&path, changelog.render(false)?).context(error::Filesystem { path })?;
   }
 
   #[throws]
@@ -124,6 +124,7 @@ impl Opt {
       "/README.md",
       "/book/src/SUMMARY.md",
       "/book/src/bittorrent.md",
+      "/book/src/changelog.md",
       "/book/src/commands.md",
       "/book/src/commands/*",
       "/book/src/faq.md",
@@ -182,9 +183,11 @@ impl Opt {
 
     gen(HEAD)?;
 
-    let head = project.repo.head()?.peel_to_commit()?;
+    let head = project.repo.head()?;
 
-    let parent = head.parent(0)?;
+    let head_commit = head.peel_to_commit()?;
+
+    let parent = head_commit.parent(0)?;
 
     let parent_hash = parent.id().to_string();
 
@@ -192,12 +195,20 @@ impl Opt {
 
     gen(&parent_hash)?;
 
-    cmd!("diff", "-r", parent_hash, HEAD)
+    cmd!("colordiff", "-ur", parent_hash, HEAD)
       .current_dir(tmp.path())
       .status_into_result()
       .ok();
 
-    cmd!("git", "checkout", &head.id().to_string()).status_into_result()?;
+    cmd!(
+      "git",
+      "checkout",
+      head
+        .shorthand()
+        .map(str::to_owned)
+        .unwrap_or_else(|| head_commit.id().to_string())
+    )
+    .status_into_result()?;
   }
 
   #[throws]
@@ -245,6 +256,11 @@ impl Opt {
     Summary::new(project).render_to(project.root.join("book/src/SUMMARY.md"))?;
 
     Introduction::new(&project.config).render_to(project.root.join("book/src/introduction.md"))?;
+
+    let changelog = Changelog::new(&project)?;
+
+    let dst = project.root.join("book/src/changelog.md");
+    fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;
   }
 
   #[throws]

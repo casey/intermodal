@@ -99,18 +99,22 @@ impl Changelog {
 
     Self { releases }
   }
-}
 
-impl Display for Changelog {
-  #[throws(fmt::Error)]
-  fn fmt(&self, f: &mut Formatter) {
-    writeln!(f, "Changelog")?;
-    writeln!(f, "=========")?;
+  #[throws]
+  pub(crate) fn render(&self, book: bool) -> String {
+    let mut lines: Vec<String> = Vec::new();
+
+    lines.push("Changelog".into());
+    lines.push("=========".into());
 
     for release in &self.releases {
-      writeln!(f)?;
-      writeln!(f)?;
-      write!(f, "{}", release)?;
+      lines.push("".into());
+      lines.push("".into());
+      release.render(&mut lines, book)?;
     }
+
+    let mut text = lines.join("\n");
+    text.push('\n');
+    text
   }
 }
