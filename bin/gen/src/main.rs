@@ -34,7 +34,9 @@ fn main() {
   pretty_env_logger::init();
 
   if let Err(error) = Opt::from_args().run() {
-    eprintln!("{}", error);
+    let bold = Style::new().bold();
+    let red = Style::new().fg(ansi_term::Color::Red).bold();
+    eprintln!("{}: {}", red.paint("error"), bold.paint(error.to_string()));
     process::exit(EXIT_FAILURE);
   }
 }

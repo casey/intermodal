@@ -11,6 +11,7 @@ pub(crate) use std::{
   str,
 };
 
+pub(crate) use ansi_term::Style;
 pub(crate) use askama::Template;
 pub(crate) use cargo_toml::Manifest;
 pub(crate) use chrono::{DateTime, NaiveDateTime, Utc};

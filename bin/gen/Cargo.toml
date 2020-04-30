@@ -6,6 +6,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
+ansi_term         = "0.12.1"
 askama            = "0.9.0"
 cargo_toml        = "0.8.0"
 chrono            = "0.4.11"
@@ -13,6 +14,7 @@ fehler            = "1.0.0"
 git2              = "0.13.1"
 globset           = "0.4.5"
 ignore            = "0.4.14"
+lexiclean         = "0.0.1"
 libc              = "0.2.69"
 log               = "0.4.8"
 pretty_env_logger = "0.4.0"
@@ -24,7 +26,6 @@ strum             = "0.18.0"
 strum_macros      = "0.18.0"
 tempfile          = "3.1.0"
 walkdir           = "2.3.1"
-lexiclean         = "0.0.1"
 
 [dependencies.serde]
 version  = "1.0.106"
