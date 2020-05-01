@@ -1,164 +1,240 @@
 use crate::common::*;
 
-#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
-pub(crate) struct Subcommand {
-  pub(crate) bin: PathBuf,
-  pub(crate) command: Vec<String>,
-  pub(crate) subcommands: Vec<String>,
+#[derive(StructOpt)]
+pub(crate) enum Subcommand {
+  #[structopt(about("Update all generated docs"))]
+  All,
+  #[structopt(about("Generate book"))]
+  Book,
+  #[structopt(about("Generate the changelog"))]
+  Changelog,
+  #[structopt(about("Print a commit template to standard output"))]
+  CommitTemplate,
+  #[structopt(about("Print possible values for `type` field of commit metadata"))]
+  CommitTypes,
+  #[structopt(about("Generate completion scripts"))]
+  CompletionScripts,
+  #[structopt(about("Diff generated content between commits"))]
+  Diff,
+  #[structopt(about("Generate readme"))]
+  Readme,
+  #[structopt(about("Generate man pages"))]
+  Man,
+}
+
+#[throws]
+fn blank(path: impl AsRef<Path>, title: &str) {
+  let path = path.as_ref();
+
+  info!("Writing blank page to `{}`…", path.display());
+
+  let text = format!(
+    "
+  # {}
+
+  This page intentionally left blank.
+  ",
+    title
+  );
+
+  fs::write(&path, text).context(error::Filesystem { path })?;
+}
+
+#[throws]
+fn clean_dir(path: impl AsRef<Path>) {
+  let path = path.as_ref();
+
+  info!("Cleaning `{}`…", path.display());
+
+  if path.is_dir() {
+    fs::remove_dir_all(path).context(error::Filesystem { path: &path })?;
+  }
+
+  fs::create_dir_all(path).context(error::Filesystem { path: &path })?;
 }
 
 impl Subcommand {
   #[throws]
-  pub(crate) fn new(bin: &Path, command: Vec<String>) -> Self {
-    let wide_help = Command::new(bin)
-      .args(command.as_slice())
-      .env("IMDL_TERM_WIDTH", "200")
-      .arg("--help")
-      .out()?;
+  pub(crate) fn run(self, options: Options) {
+    let project = Project::load(&options)?;
 
-    const MARKER: &str = "\nSUBCOMMANDS:\n";
-
-    let mut subcommands = Vec::new();
-
-    if let Some(marker) = wide_help.find(MARKER) {
-      let block = &wide_help[marker + MARKER.len()..];
-
-      for line in block.lines() {
-        let name = line.trim().split_whitespace().next().unwrap();
-        subcommands.push(name.into());
+    match self {
+      Self::Changelog => Self::changelog(&project)?,
+      Self::CommitTemplate => {
+        println!("{}", Metadata::default().to_string());
       }
-    }
-
-    Self {
-      bin: bin.into(),
-      command,
-      subcommands,
+      Self::CommitTypes => {
+        for kind in Kind::VARIANTS {
+          println!("{}", kind)
+        }
+      }
+      Self::CompletionScripts => Self::completion_scripts(&project)?,
+      Self::Readme => Self::readme(&project)?,
+      Self::Book => Self::book(&project)?,
+      Self::Man => Self::man(&project)?,
+      Self::Diff => Self::diff(&project)?,
+      Self::All => Self::all(&project)?,
     }
   }
 
   #[throws]
-  fn help(&self) -> String {
-    info!("Getting help for `{}`", self.command_line());
-
-    Command::new(&self.bin)
-      .args(self.command.as_slice())
-      .env("IMDL_TERM_WIDTH", "80")
-      .arg("--help")
-      .out()?
+  pub(crate) fn all(project: &Project) {
+    Self::changelog(&project)?;
+    Self::completion_scripts(&project)?;
+    Self::readme(&project)?;
+    Self::book(&project)?;
+    Self::man(&project)?;
   }
 
   #[throws]
-  pub(crate) fn man(&self) -> String {
-    let command_line = self.command_line();
+  pub(crate) fn changelog(project: &Project) {
+    info!("Generating changelog…");
+    let changelog = Changelog::new(&project)?;
 
-    info!("Generating man page for `{}`", command_line);
+    let path = project.gen()?.join("CHANGELOG.md");
 
-    let name = command_line.replace(" ", "\\ ");
+    fs::write(&path, changelog.render(false)?).context(error::Filesystem { path })?;
+  }
 
-    let help = self.help()?;
+  #[throws]
+  pub(crate) fn completion_scripts(project: &Project) {
+    info!("Generating completion scripts…");
+    let completions = project.gen()?.join("completions");
 
-    let description = if self.command.is_empty() {
-      "A 40' shipping container for the Internet".to_string()
-    } else {
-      help.lines().nth(1).unwrap().into()
-    };
+    clean_dir(&completions)?;
 
-    let include = format!(
-      "\
-[NAME]
-\\fB{}\\fR
-- {}
-",
-      name, description
-    );
+    cmd!(&project.executable, "completions", "--dir", completions).status_into_result()?
+  }
 
+  #[throws]
+  pub(crate) fn diff(project: &Project) {
     let tmp = tempfile::tempdir().context(error::Tempdir)?;
 
-    let include_path = tmp.path().join("include");
+    let gen = |name: &str| -> Result<(), Error> {
+      let src = Path::new("target/gen");
 
-    fs::write(&include_path, include).context(error::Filesystem {
-      path: &include_path,
-    })?;
+      fs::remove_dir_all(src).context(error::Filesystem { path: src })?;
 
-    let version = cmd!(&self.bin, "--version")
-      .out()?
-      .split_whitespace()
-      .nth(1)
-      .unwrap()
-      .to_owned();
+      cmd!("cargo", "run", "--package", "gen", "all").status_into_result()?;
 
-    info!("Running help2man for `{}`", command_line);
+      let dir = tmp.path().join(name);
 
-    let mut command = self.bin.as_os_str().to_owned();
-    for arg in &self.command {
-      command.push(" ");
-      command.push(arg);
-    }
+      fs::create_dir(&dir).context(error::Filesystem { path: &dir })?;
 
-    let output = cmd!(
-      "help2man",
-      "--include",
-      &include_path,
-      "--manual",
-      "Intermodal Manual",
-      "--no-info",
-      "--source",
-      &format!("Intermodal {}", version),
-      command
+      fs_extra::dir::copy(src, &dir, &fs_extra::dir::CopyOptions::new())
+        .context(error::FilesystemRecursiveCopy { src, dst: dir })?;
+
+      Ok(())
+    };
+
+    const HEAD: &str = "HEAD";
+
+    gen(HEAD)?;
+
+    let head = project.repo.head()?;
+
+    let head_commit = head.peel_to_commit()?;
+
+    let parent = head_commit.parent(0)?;
+
+    let parent_hash = parent.id().to_string();
+
+    cmd!("git", "checkout", &parent_hash).status_into_result()?;
+
+    gen(&parent_hash)?;
+
+    cmd!("colordiff", "-ur", parent_hash, HEAD)
+      .current_dir(tmp.path())
+      .status_into_result()
+      .ok();
+
+    cmd!(
+      "git",
+      "checkout",
+      head
+        .shorthand()
+        .map(str::to_owned)
+        .unwrap_or_else(|| head_commit.id().to_string())
     )
-    .out()?;
-
-    let man = output
-      .replace("📦 ", "\n")
-      .replace("\n.SS ", "\n.SH ")
-      .replace("\"USAGE:\"", "\"SYNOPSIS:\"");
-
-    let re = Regex::new(r"(?ms).SH DESCRIPTION.*?.SH").unwrap();
-
-    let man = re.replace(&man, ".SH").into_owned();
-
-    man
-  }
-
-  pub(crate) fn slug(&self) -> String {
-    let mut slug = self
-      .bin
-      .display()
-      .to_string()
-      .split('/')
-      .last()
-      .unwrap()
-      .to_owned();
-
-    for name in &self.command {
-      slug.push('-');
-      slug.push_str(&name);
-    }
-
-    slug
-  }
-
-  pub(crate) fn command_line(&self) -> String {
-    let mut line = self
-      .bin
-      .display()
-      .to_string()
-      .split('/')
-      .last()
-      .unwrap()
-      .to_owned();
-
-    for name in &self.command {
-      line.push(' ');
-      line.push_str(&name);
-    }
-
-    line
+    .status_into_result()?;
   }
 
   #[throws]
-  pub(crate) fn page(&self) -> String {
-    let help = self.help()?;
-    format!("# `{}`\n```\n{}\n```", self.command_line(), help)
+  pub(crate) fn readme(project: &Project) {
+    info!("Generating readme…");
+
+    let template = project.root.join("bin/gen/templates/README.md");
+
+    let readme = Readme::load(&project.config, &template)?;
+
+    let text = readme.render_newline()?;
+
+    let path = project.gen()?.join("README.md");
+    fs::write(&path, &text).context(error::Filesystem { path })?;
+
+    let path = project.root.join("README.md");
+    fs::write(&path, &text).context(error::Filesystem { path })?;
+  }
+
+  #[throws]
+  pub(crate) fn book(project: &Project) {
+    info!("Generating book…");
+
+    let gen = project.gen()?;
+
+    let out = gen.join("book");
+
+    fs::create_dir_all(&out).context(error::Filesystem { path: &out })?;
+
+    blank(out.join("commands.md"), "Commands")?;
+    blank(out.join("bittorrent.md"), "BitTorrent")?;
+    blank(out.join("references.md"), "References")?;
+
+    let commands = out.join("commands");
+
+    clean_dir(&commands)?;
+
+    for subcommand in &project.bin.subcommands {
+      let page = subcommand.page()?;
+
+      let dst = commands.join(format!("{}.md", subcommand.slug()));
+
+      fs::write(&dst, page).context(error::Filesystem { path: dst })?;
+    }
+
+    clean_dir(&out.join("references"))?;
+
+    for section in &project.config.references {
+      section.render_to(out.join(section.path()))?;
+    }
+
+    Faq::new(&project.config.faq).render_to(out.join("faq.md"))?;
+
+    Summary::new(project).render_to(out.join("SUMMARY.md"))?;
+
+    Introduction::new(&project.config).render_to(out.join("introduction.md"))?;
+
+    let changelog = Changelog::new(&project)?;
+
+    let dst = out.join("changelog.md");
+    fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;
+  }
+
+  #[throws]
+  pub(crate) fn man(project: &Project) {
+    info!("Generating man pages…");
+    let mans = project.gen()?.join("man");
+
+    clean_dir(&mans)?;
+
+    for subcommand in &project.bin.subcommands {
+      let man = subcommand.man()?;
+
+      let dst = mans.join(format!("{}.1", subcommand.slug()));
+
+      info!("Writing man page to `{}`", dst.display());
+
+      fs::write(&dst, man).context(error::Filesystem { path: dst })?;
+    }
   }
 }

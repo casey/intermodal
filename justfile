@@ -58,7 +58,8 @@ dev-deps:
 
 # update generated documentation
 gen:
-	cargo run --package gen all
+	cargo build
+	cargo run --package gen -- --bin target/debug/imdl all
 
 check-minimal-versions:
 	./bin/check-minimal-versions

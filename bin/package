@@ -6,7 +6,7 @@ version=${1#"refs/tags/"}
 os=$2
 target=$3
 src=`pwd`
-dist=$src/dist
+dist=$src/target/dist
 bin=imdl
 
 echo "Packaging $bin $version for $target..."
@@ -38,32 +38,35 @@ case $os in
 esac
 
 echo "Building completions..."
-rm -rf completions
-mkdir completions
-$executable completions --dir completions
+cargo run --package gen -- --bin $executable completion-scripts
 
 echo "Generating changelog..."
-cargo run --package gen changelog
+cargo run --package gen -- --bin $executable changelog
 
-echo "Copying release files..."
-mkdir dist
+echo "Generating readme..."
+cargo run --package gen -- --bin $executable readme
+
+echo "Copying static files..."
+mkdir $dist
 cp -r \
   $executable \
-  CHANGELOG.md \
   CONTRIBUTING \
   Cargo.lock \
   Cargo.toml \
   LICENSE \
-  README.md \
-  completions \
+  $dist
+
+echo "Copying generated files..."
+cp -r \
+  target/gen/README.md \
+  target/gen/CHANGELOG.md \
+  target/gen/completions \
   $dist
 
 if [[ $os != windows-latest ]]; then
   echo "Building man pages..."
-  rm -rf man
-  mkdir man
-  cargo run --package gen man
-  cp -r man $dist/man
+  cargo run --package gen -- --bin $executable man
+  cp -r target/gen/man $dist/man
 fi
 
 cd $dist

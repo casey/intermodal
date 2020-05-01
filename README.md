@@ -31,10 +31,7 @@ For more about the project and its goals, check out
   - [Examples](#examples)
   - [FAQ](#faq)
 - [Notes for Packagers](#notes-for-packagers)
-  - [Package Artifacts](#package-artifacts)
-    - [Binary](#binary)
-    - [Man Pages](#man-pages)
-    - [Completion Scripts](#completion-scripts)
+  - [Build Artifacts](#build-artifacts)
   - [Release Updates](#release-updates)
 - [Chat](#chat)
 - [Contributing](#contributing)
@@ -181,46 +178,38 @@ Intermodal is distributed under the
 a public domain dedication with a fallback all-permissive license. The SPDX
 identifier of the CC0 is [CC0-1.0](https://spdx.org/licenses/CC0-1.0.html).
 
-### Package Artifacts
+### Build Artifacts
 
-There are three primary build artifacts: the binary, the man pages, and the
-shell completion scripts.
+There are a number of build artifacts: the binary, the man pages, the
+changelog, and the shell completion scripts.
 
-#### Binary
+The binary is built with `cargo`, and the other artifacts are built `gen`,
+located in `bin/gen`.
 
-The binary is called `imdl`, and can be built with:
+The binary can be built with:
 
-```
-cargo build --release
-```
+    cargo build --release
 
-After building, the binary will be present at `target/release/imdl`.
+_`gen` requires [`help2man`](https://www.gnu.org/software/help2man/) to be
+installed, which is used to generate man pages from subcommand `--help`
+strings._
 
-#### Man Pages
+The rest of the build artifacts can be built with `gen`:
 
-Intermodal has a number of subcommands, each of which has a man page. The man
-pages are generated from the `--help` text using
-[`help2man`](https://www.gnu.org/software/help2man/).
+    cargo run --package gen -- --bin target/release/imdl all
 
-To generate the man pages, ensure `help2man` is available, and run:
+_The path to the built `imdl` executable should be passed to `gen` with the `--bin` flag._
 
-```
-mkdir -p man
-cargo run --package gen man
-```
+After running the above commands, the following table shows the location of the
+built artifacts.
 
-After building, the man pages will be available in `man`.
-
-#### Completion Scripts
-
-Completion scripts are available for a number of shells. To generate them, run:
-
-```
-mkdir -p completions
-cargo run --release completions --dir completions
-```
-
-After running, the completion scripts will be available in `completions`.
+| Artifact           | Location                   |
+|--------------------|----------------------------|
+| Binary             | `target/release/imdl`      |
+| Man Pages          | `target/gen/man/*`         |
+| Completion Scripts | `target/gen/completions/*` |
+| Changelog          | `target/gen/CHANGELOG.md`  |
+| Readme             | `target/gen/README.md`     |
 
 ### Release Updates
 

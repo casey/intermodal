@@ -108,7 +108,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         brew install help2man
-        cargo run --package gen all
+        cargo run --package gen -- --bin target/debug/imdl all
         git diff --no-ext-diff --exit-code
 
     - name: Install `mdbook`
@@ -118,7 +118,7 @@ jobs:
 
     - name: Build Book
       run: |
-        cargo run --package gen book
+        cargo run --package gen -- --bin target/debug/imdl book
         mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
@@ -139,12 +139,12 @@ jobs:
       shell: bash
       run: ./bin/package ${{github.ref}} ${{matrix.os}} ${{matrix.target}}
 
-    - name: Publish
+    - name: Publish Release Archive
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         draft: false
         files: ${{steps.package.outputs.archive}}
-        prerelease: false
+        prerelease: true
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

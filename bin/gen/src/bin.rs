@@ -2,7 +2,7 @@ use crate::common::*;
 
 pub(crate) struct Bin {
   path: PathBuf,
-  pub(crate) subcommands: Vec<Subcommand>,
+  pub(crate) subcommands: Vec<BinSubcommand>,
 }
 
 impl Bin {
@@ -22,7 +22,7 @@ impl Bin {
 
   #[throws]
   fn add_subcommands(&mut self, command: &mut Vec<String>) {
-    let subcommand = Subcommand::new(&self.path, command.clone())?;
+    let subcommand = BinSubcommand::new(&self.path, command.clone())?;
 
     for name in &subcommand.subcommands {
       command.push(name.into());

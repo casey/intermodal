@@ -5,11 +5,12 @@ pub(crate) struct Project {
   pub(crate) root: PathBuf,
   pub(crate) config: Config,
   pub(crate) bin: Bin,
+  pub(crate) executable: PathBuf,
 }
 
 impl Project {
   #[throws]
-  pub(crate) fn load() -> Self {
+  pub(crate) fn load(options: &Options) -> Self {
     let start_dir = env::current_dir().context(error::CurrentDir)?;
 
     let repo = Repository::discover(&start_dir).context(error::RepositoryDiscover { start_dir })?;
@@ -23,7 +24,7 @@ impl Project {
 
     let config = Config::load(&root)?;
 
-    let bin = Bin::new(&root.join("target/debug/imdl"))?;
+    let bin = Bin::new(&options.bin)?;
 
     let example_commands = config
       .examples
@@ -45,10 +46,22 @@ impl Project {
     }
 
     Project {
+      executable: options.bin.clone(),
+      bin,
+      config,
       repo,
       root,
-      config,
-      bin,
     }
+  }
+
+  #[throws]
+  pub(crate) fn gen(&self) -> PathBuf {
+    let gen = self.root.join("target").join("gen");
+
+    if !gen.is_dir() {
+      fs::create_dir_all(&gen).context(error::Filesystem { path: &gen })?;
+    }
+
+    gen
   }
 }

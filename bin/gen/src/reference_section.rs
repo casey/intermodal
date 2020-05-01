@@ -9,6 +9,6 @@ pub(crate) struct ReferenceSection {
 
 impl ReferenceSection {
   pub(crate) fn path(&self) -> String {
-    format!("./references/{}.md", self.title.slug())
+    format!("references/{}.md", self.title.slug())
   }
 }
