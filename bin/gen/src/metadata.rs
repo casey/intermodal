@@ -8,6 +8,8 @@ pub(crate) struct Metadata {
   pub(crate) pr: Option<Url>,
   #[serde(default)]
   pub(crate) fixes: Vec<Url>,
+  #[serde(default, rename = "co-authored-by")]
+  pub(crate) co_authored_by: Option<String>,
 }
 
 impl Metadata {
@@ -41,6 +43,7 @@ impl Default for Metadata {
       kind: Kind::Changed,
       pr: None,
       fixes: Vec::new(),
+      co_authored_by: None,
     }
   }
 }
