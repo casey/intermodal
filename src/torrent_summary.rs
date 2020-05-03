@@ -105,6 +105,10 @@ impl TorrentSummary {
       table.tiers("Announce List", value);
     }
 
+    if let Some(update_url) = &self.metainfo.info.update_url {
+      table.row("Update URL", update_url);
+    }
+
     if let Some(nodes) = &self.metainfo.nodes {
       table.list(
         "DHT Nodes",

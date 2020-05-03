@@ -26,7 +26,7 @@ pub(crate) struct Info {
     with = "unwrap_or_skip",
     rename = "update-url"
   )]
-  pub(crate) update_url: Option<String>,
+  pub(crate) update_url: Option<Url>,
 }
 
 impl Info {

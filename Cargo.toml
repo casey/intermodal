@@ -39,7 +39,6 @@ strum_macros      = "0.18.0"
 syn               = "1.0.14"
 tempfile          = "3.0.0"
 unicode-width     = "0.1.0"
-url               = "2.1.1"
 
 [dependencies.bendy]
 version  = "0.3.0"
@@ -56,6 +55,10 @@ features = ["derive"]
 [dependencies.structopt]
 version  = "0.3.0"
 features = ["default", "wrap_help"]
+
+[dependencies.url]
+version = "2.1.1"
+features = ["serde"]
 
 [dev-dependencies]
 claim    = "0.3.1"

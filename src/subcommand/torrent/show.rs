@@ -111,31 +111,53 @@ mod tests {
 
   #[test]
   fn output() -> Result<()> {
-    let metainfo = Metainfo {
-      announce: Some("announce".into()),
-      announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
-      nodes: Some(vec![
-        "x:12".parse().unwrap(),
-        "1.1.1.1:16".parse().unwrap(),
-        "[2001:0db8:85a3::0000:8a2e:0370]:7334".parse().unwrap(),
-      ]),
-      comment: Some("comment".into()),
-      created_by: Some("created by".into()),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["xyz", "abc"]),
-        mode: Mode::Single {
-          length: Bytes(20),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
+    let metainfo = Metainfo::test_value_single();
+
+    #[rustfmt::skip]
+    let want_human_readable = format!(
+"         Name  NAME
+      Comment  COMMENT
+Creation Date  1970-01-01 00:00:01 UTC
+   Created By  CREATED BY
+       Source  SOURCE
+    Info Hash  {}
+ Torrent Size  {}
+ Content Size  32 KiB
+      Private  yes
+      Tracker  udp://announce.example:1337
+Announce List  Tier 1: http://a.example:4567
+                       https://b.example:77
+               Tier 2: udp://c.example:88
+   Update URL  https://update.example/
+    DHT Nodes  node.example:12
+               1.1.1.1:16
+               [2001:db8:85a3::8a2e:370]:7334
+   Piece Size  16 KiB
+  Piece Count  2
+   File Count  1
+        Files  NAME
+", Metainfo::test_value_single_infohash(), Metainfo::test_value_single_torrent_size());
+
+    #[rustfmt::skip]
+    let want_machine_readable = format!("\
+name\tNAME
+comment\tCOMMENT
+creation date\t1970-01-01 00:00:01 UTC
+created by\tCREATED BY
+source\tSOURCE
+info hash\t{}
+torrent size\t{}
+content size\t32768
+private\tyes
+tracker\tudp://announce.example:1337
+announce list\thttp://a.example:4567\thttps://b.example:77\tudp://c.example:88
+update url\thttps://update.example/
+dht nodes\tnode.example:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+piece size\t16384
+piece count\t2
+file count\t1
+files\tNAME
+", Metainfo::test_value_single_infohash(), Metainfo::test_value_single_torrent_size().count());
 
     {
       let mut env = TestEnvBuilder::new()
@@ -150,29 +172,7 @@ mod tests {
       env.assert_ok();
 
       let have = env.out();
-      let want = "         Name  foo
-      Comment  comment
-Creation Date  1970-01-01 00:00:01 UTC
-   Created By  created by
-       Source  source
-    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
- Torrent Size  339 bytes
- Content Size  20 bytes
-      Private  yes
-      Tracker  announce
-Announce List  Tier 1: announce
-                       b
-               Tier 2: c
-    DHT Nodes  x:12
-               1.1.1.1:16
-               [2001:db8:85a3::8a2e:370]:7334
-   Piece Size  16 KiB
-  Piece Count  2
-   File Count  1
-        Files  foo
-";
-
-      assert_eq!(have, want);
+      assert_eq!(have, want_human_readable);
     }
 
     {
@@ -188,29 +188,8 @@ Announce List  Tier 1: announce
       env.assert_ok();
 
       let have = env.out();
-      let want = "         Name  foo
-      Comment  comment
-Creation Date  1970-01-01 00:00:01 UTC
-   Created By  created by
-       Source  source
-    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
- Torrent Size  339 bytes
- Content Size  20 bytes
-      Private  yes
-      Tracker  announce
-Announce List  Tier 1: announce
-                       b
-               Tier 2: c
-    DHT Nodes  x:12
-               1.1.1.1:16
-               [2001:db8:85a3::8a2e:370]:7334
-   Piece Size  16 KiB
-  Piece Count  2
-   File Count  1
-        Files  foo
-";
 
-      assert_eq!(have, want);
+      assert_eq!(have, want_human_readable);
     }
 
     {
@@ -225,26 +204,8 @@ Announce List  Tier 1: announce
       env.assert_ok();
 
       let have = env.out();
-      let want = "\
-name\tfoo
-comment\tcomment
-creation date\t1970-01-01 00:00:01 UTC
-created by\tcreated by
-source\tsource
-info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
-torrent size\t339
-content size\t20
-private\tyes
-tracker\tannounce
-announce list\tannounce\tb\tc
-dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
-piece size\t16384
-piece count\t2
-file count\t1
-files\tfoo
-";
 
-      assert_eq!(have, want);
+      assert_eq!(have, want_machine_readable);
     }
 
     Ok(())
@@ -252,31 +213,7 @@ files\tfoo
 
   #[test]
   fn tier_list_with_main() -> Result<()> {
-    let metainfo = Metainfo {
-      announce: Some("a".into()),
-      announce_list: Some(vec![vec!["x".into()], vec!["y".into()], vec!["z".into()]]),
-      comment: Some("comment".into()),
-      created_by: Some("created by".into()),
-      nodes: Some(vec![
-        "x:12".parse().unwrap(),
-        "1.1.1.1:16".parse().unwrap(),
-        "[2001:0db8:85a3::0000:8a2e:0370]:7334".parse().unwrap(),
-      ]),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["xyz", "abc"]),
-        mode: Mode::Single {
-          length: Bytes(20),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
+    let metainfo = Metainfo::test_value_single();
 
     {
       let mut env = TestEnvBuilder::new()
@@ -291,27 +228,34 @@ files\tfoo
       env.assert_ok();
 
       let have = env.out();
-      let want = "         Name  foo
-      Comment  comment
+
+      #[rustfmt::skip]
+      let want = format!(
+        "         Name  NAME
+      Comment  COMMENT
 Creation Date  1970-01-01 00:00:01 UTC
-   Created By  created by
-       Source  source
-    Info Hash  e12253978dc6d50db11d05747abcea1ad03b51c5
- Torrent Size  327 bytes
- Content Size  20 bytes
+   Created By  CREATED BY
+       Source  SOURCE
+    Info Hash  {}
+ Torrent Size  {}
+ Content Size  32 KiB
       Private  yes
-      Tracker  a
-Announce List  Tier 1: x
-               Tier 2: y
-               Tier 3: z
-    DHT Nodes  x:12
+      Tracker  udp://announce.example:1337
+Announce List  Tier 1: http://a.example:4567
+                       https://b.example:77
+               Tier 2: udp://c.example:88
+   Update URL  https://update.example/
+    DHT Nodes  node.example:12
                1.1.1.1:16
                [2001:db8:85a3::8a2e:370]:7334
    Piece Size  16 KiB
   Piece Count  2
    File Count  1
-        Files  foo
-";
+        Files  NAME
+",
+        Metainfo::test_value_single_infohash(),
+        Metainfo::test_value_single_torrent_size()
+      );
 
       assert_eq!(have, want);
     }
@@ -328,24 +272,31 @@ Announce List  Tier 1: x
       env.assert_ok();
 
       let have = env.out();
-      let want = "\
-name\tfoo
-comment\tcomment
+
+      #[rustfmt::skip]
+      let want = format!(
+        "\
+name\tNAME
+comment\tCOMMENT
 creation date\t1970-01-01 00:00:01 UTC
-created by\tcreated by
-source\tsource
-info hash\te12253978dc6d50db11d05747abcea1ad03b51c5
-torrent size\t327
-content size\t20
+created by\tCREATED BY
+source\tSOURCE
+info hash\t{}
+torrent size\t{}
+content size\t32768
 private\tyes
-tracker\ta
-announce list\tx\ty\tz
-dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+tracker\tudp://announce.example:1337
+announce list\thttp://a.example:4567\thttps://b.example:77\tudp://c.example:88
+update url\thttps://update.example/
+dht nodes\tnode.example:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
 piece count\t2
 file count\t1
-files\tfoo
-";
+files\tNAME
+",
+        Metainfo::test_value_single_infohash(),
+        Metainfo::test_value_single_torrent_size().count()
+      );
 
       assert_eq!(have, want);
     }
@@ -355,31 +306,13 @@ files\tfoo
 
   #[test]
   fn tier_list_without_main() -> Result<()> {
-    let metainfo = Metainfo {
-      announce: Some("a".into()),
-      announce_list: Some(vec![vec!["b".into()], vec!["c".into()], vec!["a".into()]]),
-      comment: Some("comment".into()),
-      nodes: Some(vec![
-        "x:12".parse().unwrap(),
-        "1.1.1.1:16".parse().unwrap(),
-        "[2001:0db8:85a3::8a2e:0370]:7334".parse().unwrap(),
-      ]),
-      created_by: Some("created by".into()),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["abc"]),
-        mode: Mode::Single {
-          length: Bytes(20),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
+    let mut metainfo = Metainfo::test_value_single();
+
+    metainfo.announce_list = Some(vec![
+      vec!["B".into()],
+      vec!["C".into()],
+      vec!["ANNOUNCE".into()],
+    ]);
 
     {
       let mut env = TestEnvBuilder::new()
@@ -394,27 +327,34 @@ files\tfoo
       env.assert_ok();
 
       let have = env.out();
-      let want = "         Name  foo
-      Comment  comment
+
+      #[rustfmt::skip]
+      let want = format!(
+        "         Name  NAME
+      Comment  COMMENT
 Creation Date  1970-01-01 00:00:01 UTC
-   Created By  created by
-       Source  source
-    Info Hash  b9cd9cae5748518c99d00d8ae86c0162510be4d9
- Torrent Size  307 bytes
- Content Size  20 bytes
+   Created By  CREATED BY
+       Source  SOURCE
+    Info Hash  {}
+ Torrent Size  {}
+ Content Size  32 KiB
       Private  yes
-      Tracker  a
-Announce List  Tier 1: b
-               Tier 2: c
-               Tier 3: a
-    DHT Nodes  x:12
+      Tracker  udp://announce.example:1337
+Announce List  Tier 1: B
+               Tier 2: C
+               Tier 3: ANNOUNCE
+   Update URL  https://update.example/
+    DHT Nodes  node.example:12
                1.1.1.1:16
                [2001:db8:85a3::8a2e:370]:7334
    Piece Size  16 KiB
-  Piece Count  1
+  Piece Count  2
    File Count  1
-        Files  foo
-";
+        Files  NAME
+",
+        Metainfo::test_value_single_infohash(),
+        Bytes(Metainfo::test_value_single_torrent_size().count() - 50)
+      );
 
       assert_eq!(have, want);
     }
@@ -431,24 +371,30 @@ Announce List  Tier 1: b
       env.assert_ok();
 
       let have = env.out();
-      let want = "\
-name\tfoo
-comment\tcomment
+
+      #[rustfmt::skip]
+      let want = format!("\
+name\tNAME
+comment\tCOMMENT
 creation date\t1970-01-01 00:00:01 UTC
-created by\tcreated by
-source\tsource
-info hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
-torrent size\t307
-content size\t20
+created by\tCREATED BY
+source\tSOURCE
+info hash\t{}
+torrent size\t{}
+content size\t32768
 private\tyes
-tracker\ta
-announce list\tb\tc\ta
-dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+tracker\tudp://announce.example:1337
+announce list\tB\tC\tANNOUNCE
+update url\thttps://update.example/
+dht nodes\tnode.example:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
-piece count\t1
+piece count\t2
 file count\t1
-files\tfoo
-";
+files\tNAME
+",
+        Metainfo::test_value_single_infohash(),
+        Metainfo::test_value_single_torrent_size().count() - 50
+      );
 
       assert_eq!(have, want);
     }
@@ -458,31 +404,9 @@ files\tfoo
 
   #[test]
   fn trackerless() -> Result<()> {
-    let metainfo = Metainfo {
-      announce: None,
-      announce_list: None,
-      comment: Some("comment".into()),
-      nodes: Some(vec![
-        "x:12".parse().unwrap(),
-        "1.1.1.1:16".parse().unwrap(),
-        "[2001:0db8:85a3::8a2e:0370]:7334".parse().unwrap(),
-      ]),
-      created_by: Some("created by".into()),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["abc"]),
-        mode: Mode::Single {
-          length: Bytes(20),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
+    let mut metainfo = Metainfo::test_value_single();
+    metainfo.announce = None;
+    metainfo.announce_list = None;
 
     {
       let mut env = TestEnvBuilder::new()
@@ -497,23 +421,29 @@ files\tfoo
       env.assert_ok();
 
       let have = env.out();
-      let want = "         Name  foo
-      Comment  comment
+
+      #[rustfmt::skip]
+      let want = format!("         Name  NAME
+      Comment  COMMENT
 Creation Date  1970-01-01 00:00:01 UTC
-   Created By  created by
-       Source  source
-    Info Hash  b9cd9cae5748518c99d00d8ae86c0162510be4d9
- Torrent Size  261 bytes
- Content Size  20 bytes
+   Created By  CREATED BY
+       Source  SOURCE
+    Info Hash  {}
+ Torrent Size  {}
+ Content Size  32 KiB
       Private  yes
-    DHT Nodes  x:12
+   Update URL  https://update.example/
+    DHT Nodes  node.example:12
                1.1.1.1:16
                [2001:db8:85a3::8a2e:370]:7334
    Piece Size  16 KiB
-  Piece Count  1
+  Piece Count  2
    File Count  1
-        Files  foo
-";
+        Files  NAME
+",
+        Metainfo::test_value_single_infohash(),
+        Bytes(Metainfo::test_value_single_torrent_size().count() - 130)
+      );
 
       assert_eq!(have, want);
     }
@@ -530,22 +460,99 @@ Creation Date  1970-01-01 00:00:01 UTC
       env.assert_ok();
 
       let have = env.out();
-      let want = "\
-name\tfoo
-comment\tcomment
+      #[rustfmt::skip]
+      let want = format!(
+        "\
+name\tNAME
+comment\tCOMMENT
 creation date\t1970-01-01 00:00:01 UTC
-created by\tcreated by
-source\tsource
-info hash\tb9cd9cae5748518c99d00d8ae86c0162510be4d9
-torrent size\t261
-content size\t20
+created by\tCREATED BY
+source\tSOURCE
+info hash\t{}
+torrent size\t{}
+content size\t32768
 private\tyes
-dht nodes\tx:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
+update url\thttps://update.example/
+dht nodes\tnode.example:12\t1.1.1.1:16\t[2001:db8:85a3::8a2e:370]:7334
 piece size\t16384
+piece count\t2
+file count\t1
+files\tNAME
+",
+        Metainfo::test_value_single_infohash(),
+        Metainfo::test_value_single_torrent_size().count() - 130
+      );
+
+      assert_eq!(have, want);
+    }
+
+    Ok(())
+  }
+
+  #[test]
+  fn unset() -> Result<()> {
+    let metainfo = Metainfo::test_value_single_unset();
+
+    {
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
+        .out_is_term()
+        .build();
+
+      let path = env.resolve("foo.torrent")?;
+
+      metainfo.dump(path).unwrap();
+
+      env.assert_ok();
+
+      let have = env.out();
+
+      #[rustfmt::skip]
+      let want = format!("        Name  NAME
+   Info Hash  {}
+Torrent Size  {}
+Content Size  5 bytes
+     Private  no
+  Piece Size  1 KiB
+ Piece Count  1
+  File Count  1
+       Files  NAME
+",
+        Metainfo::test_value_single_unset_infohash(),
+        Metainfo::test_value_single_unset_torrent_size()
+      );
+
+      assert_eq!(have, want);
+    }
+
+    {
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&["imdl", "torrent", "show", "--input", "foo.torrent"])
+        .build();
+
+      let path = env.resolve("foo.torrent")?;
+
+      metainfo.dump(path).unwrap();
+
+      env.assert_ok();
+
+      let have = env.out();
+      #[rustfmt::skip]
+      let want = format!(
+        "\
+name\tNAME
+info hash\t{}
+torrent size\t{}
+content size\t5
+private\tno
+piece size\t1024
 piece count\t1
 file count\t1
-files\tfoo
-";
+files\tNAME
+",
+        Metainfo::test_value_single_unset_infohash(),
+        Metainfo::test_value_single_unset_torrent_size().count()
+      );
 
       assert_eq!(have, want);
     }

@@ -382,13 +382,13 @@ impl Create {
     }
 
     let info = Info {
-      source: self.source,
-      piece_length: content.piece_length,
       name: content.name,
+      piece_length: content.piece_length,
+      source: self.source,
+      update_url: self.update_url,
       mode,
       pieces,
       private,
-      update_url: self.update_url.map(|url| url.to_string()),
     };
 
     let metainfo = Metainfo {
@@ -3187,8 +3187,8 @@ Content Size  9 bytes
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
-      metainfo.info.update_url.as_deref(),
-      Some("https://www.a_real_url.com/")
+      metainfo.info.update_url,
+      Some("https://www.a_real_url.com/".parse().unwrap())
     );
   }
 }

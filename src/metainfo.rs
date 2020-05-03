@@ -117,155 +117,69 @@ impl Metainfo {
   pub(crate) fn infohash(&self) -> Result<Infohash> {
     self.info.infohash()
   }
-}
 
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn round_trip_single() {
-    let value = Metainfo {
-      announce: Some("announce".into()),
-      announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
-      comment: Some("comment".into()),
-      created_by: Some("created by".into()),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["abc"]),
-        mode: Mode::Single {
-          length: Bytes(20),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
-
-    let bencode = bendy::serde::ser::to_bytes(&value).unwrap();
-
-    let deserialized = bendy::serde::de::from_bytes(&bencode).unwrap();
-
-    assert_eq!(value, deserialized);
-  }
-
-  #[test]
-  fn round_trip_multiple() {
-    let value = Metainfo {
-      announce: Some("announce".into()),
-      announce_list: Some(vec![vec!["announce".into(), "b".into()], vec!["c".into()]]),
-      nodes: Some(vec!["x:12".parse().unwrap(), "1.1.1.1:16".parse().unwrap()]),
-      comment: Some("comment".into()),
-      created_by: Some("created by".into()),
-      creation_date: Some(1),
-      encoding: Some("UTF-8".into()),
-      info: Info {
-        private: Some(true),
-        piece_length: Bytes(16 * 1024),
-        source: Some("source".into()),
-        name: "foo".into(),
-        pieces: PieceList::from_pieces(&["abc"]),
-        mode: Mode::Multiple {
-          files: vec![FileInfo {
-            length: Bytes(10),
-            path: FilePath::from_components(&["foo", "bar"]),
-            md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
-          }],
-        },
-        update_url: None,
-      },
-    };
-
-    let bencode = bendy::serde::ser::to_bytes(&value).unwrap();
-
-    let deserialized = bendy::serde::de::from_bytes(&bencode).unwrap();
-
-    assert_eq!(value, deserialized);
-  }
-
-  fn representation(value: Metainfo, want: &str) {
-    let have = value.serialize().unwrap();
-
-    if have != want.as_bytes() {
-      eprintln!("have:");
-      eprintln!("{}", String::from_utf8_lossy(&have));
-      eprintln!("want:");
-      eprintln!("{}", want);
-      panic!("Unexpected representation...");
-    }
-  }
-
-  #[test]
-  fn bencode_representation_single_some() {
-    let value = Metainfo {
-      announce: Some("ANNOUNCE".into()),
-      announce_list: Some(vec![vec!["A".into(), "B".into()], vec!["C".into()]]),
+  #[cfg(test)]
+  pub(crate) fn test_value_single() -> Metainfo {
+    Metainfo {
+      announce: Some("udp://announce.example:1337".into()),
+      announce_list: Some(vec![
+        vec![
+          "http://a.example:4567".into(),
+          "https://b.example:77".into(),
+        ],
+        vec!["udp://c.example:88".into()],
+      ]),
       nodes: Some(vec![
-        "domain:1".parse().unwrap(),
+        "node.example:12".parse().unwrap(),
         "1.1.1.1:16".parse().unwrap(),
-        "[1234:5678:9abc:def0:1234:5678:9abc:def0]:65000"
-          .parse()
-          .unwrap(),
+        "[2001:0db8:85a3::0000:8a2e:0370]:7334".parse().unwrap(),
       ]),
       comment: Some("COMMENT".into()),
       created_by: Some("CREATED BY".into()),
-      creation_date: Some(0),
+      creation_date: Some(1),
       encoding: Some("UTF-8".into()),
       info: Info {
         private: Some(true),
-        piece_length: Bytes(1024),
+        piece_length: Bytes(16 * 1024),
         source: Some("SOURCE".into()),
         name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
+        pieces: PieceList::from_pieces(&["fae50", "fae50"]),
         mode: Mode::Single {
-          length: Bytes(5),
+          length: Bytes(32 * 1024),
           md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
         },
-        update_url: None,
+        update_url: Some("https://update.example".parse().unwrap()),
       },
-    };
-
-    #[rustfmt::skip]
-    let want = concat!(
-      "d",
-        "8:announce", "8:ANNOUNCE",
-        "13:announce-list", "l", 
-          "l", "1:A", "1:B", "e",
-          "l", "1:C", "e",
-        "e",
-        "7:comment", "7:COMMENT",
-        "10:created by", "10:CREATED BY",
-        "13:creation date", "i0e",
-        "8:encoding", "5:UTF-8",
-        "4:info", "d",
-          "6:length", "i5e",
-          "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
-          "4:name", "4:NAME",
-          "12:piece length", "i1024e",
-          "6:pieces", "20:8,OS7d玤{Qk!Mk",
-          "7:private", "i1e",
-          "6:source", "6:SOURCE",
-        "e",
-        "5:nodes", "l",
-          "l", "6:domain", "i1e", "e",
-          "l", "7:1.1.1.1", "i16e", "e",
-          "l", "39:1234:5678:9abc:def0:1234:5678:9abc:def0", "i65000e", "e",
-        "e",
-      "e"
-    );
-
-    representation(value, want);
+    }
   }
 
-  #[test]
-  fn bencode_representation_single_none() {
-    let value = Metainfo {
-      announce: Some("ANNOUNCE".into()),
+  #[cfg(test)]
+  pub(crate) fn test_value_single_infohash() -> &'static str {
+    "5d6f53772b4c20536fcce0c4c364d764a6efa39c"
+  }
+
+  #[cfg(test)]
+  pub(crate) fn test_value_single_torrent_size() -> Bytes {
+    Bytes(509)
+  }
+
+  #[cfg(test)]
+  pub(crate) fn test_value_multiple() -> Metainfo {
+    let mut instance = Self::test_value_single();
+    instance.info.mode = Mode::Multiple {
+      files: vec![FileInfo {
+        length: Bytes(32 * 1024),
+        path: FilePath::from_components(&["DIR", "FILE"]),
+        md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
+      }],
+    };
+    instance
+  }
+
+  #[cfg(test)]
+  pub(crate) fn test_value_single_unset() -> Metainfo {
+    Metainfo {
+      announce: None,
       announce_list: None,
       nodes: None,
       comment: None,
@@ -284,77 +198,23 @@ mod tests {
         },
         update_url: None,
       },
-    };
-
-    #[rustfmt::skip]
-    let want = concat!(
-      "d",
-        "8:announce", "8:ANNOUNCE",
-        "4:info", "d",
-          "6:length", "i5e",
-          "4:name", "4:NAME",
-          "12:piece length", "i1024e",
-          "6:pieces", "20:8,OS7d玤{Qk!Mk",
-        "e",
-      "e"
-    );
-
-    representation(value, want);
+    }
   }
 
-  #[test]
-  fn bencode_representation_multiple_some() {
-    let value = Metainfo {
-      announce: Some("ANNOUNCE".into()),
-      announce_list: None,
-      nodes: None,
-      comment: None,
-      created_by: None,
-      creation_date: None,
-      encoding: None,
-      info: Info {
-        private: None,
-        piece_length: Bytes(1024),
-        source: None,
-        name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
-        mode: Mode::Multiple {
-          files: vec![FileInfo {
-            length: Bytes(1024),
-            md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
-            path: FilePath::from_components(&["a", "b"]),
-          }],
-        },
-        update_url: None,
-      },
-    };
-
-    #[rustfmt::skip]
-    let want = concat!(
-      "d",
-        "8:announce", "8:ANNOUNCE",
-        "4:info", "d",
-          "5:files", "l",
-            "d",
-              "6:length", "i1024e",
-              "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
-              "4:path", "l", "1:a", "1:b", "e",
-            "e",
-          "e",
-          "4:name", "4:NAME",
-          "12:piece length", "i1024e",
-          "6:pieces", "20:8,OS7d玤{Qk!Mk",
-        "e",
-      "e"
-    );
-
-    representation(value, want);
+  #[cfg(test)]
+  pub(crate) fn test_value_single_unset_infohash() -> &'static str {
+    "a9105b0ff5f7cefeee5599ed7831749be21cc04e"
   }
 
-  #[test]
-  fn bencode_representation_multiple_none() {
-    let value = Metainfo {
-      announce: Some("ANNOUNCE".into()),
+  #[cfg(test)]
+  pub(crate) fn test_value_single_unset_torrent_size() -> Bytes {
+    Bytes(85)
+  }
+
+  #[cfg(test)]
+  pub(crate) fn test_value_multiple_unset() -> Metainfo {
+    Metainfo {
+      announce: None,
       announce_list: None,
       nodes: None,
       comment: None,
@@ -376,12 +236,167 @@ mod tests {
         },
         update_url: None,
       },
-    };
+    }
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  use pretty_assertions::assert_eq;
+
+  #[test]
+  fn round_trip_single() {
+    let value = Metainfo::test_value_single();
+
+    let bencode = bendy::serde::ser::to_bytes(&value).unwrap();
+
+    let deserialized = bendy::serde::de::from_bytes(&bencode).unwrap();
+
+    assert_eq!(value, deserialized);
+  }
+
+  #[test]
+  fn round_trip_multiple() {
+    let value = Metainfo::test_value_multiple();
+
+    let bencode = bendy::serde::ser::to_bytes(&value).unwrap();
+
+    let deserialized = bendy::serde::de::from_bytes(&bencode).unwrap();
+
+    assert_eq!(value, deserialized);
+  }
+
+  fn representation(value: Metainfo, want: &str) {
+    let have = value.serialize().unwrap();
+
+    if have != want.as_bytes() {
+      let have = String::from_utf8_lossy(&have);
+      assert_eq!(have, want);
+      eprintln!("have:");
+      eprintln!("{}", have);
+      eprintln!("want:");
+      eprintln!("{}", want);
+      panic!("Unexpected representation...");
+    }
+  }
+
+  #[test]
+  fn bencode_representation_single_set() {
+    let value = Metainfo::test_value_single();
 
     #[rustfmt::skip]
     let want = concat!(
       "d",
-        "8:announce", "8:ANNOUNCE",
+        "8:announce", "27:udp://announce.example:1337",
+        "13:announce-list", "l",
+          "l",
+            "21:http://a.example:4567",
+            "20:https://b.example:77",
+          "e",
+          "l",
+            "18:udp://c.example:88", 
+          "e",
+        "e",
+        "7:comment", "7:COMMENT",
+        "10:created by", "10:CREATED BY",
+        "13:creation date", "i1e",
+        "8:encoding", "5:UTF-8",
+        "4:info", "d",
+          "6:length", "i32768e",
+          "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
+          "4:name", "4:NAME",
+          "12:piece length", "i16384e",
+          "6:pieces", "40:8,OS7d玤{Qk!Mk8,OS7d玤{Qk!Mk",
+          "7:private", "i1e",
+          "6:source", "6:SOURCE",
+          "10:update-url", "23:https://update.example/",
+        "e",
+        "5:nodes", "l",
+          "l", "12:node.example", "i12e", "e",
+          "l", "7:1.1.1.1", "i16e", "e",
+          "l", "23:2001:db8:85a3::8a2e:370", "i7334e", "e",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_single_unset() {
+    let value = Metainfo::test_value_single_unset();
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "4:info", "d",
+          "6:length", "i5e",
+          "4:name", "4:NAME",
+          "12:piece length", "i1024e",
+          "6:pieces", "20:8,OS7d玤{Qk!Mk",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_multiple_set() {
+    let value = Metainfo::test_value_multiple();
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
+        "8:announce", "27:udp://announce.example:1337",
+        "13:announce-list", "l",
+          "l",
+            "21:http://a.example:4567",
+            "20:https://b.example:77",
+          "e",
+          "l",
+            "18:udp://c.example:88",
+          "e",
+        "e",
+        "7:comment", "7:COMMENT",
+        "10:created by", "10:CREATED BY",
+        "13:creation date", "i1e",
+        "8:encoding", "5:UTF-8",
+        "4:info", "d",
+          "5:files", "l",
+            "d",
+              "6:length", "i32768e",
+              "6:md5sum", "32:000102030405060708090a0b0c0d0e0f",
+              "4:path", "l", "3:DIR", "4:FILE", "e",
+            "e",
+          "e",
+          "4:name", "4:NAME",
+          "12:piece length", "i16384e",
+          "6:pieces", "40:8,OS7d玤{Qk!Mk8,OS7d玤{Qk!Mk",
+          "7:private", "i1e",
+          "6:source", "6:SOURCE",
+          "10:update-url", "23:https://update.example/",
+        "e",
+        "5:nodes", "l",
+          "l", "12:node.example", "i12e", "e",
+          "l", "7:1.1.1.1", "i16e", "e",
+          "l", "23:2001:db8:85a3::8a2e:370", "i7334e", "e",
+        "e",
+      "e"
+    );
+
+    representation(value, want);
+  }
+
+  #[test]
+  fn bencode_representation_multiple_unset() {
+    let value = Metainfo::test_value_multiple_unset();
+
+    #[rustfmt::skip]
+    let want = concat!(
+      "d",
         "4:info", "d",
           "5:files", "l",
             "d",
@@ -400,85 +415,44 @@ mod tests {
   }
 
   #[test]
-  fn private_false() {
-    let value = Metainfo {
-      announce: Some("ANNOUNCE".into()),
-      announce_list: None,
-      nodes: None,
-      comment: None,
-      created_by: None,
-      creation_date: None,
-      encoding: None,
-      info: Info {
-        private: Some(false),
-        piece_length: Bytes(1024),
-        source: None,
-        name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
-        mode: Mode::Single {
-          length: Bytes(5),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
+  fn trackers() {
+    fn assert_trackers_eq(metainfo: &Metainfo, want: &[&str]) {
+      let want = want
+        .iter()
+        .cloned()
+        .map(Url::parse)
+        .collect::<Result<Vec<Url>, url::ParseError>>()
+        .unwrap();
+      let have = metainfo.trackers().collect::<Result<Vec<Url>>>().unwrap();
+      assert_eq!(have, want);
+    }
 
-    #[rustfmt::skip]
-    let want = concat!(
-      "d",
-        "8:announce", "8:ANNOUNCE",
-        "4:info", "d",
-          "6:length", "i5e",
-          "4:name", "4:NAME",
-          "12:piece length", "i1024e",
-          "6:pieces", "20:8,OS7d玤{Qk!Mk",
-          "7:private", "i0e",
-        "e",
-      "e"
+    let mut metainfo = Metainfo::test_value_single();
+
+    assert_trackers_eq(
+      &metainfo,
+      &[
+        "udp://announce.example:1337",
+        "http://a.example:4567",
+        "https://b.example:77",
+        "udp://c.example:88",
+      ],
     );
 
-    representation(value, want);
-  }
-
-  #[test]
-  fn trackers() {
-    let mut metainfo = Metainfo {
-      announce: Some("http://foo".into()),
-      announce_list: None,
-      nodes: None,
-      comment: None,
-      created_by: None,
-      creation_date: None,
-      encoding: None,
-      info: Info {
-        private: Some(false),
-        piece_length: Bytes(1024),
-        source: None,
-        name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
-        mode: Mode::Single {
-          length: Bytes(5),
-          md5sum: None,
-        },
-        update_url: None,
-      },
-    };
-
-    let trackers = metainfo.trackers().collect::<Result<Vec<Url>>>().unwrap();
-    assert_eq!(trackers, &["http://foo".parse().unwrap()]);
-
     metainfo.announce_list = Some(vec![
-      vec!["http://bar".into(), "http://baz".into()],
-      vec!["http://foo".into()],
+      vec![
+        "udp://announce.example:1337".into(),
+        "https://b.example:77".into(),
+      ],
+      vec!["udp://c.example:88".into()],
     ]);
 
-    let trackers = metainfo.trackers().collect::<Result<Vec<Url>>>().unwrap();
-    assert_eq!(
-      trackers,
+    assert_trackers_eq(
+      &metainfo,
       &[
-        "http://foo".parse().unwrap(),
-        "http://bar".parse().unwrap(),
-        "http://baz".parse().unwrap(),
+        "udp://announce.example:1337",
+        "https://b.example:77",
+        "udp://c.example:88",
       ],
     );
   }
