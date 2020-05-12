@@ -36,7 +36,6 @@ snafu             = "0.6.0"
 static_assertions = "1.0.0"
 strum             = "0.18.0"
 strum_macros      = "0.18.0"
-syn               = "1.0.14"
 tempfile          = "3.0.0"
 unicode-width     = "0.1.0"
 
@@ -61,7 +60,6 @@ version = "2.1.1"
 features = ["serde"]
 
 [dev-dependencies]
-claim    = "0.3.1"
 temptree = "0.0.0"
 
 [workspace]
@@ -71,10 +69,4 @@ members = [
 
   # run commands for demo animation
   "bin/demo",
-
-  # data description language
-  "crates/data",
-
-  # data description language proc macros
-  "crates/data-macros",
 ]

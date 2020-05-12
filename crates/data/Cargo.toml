@@ -1,8 +1,0 @@
-[package]
-name    = "data"
-version = "0.1.0"
-authors = ["Casey Rodarmor <casey@rodarmor.com>"]
-edition = "2018"
-
-[dependencies.data-macros]
-path = "../data-macros"

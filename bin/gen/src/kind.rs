@@ -27,6 +27,7 @@ pub(crate) enum Kind {
   Reform,
   Release,
   Testing,
+  Removed,
 }
 
 impl Kind {
@@ -43,6 +44,7 @@ impl Kind {
       Self::Reform => "🎨",
       Self::Release => "🔖",
       Self::Testing => "✅",
+      Self::Removed => "➖",
     }
   }
 
@@ -59,6 +61,7 @@ impl Kind {
       Self::Reform => ":art:",
       Self::Release => ":bookmark:",
       Self::Testing => ":white_check_mark:",
+      Self::Removed => ":heavy_minus_sign:",
     }
   }
 }
