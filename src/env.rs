@@ -77,7 +77,7 @@ impl Env {
   /// To enable logging in those tests, call `Env::initialize_logging()` like
   /// so:
   ///
-  /// ```
+  /// ```no_run
   /// #[test]
   /// fn foo() {
   ///   Env::initialize_logging();

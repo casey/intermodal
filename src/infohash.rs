@@ -1,4 +1,4 @@
-use crate::*;
+use crate::common::*;
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub(crate) struct Infohash {

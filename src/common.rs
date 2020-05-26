@@ -15,7 +15,7 @@ pub(crate) use std::{
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
-  process::{self, ExitStatus},
+  process::ExitStatus,
   str::{self, FromStr},
   string::FromUtf8Error,
   sync::Once,

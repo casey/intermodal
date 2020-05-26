@@ -34,7 +34,7 @@ pub(crate) const PROGRESS_CHARS: &str = "█▉▊▋▌▍▎▏ ";
 /// Digits are ordered from least significant to most significant from
 /// top to bottom, and then left to right, like so:
 ///
-/// ```
+/// ```text
 /// ╔═════╗
 /// ║ 0 4 ║
 /// ║ 1 5 ║
