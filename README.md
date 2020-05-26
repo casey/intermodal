@@ -35,6 +35,7 @@ For more about the project and its goals, check out
   - [Release Updates](#release-updates)
 - [Chat](#chat)
 - [Contributing](#contributing)
+- [Benchmarks](#benchmarks)
 - [Semantic Versioning](#semantic-versioning)
 - [Unstable Features](#unstable-features)
 - [Source Signatures](#source-signatures)
@@ -268,6 +269,18 @@ fixes:
 
 The only required field is `type`. To see the possible values for `type`, run
 `cargo run --package gen commit-types`.
+
+## Benchmarks
+
+Performance benchmarks can be run with:
+
+```shell
+$ cargo bench --features bench
+```
+
+The benchmark framework used is [`criterion`](https://github.com/bheisler/criterion.rs).
+
+The bench targets themselves are in the `benches` directory. These targets call benchmarking functions in `src/benches.rs`, which are only enabled when the `bench` feature is enabled.
 
 ## Semantic Versioning
 
