@@ -84,7 +84,7 @@ merge BRANCH=`git rev-parse --abbrev-ref HEAD`:
 
 publish-check: check
 	cargo outdated --exit-code 1
-	grep '^\[{{version}}\]' CHANGELOG.md
+	grep '^\[{{version}}\]' target/gen/CHANGELOG.md
 
 publish: publish-check
 	#!/usr/bin/env bash

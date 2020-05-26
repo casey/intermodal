@@ -1,6 +1,6 @@
 [package]
 name        = "imdl"
-version     = "0.1.7"
+version     = "0.1.8"
 description = "📦 A 40' shipping container for the internet"
 authors     = ["Casey Rodarmor <casey@rodarmor.com>"]
 license     = "CC0-1.0"
@@ -20,7 +20,7 @@ bench   = ["rand"]
 ansi_term         = "0.12.0"
 atty              = "0.2.0"
 chrono            = "0.4.1"
-console           = "0.10.0"
+console           = "0.11.0"
 globset           = "0.4.0"
 ignore            = "0.4.14"
 lazy_static       = "1.4.0"
