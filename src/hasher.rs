@@ -90,7 +90,6 @@ impl Hasher {
   }
 
   fn hash_read_io(&mut self, file: &mut dyn BufRead) -> io::Result<(Option<Md5Digest>, Bytes)> {
-    let buffer_len = self.buffer.len();
     let mut bytes_hashed = 0;
 
     let mut md5 = if self.md5sum {
@@ -100,9 +99,9 @@ impl Hasher {
     };
 
     loop {
-      let buffer = &mut self.buffer[..buffer_len];
+      let remaining = &mut self.buffer[..self.piece_length - self.piece_bytes_hashed];
 
-      let bytes_read = file.read(buffer)?;
+      let bytes_read = file.read(remaining)?;
 
       if bytes_read == 0 {
         break;
@@ -110,18 +109,16 @@ impl Hasher {
 
       bytes_hashed += bytes_read;
 
-      let read = &buffer[0..bytes_read];
+      let read = &remaining[..bytes_read];
 
-      for byte in read.iter().cloned() {
-        self.sha1.update(&[byte]);
+      self.sha1.update(read);
 
-        self.piece_bytes_hashed += 1;
+      self.piece_bytes_hashed += bytes_read;
 
-        if self.piece_bytes_hashed == self.piece_length {
-          self.pieces.push(self.sha1.digest().into());
-          self.sha1.reset();
-          self.piece_bytes_hashed = 0;
-        }
+      if self.piece_bytes_hashed == self.piece_length {
+        self.pieces.push(self.sha1.digest().into());
+        self.sha1.reset();
+        self.piece_bytes_hashed = 0;
       }
 
       if let Some(md5) = md5.as_mut() {

@@ -12,6 +12,10 @@ repository  = "https://github.com/casey/intermodal"
 edition     = "2018"
 default-run = "imdl"
 
+[features]
+default = []
+bench   = ["rand"]
+
 [dependencies]
 ansi_term         = "0.12.0"
 atty              = "0.2.0"
@@ -59,8 +63,13 @@ features = ["default", "wrap_help"]
 version = "2.1.1"
 features = ["serde"]
 
+[dependencies.rand]
+version  = "0.7.3"
+optional = true
+
 [dev-dependencies]
-temptree = "0.0.0"
+criterion = "0.3.0"
+temptree  = "0.0.0"
 
 [workspace]
 members = [
@@ -70,3 +79,7 @@ members = [
   # run commands for demo animation
   "bin/demo",
 ]
+
+[[bench]]
+name    = "hasher"
+harness = false

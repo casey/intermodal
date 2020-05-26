@@ -24,10 +24,11 @@ pub(crate) enum Kind {
   Distribution,
   Documentation,
   Fixed,
+  Performance,
   Reform,
   Release,
-  Testing,
   Removed,
+  Testing,
 }
 
 impl Kind {
@@ -41,10 +42,11 @@ impl Kind {
       Self::Distribution => "📦",
       Self::Documentation => "📚",
       Self::Fixed => "🐛",
+      Self::Performance => "🐎",
       Self::Reform => "🎨",
       Self::Release => "🔖",
-      Self::Testing => "✅",
       Self::Removed => "➖",
+      Self::Testing => "✅",
     }
   }
 
@@ -58,10 +60,11 @@ impl Kind {
       Self::Distribution => ":package:",
       Self::Documentation => ":books:",
       Self::Fixed => ":bug:",
+      Self::Performance => ":racehorse:",
       Self::Reform => ":art:",
       Self::Release => ":bookmark:",
-      Self::Testing => ":white_check_mark:",
       Self::Removed => ":heavy_minus_sign:",
+      Self::Testing => ":white_check_mark:",
     }
   }
 }

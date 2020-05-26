@@ -103,4 +103,7 @@ mod verifier;
 mod walker;
 mod xor_args;
 
+#[cfg(feature = "bench")]
+pub mod bench;
+
 pub use run::run;
