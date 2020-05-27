@@ -71,36 +71,31 @@ impl<'a> Verifier<'a> {
   }
 
   pub(crate) fn hash(&mut self, path: &Path) -> io::Result<()> {
-    let mut file = File::open(path)?;
+    let mut file = BufReader::new(File::open(path)?);
 
-    let mut remaining = path.metadata()?.len();
+    loop {
+      let remaining = &mut self.buffer[..self.piece_length - self.piece_bytes_hashed];
 
-    while remaining > 0 {
-      let to_buffer: usize = remaining
-        .min(self.buffer.len().into_u64())
-        .try_into()
-        .invariant_unwrap("min with usize should fit in usize");
+      let bytes_read = file.read(remaining)?;
 
-      let buffer = &mut self.buffer[0..to_buffer];
-
-      file.read_exact(buffer)?;
-
-      for byte in buffer.iter().cloned() {
-        self.sha1.update(&[byte]);
-
-        self.piece_bytes_hashed += 1;
-
-        if self.piece_bytes_hashed == self.piece_length {
-          self.pieces.push(self.sha1.digest().into());
-          self.sha1.reset();
-          self.piece_bytes_hashed = 0;
-        }
+      if bytes_read == 0 {
+        break;
       }
 
-      remaining -= buffer.len().into_u64();
+      let read = &remaining[..bytes_read];
+
+      self.sha1.update(read);
+
+      self.piece_bytes_hashed += bytes_read;
+
+      if self.piece_bytes_hashed == self.piece_length {
+        self.pieces.push(self.sha1.digest().into());
+        self.sha1.reset();
+        self.piece_bytes_hashed = 0;
+      }
 
       if let Some(progress_bar) = &self.progress_bar {
-        progress_bar.inc(to_buffer.into_u64());
+        progress_bar.inc(bytes_read.into_u64());
       }
     }
 

@@ -107,12 +107,11 @@ impl Hasher {
         break;
       }
 
-      bytes_hashed += bytes_read;
-
       let read = &remaining[..bytes_read];
 
       self.sha1.update(read);
 
+      bytes_hashed += bytes_read;
       self.piece_bytes_hashed += bytes_read;
 
       if self.piece_bytes_hashed == self.piece_length {
