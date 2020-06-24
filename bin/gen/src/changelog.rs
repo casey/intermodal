@@ -7,7 +7,9 @@ pub(crate) struct Changelog {
 impl Changelog {
   #[throws]
   pub(crate) fn new(project: &Project) -> Self {
-    let mut current = project.repo.head()?.peel_to_commit()?;
+    let repo = project.repo()?;
+
+    let mut current = repo.head()?.peel_to_commit()?;
 
     let mut entries = Vec::new();
 
@@ -24,7 +26,7 @@ impl Changelog {
         let manifest_bytes = current
           .tree()?
           .get_path("Cargo.toml".as_ref())?
-          .to_object(&project.repo)?
+          .to_object(&repo)?
           .as_blob()
           .unwrap()
           .content()

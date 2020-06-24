@@ -1,7 +1,6 @@
 use crate::common::*;
 
 pub(crate) struct Project {
-  pub(crate) repo: Repository,
   pub(crate) root: PathBuf,
   pub(crate) config: Config,
   pub(crate) bin: Bin,
@@ -11,16 +10,7 @@ pub(crate) struct Project {
 impl Project {
   #[throws]
   pub(crate) fn load(options: &Options) -> Self {
-    let start_dir = env::current_dir().context(error::CurrentDir)?;
-
-    let repo = Repository::discover(&start_dir).context(error::RepositoryDiscover { start_dir })?;
-
-    let root = repo
-      .workdir()
-      .ok_or_else(|| Error::Workdir {
-        repo: repo.path().to_owned(),
-      })?
-      .to_owned();
+    let root = env::current_dir().context(error::CurrentDir)?;
 
     let config = Config::load(&root)?;
 
@@ -49,7 +39,6 @@ impl Project {
       executable: options.bin.clone(),
       bin,
       config,
-      repo,
       root,
     }
   }
@@ -63,5 +52,12 @@ impl Project {
     }
 
     gen
+  }
+
+  #[throws]
+  pub(crate) fn repo(&self) -> Repository {
+    Repository::discover(&self.root).context(error::RepositoryDiscover {
+      start_dir: &self.root,
+    })?
   }
 }

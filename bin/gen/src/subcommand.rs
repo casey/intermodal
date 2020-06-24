@@ -3,7 +3,14 @@ use crate::common::*;
 #[derive(StructOpt)]
 pub(crate) enum Subcommand {
   #[structopt(about("Update all generated docs"))]
-  All,
+  All {
+    #[structopt(
+      long = "no-git",
+      help = "Skip generated outputs that require a Git repository. Currently this only includes \
+              the changelog."
+    )]
+    no_git: bool,
+  },
   #[structopt(about("Generate book"))]
   Book,
   #[structopt(about("Generate the changelog"))]
@@ -73,13 +80,15 @@ impl Subcommand {
       Self::Book => Self::book(&project)?,
       Self::Man => Self::man(&project)?,
       Self::Diff => Self::diff(&project)?,
-      Self::All => Self::all(&project)?,
+      Self::All { no_git } => Self::all(&project, no_git)?,
     }
   }
 
   #[throws]
-  pub(crate) fn all(project: &Project) {
-    Self::changelog(&project)?;
+  pub(crate) fn all(project: &Project, no_git: bool) {
+    if !no_git {
+      Self::changelog(&project)?;
+    }
     Self::completion_scripts(&project)?;
     Self::readme(&project)?;
     Self::book(&project)?;
@@ -131,7 +140,9 @@ impl Subcommand {
 
     gen(HEAD)?;
 
-    let head = project.repo.head()?;
+    let repo = project.repo()?;
+
+    let head = repo.head()?;
 
     let head_commit = head.peel_to_commit()?;
 

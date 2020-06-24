@@ -68,7 +68,7 @@ pub(crate) enum Error {
   Git { source: git2::Error },
   #[snafu(display("Regex compilation error: {}", source))]
   Regex { source: regex::Error },
-  #[snafu(display("Failed to find repository from `{}`: {}", start_dir.display(), source))]
+  #[snafu(display("Failed to find Git repository from `{}`: {}", start_dir.display(), source))]
   RepositoryDiscover {
     start_dir: PathBuf,
     source: git2::Error,
