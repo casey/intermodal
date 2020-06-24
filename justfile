@@ -94,8 +94,8 @@ publish: publish-check
 	done
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
-	cargo publish
 	just merge
+	cargo publish
 
 # record, upload, and render demo animation
 demo: demo-record demo-upload demo-render
