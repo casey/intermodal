@@ -5,10 +5,11 @@ use crate::common::*;
 pub(crate) struct Summary {
   pub(crate) commands: String,
   pub(crate) references: String,
+  pub(crate) include_changelog: bool,
 }
 
 impl Summary {
-  pub(crate) fn new(project: &Project) -> Summary {
+  pub(crate) fn new(project: &Project, include_changelog: bool) -> Summary {
     let mut commands = Index::new("Commands", "./commands.md");
 
     for subcommand in &project.bin.subcommands {
@@ -27,6 +28,7 @@ impl Summary {
     Summary {
       commands: commands.text(),
       references: references.text(),
+      include_changelog,
     }
   }
 }

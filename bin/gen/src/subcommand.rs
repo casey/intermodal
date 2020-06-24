@@ -12,7 +12,14 @@ pub(crate) enum Subcommand {
     no_git: bool,
   },
   #[structopt(about("Generate book"))]
-  Book,
+  Book {
+    #[structopt(
+      long = "no-git",
+      help = "Skip book contents require a Git repository. Currently this only includes the \
+              changelog."
+    )]
+    no_git: bool,
+  },
   #[structopt(about("Generate the changelog"))]
   Changelog,
   #[structopt(about("Print a commit template to standard output"))]
@@ -77,7 +84,7 @@ impl Subcommand {
       }
       Self::CompletionScripts => Self::completion_scripts(&project)?,
       Self::Readme => Self::readme(&project)?,
-      Self::Book => Self::book(&project)?,
+      Self::Book { no_git } => Self::book(&project, no_git)?,
       Self::Man => Self::man(&project)?,
       Self::Diff => Self::diff(&project)?,
       Self::All { no_git } => Self::all(&project, no_git)?,
@@ -91,7 +98,7 @@ impl Subcommand {
     }
     Self::completion_scripts(&project)?;
     Self::readme(&project)?;
-    Self::book(&project)?;
+    Self::book(&project, no_git)?;
     Self::man(&project)?;
   }
 
@@ -188,7 +195,7 @@ impl Subcommand {
   }
 
   #[throws]
-  pub(crate) fn book(project: &Project) {
+  pub(crate) fn book(project: &Project, no_git: bool) {
     info!("Generating book…");
 
     let gen = project.gen()?;
@@ -221,14 +228,17 @@ impl Subcommand {
 
     Faq::new(&project.config.faq).render_to(out.join("faq.md"))?;
 
-    Summary::new(project).render_to(out.join("SUMMARY.md"))?;
-
     Introduction::new(&project.config).render_to(out.join("introduction.md"))?;
 
-    let changelog = Changelog::new(&project)?;
+    let include_changelog = !no_git;
 
-    let dst = out.join("changelog.md");
-    fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;
+    Summary::new(project, include_changelog).render_to(out.join("SUMMARY.md"))?;
+
+    if !no_git {
+      let changelog = Changelog::new(&project)?;
+      let dst = out.join("changelog.md");
+      fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;
+    }
   }
 
   #[throws]

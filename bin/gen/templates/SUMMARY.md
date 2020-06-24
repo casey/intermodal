@@ -5,7 +5,9 @@ Summary
 
 - [FAQ](./faq.md)
 
+{% if include_changelog %}
 - [Changelog](./changelog.md)
+{% endif %}
 
 {{commands}}
 
