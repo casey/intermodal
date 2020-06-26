@@ -219,9 +219,7 @@ watch the intermodal repository in "Releases only" mode.
 
 ## Chat
 
-The primary chat is on [Discord](https://discord.gg/HaaT5Qz), but I try to also
-check [Keybase](https://keybase.io/team/intermodal) and
-[IRC](ircs://chat.freenode.net:6697/#intermodal) as time permits.
+The primary chat is on [Discord](https://discord.gg/HaaT5Qz).
 
 ## Contributing
 
