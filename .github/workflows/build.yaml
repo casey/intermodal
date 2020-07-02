@@ -145,6 +145,6 @@ jobs:
       with:
         draft: false
         files: ${{steps.package.outputs.archive}}
-        prerelease: true
+        prerelease: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
