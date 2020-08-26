@@ -32,6 +32,8 @@ pub(crate) enum Error {
   FileSearch { source: ignore::Error },
   #[snafu(display("Invalid glob: {}", source))]
   GlobParse { source: globset::Error },
+  #[snafu(display("Failed to parse host and port: {}", source))]
+  HostPortParse { source: HostPortParseError },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
   InfoSerialize { source: bendy::serde::Error },
   #[snafu(display("Input target empty"))]
@@ -49,23 +51,27 @@ pub(crate) enum Error {
     text: String,
     source: MagnetLinkParseError,
   },
+  #[snafu(display("Failed to decode torrent metainfo from {}: {}", input, error))]
+  MetainfoDecode {
+    input: InputTarget,
+    error: bendy::decoding::Error,
+  },
   #[snafu(display("Failed to deserialize torrent metainfo from {}: {}", input, source))]
   MetainfoDeserialize {
     source: bendy::serde::Error,
     input: InputTarget,
   },
+  #[snafu(display("A peer source is required"))]
+  MetainfoMissingTrackers,
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
   MetainfoSerialize { source: bendy::serde::Error },
-  #[snafu(display("Failed to decode metainfo bencode from {}: {}", input, error))]
-  MetainfoDecode {
-    input: InputTarget,
-    error: bendy::decoding::Error,
-  },
   #[snafu(display("Metainfo from {} failed to validate: {}", input, source))]
   MetainfoValidate {
     input: InputTarget,
     source: MetainfoError,
   },
+  #[snafu(display("Network I/O error: {}", source))]
+  Network { source: io::Error },
   #[snafu(display("Failed to invoke opener: {}", source))]
   OpenerInvoke { source: io::Error },
   #[snafu(display("Opener failed: {}", exit_status))]
@@ -136,6 +142,19 @@ pub(crate) enum Error {
   SymlinkRoot { root: PathBuf },
   #[snafu(display("Failed to retrieve system time: {}", source))]
   SystemTime { source: SystemTimeError },
+  #[snafu(display("Failed to resolve UDP tracker `{}`: {}.", host_port, source))]
+  TrackerDnsResolution {
+    host_port: HostPort,
+    source: io::Error,
+  },
+  #[snafu(display("UDP tracker connection id has expired."))]
+  TrackerConnectionExpired,
+  #[snafu(display("UDP tracker resolved `{}` to no useable addresses.", host_port))]
+  TrackerNoHosts { host_port: HostPort },
+  #[snafu(display("Connection to UDP tracker `{}` timed out.", host_port))]
+  TrackerTimeout { host_port: HostPort },
+  #[snafu(display("Malformed response from UDP tracker."))]
+  TrackerResponse,
   #[snafu(display(
     "Feature `{}` cannot be used without passing the `--unstable` flag",
     feature

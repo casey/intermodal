@@ -2,8 +2,34 @@ use crate::common::*;
 
 #[derive(Debug, PartialEq, Clone)]
 pub(crate) struct HostPort {
-  host: Host,
-  port: u16,
+  pub host: Host,
+  pub port: u16,
+}
+
+impl HostPort {
+  pub(crate) fn from_url(url: &Url) -> Option<Self> {
+    match (url.host(), url.port()) {
+      (Some(host), Some(port)) => Some(HostPort {
+        host: host.to_owned(),
+        port,
+      }),
+      _ => None,
+    }
+  }
+}
+
+impl ToSocketAddrs for HostPort {
+  type Iter = std::vec::IntoIter<SocketAddr>;
+
+  fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
+    let address = match &self.host {
+      Host::Domain(domain) => return (domain.to_owned(), self.port).to_socket_addrs(),
+      Host::Ipv4(address) => IpAddr::V4(*address),
+      Host::Ipv6(address) => IpAddr::V6(*address),
+    };
+
+    Ok(vec![SocketAddr::new(address, self.port)].into_iter())
+  }
 }
 
 impl FromStr for HostPort {

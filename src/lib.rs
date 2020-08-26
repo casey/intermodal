@@ -116,6 +116,7 @@ mod style;
 mod subcommand;
 mod table;
 mod torrent_summary;
+mod tracker;
 mod use_color;
 mod verifier;
 mod walker;

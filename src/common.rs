@@ -12,6 +12,7 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, BufRead, BufReader, Cursor, Read, Write},
   iter::{self, Sum},
+  net::{IpAddr, SocketAddr, ToSocketAddrs, UdpSocket},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
@@ -19,7 +20,7 @@ pub(crate) use std::{
   str::{self, FromStr},
   string::FromUtf8Error,
   sync::Once,
-  time::{SystemTime, SystemTimeError},
+  time::{Duration, SystemTime, SystemTimeError},
   usize,
 };
 
@@ -31,6 +32,7 @@ pub(crate) use ignore::WalkBuilder;
 pub(crate) use indicatif::{ProgressBar, ProgressStyle};
 pub(crate) use lexiclean::Lexiclean;
 pub(crate) use libc::EXIT_FAILURE;
+pub(crate) use rand::Rng;
 pub(crate) use regex::{Regex, RegexSet};
 pub(crate) use serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer};
 pub(crate) use serde_hex::SerHex;
@@ -52,7 +54,7 @@ pub(crate) use url::{Host, Url};
 pub(crate) use log::trace;
 
 // modules
-pub(crate) use crate::{consts, error, host_port_parse_error, magnet_link_parse_error};
+pub(crate) use crate::{consts, error, host_port_parse_error, magnet_link_parse_error, tracker};
 
 // functions
 pub(crate) use crate::xor_args::xor_args;
