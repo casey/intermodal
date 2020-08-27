@@ -61,6 +61,11 @@ packages:
   package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
   command:          '[wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)'
 
+- operating-system: '[Void Linux](https://voidlinux.org)'
+  package-manager:  '[XBPS](https://docs.voidlinux.org/xbps/index.html)'
+  package:          '[intermodal](https://github.com/void-linux/void-packages/blob/master/srcpkgs/intermodal/template)'
+  command:          '`xbps-install -S intermodal`'
+
 references:
   - title: BitTorrent
     entries:
