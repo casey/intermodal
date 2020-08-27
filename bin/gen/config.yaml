@@ -66,6 +66,11 @@ packages:
   package:          '[intermodal](https://github.com/void-linux/void-packages/blob/master/srcpkgs/intermodal/template)'
   command:          '`xbps-install -S intermodal`'
 
+- operating-system: '[Windows](https://www.microsoft.com/en-us/windows)'
+  package-manager:  '[Scoop](https://scoop.sh)'
+  package:          '[intermodal](https://github.com/ScoopInstaller/Main/blob/master/bucket/intermodal.json)'
+  command:          '`scoop install intermodal`'
+
 references:
   - title: BitTorrent
     entries:
