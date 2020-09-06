@@ -4,7 +4,7 @@ pub(crate) trait Invariant<T: Sized>: Sized {
   fn invariant<D: Display>(self, invariant: D) -> Result<T>;
 
   fn invariant_unwrap<D: Display>(self, invariant: D) -> T {
-    #![allow(clippy::result_unwrap_used)]
+    #![allow(clippy::unwrap_used)]
     self.invariant(invariant).unwrap()
   }
 }
