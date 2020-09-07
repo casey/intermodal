@@ -24,13 +24,32 @@ impl Entry {
       Metadata::from_commit(commit)?
     };
 
+    fn bytes_to_option(bytes: &[u8]) -> Option<String> {
+      let string = String::from_utf8_lossy(bytes).into_owned();
+      if string.is_empty() {
+        None
+      } else {
+        Some(string)
+      }
+    }
+
+    let name = bytes_to_option(commit.author().name_bytes());
+    let email = bytes_to_option(commit.author().email_bytes());
+
+    let author = match (name, email) {
+      (Some(name), Some(email)) => format!("[{}](mailto:{})", name, email),
+      (Some(name), None) => name,
+      (None, Some(email)) => email,
+      (None, None) => String::from("Anonymous"),
+    };
+
     Entry {
-      version: version.into(),
-      summary: commit.summary().unwrap().into(),
-      author: commit.author().to_string(),
       hash: commit.id().to_string(),
-      metadata,
+      summary: commit.summary().unwrap().into(),
+      version: version.into(),
+      author,
       head,
+      metadata,
       time,
     }
   }

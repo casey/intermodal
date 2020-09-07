@@ -49,19 +49,19 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.cargo/registry
-        key: v0-${{ runner.os }}-cargo-registry
+        key: v1-${{ runner.os }}-cargo-registry
 
     - name: Cache cargo index
       uses: actions/cache@v1
       with:
         path: ~/.cargo/git
-        key: v0-${{ runner.os }}-cargo-index
+        key: v1-${{ runner.os }}-cargo-index
 
     - name: Cache cargo build
       uses: actions/cache@v1
       with:
         path: target
-        key: v0-${{ runner.os }}-cargo-build-target
+        key: v1-${{ runner.os }}-cargo-build-target
 
     - name: Install Stable
       uses: actions-rs/toolchain@v1
