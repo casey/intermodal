@@ -454,11 +454,13 @@ impl Create {
     }
 
     if self.show {
-      TorrentSummary::from_metainfo(metainfo.clone())?.write(env)?;
+      // We just created this torrent, so no extra fields have been discarded.
+      TorrentSummary::from_metainfo_lossy(metainfo.clone())?.write(env)?;
     }
 
     if self.print_magnet_link {
-      let mut link = MagnetLink::from_metainfo(&metainfo)?;
+      // We just created this torrent, so no extra fields have been discarded.
+      let mut link = MagnetLink::from_metainfo_lossy(&metainfo)?;
       for peer in self.peers {
         link.add_peer(peer);
       }

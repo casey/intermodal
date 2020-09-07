@@ -15,17 +15,20 @@ impl TorrentSummary {
     }
   }
 
-  pub(crate) fn from_metainfo(metainfo: Metainfo) -> Result<Self> {
+  /// See `Info::infohash_lossy` for details on when this function is lossy.
+  pub(crate) fn from_metainfo_lossy(metainfo: Metainfo) -> Result<Self> {
     let bytes = metainfo.serialize()?;
     let size = Bytes(bytes.len().into_u64());
-    let infohash = metainfo.infohash()?;
+    let infohash = metainfo.infohash_lossy()?;
     Ok(Self::new(metainfo, infohash, size))
   }
 
   pub(crate) fn from_input(input: &Input) -> Result<Self> {
     let metainfo = Metainfo::from_input(input)?;
+    let infohash = Infohash::from_input(input)?;
+    let size = Bytes(input.data().len().into_u64());
 
-    Ok(Self::from_metainfo(metainfo)?)
+    Ok(Self::new(metainfo, infohash, size))
   }
 
   pub(crate) fn write(&self, env: &mut Env) -> Result<()> {

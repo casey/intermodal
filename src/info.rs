@@ -34,7 +34,16 @@ impl Info {
     self.mode.content_size()
   }
 
-  pub(crate) fn infohash(&self) -> Result<Infohash> {
+  /// This function is potentially lossy. If an arbitrary torrent info
+  /// dictionary is deserialized into an `Info` struct, extra fields not present
+  /// on the struct will be discarded. If `infohash_lossy` is then called on
+  /// the resultant struct, those fields will not contribute to the infohash,
+  /// which will thus be different from that of the original torrent.
+  ///
+  /// It will not be lossy if no extra fields are present in the original
+  /// torrent. So, it is safe to call on torrents that have just been created
+  /// and are still in memory, and thus are known to have no extra fields.
+  pub(crate) fn infohash_lossy(&self) -> Result<Infohash> {
     let encoded = bendy::serde::ser::to_bytes(self).context(error::InfoSerialize)?;
     Ok(Infohash::from_bencoded_info_dict(&encoded))
   }

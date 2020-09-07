@@ -114,8 +114,9 @@ impl Metainfo {
       })
   }
 
-  pub(crate) fn infohash(&self) -> Result<Infohash> {
-    self.info.infohash()
+  /// See `Info::infohash_lossy` for details on when this function is lossy.
+  pub(crate) fn infohash_lossy(&self) -> Result<Infohash> {
+    self.info.infohash_lossy()
   }
 
   #[cfg(test)]

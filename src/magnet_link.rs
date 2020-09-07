@@ -9,8 +9,9 @@ pub(crate) struct MagnetLink {
 }
 
 impl MagnetLink {
-  pub(crate) fn from_metainfo(metainfo: &Metainfo) -> Result<MagnetLink> {
-    let mut link = Self::with_infohash(metainfo.infohash()?);
+  /// See `Info::infohash_lossy` for details on when this function is lossy.
+  pub(crate) fn from_metainfo_lossy(metainfo: &Metainfo) -> Result<MagnetLink> {
+    let mut link = Self::with_infohash(metainfo.infohash_lossy()?);
 
     link.set_name(metainfo.info.name.clone());
 
