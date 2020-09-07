@@ -13,8 +13,6 @@ impl Changelog {
 
     let mut entries = Vec::new();
 
-    let mut head = true;
-
     loop {
       let summary_bytes = current
         .summary_bytes()
@@ -37,14 +35,11 @@ impl Changelog {
         let entry = Entry::new(
           &current,
           manifest.package.unwrap().version.as_ref(),
-          head,
           &project.config,
         )?;
 
         entries.push(entry);
       }
-
-      head = false;
 
       match current.parent_count() {
         0 => break,

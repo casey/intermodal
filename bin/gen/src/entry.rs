@@ -7,12 +7,11 @@ pub(crate) struct Entry {
   hash: String,
   author: String,
   summary: String,
-  head: bool,
 }
 
 impl Entry {
   #[throws]
-  pub(crate) fn new(commit: &Commit, version: &str, head: bool, config: &Config) -> Self {
+  pub(crate) fn new(commit: &Commit, version: &str, config: &Config) -> Self {
     let time = DateTime::<Utc>::from_utc(
       NaiveDateTime::from_timestamp(commit.time().seconds(), 0),
       Utc,
@@ -48,18 +47,13 @@ impl Entry {
       summary: commit.summary().unwrap().into(),
       version: version.into(),
       author,
-      head,
       metadata,
       time,
     }
   }
 
   fn url(&self) -> String {
-    if self.head {
-      "https://github.com/casey/intermodal/commits/master".into()
-    } else {
-      format!("https://github.com/casey/intermodal/commit/{}", self.hash)
-    }
+    format!("https://github.com/casey/intermodal/commit/{}", self.hash)
   }
 
   fn shorthash(&self) -> String {
