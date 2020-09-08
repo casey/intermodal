@@ -58,9 +58,7 @@ impl Verify {
       &self.input_flag,
     )?;
 
-    if !options.quiet {
-      VerifyStep::Loading { metainfo: &target }.print(env)?;
-    }
+    VerifyStep::Loading { metainfo: &target }.print(env)?;
 
     let input = env.read(target.clone())?;
 
@@ -86,21 +84,17 @@ impl Verify {
       None
     };
 
-    if !options.quiet {
-      VerifyStep::Verifying { content: &content }.print(env)?;
-    }
+    VerifyStep::Verifying { content: &content }.print(env)?;
 
     let status = metainfo.verify(&env.resolve(content)?, progress_bar)?;
 
     status.print(env)?;
 
     if status.good() {
-      if !options.quiet {
-        errln!(
-          env,
-          "\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}"
-        )?;
-      }
+      errln!(
+        env,
+        "\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}"
+      )?;
       Ok(())
     } else {
       Err(Error::Verify)

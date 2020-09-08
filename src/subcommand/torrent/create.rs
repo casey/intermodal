@@ -315,9 +315,7 @@ impl Create {
       )
     };
 
-    if !options.quiet {
-      CreateStep::Searching { input: &input }.print(env)?;
-    }
+    CreateStep::Searching { input: &input }.print(env)?;
 
     let content = CreateContent::from_create(&self, &input, env)?;
 
@@ -354,9 +352,7 @@ impl Create {
       Some(String::from(consts::CREATED_BY_DEFAULT))
     };
 
-    if !options.quiet {
-      CreateStep::Hashing.print(env)?;
-    }
+    CreateStep::Hashing.print(env)?;
 
     let hasher = Hasher::new(
       self.md5sum,
@@ -374,12 +370,10 @@ impl Create {
       hasher.hash_stdin(&mut env.input())?
     };
 
-    if !options.quiet {
-      CreateStep::Writing {
-        output: &content.output,
-      }
-      .print(env)?;
+    CreateStep::Writing {
+      output: &content.output,
     }
+    .print(env)?;
 
     let info = Info {
       name: content.name,
@@ -449,9 +443,7 @@ impl Create {
       }
     }
 
-    if !options.quiet {
-      errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
-    }
+    errln!(env, "\u{2728}\u{2728} Done! \u{2728}\u{2728}")?;
 
     if self.show {
       // We just created this torrent, so no extra fields have been discarded.

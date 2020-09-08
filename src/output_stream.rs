@@ -4,6 +4,7 @@ pub(crate) struct OutputStream {
   stream: Box<dyn Write>,
   style: bool,
   term: bool,
+  active: bool,
 }
 
 impl OutputStream {
@@ -12,6 +13,7 @@ impl OutputStream {
     Self {
       stream: Box::new(io::stdout()),
       style: style && term,
+      active: true,
       term,
     }
   }
@@ -20,13 +22,15 @@ impl OutputStream {
     Self {
       term: style && atty::is(atty::Stream::Stderr),
       stream: Box::new(io::stderr()),
+      active: true,
       style,
     }
   }
 
   #[cfg(test)]
-  pub(crate) fn new(stream: Box<dyn Write>, style: bool, term: bool) -> OutputStream {
+  pub(crate) fn new(stream: Box<dyn Write>, style: bool, term: bool, active: bool) -> OutputStream {
     Self {
+      active,
       stream,
       style,
       term,
@@ -60,14 +64,43 @@ impl OutputStream {
   pub(crate) fn style(&self) -> Style {
     Style::from_active(self.style)
   }
+
+  pub(crate) fn set_active(&mut self, active: bool) {
+    self.active = active;
+  }
 }
 
 impl Write for OutputStream {
   fn write(&mut self, data: &[u8]) -> io::Result<usize> {
-    self.stream.write(data)
+    if self.active {
+      self.stream.write(data)
+    } else {
+      Ok(data.len())
+    }
   }
 
   fn flush(&mut self) -> io::Result<()> {
     self.stream.flush()
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn active() {
+    let capture = Capture::new();
+    let mut stream = OutputStream::new(Box::new(capture.clone()), false, false, true);
+    stream.write_all("hello".as_bytes()).unwrap();
+    assert_eq!(capture.string(), "hello");
+  }
+
+  #[test]
+  fn inactive() {
+    let capture = Capture::new();
+    let mut stream = OutputStream::new(Box::new(capture.clone()), false, false, false);
+    stream.write_all("hello".as_bytes()).unwrap();
+    assert_eq!(capture.string(), "");
   }
 }

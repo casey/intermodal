@@ -61,6 +61,10 @@ impl Env {
       self.out.set_is_term(true);
     }
 
+    if args.options().quiet {
+      self.err.set_active(false);
+    }
+
     args.run(self)
   }
 
@@ -245,6 +249,29 @@ mod tests {
       panic!("Unexpected standard error output: {}", err);
     }
 
+    assert_eq!(env.out(), "");
+  }
+
+  #[test]
+  fn quiet() {
+    let mut env = test_env! {
+      args: [
+        "--quiet",
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "udp:bar.com",
+        "--announce-tier",
+        "foo",
+      ],
+      tree: {
+        foo: "",
+      }
+    };
+    env.status().ok();
+    assert_eq!(env.err(), "");
     assert_eq!(env.out(), "");
   }
 

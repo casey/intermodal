@@ -76,9 +76,10 @@ impl TestEnvBuilder {
       Box::new(out.clone()),
       self.use_color && self.out_is_term,
       self.out_is_term,
+      true,
     );
 
-    let err_stream = OutputStream::new(Box::new(err.clone()), self.err_style, false);
+    let err_stream = OutputStream::new(Box::new(err.clone()), self.err_style, false, true);
 
     let env = Env::new(
       current_dir,
