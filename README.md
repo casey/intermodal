@@ -1,9 +1,15 @@
-# Intermodal: A 40' shipping container for the Internet
+<h1 align="center">Intermodal</h1>
 
-[![Crate](https://img.shields.io/crates/v/imdl.svg?logo=rust)](https://crates.io/crates/imdl)
-[![Build](https://github.com/casey/intermodal/workflows/Build/badge.svg)](https://github.com/casey/intermodal/actions)
-[![Book](https://img.shields.io/static/v1?logo=read-the-docs&label=book&message=imdl.io&color=informational)](https://imdl.io/book/)
-[![Chat](https://img.shields.io/discord/679283456261226516.svg?logo=discord&color=7289da)](https://discord.gg/HaaT5Qz)
+<div align="center">A 40' shipping container for the Internet</div>
+
+<br />
+<div align="center">
+  <a href="https://crates.io/crates/imdl"><img src="https://img.shields.io/crates/v/imdl.svg?logo=rust" alt="crate"/></a>
+  <a href="https://github.com/casey/intermodal/actions"><img src="https://github.com/casey/intermodal/workflows/Build/badge.svg" alt="build" /></a>
+  <a href="https://imdl.io/book/"><img src="https://img.shields.io/static/v1?logo=read-the-docs&label=book&message=imdl.io&color=informational" alt="book" /></a>
+  <a href="https://discord.gg/HaaT5Qz"><img src="https://img.shields.io/discord/679283456261226516.svg?logo=discord&color=7289da" alt ="chat" /></a>
+</div>
+<br />
 
 Intermodal is a user-friendly and featureful command-line BitTorrent metainfo
 utility. The binary is called `imdl` and runs on Linux, Windows, and macOS.
@@ -19,7 +25,6 @@ For more about the project and its goals, check out
 
 ## Table of Contents
 
-- [Installation](#installation)
   - [Supported Operating Systems](#supported-operating-systems)
   - [Packages](#packages)
   - [Pre-built binaries](#pre-built-binaries)
