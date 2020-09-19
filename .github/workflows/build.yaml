@@ -10,6 +10,12 @@ on:
     branches:
     - master
 
+env:
+  # Increment to invalidate github actions caches if they become corrupt.
+  # Errors of the form "can't find crate for `snafu_derive` which `snafu` depends on"
+  # can usually be fixed by incrementing this value.
+  CACHE_KEY_PREFIX: 2
+
 jobs:
   all:
     name: All
@@ -45,23 +51,31 @@ jobs:
       with:
         fetch-depth: 0
 
+    # An issue with BSD Tar causes sporadic failures on macOS.
+    # c.f https://github.com/actions/cache/issues/403
+    - name: Install GNU Tar
+      if: matrix.build == 'macos'
+      run: |
+        brew install gnu-tar
+        echo "::add-path::/usr/local/opt/gnu-tar/libexec/gnubin"
+
     - name: Cache cargo registry
       uses: actions/cache@v1
       with:
         path: ~/.cargo/registry
-        key: v1-${{ runner.os }}-cargo-registry
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-registry
 
     - name: Cache cargo index
       uses: actions/cache@v1
       with:
         path: ~/.cargo/git
-        key: v1-${{ runner.os }}-cargo-index
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-index
 
     - name: Cache cargo build
       uses: actions/cache@v1
       with:
         path: target
-        key: v1-${{ runner.os }}-cargo-build-target
+        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-build-target
 
     - name: Install Stable
       uses: actions-rs/toolchain@v1

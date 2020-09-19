@@ -6,6 +6,27 @@ pub(crate) struct TorrentSummary {
   size: Bytes,
 }
 
+#[derive(Serialize)]
+pub(crate) struct TorrentSummaryJson {
+  name: String,
+  comment: Option<String>,
+  creation_date: Option<u64>,
+  created_by: Option<String>,
+  source: Option<String>,
+  info_hash: String,
+  torrent_size: u64,
+  content_size: u64,
+  private: bool,
+  tracker: Option<String>,
+  announce_list: Vec<Vec<String>>,
+  update_url: Option<String>,
+  dht_nodes: Vec<String>,
+  piece_size: u64,
+  piece_count: usize,
+  file_count: usize,
+  files: Vec<String>,
+}
+
 impl TorrentSummary {
   fn new(metainfo: Metainfo, infohash: Infohash, size: Bytes) -> Self {
     Self {
@@ -145,5 +166,71 @@ impl TorrentSummary {
     };
 
     table
+  }
+
+  pub(crate) fn write_json(&self, env: &mut Env) -> Result<()> {
+    let data = self.torrent_summary_data();
+    let json = serde_json::to_string(&data).context(error::JsonSerialize)?;
+    outln!(env, "{}", json)?;
+    Ok(())
+  }
+
+  fn torrent_summary_data(&self) -> TorrentSummaryJson {
+    let (file_count, files) = match &self.metainfo.info.mode {
+      Mode::Single { .. } => (1, vec![self.metainfo.info.name.to_string()]),
+      Mode::Multiple { files } => (
+        files.len(),
+        files
+          .iter()
+          .map(|file_info| {
+            format!(
+              "{}",
+              file_info
+                .path
+                .absolute(Path::new(&self.metainfo.info.name))
+                .as_path()
+                .display()
+            )
+          })
+          .collect(),
+      ),
+    };
+
+    TorrentSummaryJson {
+      name: self.metainfo.info.name.to_string(),
+      comment: self.metainfo.comment.clone(),
+      creation_date: self.metainfo.creation_date,
+      created_by: self.metainfo.created_by.clone(),
+      source: self.metainfo.info.source.clone(),
+      info_hash: self.infohash.to_string(),
+      torrent_size: self.size.count(),
+      content_size: self.metainfo.content_size().count(),
+      private: self.metainfo.info.private.unwrap_or_default(),
+      tracker: self.metainfo.announce.clone(),
+      announce_list: self
+        .metainfo
+        .announce_list
+        .as_ref()
+        .map(Clone::clone)
+        .unwrap_or_default(),
+      update_url: self
+        .metainfo
+        .info
+        .update_url
+        .as_ref()
+        .map(ToString::to_string),
+      dht_nodes: self
+        .metainfo
+        .nodes
+        .as_ref()
+        .unwrap_or(&Vec::new())
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<String>>(),
+      piece_size: self.metainfo.info.piece_length.count(),
+      piece_count: self.metainfo.info.pieces.count(),
+      file_count,
+      files,
+    }
   }
 }

@@ -136,6 +136,8 @@ pub(crate) enum Error {
   Unstable { feature: &'static str },
   #[snafu(display("Torrent verification failed."))]
   Verify,
+  #[snafu(display("Failed to serialize JSON: {}", source))]
+  JsonSerialize { source: serde_json::Error },
 }
 
 impl Error {

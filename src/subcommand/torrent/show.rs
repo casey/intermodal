@@ -9,6 +9,10 @@ const INPUT_POSITIONAL: &str = "<INPUT>";
 
 const INPUT_VALUE: &str = "INPUT";
 
+const JSON_OUTPUT: &str = "json";
+
+const JSON_HELP: &str = "Output data as JSON instead of the default format.";
+
 #[derive(StructOpt)]
 #[structopt(
   help_message(consts::HELP_MESSAGE),
@@ -36,6 +40,13 @@ pub(crate) struct Show {
     help = INPUT_HELP,
   )]
   input_positional: Option<InputTarget>,
+  #[structopt(
+    name = JSON_OUTPUT,
+    long = "json",
+    short = "j",
+    help = JSON_HELP,
+  )]
+  json: bool,
 }
 
 impl Show {
@@ -49,7 +60,11 @@ impl Show {
 
     let input = env.read(target)?;
     let summary = TorrentSummary::from_input(&input)?;
-    summary.write(env)?;
+    if self.json {
+      summary.write_json(env)?;
+    } else {
+      summary.write(env)?;
+    }
     Ok(())
   }
 }
@@ -558,5 +573,64 @@ files\tNAME
     }
 
     Ok(())
+  }
+
+  #[test]
+  fn output_json() {
+    {
+      let metainfo = Metainfo::test_value_single();
+      let mut want = r#"{"name":"NAME","comment":"COMMENT","creation_date":1,
+"created_by":"CREATED BY","source":"SOURCE","info_hash":"5d6f53772b4c20536fcce0c4c364d764a6efa39c",
+"torrent_size":509,"content_size":32768,"private":true,"tracker":
+"udp://announce.example:1337","announce_list":[["http://a.example:4567",
+"https://b.example:77"],["udp://c.example:88"]],"update_url":"https://update.example/",
+"dht_nodes":["node.example:12","1.1.1.1:16","[2001:db8:85a3::8a2e:370]:7334"],
+"piece_size":16384,"piece_count":2,"file_count":1,"files":["NAME"]}"#
+        .replace('\n', "");
+      want.push('\n');
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&[
+          "imdl",
+          "torrent",
+          "show",
+          "--input",
+          "foo.torrent",
+          "--json",
+        ])
+        .out_is_term()
+        .build();
+      let path = env.resolve("foo.torrent").unwrap();
+      metainfo.dump(path).unwrap();
+      env.assert_ok();
+      let have = env.out();
+      assert_eq!(have, want);
+    }
+
+    {
+      let metainfo = Metainfo::test_value_single_unset();
+      let mut want = r#"{"name":"NAME","comment":null,"creation_date":null,
+"created_by":null,"source":null,"info_hash":"a9105b0ff5f7cefeee5599ed7831749be21cc04e",
+"torrent_size":85,"content_size":5,"private":false,"tracker":null,"announce_list":[],
+"update_url":null,"dht_nodes":[],"piece_size":1024,"piece_count":1,"file_count":1,
+"files":["NAME"]}"#
+        .replace('\n', "");
+      want.push('\n');
+      let mut env = TestEnvBuilder::new()
+        .arg_slice(&[
+          "imdl",
+          "torrent",
+          "show",
+          "--input",
+          "foo.torrent",
+          "--json",
+        ])
+        .out_is_term()
+        .build();
+      let path = env.resolve("foo.torrent").unwrap();
+      metainfo.dump(path).unwrap();
+      env.assert_ok();
+      let have = env.out();
+      assert_eq!(have, want);
+    }
   }
 }
