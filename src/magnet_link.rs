@@ -1,5 +1,6 @@
 use crate::common::*;
 
+#[derive(Debug, PartialEq)]
 pub(crate) struct MagnetLink {
   infohash: Infohash,
   name: Option<String>,
@@ -22,7 +23,7 @@ impl MagnetLink {
     Ok(link)
   }
 
-  pub(crate) fn with_infohash(infohash: Infohash) -> MagnetLink {
+  pub(crate) fn with_infohash(infohash: Infohash) -> Self {
     MagnetLink {
       infohash,
       name: None,
@@ -37,7 +38,6 @@ impl MagnetLink {
     self.name = Some(name.into());
   }
 
-  #[allow(dead_code)]
   pub(crate) fn add_peer(&mut self, peer: HostPort) {
     self.peers.push(peer);
   }
@@ -83,6 +83,74 @@ impl MagnetLink {
     url.set_query(Some(&query));
 
     url
+  }
+
+  fn parse(text: &str) -> Result<Self, MagnetLinkParseError> {
+    let url = Url::parse(&text).context(magnet_link_parse_error::URL)?;
+
+    if url.scheme() != "magnet" {
+      return Err(MagnetLinkParseError::Scheme {
+        scheme: url.scheme().into(),
+      });
+    }
+
+    let mut link = None;
+    for (k, v) in url.query_pairs() {
+      if k.as_ref() == "xt" {
+        if let Some(infohash) = v.strip_prefix("urn:btih:") {
+          if infohash.len() != 40 {
+            return Err(MagnetLinkParseError::InfohashLength {
+              text: infohash.into(),
+            });
+          }
+
+          let buf = hex::decode(infohash).context(magnet_link_parse_error::HexParse {
+            text: infohash.to_string(),
+          })?;
+
+          link = Some(MagnetLink::with_infohash(
+            Sha1Digest::from_bytes(
+              buf
+                .as_slice()
+                .try_into()
+                .invariant_unwrap("bounds are checked above"),
+            )
+            .into(),
+          ));
+
+          break;
+        }
+      }
+    }
+
+    let mut link = link.ok_or(MagnetLinkParseError::TopicMissing)?;
+
+    for (k, v) in url.query_pairs() {
+      match k.as_ref() {
+        "tr" => link.add_tracker(Url::parse(&v).context(
+          magnet_link_parse_error::TrackerAddress {
+            text: v.to_string(),
+          },
+        )?),
+        "dn" => link.set_name(v),
+        "x.pe" => link.add_peer(HostPort::from_str(&v).context(
+          magnet_link_parse_error::PeerAddress {
+            text: v.to_string(),
+          },
+        )?),
+        _ => {}
+      }
+    }
+
+    Ok(link)
+  }
+}
+
+impl FromStr for MagnetLink {
+  type Err = Error;
+
+  fn from_str(text: &str) -> Result<Self, Self::Err> {
+    Self::parse(text).context(error::MagnetLinkParse { text })
   }
 }
 
@@ -177,6 +245,116 @@ mod tests {
         "&x.pe=foo.com:1337",
         "&x.pe=bar.net:666",
       ),
+    );
+  }
+
+  #[test]
+  fn link_from_str_round_trip() {
+    let mut link_to = MagnetLink::with_infohash(Infohash::from_bencoded_info_dict("".as_bytes()));
+
+    link_to.set_name("foo");
+    link_to.add_tracker(Url::parse("http://foo.com/announce").unwrap());
+    link_to.add_tracker(Url::parse("http://bar.net/announce").unwrap());
+    link_to.add_peer("foo.com:1337".parse().unwrap());
+    link_to.add_peer("bar.net:666".parse().unwrap());
+
+    let link_from = MagnetLink::from_str(&link_to.to_url().to_string()).unwrap();
+
+    assert_eq!(link_to, link_from);
+  }
+
+  #[test]
+  fn link_from_str_url_error() {
+    let link = "%imdl.io";
+    let e = MagnetLink::from_str(link).unwrap_err();
+
+    assert_matches!(e, Error::MagnetLinkParse {
+      text,
+      source: MagnetLinkParseError::URL { .. },
+    } if text == link);
+  }
+
+  #[test]
+  fn link_from_str_scheme_error() {
+    let link = "mailto:?alice@imdl.io";
+
+    let e = MagnetLink::from_str(link).unwrap_err();
+    assert_matches!(e, Error::MagnetLinkParse {
+      text,
+      source: MagnetLinkParseError::Scheme { scheme },
+    } if text == link && scheme == "mailto");
+  }
+
+  #[test]
+  fn link_from_str_infohash_length_error() {
+    let infohash = "123456789abcedf";
+    let link = format!("magnet:?xt=urn:btih:{}", infohash);
+    let e = MagnetLink::from_str(&link).unwrap_err();
+
+    assert_matches!(e, Error::MagnetLinkParse {
+      text,
+      source: MagnetLinkParseError::InfohashLength { text: ih },
+    } if text == link && infohash == ih);
+  }
+
+  #[test]
+  fn link_from_str_infohash_bad_hex() {
+    let infohash = "laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let link = format!("magnet:?xt=urn:btih:{}", infohash);
+    let e = MagnetLink::from_str(&link).unwrap_err();
+
+    assert_matches!(e, Error::MagnetLinkParse {
+      text,
+      source: MagnetLinkParseError::HexParse {
+        text: ih,
+        source: _,
+      }} if text == link && infohash == ih);
+  }
+
+  #[test]
+  fn link_from_str_topic_missing() {
+    let link = "magnet:?";
+    let e = MagnetLink::from_str(&link).unwrap_err();
+
+    assert_matches!(e,
+      Error::MagnetLinkParse {
+        text,
+        source: MagnetLinkParseError::TopicMissing,
+      } if text == link);
+  }
+
+  #[test]
+  fn link_from_str_tracker_address() {
+    let infohash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let bad_addr = "%imdl.io/announce";
+    let link = format!("magnet:?xt=urn:btih:{}&tr={}", infohash, bad_addr);
+    let e = MagnetLink::from_str(&link).unwrap_err();
+
+    assert_matches!(e,
+      Error::MagnetLinkParse {
+      text,
+      source: MagnetLinkParseError::TrackerAddress {
+        text: addr,
+        source: _,
+      },
+    } if text == link && addr == bad_addr);
+  }
+
+  #[test]
+  fn link_from_str_peer_address() {
+    let infohash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let bad_addr = "%imdl.io:13337";
+    let link = format!("magnet:?xt=urn:btih:{}&x.pe={}", infohash, bad_addr);
+    let e = MagnetLink::from_str(&link).unwrap_err();
+
+    assert_matches!(e,
+      Error::MagnetLinkParse {
+        text,
+        source: MagnetLinkParseError::PeerAddress {
+          text: addr,
+          source: _,
+        }
+      } if text == link && addr == bad_addr
     );
   }
 }

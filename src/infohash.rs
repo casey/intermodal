@@ -56,6 +56,12 @@ impl Infohash {
   }
 }
 
+impl From<Sha1Digest> for Infohash {
+  fn from(inner: Sha1Digest) -> Self {
+    Self { inner }
+  }
+}
+
 impl Into<Sha1Digest> for Infohash {
   fn into(self) -> Sha1Digest {
     self.inner

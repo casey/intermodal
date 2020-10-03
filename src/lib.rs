@@ -75,6 +75,7 @@ mod invariant;
 mod lint;
 mod linter;
 mod magnet_link;
+mod magnet_link_parse_error;
 mod md5_digest;
 mod metainfo;
 mod metainfo_error;

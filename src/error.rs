@@ -44,6 +44,11 @@ pub(crate) enum Error {
   Internal { message: String },
   #[snafu(display("Unknown lint: {}", text))]
   LintUnknown { text: String },
+  #[snafu(display("Failed to parse magnet link `{}`: {}", text, source))]
+  MagnetLinkParse {
+    text: String,
+    source: MagnetLinkParseError,
+  },
   #[snafu(display("Failed to deserialize torrent metainfo from {}: {}", input, source))]
   MetainfoDeserialize {
     source: bendy::serde::Error,

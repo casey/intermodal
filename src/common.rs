@@ -52,7 +52,7 @@ pub(crate) use url::{Host, Url};
 pub(crate) use log::trace;
 
 // modules
-pub(crate) use crate::{consts, error, host_port_parse_error};
+pub(crate) use crate::{consts, error, host_port_parse_error, magnet_link_parse_error};
 
 // functions
 pub(crate) use crate::xor_args::xor_args;
@@ -69,12 +69,13 @@ pub(crate) use crate::{
   file_info::FileInfo, file_path::FilePath, file_status::FileStatus, files::Files, hasher::Hasher,
   host_port::HostPort, host_port_parse_error::HostPortParseError, info::Info, infohash::Infohash,
   input::Input, input_target::InputTarget, lint::Lint, linter::Linter, magnet_link::MagnetLink,
-  md5_digest::Md5Digest, metainfo::Metainfo, metainfo_error::MetainfoError, mode::Mode,
-  options::Options, output_stream::OutputStream, output_target::OutputTarget,
-  piece_length_picker::PieceLengthPicker, piece_list::PieceList, platform::Platform,
-  sha1_digest::Sha1Digest, shell::Shell, sort_key::SortKey, sort_order::SortOrder,
-  sort_spec::SortSpec, status::Status, style::Style, subcommand::Subcommand, table::Table,
-  torrent_summary::TorrentSummary, use_color::UseColor, verifier::Verifier, walker::Walker,
+  magnet_link_parse_error::MagnetLinkParseError, md5_digest::Md5Digest, metainfo::Metainfo,
+  metainfo_error::MetainfoError, mode::Mode, options::Options, output_stream::OutputStream,
+  output_target::OutputTarget, piece_length_picker::PieceLengthPicker, piece_list::PieceList,
+  platform::Platform, sha1_digest::Sha1Digest, shell::Shell, sort_key::SortKey,
+  sort_order::SortOrder, sort_spec::SortSpec, status::Status, style::Style, subcommand::Subcommand,
+  table::Table, torrent_summary::TorrentSummary, use_color::UseColor, verifier::Verifier,
+  walker::Walker,
 };
 
 // type aliases
