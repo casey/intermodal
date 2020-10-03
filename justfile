@@ -86,15 +86,14 @@ publish-check: check
 	cargo outdated --exit-code 1
 	grep '^\[{{version}}\]' target/gen/CHANGELOG.md
 
-publish: publish-check
+publish BRANCH=`git rev-parse --abbrev-ref HEAD`: publish-check (merge BRANCH)
 	#!/usr/bin/env bash
 	set -euxo pipefail
-	while ! hub ci-status --verbose; do
-		sleep 5
-	done
 	git tag -a {{version}} -m 'Release {{version}}'
 	git push github {{version}}
-	just merge
+	while ! hub ci-status --verbose {{BRANCH}}; do
+		sleep 5
+	done
 	cargo publish
 
 # record, upload, and render demo animation
