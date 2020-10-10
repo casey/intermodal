@@ -1,5 +1,6 @@
 #![deny(clippy::all, clippy::pedantic, clippy::restriction)]
 #![allow(
+  clippy::blanket_clippy_restriction_lints,
   clippy::else_if_without_else,
   clippy::enum_glob_use,
   clippy::float_arithmetic,
@@ -14,6 +15,7 @@
   clippy::missing_inline_in_public_items,
   clippy::needless_pass_by_value,
   clippy::non_ascii_literal,
+  clippy::pattern_type_mismatch,
   clippy::shadow_reuse,
   clippy::struct_excessive_bools,
   clippy::too_many_lines,

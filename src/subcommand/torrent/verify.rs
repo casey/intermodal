@@ -64,14 +64,13 @@ impl Verify {
 
     let metainfo = Metainfo::from_input(&input)?;
 
-    let content = if let Some(content) = &self.content {
-      content.clone()
-    } else {
-      match target {
+    let content = self.content.as_ref().map_or_else(
+      || match target {
         InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).lexiclean(),
         InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
-      }
-    };
+      },
+      PathBuf::clone,
+    );
 
     let progress_bar = if env.err().is_styled_term() && !options.quiet {
       let style = ProgressStyle::default_bar()

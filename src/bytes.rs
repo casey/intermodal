@@ -66,10 +66,7 @@ impl FromStr for Bytes {
   fn from_str(text: &str) -> Result<Self, Self::Err> {
     #[allow(clippy::trivially_copy_pass_by_ref)]
     fn is_digit(c: &char) -> bool {
-      match c {
-        '0'..='9' | '.' => true,
-        _ => false,
-      }
+      matches!(c, '0'..='9' | '.')
     }
 
     let digits = text.chars().take_while(is_digit).collect::<String>();

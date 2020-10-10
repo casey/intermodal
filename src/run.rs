@@ -18,5 +18,13 @@ use crate::common::*;
 /// be passed to `std::process::exit`, to exit the process and report its
 /// failure to the system.
 pub fn run() -> Result<(), i32> {
-  Env::main().status()
+  let mut env = match Env::main() {
+    Ok(env) => env,
+    Err(err) => {
+      eprintln!("{}", err);
+      return Err(EXIT_FAILURE);
+    }
+  };
+
+  env.status()
 }

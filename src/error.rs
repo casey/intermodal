@@ -14,10 +14,12 @@ pub(crate) enum Error {
   ByteSuffix { text: String, suffix: String },
   #[snafu(display("{}", source))]
   Clap { source: clap::Error },
-  #[snafu(display("Failed to invoke command `{}`: {}", command, source,))]
+  #[snafu(display("Failed to invoke command `{}`: {}", command, source))]
   CommandInvoke { command: String, source: io::Error },
   #[snafu(display("Command `{}` returned bad exit status: {}", command, status))]
   CommandStatus { command: String, status: ExitStatus },
+  #[snafu(display("Failed to get current directory: {}", source))]
+  CurrentDirectoryGet { source: io::Error },
   #[snafu(display("Filename was not valid unicode: `{}`", filename.display()))]
   FilenameDecode { filename: PathBuf },
   #[snafu(display("Path had no file name: `{}`", path.display()))]

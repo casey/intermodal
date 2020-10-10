@@ -9,11 +9,8 @@ pub(crate) struct Env {
 }
 
 impl Env {
-  pub(crate) fn main() -> Self {
-    let dir = match env::current_dir() {
-      Ok(dir) => dir,
-      Err(error) => panic!("Failed to get current directory: {}", error),
-    };
+  pub(crate) fn main() -> Result<Self> {
+    let dir = env::current_dir().context(error::CurrentDirectoryGet)?;
 
     let style = env::var_os("NO_COLOR").is_none()
       && env::var_os("TERM").as_deref() != Some(OsStr::new("dumb"));
@@ -21,30 +18,32 @@ impl Env {
     let out_stream = OutputStream::stdout(style);
     let err_stream = OutputStream::stderr(style);
 
-    Self::new(
+    Ok(Self::new(
       dir,
       env::args(),
       Box::new(io::stdin()),
       out_stream,
       err_stream,
-    )
+    ))
   }
 
-  pub(crate) fn run(&mut self) -> Result<(), Error> {
+  pub(crate) fn run(&mut self) -> Result<()> {
     #[cfg(windows)]
     ansi_term::enable_ansi_support().ok();
 
     Self::initialize_logging();
 
-    let app = Arguments::clap();
+    let app = {
+      let mut app = Arguments::clap();
 
-    let width = env::var("IMDL_TERM_WIDTH")
-      .ok()
-      .and_then(|width| width.parse::<usize>().ok());
+      let width = env::var("IMDL_TERM_WIDTH")
+        .ok()
+        .and_then(|width| width.parse::<usize>().ok());
 
-    let app = if let Some(width) = width {
-      app.set_term_width(width)
-    } else {
+      if let Some(width) = width {
+        app = app.set_term_width(width)
+      }
+
       app
     };
 
