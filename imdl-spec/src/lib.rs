@@ -10,5 +10,4 @@
 #![feature(const_generics)]
 #![allow(incomplete_features)]
 
-/// An archive format for strongly-typed media.
 pub mod archive;

@@ -1,0 +1,5 @@
+watch:
+	cargo +nightly watch --clear --exec doc
+
+open:
+	cargo +nightly doc --open

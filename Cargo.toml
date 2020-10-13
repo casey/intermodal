@@ -79,9 +79,6 @@ members = [
 
   # run commands for demo animation
   "bin/demo",
-
-  # archive and protocol specifications
-  "imdl-spec",
 ]
 
 [[bench]]

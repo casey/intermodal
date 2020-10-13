@@ -393,7 +393,7 @@
 //! types that will be exposde by the format, so aside from an explanation of
 //! thier charactaristics, they have no internals.
 //!
-//! See the [Footer)(Footer) and [Header](Header) documentation for information
+//! See the [Footer](Footer) and [Header](Header) documentation for information
 //! about their contents.
 //!
 //! Since the footer is at the end of an archive, files can be added to an
@@ -420,42 +420,42 @@ use std::marker::PhantomData;
 
 /// `fixed`
 pub struct Header {
-  magic_number: MagicNumber<b"imdl">,
-  version: Version,
-  flags: Flags,
+  pub magic_number: MagicNumber<b"imdl">,
+  pub version: Version,
+  pub flags: Flags,
 }
 
 /// `fixed`
-struct MagicNumber<const CONTENTS: &'static [u8]>;
+pub struct MagicNumber<const CONTENTS: &'static [u8]>;
 
 /// `fixed`
-struct Version {
-  major: u64,
-  minor: u64,
-  patch: u64,
+pub struct Version {
+  pub major: u64,
+  pub minor: u64,
+  pub patch: u64,
 }
 
 /// `fixed`
-struct Flags {
-  bits: u128,
+pub struct Flags {
+  pub bits: u128,
 }
 
 /// `flexible`
-struct Footer {
-  repository: Link<Repository>,
-  object_map: ObjectMap,
+pub struct Footer {
+  pub repository: Link<Repository>,
+  pub object_map: ObjectMap,
 }
 
 /// `flexible`
-struct ObjectMap {
-  objects: Map<Hash, Object>,
+pub struct ObjectMap {
+  pub objects: Map<Hash, Object>,
 }
 
 /// `fixed`
-struct Object {
-  location: Location,
-  compression: Compression,
-  length: u64,
+pub struct Object {
+  pub location: Location,
+  pub compression: Compression,
+  pub length: u64,
   /// Should this be required?
   /// If interior hashes are always stored, then corruption in files
   /// can be identified, instead of just knowing that the hashes don't
@@ -467,7 +467,7 @@ struct Object {
   /// One possibility is to make interior hash storage optional. However,
   /// if interior hash storage is optional, then archives without interior
   /// hashes would be degraded.
-  hash_tree: Option<Link<HashTree>>,
+  pub hash_tree: Option<Link<HashTree>>,
 }
 
 /// discuss hash tree overhead. Overhead at 1KiB blocks is ?,
@@ -476,103 +476,103 @@ struct Object {
 /// Tiers in order, so any number can be omitted.
 ///
 /// `flexible`
-struct HashTree {
-  hashes: Slice<Hash>,
+pub struct HashTree {
+  pub hashes: Slice<Hash>,
 }
 
 /// `flexible`
-enum Location {
+pub enum Location {
   Body { offset: u64 },
   Path { path: Path },
 }
 
 /// `flexible`
-enum Compression {
+pub enum Compression {
   Uncompressed,
 }
 
 /// Should this support inline data?
 /// `fixed`
-struct Link<T> {
-  hash: Hash,
-  value: PhantomData<T>,
+pub struct Link<T> {
+  pub hash: Hash,
+  pub value: PhantomData<T>,
 }
 
 /// `fixed`
-struct Hash {
-  bytes: [u8; 32],
+pub struct Hash {
+  pub bytes: [u8; 32],
 }
 
 /// `flexible`
-struct Repository {
-  head: Link<Commit>,
-  certificates: Set<Link<Certificate>>,
+pub struct Repository {
+  pub head: Link<Commit>,
+  pub certificates: Set<Link<Certificate>>,
 }
 
 /// `flexible`
-struct Commit {
-  tree: Link<Tree>,
-  parent: Option<Link<Commit>>,
-  metadata: Link<Metadata>,
+pub struct Commit {
+  pub tree: Link<Tree>,
+  pub parent: Option<Link<Commit>>,
+  pub metadata: Link<Metadata>,
 }
 
 /// `flexible`
-struct Metadata {}
+pub struct Metadata {}
 
 /// `flexible`
-struct Tree {
-  root: Directory,
+pub struct Tree {
+  pub root: Directory,
 }
 
 /// `flexible`
-struct Directory {
-  entries: Map<Filename, Entry>,
+pub struct Directory {
+  pub entries: Map<Filename, Entry>,
 }
 
 /// `flexible`
-struct Entry {
-  ty: EntryType,
+pub struct Entry {
+  pub ty: EntryType,
 }
 
 /// `flexible`
-enum EntryType {
+pub enum EntryType {
   Directory(Directory),
   File(File),
 }
 
 /// `fixed`
-struct Map<K, V> {
-  key: PhantomData<K>,
-  value: PhantomData<V>,
+pub struct Map<K, V> {
+  pub key: PhantomData<K>,
+  pub value: PhantomData<V>,
 }
 
 /// `fixed`
-struct Set<T> {
-  value: PhantomData<T>,
+pub struct Set<T> {
+  pub value: PhantomData<T>,
 }
 
 /// `fixed`
-struct Slice<T> {
-  value: PhantomData<T>,
+pub struct Slice<T> {
+  pub value: PhantomData<T>,
 }
 
 /// `flexible`
-struct File {
-  hash: Hash,
+pub struct File {
+  pub hash: Hash,
 }
 
 /// `fixed`
-struct Filename {
+pub struct Filename {
   /// Maximum length 255 bytes
   /// May not contain `\0`, or `\\`, or be `.`, or `..`
-  data: String,
+  pub data: String,
 }
 
 /// `fixed`
-struct Path {
+pub struct Path {
   /// may not contain `\0`, empty path components, `..`, or `.`, or a leading
   /// `\` or trailing `/`, filenames limited to 255 bytes
-  data: String,
+  pub data: String,
 }
 
 /// Must not be possible to trick someone into signing something they mean to.
@@ -582,52 +582,52 @@ struct Path {
 /// This sheme *must* be vetted by a crytographer first.
 ///
 /// `flexible`
-struct Certificate {
-  message: Link<Message>,
-  signature: Signature,
+pub struct Certificate {
+  pub message: Link<Message>,
+  pub signature: Signature,
 }
 
 /// `fixed`
-struct Message {
+pub struct Message {
   // for preventing tricking someone into signing something they didn't intend
-  magic: MagicNumber<b"imdl.signature">,
+  pub magic: MagicNumber<b"imdl.signature">,
   // for versioning signatures separately from protocol
-  version: SignatureVersion,
+  pub version: SignatureVersion,
   // for flags, unknown if this is useful
-  flags: SignatureFlags,
+  pub flags: SignatureFlags,
   // pubkey that signed
-  pubkey: Pubkey,
+  pub pubkey: Pubkey,
   // To prevent all bits of message being known by attacker
   // Can nonce be derived deterministically?
-  nonce: [u8; 32],
+  pub nonce: [u8; 32],
   // what this signature "means"
-  policy: Policy,
+  pub policy: Policy,
 }
 
 /// `fixed`
-struct SignatureVersion {
-  major: u64,
-  minor: u64,
-  patch: u64,
+pub struct SignatureVersion {
+  pub major: u64,
+  pub minor: u64,
+  pub patch: u64,
 }
 
 /// `fixed`
-struct SignatureFlags {
-  flags: u128,
+pub struct SignatureFlags {
+  pub flags: u128,
 }
 
 /// `flexible`
-enum Policy {
+pub enum Policy {
   Author { hash: Hash },
   Packager { hash: Hash },
 }
 
 /// `fixed`
-struct Signature {
-  bytes: [u8; 64],
+pub struct Signature {
+  pub bytes: [u8; 64],
 }
 
 /// `fixed`
-struct Pubkey {
-  bytes: [u8; 32],
+pub struct Pubkey {
+  pub bytes: [u8; 32],
 }
