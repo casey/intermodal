@@ -414,8 +414,6 @@
 //!   top-level thing that's like git refs that contains a bunch of sub-archives
 //!   by link?
 
-#![allow(unused)]
-
 use std::marker::PhantomData;
 
 /// `fixed`
@@ -589,16 +587,16 @@ pub struct Certificate {
 
 /// `fixed`
 pub struct Message {
-  // for preventing tricking someone into signing something they didn't intend
+  /// for preventing tricking someone into signing something they didn't intend
   pub magic: MagicNumber<b"imdl.signature">,
-  // for versioning signatures separately from protocol
+  /// for versioning signatures separately from protocol
   pub version: SignatureVersion,
-  // for flags, unknown if this is useful
+  /// for flags, unknown if this is useful
   pub flags: SignatureFlags,
-  // pubkey that signed
+  /// pubkey that signed
   pub pubkey: Pubkey,
-  // To prevent all bits of message being known by attacker
-  // Can nonce be derived deterministically?
+  /// To prevent all bits of message being known by attacker
+  /// Can nonce be derived deterministically?
   pub nonce: [u8; 32],
   // what this signature "means"
   pub policy: Policy,

@@ -9,5 +9,6 @@
 
 #![feature(const_generics)]
 #![allow(incomplete_features)]
+#![deny(missing_docs)]
 
 pub mod archive;
