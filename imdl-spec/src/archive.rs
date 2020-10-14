@@ -252,6 +252,23 @@
 //!
 //! If a three letter extension is required, use .imd
 //!
+//! ### Hash Function
+//!
+//! Blake3. Tree hash, 1 KiB block. Downside is that the contents of a chunk
+//! hash depends not only on the contents of the chunk, but also the chunk
+//! index, i.e. the position of that chunk in the file. This will likely lead to
+//! some missed opportunities for deduplication, but these should be small.
+//!
+//! For reference, IPFS found that a hashing scheme designed specifically for
+//! deduplication produced little actual savings in pratice. (Todo: add link.)
+//!
+//! 1 KiB chunks are unlikely to be identical between files. Consider files
+//! as the deduplicable unit of content.
+//!
+//! Could modify blake3 to make chunk hashes depend only on chunk contents. This
+//! would be secure, since chunk index determining chunk hash isn't needed for
+//! security. However, it probably isn't worth the confusion this would cause.
+//!
 //! ### Hash Types
 //!
 //! - archive hash
@@ -403,6 +420,8 @@
 //! Todo
 //! ----
 //!
+//! - put specs in mdbook
+//! - split SFV section out
 //! - justify each `fixed` or `flexible`
 //! - get feedback from RC
 //! - cypherpunk bitstream ad
@@ -418,7 +437,7 @@ use std::marker::PhantomData;
 
 /// `fixed`
 pub struct Header {
-  pub magic_number: MagicNumber<b"imdl">,
+  pub magic_number: MagicNumber<b"imdl.archive">,
   pub version: Version,
   pub flags: Flags,
 }
@@ -465,7 +484,7 @@ pub struct Object {
   /// One possibility is to make interior hash storage optional. However,
   /// if interior hash storage is optional, then archives without interior
   /// hashes would be degraded.
-  pub hash_tree: Option<Link<HashTree>>,
+  pub hash_tree: Option<Link<InteriorHashes>>,
 }
 
 /// discuss hash tree overhead. Overhead at 1KiB blocks is ?,
@@ -474,8 +493,13 @@ pub struct Object {
 /// Tiers in order, so any number can be omitted.
 ///
 /// `flexible`
-pub struct HashTree {
-  pub hashes: Slice<Hash>,
+pub struct InteriorHashes {
+  pub hashes: Slice<InteriorHash>,
+}
+
+/// `fixed`
+pub struct InteriorHash {
+  pub bytes: [u8; 32],
 }
 
 /// `flexible`
