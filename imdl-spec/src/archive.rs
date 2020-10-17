@@ -420,6 +420,8 @@
 //! Todo
 //! ----
 //!
+//! - talk about how archives are not a concensus system, but have similar
+//!   properties
 //! - put specs in mdbook
 //! - split SFV section out
 //! - justify each `fixed` or `flexible`
