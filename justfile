@@ -116,6 +116,10 @@ demo-upload:
 demo-render:
 	../asciicast2gif/asciicast2gif -S4 tmp/demo.json www/demo.gif
 
+# print commit metadata types
+commit-types:
+	cargo run --package gen -- --bin target/debug/imdl commit-types
+
 # open site index
 www:
 	open www/index.html

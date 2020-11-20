@@ -10,11 +10,13 @@ on:
     branches:
     - master
 
+defaults:
+  run:
+    shell: bash
+
 env:
-  # Increment to invalidate github actions caches if they become corrupt.
-  # Errors of the form "can't find crate for `snafu_derive` which `snafu` depends on"
-  # can usually be fixed by incrementing this value.
-  CACHE_KEY_PREFIX: 3
+  # Cache issues can sometimes be fixed by incrementing this value.
+  CACHE_KEY: 6
 
 jobs:
   all:
@@ -57,25 +59,16 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         brew install gnu-tar
-        echo "::add-path::/usr/local/opt/gnu-tar/libexec/gnubin"
+        echo /usr/local/opt/gnu-tar/libexec/gnubin > $GITHUB_PATH
 
-    - name: Cache cargo registry
-      uses: actions/cache@v1
+    - name: Cache
+      uses: actions/cache@v2
       with:
-        path: ~/.cargo/registry
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-registry
-
-    - name: Cache cargo index
-      uses: actions/cache@v1
-      with:
-        path: ~/.cargo/git
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-index
-
-    - name: Cache cargo build
-      uses: actions/cache@v1
-      with:
-        path: target
-        key: ${{ env.CACHE_KEY_PREFIX }}-${{ runner.os }}-cargo-build-target
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: cargo-${{ env.CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install Stable
       uses: actions-rs/toolchain@v1
@@ -126,11 +119,13 @@ jobs:
         git diff --no-ext-diff --exit-code
 
     - name: Install `mdbook`
+      if: matrix.os != 'windows-latest'
       uses: peaceiris/actions-mdbook@v1
       with:
         mdbook-version: latest
 
     - name: Build Book
+      if: matrix.os != 'windows-latest'
       run: |
         cargo run --package gen -- --bin target/debug/imdl book
         mdbook build book --dest-dir ../www/book
@@ -150,7 +145,6 @@ jobs:
     - name: Package
       id: package
       if: startsWith(github.ref, 'refs/tags/')
-      shell: bash
       run: ./bin/package ${{github.ref}} ${{matrix.os}} ${{matrix.target}}
 
     - name: Publish Release Archive
