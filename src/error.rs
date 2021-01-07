@@ -56,7 +56,7 @@ pub(crate) enum Error {
   },
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
   MetainfoSerialize { source: bendy::serde::Error },
-  #[snafu(display("Failed to decode torrent metainfo from {}: {}", input, error))]
+  #[snafu(display("Failed to decode metainfo bencode from {}: {}", input, error))]
   MetainfoDecode {
     input: InputTarget,
     error: bendy::decoding::Error,

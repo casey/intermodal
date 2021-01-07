@@ -13,6 +13,7 @@
   clippy::map_unwrap_or,
   clippy::missing_docs_in_private_items,
   clippy::missing_inline_in_public_items,
+  clippy::needless_lifetimes,
   clippy::needless_pass_by_value,
   clippy::non_ascii_literal,
   clippy::pattern_type_mismatch,
