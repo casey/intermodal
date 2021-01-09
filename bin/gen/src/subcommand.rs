@@ -4,21 +4,13 @@ use crate::common::*;
 pub(crate) enum Subcommand {
   #[structopt(about("Update all generated docs"))]
   All {
-    #[structopt(
-      long = "no-git",
-      help = "Skip generated outputs that require a Git repository. Currently this only includes \
-              the changelog."
-    )]
-    no_git: bool,
+    #[structopt(long = "no-changelog", help = "Don't generate the changelog.")]
+    no_changelog: bool,
   },
   #[structopt(about("Generate book"))]
   Book {
-    #[structopt(
-      long = "no-git",
-      help = "Skip book contents require a Git repository. Currently this only includes the \
-              changelog."
-    )]
-    no_git: bool,
+    #[structopt(long = "no-changelog", help = "Don't generate the changelog.")]
+    no_changelog: bool,
   },
   #[structopt(about("Generate the changelog"))]
   Changelog,
@@ -84,21 +76,21 @@ impl Subcommand {
       }
       Self::CompletionScripts => Self::completion_scripts(&project)?,
       Self::Readme => Self::readme(&project)?,
-      Self::Book { no_git } => Self::book(&project, no_git)?,
+      Self::Book { no_changelog } => Self::book(&project, no_changelog)?,
       Self::Man => Self::man(&project)?,
       Self::Diff => Self::diff(&project)?,
-      Self::All { no_git } => Self::all(&project, no_git)?,
+      Self::All { no_changelog } => Self::all(&project, no_changelog)?,
     }
   }
 
   #[throws]
-  pub(crate) fn all(project: &Project, no_git: bool) {
-    if !no_git {
+  pub(crate) fn all(project: &Project, no_changelog: bool) {
+    if !no_changelog {
       Self::changelog(&project)?;
     }
     Self::completion_scripts(&project)?;
     Self::readme(&project)?;
-    Self::book(&project, no_git)?;
+    Self::book(&project, no_changelog)?;
     Self::man(&project)?;
   }
 
@@ -195,7 +187,7 @@ impl Subcommand {
   }
 
   #[throws]
-  pub(crate) fn book(project: &Project, no_git: bool) {
+  pub(crate) fn book(project: &Project, no_changelog: bool) {
     info!("Generating book…");
 
     let gen = project.gen()?;
@@ -230,11 +222,11 @@ impl Subcommand {
 
     Introduction::new(&project.config).render_to(out.join("introduction.md"))?;
 
-    let include_changelog = !no_git;
+    let include_changelog = !no_changelog;
 
     Summary::new(project, include_changelog).render_to(out.join("SUMMARY.md"))?;
 
-    if !no_git {
+    if !no_changelog {
       let changelog = Changelog::new(&project)?;
       let dst = out.join("changelog.md");
       fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;

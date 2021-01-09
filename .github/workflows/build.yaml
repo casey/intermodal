@@ -43,13 +43,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      if: github.event_name == 'pull_request'
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
-        fetch-depth: 0
-
-    - uses: actions/checkout@v2
-      if: github.event_name != 'pull_request'
       with:
         fetch-depth: 0
 
@@ -115,7 +108,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         brew install help2man
-        cargo run --package gen -- --bin target/debug/imdl all
+        cargo run --package gen -- --bin target/debug/imdl all --no-changelog
         git diff --no-ext-diff --exit-code
 
     - name: Install `mdbook`
@@ -127,7 +120,7 @@ jobs:
     - name: Build Book
       if: matrix.os != 'windows-latest'
       run: |
-        cargo run --package gen -- --bin target/debug/imdl book
+        cargo run --package gen -- --bin target/debug/imdl book --no-changelog
         mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
