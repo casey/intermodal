@@ -62,9 +62,10 @@ impl From<Sha1Digest> for Infohash {
   }
 }
 
-impl From<Infohash> for Sha1Digest {
-  fn from(infohash: Infohash) -> Sha1Digest {
-    infohash.inner
+impl From<Infohash> for [u8; 20] {
+  fn from(infohash: Infohash) -> Self {
+    infohash.inner.bytes()
+  }
 }
 
 impl Into<Sha1Digest> for Infohash {

@@ -7,7 +7,6 @@ mod action;
 mod client;
 mod request;
 mod response;
-mod state;
 
 mod announce;
 mod connect;

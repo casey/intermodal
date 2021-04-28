@@ -34,8 +34,9 @@ impl<'a> Client {
         }
       };
       sock.connect(addr).context(error::Network)?;
+      // Set the read timeout to 500ms; anything else is way too slow.
       sock
-        .set_read_timeout(Some(Duration::new(15, 0)))
+        .set_read_timeout(Some(Duration::new(0, 500_000_000)))
         .context(error::Network)?;
     } else {
       return Err(Error::TrackerNoHosts {
@@ -53,7 +54,7 @@ impl<'a> Client {
 
     let req = connect::Request {
       protocol_id: Self::UDP_TRACKER_MAGIC,
-      action: 0x0000,
+      action: 0,
       transaction_id: rng.gen(),
     };
     let mut buf = [0u8; announce::Response::LENGTH];
@@ -85,7 +86,7 @@ impl<'a> Client {
       num_want: u32::MAX,
       port: self.sock.local_addr().context(error::Network)?.port(),
     };
-    let mut buf = [0u8; 1 << 12];
+    let mut buf = [0u8; 1024];
     let (_, len) = self.exchange(&req, &mut buf)?;
 
     Client::parse_compact_peer_list(self.is_ipv6, &buf[announce::Response::LENGTH..len])
@@ -93,21 +94,10 @@ impl<'a> Client {
 
   fn exchange<T: Request>(&self, req: &T, rxbuf: &mut [u8]) -> Result<(T::Response, usize)> {
     let msg = req.serialize();
-    let resp_buf = self.send_and_retry(&msg, rxbuf)?;
-
-    let (resp, size) = T::Response::deserialize(resp_buf)?;
-    if resp.transaction_id() != req.transaction_id() || resp.action() != req.action() {
-      return Err(Error::TrackerResponse);
-    }
-
-    Ok((resp, size))
-  }
-
-  fn send_and_retry(&self, txbuf: &'a [u8], rxbuf: &'a mut [u8]) -> Result<&'a [u8]> {
     let mut len_read: usize = 0;
 
-    for _ in 0..=3 {
-      self.sock.send(txbuf).context(error::Network)?;
+    for _ in 0..3 {
+      self.sock.send(&msg).context(error::Network)?;
       if let Ok(len) = self.sock.recv(rxbuf) {
         len_read = len;
         break;
@@ -115,12 +105,17 @@ impl<'a> Client {
     }
 
     if len_read == 0 {
-      Err(Error::TrackerTimeout {
+      return Err(Error::TrackerTimeout {
         host_port: self.host_port.clone(),
-      })
-    } else {
-      Ok(&rxbuf[..len_read])
+      });
     }
+
+    let (resp, size) = T::Response::deserialize(&rxbuf[..len_read])?;
+    if resp.transaction_id() != req.transaction_id() || resp.action() != req.action() {
+      return Err(Error::TrackerResponse);
+    }
+
+    Ok((resp, size))
   }
 
   fn parse_compact_peer_list(is_ipv6: bool, buf: &[u8]) -> Result<Vec<SocketAddr>> {
@@ -160,7 +155,7 @@ impl<'a> Client {
 mod tests {
   use super::*;
   use action::Action;
-  use std::thread;
+  use std::{thread, time::Duration};
 
   #[cfg(test)]
   pub(crate) fn dummy_metainfo() -> Metainfo {
@@ -187,10 +182,57 @@ mod tests {
     }
   }
 
-  fn client_end_to_end_announce_helper(addr: &str) {
+  fn tracker_simulate_announce_response(server: UdpSocket, targets: Vec<u8>) {
+    tracker_simulate_announce_response_helper(server, targets, false)
+  }
+
+  fn tracker_simulate_announce_response_slowly(server: UdpSocket, targets: Vec<u8>) {
+    tracker_simulate_announce_response_helper(server, targets, true)
+  }
+
+  fn tracker_simulate_announce_response_helper(server: UdpSocket, targets: Vec<u8>, slowly: bool) {
+    let mut rng = rand::thread_rng();
+    let mut buf = [0u8; 8192];
+
+    // connect exchange
+    let (n, peer) = server.recv_from(&mut buf).unwrap();
+    let (req, _) = connect::Request::deserialize(buf[..n].try_into().unwrap()).unwrap();
+    let req = connect::Response {
+      action: Action::Connect.into(),
+      transaction_id: req.transaction_id,
+      connection_id: rng.gen(),
+    }
+    .serialize();
+    if slowly {
+      thread::sleep(Duration::new(60, 0));
+    }
+    server.send_to(&req, peer).unwrap();
+
+    // announce exchange
+    let (_n, peer) = server.recv_from(&mut buf).unwrap();
+    let (req, _) = announce::Request::deserialize(&buf).unwrap();
+    let mut req: Vec<u8> = announce::Response {
+      action: Action::Announce.into(),
+      transaction_id: req.transaction_id,
+      interval: 0x13371337,
+      leechers: 0xcafebabe,
+      seeders: 0xdeadbeef,
+    }
+    .serialize();
+    req.extend_from_slice(&targets);
+    if slowly {
+      thread::sleep(Duration::new(60, 0));
+    }
+    server.send_to(&req, peer).unwrap();
+  }
+
+  fn client_end_to_end_announce_helper(addr: &str, slow: bool) {
     let server = UdpSocket::bind(addr).unwrap();
-    let server_local_addr = server.local_addr().unwrap();
+    server.set_read_timeout(Some(Duration::new(15, 0))).unwrap();
+
     let mut metainfo = dummy_metainfo();
+    let server_local_addr = server.local_addr().unwrap();
+    metainfo.announce = Some(format!("udp://{}", server_local_addr));
     let mut env = test_env! {
       args: [
         "torrent",
@@ -201,6 +243,7 @@ mod tests {
       tree: {
       }
     };
+    env.write("test.torrent", metainfo.serialize().unwrap());
 
     let targets = if server_local_addr.is_ipv6() {
       vec![
@@ -218,81 +261,74 @@ mod tests {
       .collect::<Vec<String>>()
       .join("\n");
 
-    metainfo.announce = Some(format!("udp://{}", server_local_addr));
-    server.set_read_timeout(Some(Duration::new(15, 0))).unwrap();
-    env.write("test.torrent", metainfo.serialize().unwrap());
-
-    thread::spawn(move || {
-      let mut rng = rand::thread_rng();
-      let mut buf = [0; 8192];
-
-      // ==0== connect_request exchange
-      let (n, peer) = server.recv_from(&mut buf).unwrap();
-      assert_eq!(
-        n,
-        connect::Request::LENGTH,
-        "Received a connection request message with the wrong length."
-      );
-
-      let (req, _) = connect::Request::deserialize(buf[0..16].try_into().unwrap()).unwrap();
-      assert_eq!(
-        req.protocol_id,
-        tracker::Client::UDP_TRACKER_MAGIC,
-        "Client sent bad protoocl id"
-      );
-      assert_eq!(req.action, 0, "Client sent bad action.");
-
-      let req = connect::Response {
-        action: Action::Connect as u32,
-        transaction_id: req.transaction_id,
-        connection_id: rng.gen(),
-      }
-      .serialize();
-      server.send_to(&req, peer).unwrap();
-
-      // ==1== announce_request exchange
-      let (n, peer) = server.recv_from(&mut buf).unwrap();
-      assert_eq!(
-        n,
-        announce::Request::LENGTH,
-        "Received an announce request message with the wrong length."
-      );
-      let (req, _) = announce::Request::deserialize(&buf).unwrap();
-      assert_eq!(
-        req.action,
-        Action::Announce as u32,
-        "Announce request should have action equal to 1"
-      );
-
-      let mut req: Vec<u8> = announce::Response {
-        action: Action::Announce as u32,
-        transaction_id: req.transaction_id,
-        interval: 0x13371337,
-        leechers: 0xcafebabe,
-        seeders: 0xdeadbeef,
-      }
-      .serialize();
-      req.extend_from_slice(&targets);
-      server.send_to(&req, peer).unwrap();
-    });
-
+    // simulate a tracker response
+    if slow {
+      thread::spawn(move || {
+        tracker_simulate_announce_response_slowly(server, targets);
+      });
+    } else {
+      thread::spawn(move || {
+        tracker_simulate_announce_response(server, targets);
+      });
+    }
     env.run().unwrap();
 
-    assert_eq!(env.out(), format!("{}\n", target_sockaddrs));
+    if slow {
+      assert_eq!(
+        env.err(),
+        format!(
+          "Couldn't connect to tracker: Connection to UDP tracker `{}` timed out.\n",
+          server_local_addr
+        )
+      );
+    } else {
+      assert_eq!(env.out(), format!("{}\n", target_sockaddrs));
+    }
   }
 
   #[test]
   fn client_end_to_end_announce_hostname() {
-    client_end_to_end_announce_helper("localhost:0");
+    client_end_to_end_announce_helper("localhost:0", false);
   }
 
   #[test]
   fn client_end_to_end_announce_ipv4() {
-    client_end_to_end_announce_helper("127.0.0.1:0");
+    client_end_to_end_announce_helper("127.0.0.1:0", false);
   }
 
   #[test]
   fn client_end_to_end_announce_ipv6() {
-    client_end_to_end_announce_helper("[::1]:0")
+    client_end_to_end_announce_helper("[::1]:0", false)
+  }
+
+  #[test]
+  #[ignore]
+  fn client_end_to_end_announce_ipv6_timeout() {
+    client_end_to_end_announce_helper("[::1]:0", true)
+  }
+
+  #[test]
+  fn client_end_to_end_announce_timeout() {
+    // client_end_to_end_announce_helper("127.0.0.1:0", true);
+    let server = UdpSocket::bind("127.0.0.1:0").unwrap();
+    let server_local_addr = server.local_addr().unwrap();
+    let mut metainfo = dummy_metainfo();
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "announce",
+        "--input",
+        "test.torrent",
+      ],
+      tree: {
+      }
+    };
+    metainfo.announce = Some("udp://127.0.0.1:0".to_string());
+    env.write("test.torrent", metainfo.serialize().unwrap());
+    env.run().unwrap();
+    assert_eq!(
+      env.err(),
+      "Couldn't connect to tracker: Connection to UDP tracker `127.0.0.1:0` timed out.\n",
+    );
   }
 }

@@ -77,19 +77,21 @@ impl Announce {
         None => continue,
       };
 
-      let client = tracker::Client::connect(&hostport);
-      if let Err(e) = client {
-        errln!(env, "Couldn't connect to tracker: {}", e)?;
-        continue;
-      }
-      let client = client.invariant_unwrap("we know client.is_ok()");
+      let client = match tracker::Client::connect(&hostport) {
+        Err(err) => {
+          errln!(env, "Couldn't connect to tracker: {}", err)?;
+          continue;
+        }
+        Ok(client) => client,
+      };
 
       match client.announce(infohash) {
         Ok(subswarm) => {
+          errln!(env, "Successful announce to tracker `{}`.", tracker)?;
           peer_list.extend(subswarm);
           break;
         }
-        Err(err) => errln!(env, "{:?}", err)?,
+        Err(err) => errln!(env, "Announce failed with tracker `{}`: {}", tracker, err)?,
       }
     }
 
@@ -116,5 +118,47 @@ mod tests {
       },
       matches: Err(Error::Clap { .. }),
     };
+  }
+
+  #[test]
+  fn input_arguments_positional() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "announce",
+        "foo",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(error::Error::Filesystem { .. }));
+  }
+
+  #[test]
+  fn input_arguments_flag() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "announce",
+        "--input",
+        "foo",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(error::Error::Filesystem { .. }));
+  }
+
+  #[test]
+  fn input_arguments_conflict() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "announce",
+        "--input",
+        "foo",
+        "bar",
+      ],
+      tree: {},
+    };
+    assert_matches!(env.run(), Err(Error::Clap { .. }));
   }
 }

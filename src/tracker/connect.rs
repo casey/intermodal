@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct Request {
   pub(crate) protocol_id: u64,
   pub(crate) action: u32,
@@ -8,11 +8,10 @@ pub(crate) struct Request {
 }
 
 impl Request {
-  #[allow(unused)]
   pub(crate) const LENGTH: usize = 16;
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct Response {
   pub(crate) action: u32,
   pub(crate) transaction_id: u32,
@@ -20,7 +19,6 @@ pub(crate) struct Response {
 }
 
 impl Response {
-  #[allow(unused)]
   pub(crate) const LENGTH: usize = 16;
 }
 
@@ -47,9 +45,8 @@ impl super::Request for Request {
 }
 
 impl super::Response for Request {
-  #[allow(dead_code)]
   fn deserialize(buf: &[u8]) -> Result<(Self, usize)> {
-    if buf.len() != 8 + 4 + 4 {
+    if buf.len() != Self::LENGTH {
       return Err(Error::TrackerResponse);
     }
 
@@ -71,7 +68,7 @@ impl super::Response for Request {
             .invariant_unwrap("incoming type guarantees bounds are OK"),
         ),
       },
-      16,
+      Self::LENGTH,
     ))
   }
 
@@ -87,7 +84,6 @@ impl super::Response for Request {
 impl super::Request for Response {
   type Response = Request;
 
-  #[allow(dead_code)]
   fn serialize(&self) -> Vec<u8> {
     let mut msg = Vec::new();
 
@@ -109,7 +105,7 @@ impl super::Request for Response {
 
 impl super::Response for Response {
   fn deserialize(buf: &[u8]) -> Result<(Self, usize)> {
-    if buf.len() < 4 + 4 + 8 {
+    if buf.len() < Self::LENGTH {
       return Err(Error::TrackerResponse);
     }
 
@@ -141,5 +137,51 @@ impl super::Response for Response {
 
   fn action(&self) -> u32 {
     self.action
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::tracker::{connect, request::Request, response::Response};
+
+  #[test]
+  pub(crate) fn connect_request_roundtrip() {
+    let req = connect::Request {
+      protocol_id: 0x1337_beef_babe_cafe,
+      action: 50,
+      transaction_id: 1234,
+    };
+
+    let buf = req.serialize();
+    let (req2, _) = connect::Request::deserialize(&buf).unwrap();
+    assert_eq!(req, req2);
+  }
+
+  #[test]
+  pub(crate) fn connect_response_roundtrip() {
+    let resp = connect::Response {
+      action: 50,
+      transaction_id: 1234,
+      connection_id: 0x1337_beef_babe_cafe,
+    };
+
+    let buf = resp.serialize();
+    let (resp2, _) = connect::Response::deserialize(&buf).unwrap();
+    assert_eq!(resp, resp2);
+  }
+
+  #[test]
+  pub(crate) fn connect_request_datagram_size() {
+    let buf = [0x01, 0x02, 0x03];
+    let err = connect::Request::deserialize(&buf);
+    assert_matches!(err, Err(Error::TrackerResponse));
+  }
+
+  #[test]
+  pub(crate) fn connect_response_datagram_size() {
+    let buf = [0x01, 0x02, 0x03];
+    let err = connect::Response::deserialize(&buf);
+    assert_matches!(err, Err(Error::TrackerResponse));
   }
 }

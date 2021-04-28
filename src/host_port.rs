@@ -180,4 +180,18 @@ mod tests {
       "l39:1234:5678:9abc:def0:1234:5678:9abc:def0i65000ee",
     );
   }
+
+  #[test]
+  fn test_from_url() {
+    let url = Url::parse("udp://imdl.io:12345").unwrap();
+    let host_port = HostPort::from_url(&url).unwrap();
+    assert_eq!(host_port.host, Host::Domain("imdl.io".into()));
+    assert_eq!(host_port.port, 12345);
+  }
+
+  #[test]
+  fn test_from_url_no_port() {
+    let url = Url::parse("udp://imdl.io").unwrap();
+    assert!(HostPort::from_url(&url).is_none());
+  }
 }

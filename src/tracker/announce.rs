@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct Request {
   pub(crate) connection_id: u64,  //  8
   pub(crate) action: u32,         // 12
@@ -21,7 +21,7 @@ impl Request {
   pub(crate) const LENGTH: usize = 98;
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct Response {
   pub(crate) action: u32,
   pub(crate) transaction_id: u32,
@@ -147,6 +147,7 @@ impl super::Response for Request {
 impl super::Response for Response {
   fn deserialize(buf: &[u8]) -> Result<(Self, usize)> {
     if buf.len() < 4 + 4 + 4 + 4 + 4 {
+      // 20
       return Err(Error::TrackerResponse);
     }
 
@@ -213,5 +214,60 @@ impl super::Request for Response {
 
   fn action(&self) -> u32 {
     self.action
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use crate::tracker::{announce, request::Request, response::Response};
+
+  #[test]
+  pub(crate) fn announce_request_roundtrip() {
+    let req = announce::Request {
+      connection_id: 0x01,
+      action: 0x02,
+      transaction_id: 0x03,
+      infohash: [0x04; 20],
+      peer_id: [0x05; 20],
+      downloaded: 0x06,
+      left: 0x07,
+      uploaded: 0x08,
+      event: 0x09,
+      ip_address: 0x0a,
+      num_want: 0x0b,
+      port: 0x0c,
+    };
+    let buf = req.serialize();
+    let (req2, _) = announce::Request::deserialize(&buf).unwrap();
+    assert_eq!(req, req2);
+  }
+
+  #[test]
+  pub(crate) fn announce_response_roundtrip() {
+    let resp = announce::Response {
+      action: 0x01,
+      transaction_id: 0x02,
+      interval: 0x03,
+      leechers: 0x04,
+      seeders: 0x05,
+    };
+    let buf = resp.serialize();
+    let (resp2, _) = announce::Response::deserialize(&buf).unwrap();
+    assert_eq!(resp, resp2);
+  }
+
+  #[test]
+  pub(crate) fn announce_request_bad_deserialize() {
+    let buf = [0x01, 0x02, 0x03, 0x04, 0x05];
+    let err = announce::Request::deserialize(&buf);
+    assert_matches!(err, Err(Error::TrackerResponse));
+  }
+
+  #[test]
+  pub(crate) fn announce_response_bad_deserialize() {
+    let buf = [0x01, 0x02, 0x03, 0x04, 0x05];
+    let err = announce::Response::deserialize(&buf);
+    assert_matches!(err, Err(Error::TrackerResponse));
   }
 }
