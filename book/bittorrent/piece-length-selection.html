@@ -169,7 +169,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#bittorrent-piece-length-selection" id="bittorrent-piece-length-selection">BitTorrent Piece Length Selection</a></h1>
+                        <h1 id="bittorrent-piece-length-selection"><a class="header" href="#bittorrent-piece-length-selection">BitTorrent Piece Length Selection</a></h1>
 <p>BitTorrent <code>.torrent</code> files contain so-called metainfo that allows BitTorrent
 peers to locate, download, and verify the contents of a torrent.</p>
 <p>This metainfo includes the piece list, a list of SHA-1 hashes of fixed-size
@@ -185,7 +185,7 @@ algorithm chooses piece lengths that are powers of two, and that are at least
 than 16MiB have been reported to cause issues for some clients.</p>
 <p>In addition to the above constraints, there are a number of additional factors
 to consider.</p>
-<h2><a class="header" href="#factors-favoring-smaller-piece-length" id="factors-favoring-smaller-piece-length">Factors favoring smaller piece length</a></h2>
+<h2 id="factors-favoring-smaller-piece-length"><a class="header" href="#factors-favoring-smaller-piece-length">Factors favoring smaller piece length</a></h2>
 <ul>
 <li>
 <p>To avoid uploading bad data, peers only upload data from full pieces, which
@@ -198,7 +198,7 @@ uploading, and receiving data in return.</p>
 away in case of corruption.</p>
 </li>
 </ul>
-<h2><a class="header" href="#factors-favoring-larger-piece-length" id="factors-favoring-larger-piece-length">Factors favoring larger piece length</a></h2>
+<h2 id="factors-favoring-larger-piece-length"><a class="header" href="#factors-favoring-larger-piece-length">Factors favoring larger piece length</a></h2>
 <ul>
 <li>
 <p>Increasing the piece size decreases the protocol overhead from requesting
@@ -213,7 +213,7 @@ size of the metainfo.</p>
 reads, which can be beneficial for spinning disks.</p>
 </li>
 </ul>
-<h2><a class="header" href="#intermodals-algorithm" id="intermodals-algorithm">Intermodal’s Algorithm</a></h2>
+<h2 id="intermodals-algorithm"><a class="header" href="#intermodals-algorithm">Intermodal’s Algorithm</a></h2>
 <p>In Python, the algorithm used by intermodal is:</p>
 <pre><code class="language-python">MIN = 16 * 1024
 MAX = 16 * 1024 * 1024
@@ -263,8 +263,8 @@ def piece_length(content_length):
 512 TiB -&gt; 16 MiB       x 33554432 = 640 MiB
 1 PiB   -&gt; 16 MiB       x 67108864 = 1.25 GiB
 </code></pre>
-<h2><a class="header" href="#references" id="references">References</a></h2>
-<h3><a class="header" href="#articles" id="articles">Articles</a></h3>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<h3 id="articles"><a class="header" href="#articles">Articles</a></h3>
 <ul>
 <li>
 <p><a href="https://wiki.vuze.com/w/Torrent_Piece_Size">Vuze Wiki</a></p>
@@ -273,7 +273,7 @@ def piece_length(content_length):
 <p><a href="https://torrentfreak.com/how-to-make-the-best-torrents-081121/">TorrentFreak</a></p>
 </li>
 </ul>
-<h3><a class="header" href="#implementations" id="implementations">Implementations</a></h3>
+<h3 id="implementations"><a class="header" href="#implementations">Implementations</a></h3>
 <ul>
 <li>
 <p><a href="https://github.com/arvidn/libtorrent/blob/a3440e54bb7f65ac6100c3d993c53f887025d660/src/create_torrent.cpp#L367">libtorrent</a></p>

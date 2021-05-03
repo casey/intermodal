@@ -169,7 +169,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#udp-tracker-protocol" id="udp-tracker-protocol">UDP Tracker Protocol</a></h1>
+                        <h1 id="udp-tracker-protocol"><a class="header" href="#udp-tracker-protocol">UDP Tracker Protocol</a></h1>
 <p>This description of the UDP tracker protocol is adapted from
 <a href="https://libtorrent.org/udp_tracker_protocol.html">this page</a> by Arvid Norberg.</p>
 <p>A tracker with the protocol “udp://” in its URI is should be contacted with
@@ -191,41 +191,41 @@ padding.</p>
 extra padding, where <code>NAME</code> is an integer field of the same message.</p>
 <p>Files with type <code>[T]</code> are zero or more instances of values of type <code>T</code> with no
 extra padding, which make up any trailing bytes of the message.</p>
-<h2><a class="header" href="#actions" id="actions">Actions</a></h2>
+<h2 id="actions"><a class="header" href="#actions">Actions</a></h2>
 <table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>connect</td><td>0</td></tr>
 <tr><td>announce</td><td>1</td></tr>
 <tr><td>scrape</td><td>2</td></tr>
 <tr><td>error</td><td>3</td></tr>
 </tbody></table>
-<h2><a class="header" href="#events" id="events">Events</a></h2>
+<h2 id="events"><a class="header" href="#events">Events</a></h2>
 <table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>none</td><td>0</td></tr>
 <tr><td>completed</td><td>1</td></tr>
 <tr><td>started</td><td>2</td></tr>
 <tr><td>stopped</td><td>3</td></tr>
 </tbody></table>
-<h2><a class="header" href="#error" id="error">Error</a></h2>
+<h2 id="error"><a class="header" href="#error">Error</a></h2>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
 <tr><td>[i8]</td><td>error_string</td><td>rest of packet is string describing error</td></tr>
 </tbody></table>
-<h2><a class="header" href="#connect" id="connect">Connect</a></h2>
-<h3><a class="header" href="#request" id="request">Request</a></h3>
+<h2 id="connect"><a class="header" href="#connect">Connect</a></h2>
+<h3 id="request"><a class="header" href="#request">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
-<h3><a class="header" href="#response" id="response">Response</a></h3>
+<h3 id="response"><a class="header" href="#response">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 <tr><td>i64</td><td>connection_id</td></tr>
 </tbody></table>
-<h2><a class="header" href="#announce" id="announce">Announce</a></h2>
-<h3><a class="header" href="#request-1" id="request-1">Request</a></h3>
+<h2 id="announce"><a class="header" href="#announce">Announce</a></h2>
+<h3 id="request-1"><a class="header" href="#request-1">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td><td></td></tr>
 <tr><td>i32</td><td>action</td><td></td></tr>
@@ -242,7 +242,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>u16</td><td>port</td><td>listening port</td></tr>
 <tr><td>u16</td><td>extensions</td><td></td></tr>
 </tbody></table>
-<h3><a class="header" href="#response-1" id="response-1">Response</a></h3>
+<h3 id="response-1"><a class="header" href="#response-1">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
@@ -255,8 +255,8 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>i32</td><td>ip</td><td>peer IP</td></tr>
 <tr><td>i16</td><td>port</td><td>peer listening port</td></tr>
 </tbody></table>
-<h2><a class="header" href="#scrape" id="scrape">Scrape</a></h2>
-<h3><a class="header" href="#request-2" id="request-2">Request</a></h3>
+<h2 id="scrape"><a class="header" href="#scrape">Scrape</a></h2>
+<h3 id="request-2"><a class="header" href="#request-2">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
@@ -266,7 +266,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>[i8; 20]</td><td>info_hash</td></tr>
 </tbody></table>
-<h3><a class="header" href="#response-2" id="response-2">Response</a></h3>
+<h3 id="response-2"><a class="header" href="#response-2">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
@@ -277,7 +277,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>i32</td><td>downloaded</td><td>times torrent has been downloaded</td></tr>
 <tr><td>i32</td><td>incomplete</td><td>peers that have not finished downloading</td></tr>
 </tbody></table>
-<h2><a class="header" href="#extensions" id="extensions">Extensions</a></h2>
+<h2 id="extensions"><a class="header" href="#extensions">Extensions</a></h2>
 <p>The extensions field is a bitmask. The following bits are assigned:</p>
 <table><thead><tr><th>name</th><th>bit</th></tr></thead><tbody>
 <tr><td>authentication</td><td>1</td></tr>
@@ -287,7 +287,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 appended to the packet in the order of least significant bit first. For
 instance, if both bit 1 and 2 are set, the extension represented by bit 1 comes
 first, followed by the extension represented by bit 2.</p>
-<h3><a class="header" href="#authentication" id="authentication">Authentication</a></h3>
+<h3 id="authentication"><a class="header" href="#authentication">Authentication</a></h3>
 <p>The packet will have authentication information appended to it.</p>
 <p><code>passwd_hash</code> is the first eight bytes of <code>sha1(packet || sha1(password))</code>,
 where <code>packet</code> is the bytes of the packet, less the final 8 bytes that are
@@ -297,7 +297,7 @@ where <code>packet</code> is the bytes of the packet, less the final 8 bytes tha
 <tr><td>[i8; <code>username_length</code></td><td>username</td></tr>
 <tr><td>[u8; 8]</td><td>passwd_hash</td></tr>
 </tbody></table>
-<h3><a class="header" href="#request-string" id="request-string">Request String</a></h3>
+<h3 id="request-string"><a class="header" href="#request-string">Request String</a></h3>
 <p>The request string extension is meant to allow torrent creators pass along
 cookies back to the tracker. This can be useful for authenticating that a
 torrent is allowed to be tracked by a tracker for instance. It could also be
@@ -312,7 +312,7 @@ UDP tracker URL. Typically this starts with “/announce” The bittorrent clien
 is not expected to append query string arguments for stats reporting, like
 “uploaded” and “downloaded” since this is already reported in the UDP tracker
 protocol. However, the client is free to add arguments as extensions.|</p>
-<h2><a class="header" href="#credits" id="credits">Credits</a></h2>
+<h2 id="credits"><a class="header" href="#credits">Credits</a></h2>
 <p>Protocol designed by Olaf van der Spek and extended by Arvid Norberg</p>
 
                     </main>

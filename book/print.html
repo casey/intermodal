@@ -171,7 +171,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#intermodal-a-40-shipping-container-for-the-internet" id="intermodal-a-40-shipping-container-for-the-internet">Intermodal: A 40’ shipping container for the Internet</a></h1>
+                        <h1 id="intermodal-a-40-shipping-container-for-the-internet"><a class="header" href="#intermodal-a-40-shipping-container-for-the-internet">Intermodal: A 40’ shipping container for the Internet</a></h1>
 <p>Intermodal is a user-friendly and featureful command-line BitTorrent metainfo utility for Linux, Windows, and macOS.</p>
 <p>Project development is hosted on <a href="https://github.com/casey/intermodal">GitHub</a>.</p>
 <p>The binary is called <code>imdl</code>:</p>
@@ -203,7 +203,7 @@
 <pre><code class="language-sh">$ imdl --unstable torrent stats --input dir
 </code></pre>
 <p>Happy sharing!</p>
-<h1><a class="header" href="#faq" id="faq">FAQ</a></h1>
+<h1 id="faq"><a class="header" href="#faq">FAQ</a></h1>
 <ul>
 <li>
 <p><a href="faq.html#fzf-preview">Can Intermodal be used to preview torrents with <code>fzf</code>?</a></p>
@@ -216,7 +216,7 @@
 </li>
 </ul>
 <p><a name="fzf-preview"></a></p>
-<h2><a class="header" href="#can-intermodal-be-used-to-preview-torrents-with-fzf" id="can-intermodal-be-used-to-preview-torrents-with-fzf">Can Intermodal be used to preview torrents with <code>fzf</code>?</a></h2>
+<h2 id="can-intermodal-be-used-to-preview-torrents-with-fzf"><a class="header" href="#can-intermodal-be-used-to-preview-torrents-with-fzf">Can Intermodal be used to preview torrents with <code>fzf</code>?</a></h2>
 </h2>
 <p>Yes! <a href="https://github.com/mustaqimM">@mustaqimM</a> came up with the following:</p>
 <pre><code>fzf --preview='imdl --color always --terminal torrent show --input {}
@@ -226,7 +226,7 @@
 <pre><code>find . -name '*.torrent' | fzf --preview='imdl -c always -t torrent show -i {}'
 </code></pre>
 <p><a name="git-repo"></a></p>
-<h2><a class="header" href="#can-intermodal-be-used-to-create-a-torrent-from-a-git-repo" id="can-intermodal-be-used-to-create-a-torrent-from-a-git-repo">Can Intermodal be used to create a torrent from a Git repo?</a></h2>
+<h2 id="can-intermodal-be-used-to-create-a-torrent-from-a-git-repo"><a class="header" href="#can-intermodal-be-used-to-create-a-torrent-from-a-git-repo">Can Intermodal be used to create a torrent from a Git repo?</a></h2>
 </h2>
 <p>Yes! The <code>--ignore</code> flag, contributed by <a href="https://github.com/Celeo">@Celeo</a>, can be used
 to make <code>imdl torrent create</code> respect <code>.gitignore</code> files:</p>
@@ -239,7 +239,7 @@ otherwise be skipped, and to skip the contents of the <code>.git</code> director
 <pre><code>imdl torrent create --ignore -hjg '!.git/*' -i .
 </code></pre>
 <p><a name="include"></a></p>
-<h2><a class="header" href="#how-do-i-include-and-exclude-files-when-creating-a-torrent" id="how-do-i-include-and-exclude-files-when-creating-a-torrent">How do I include and exclude files when creating a torrent?</a></h2>
+<h2 id="how-do-i-include-and-exclude-files-when-creating-a-torrent"><a class="header" href="#how-do-i-include-and-exclude-files-when-creating-a-torrent">How do I include and exclude files when creating a torrent?</a></h2>
 </h2>
 <p>There are a few ways to control which files are included when you create a torrent.</p>
 <p>By default, symlinks, hidden files, and common “junk” files are excluded. To include these files, use:</p>
@@ -266,9 +266,9 @@ imdl torrent create --input foo --glob '!bar/' --glob '!bob/'
 imdl torrent create --input foo --glob `bar/` --glob `!bar/baz/`
 </code></pre>
 <p><code>--glob</code> can be passed any number of times. If multiple <code>PATTERN</code>s match a path, the last one on the command line takes precedence.</p>
-<h1><a class="header" href="#commands" id="commands">Commands</a></h1>
+<h1 id="commands"><a class="header" href="#commands">Commands</a></h1>
 <p>This page intentionally left blank.</p>
-<h1><a class="header" href="#imdl" id="imdl"><code>imdl</code></a></h1>
+<h1 id="imdl"><a class="header" href="#imdl"><code>imdl</code></a></h1>
 <pre><code>imdl v0.1.12
 Casey Rodarmor &lt;casey@rodarmor.com&gt;
 📦 A 40' shipping container for the internet -
@@ -306,7 +306,7 @@ SUBCOMMANDS:
     torrent        Subcommands related to the BitTorrent protocol.
 
 </code></pre>
-<h1><a class="header" href="#imdl-completions" id="imdl-completions"><code>imdl completions</code></a></h1>
+<h1 id="imdl-completions"><a class="header" href="#imdl-completions"><code>imdl completions</code></a></h1>
 <pre><code>imdl-completions 0.1.12
 Print shell completion scripts to standard output.
 
@@ -329,7 +329,7 @@ ARGS:
                bash, fish, powershell, elvish]
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent" id="imdl-torrent"><code>imdl torrent</code></a></h1>
+<h1 id="imdl-torrent"><a class="header" href="#imdl-torrent"><code>imdl torrent</code></a></h1>
 <pre><code>imdl-torrent 0.1.12
 Subcommands related to the BitTorrent protocol.
 
@@ -352,7 +352,7 @@ SUBCOMMANDS:
     verify          Verify files against a .torrent file.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-create" id="imdl-torrent-create"><code>imdl torrent create</code></a></h1>
+<h1 id="imdl-torrent-create"><a class="header" href="#imdl-torrent-create"><code>imdl torrent create</code></a></h1>
 <pre><code>imdl-torrent-create 0.1.12
 Create a .torrent file.
 
@@ -506,7 +506,7 @@ ARGS:
                is not given.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-link" id="imdl-torrent-link"><code>imdl torrent link</code></a></h1>
+<h1 id="imdl-torrent-link"><a class="header" href="#imdl-torrent-link"><code>imdl torrent link</code></a></h1>
 <pre><code>imdl-torrent-link 0.1.12
 Generate a magnet link from a .torrent file.
 
@@ -534,7 +534,7 @@ ARGS:
                `-`, read metainfo from standard input.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-piece-length" id="imdl-torrent-piece-length"><code>imdl torrent piece-length</code></a></h1>
+<h1 id="imdl-torrent-piece-length"><a class="header" href="#imdl-torrent-piece-length"><code>imdl torrent piece-length</code></a></h1>
 <pre><code>imdl-torrent-piece-length 0.1.12
 Display information about automatic piece length selection.
 
@@ -546,7 +546,7 @@ FLAGS:
     -V, --version    Print version number.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-show" id="imdl-torrent-show"><code>imdl torrent show</code></a></h1>
+<h1 id="imdl-torrent-show"><a class="header" href="#imdl-torrent-show"><code>imdl torrent show</code></a></h1>
 <pre><code>imdl-torrent-show 0.1.12
 Display information about a .torrent file.
 
@@ -567,7 +567,7 @@ ARGS:
                read torrent metainfo from standard input.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-stats" id="imdl-torrent-stats"><code>imdl torrent stats</code></a></h1>
+<h1 id="imdl-torrent-stats"><a class="header" href="#imdl-torrent-stats"><code>imdl torrent stats</code></a></h1>
 <pre><code>imdl-torrent-stats 0.1.12
 Show statistics about a collection of .torrent files.
 
@@ -597,7 +597,7 @@ OPTIONS:
             collections of `.torrent` files.
 
 </code></pre>
-<h1><a class="header" href="#imdl-torrent-verify" id="imdl-torrent-verify"><code>imdl torrent verify</code></a></h1>
+<h1 id="imdl-torrent-verify"><a class="header" href="#imdl-torrent-verify"><code>imdl torrent verify</code></a></h1>
 <pre><code>imdl-torrent-verify 0.1.12
 Verify files against a .torrent file.
 
@@ -621,9 +621,9 @@ ARGS:
                If `INPUT` is `-`, read metainfo from standard input.
 
 </code></pre>
-<h1><a class="header" href="#bittorrent" id="bittorrent">BitTorrent</a></h1>
+<h1 id="bittorrent"><a class="header" href="#bittorrent">BitTorrent</a></h1>
 <p>This page intentionally left blank.</p>
-<h1><a class="header" href="#bittorrent-piece-length-selection" id="bittorrent-piece-length-selection">BitTorrent Piece Length Selection</a></h1>
+<h1 id="bittorrent-piece-length-selection"><a class="header" href="#bittorrent-piece-length-selection">BitTorrent Piece Length Selection</a></h1>
 <p>BitTorrent <code>.torrent</code> files contain so-called metainfo that allows BitTorrent
 peers to locate, download, and verify the contents of a torrent.</p>
 <p>This metainfo includes the piece list, a list of SHA-1 hashes of fixed-size
@@ -639,7 +639,7 @@ algorithm chooses piece lengths that are powers of two, and that are at least
 than 16MiB have been reported to cause issues for some clients.</p>
 <p>In addition to the above constraints, there are a number of additional factors
 to consider.</p>
-<h2><a class="header" href="#factors-favoring-smaller-piece-length" id="factors-favoring-smaller-piece-length">Factors favoring smaller piece length</a></h2>
+<h2 id="factors-favoring-smaller-piece-length"><a class="header" href="#factors-favoring-smaller-piece-length">Factors favoring smaller piece length</a></h2>
 <ul>
 <li>
 <p>To avoid uploading bad data, peers only upload data from full pieces, which
@@ -652,7 +652,7 @@ uploading, and receiving data in return.</p>
 away in case of corruption.</p>
 </li>
 </ul>
-<h2><a class="header" href="#factors-favoring-larger-piece-length" id="factors-favoring-larger-piece-length">Factors favoring larger piece length</a></h2>
+<h2 id="factors-favoring-larger-piece-length"><a class="header" href="#factors-favoring-larger-piece-length">Factors favoring larger piece length</a></h2>
 <ul>
 <li>
 <p>Increasing the piece size decreases the protocol overhead from requesting
@@ -667,7 +667,7 @@ size of the metainfo.</p>
 reads, which can be beneficial for spinning disks.</p>
 </li>
 </ul>
-<h2><a class="header" href="#intermodals-algorithm" id="intermodals-algorithm">Intermodal’s Algorithm</a></h2>
+<h2 id="intermodals-algorithm"><a class="header" href="#intermodals-algorithm">Intermodal’s Algorithm</a></h2>
 <p>In Python, the algorithm used by intermodal is:</p>
 <pre><code class="language-python">MIN = 16 * 1024
 MAX = 16 * 1024 * 1024
@@ -717,8 +717,8 @@ def piece_length(content_length):
 512 TiB -&gt; 16 MiB       x 33554432 = 640 MiB
 1 PiB   -&gt; 16 MiB       x 67108864 = 1.25 GiB
 </code></pre>
-<h2><a class="header" href="#references" id="references">References</a></h2>
-<h3><a class="header" href="#articles" id="articles">Articles</a></h3>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<h3 id="articles"><a class="header" href="#articles">Articles</a></h3>
 <ul>
 <li>
 <p><a href="https://wiki.vuze.com/w/Torrent_Piece_Size">Vuze Wiki</a></p>
@@ -727,7 +727,7 @@ def piece_length(content_length):
 <p><a href="https://torrentfreak.com/how-to-make-the-best-torrents-081121/">TorrentFreak</a></p>
 </li>
 </ul>
-<h3><a class="header" href="#implementations" id="implementations">Implementations</a></h3>
+<h3 id="implementations"><a class="header" href="#implementations">Implementations</a></h3>
 <ul>
 <li>
 <p><a href="https://github.com/arvidn/libtorrent/blob/a3440e54bb7f65ac6100c3d993c53f887025d660/src/create_torrent.cpp#L367">libtorrent</a></p>
@@ -742,7 +742,7 @@ def piece_length(content_length):
 <p><a href="https://github.com/torrent-file-editor/torrent-file-editor/blob/811e401b38f26b6d94c4808c54ae2dcc7bbc27dd/mainwindow.cpp#L1210">Torrent File Editor</a></p>
 </li>
 </ul>
-<h1><a class="header" href="#bep-support" id="bep-support">BEP Support</a></h1>
+<h1 id="bep-support"><a class="header" href="#bep-support">BEP Support</a></h1>
 <table><thead><tr><th align="center">Symbol</th><th>Meaning</th></tr></thead><tbody>
 <tr><td align="center">✅</td><td>Supported</td></tr>
 <tr><td align="center">❌</td><td>Unsupported (link to issue)</td></tr>
@@ -806,7 +806,7 @@ def piece_length(content_length):
 <tr><td align="center"><a href="http://bittorrent.org/beps/bep_0054.html">54</a></td><td align="center">➖</td><td align="left">The lt_donthave extension</td></tr>
 <tr><td align="center"><a href="http://bittorrent.org/beps/bep_0055.html">55</a></td><td align="center">➖</td><td align="left">Holepunch extension</td></tr>
 </tbody></table>
-<h1><a class="header" href="#metainfo-utilities" id="metainfo-utilities">Metainfo Utilities</a></h1>
+<h1 id="metainfo-utilities"><a class="header" href="#metainfo-utilities">Metainfo Utilities</a></h1>
 <table><thead><tr><th>Name</th><th>UI</th><th>Language</th><th>Notes</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rndusr/torf-cli">torf-cli</a></td><td>CLI</td><td>Python</td><td>Highly recommended utility for creating torrents and magnet links, as well as displaying information about and editing existing torrents.</td></tr>
 <tr><td><a href="https://github.com/Rudde/mktorrent">mktorrent</a></td><td>CLI</td><td>C</td><td>Popular but unmaintained torrent file creator.</td></tr>
@@ -825,7 +825,7 @@ def piece_length(content_length):
 <tr><td><a href="http://manpages.ubuntu.com/manpages/bionic/man1/buildtorrent.1.html">buildtorrent</a></td><td>CLI</td><td>C</td><td>Torrent file creator packaged for Ubuntu and Debian</td></tr>
 <tr><td><a href="https://github.com/fuchsi/maketorrent">maketorrent</a></td><td>CLI</td><td>Rust</td><td>Torrent file creator.</td></tr>
 </tbody></table>
-<h1><a class="header" href="#distributing-large-data-sets" id="distributing-large-data-sets">Distributing Large Data Sets</a></h1>
+<h1 id="distributing-large-data-sets"><a class="header" href="#distributing-large-data-sets">Distributing Large Data Sets</a></h1>
 <p>Even though BitTorrent is well-suited for distributing large amounts of data,
 very large torrents can still cause problems. Here are some of the problems you
 might encounter, as well as suggestions for how to avoid or ameliorate those
@@ -834,7 +834,7 @@ issues.</p>
 distributing a large data set and hashing time is a problem, please open an
 issue! I’m eager to improve hashing performance, but want to make sure I do it
 in such a way that real workloads benefit.</p>
-<h2><a class="header" href="#background" id="background">Background</a></h2>
+<h2 id="background"><a class="header" href="#background">Background</a></h2>
 <p>In order to support incremental download and verification, as well as
 resumption of partial downloads, the contents of a torrent are broken into
 pieces.</p>
@@ -845,13 +845,13 @@ Very large torrents may use much larger piece lengths, like 16MiB.</p>
 contain a list of those hashes.</p>
 <p>For all the example commands, I’ll be using <code>dir</code> for the directory containing
 the data set you want to share.</p>
-<h2><a class="header" href="#issues" id="issues">Issues</a></h2>
-<h3><a class="header" href="#torrent-file-too-large" id="torrent-file-too-large"><code>.torrent</code> file too large</a></h3>
+<h2 id="issues"><a class="header" href="#issues">Issues</a></h2>
+<h3 id="torrent-file-too-large"><a class="header" href="#torrent-file-too-large"><code>.torrent</code> file too large</a></h3>
 <p>When the amount of data is large, or the piece length is small, the number of
 pieces can make the <code>.torrent</code> file very big.</p>
 <p>To avoid this, you can either break the data into multiple torrents, or make
 the piece length larger, so the <code>.torrent</code> file contains fewer pieces.</p>
-<h4><a class="header" href="#breaking-data-into-multiple-torrents" id="breaking-data-into-multiple-torrents">Breaking data into multiple torrents</a></h4>
+<h4 id="breaking-data-into-multiple-torrents"><a class="header" href="#breaking-data-into-multiple-torrents">Breaking data into multiple torrents</a></h4>
 <p><code>imdl torrent create</code> has a <code>--glob</code> option that can be used to control which
 files are included in a torrent. If your data set is divided into multiple
 files, ideally with a consistent naming scheme, this can be used to easily
@@ -863,7 +863,7 @@ $ imdl torrent create -i dir -o b.torrent --glob 'dir/1*'
 $ imdl torrent create -i dir -o c.torrent --glob 'dir/2*'
 # etc…
 </code></pre>
-<h4><a class="header" href="#making-the-piece-length-larger" id="making-the-piece-length-larger">Making the piece length larger</a></h4>
+<h4 id="making-the-piece-length-larger"><a class="header" href="#making-the-piece-length-larger">Making the piece length larger</a></h4>
 <p><code>imdl</code> has an automatic piece length picker, which should choose a good piece
 length. You can see what choices it makes for different torrent sizes with:</p>
 <pre><code>$ imdl torrrent piece-length
@@ -874,11 +874,11 @@ overridden by specifying <code>--piece-length</code> manually. <code>--piece-len
 SI units, like <code>KiB</code>, <code>MiB</code>, and <code>KiB</code>:</p>
 <pre><code>$ imdl torrent create -i dir --piece-length 128mib
 </code></pre>
-<h3><a class="header" href="#too-many-files" id="too-many-files">Too many files</a></h3>
+<h3 id="too-many-files"><a class="header" href="#too-many-files">Too many files</a></h3>
 <p>Torrents containing a large number of separate files can cause performance
 issues. It’s not clear if these performance issues are due to BitTorrent client
 implementations, host OS file system issues, or both.</p>
-<h4><a class="header" href="#distributing-your-data-set-as-an-iso-image" id="distributing-your-data-set-as-an-iso-image">Distributing your data set as an ISO image</a></h4>
+<h4 id="distributing-your-data-set-as-an-iso-image"><a class="header" href="#distributing-your-data-set-as-an-iso-image">Distributing your data set as an ISO image</a></h4>
 <p>By distributing your data set as an ISO image, all the files in your torrent
 will be packed into a single <code>.iso</code> file. Additionally, recipients of the ISO
 won’t have to decompress the whole data set to browse or extract individual
@@ -913,10 +913,10 @@ $ sudo umount /mnt                     # unmount when finished
 </code></pre>
 <p>On Windows, MacOS, and some Linux desktop environments, ISOs can also be
 mounted by double-clicking the file.</p>
-<h3><a class="header" href="#torrent-client-issues" id="torrent-client-issues">Torrent Client Issues</a></h3>
+<h3 id="torrent-client-issues"><a class="header" href="#torrent-client-issues">Torrent Client Issues</a></h3>
 <p>Some torrent clients don’t do well with torrents with large piece sizes, many
 files, or a large amount of data.</p>
-<h4><a class="header" href="#switch-to-a-libtorrent-based-client" id="switch-to-a-libtorrent-based-client">Switch to a <code>libtorrent</code>-based client</a></h4>
+<h4 id="switch-to-a-libtorrent-based-client"><a class="header" href="#switch-to-a-libtorrent-based-client">Switch to a <code>libtorrent</code>-based client</a></h4>
 <p>If you’re experiencing issues downloading a large data set, switching torrent
 clients may help.</p>
 <p>In my personal experience, torrent clients that use Arvid Norberg’s
@@ -924,13 +924,13 @@ clients may help.</p>
 <p><code>libtorrent</code>‘s <a href="https://en.wikipedia.org/wiki/Libtorrent">Wikipedia page</a> has a
 <a href="https://en.wikipedia.org/wiki/Libtorrent#Applications">list</a> of torrent
 clients that use <code>libtorrent</code>.</p>
-<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>If you have suggestions for this guide, please don’t hesitate to open an
 <a href="https://github.com/casey/intermodal/issues">issue</a>.</p>
 <p>In particular, if you’ve found particular torrent clients to be good or bad at
 downloading large data sets, or have run into issues or found solutions not
 covered by this guide, I would love to know!</p>
-<h1><a class="header" href="#udp-tracker-protocol" id="udp-tracker-protocol">UDP Tracker Protocol</a></h1>
+<h1 id="udp-tracker-protocol"><a class="header" href="#udp-tracker-protocol">UDP Tracker Protocol</a></h1>
 <p>This description of the UDP tracker protocol is adapted from
 <a href="https://libtorrent.org/udp_tracker_protocol.html">this page</a> by Arvid Norberg.</p>
 <p>A tracker with the protocol “udp://” in its URI is should be contacted with
@@ -952,41 +952,41 @@ padding.</p>
 extra padding, where <code>NAME</code> is an integer field of the same message.</p>
 <p>Files with type <code>[T]</code> are zero or more instances of values of type <code>T</code> with no
 extra padding, which make up any trailing bytes of the message.</p>
-<h2><a class="header" href="#actions" id="actions">Actions</a></h2>
+<h2 id="actions"><a class="header" href="#actions">Actions</a></h2>
 <table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>connect</td><td>0</td></tr>
 <tr><td>announce</td><td>1</td></tr>
 <tr><td>scrape</td><td>2</td></tr>
 <tr><td>error</td><td>3</td></tr>
 </tbody></table>
-<h2><a class="header" href="#events" id="events">Events</a></h2>
+<h2 id="events"><a class="header" href="#events">Events</a></h2>
 <table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>none</td><td>0</td></tr>
 <tr><td>completed</td><td>1</td></tr>
 <tr><td>started</td><td>2</td></tr>
 <tr><td>stopped</td><td>3</td></tr>
 </tbody></table>
-<h2><a class="header" href="#error" id="error">Error</a></h2>
+<h2 id="error"><a class="header" href="#error">Error</a></h2>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
 <tr><td>[i8]</td><td>error_string</td><td>rest of packet is string describing error</td></tr>
 </tbody></table>
-<h2><a class="header" href="#connect" id="connect">Connect</a></h2>
-<h3><a class="header" href="#request" id="request">Request</a></h3>
+<h2 id="connect"><a class="header" href="#connect">Connect</a></h2>
+<h3 id="request"><a class="header" href="#request">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
-<h3><a class="header" href="#response" id="response">Response</a></h3>
+<h3 id="response"><a class="header" href="#response">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 <tr><td>i64</td><td>connection_id</td></tr>
 </tbody></table>
-<h2><a class="header" href="#announce" id="announce">Announce</a></h2>
-<h3><a class="header" href="#request-1" id="request-1">Request</a></h3>
+<h2 id="announce"><a class="header" href="#announce">Announce</a></h2>
+<h3 id="request-1"><a class="header" href="#request-1">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td><td></td></tr>
 <tr><td>i32</td><td>action</td><td></td></tr>
@@ -1003,7 +1003,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>u16</td><td>port</td><td>listening port</td></tr>
 <tr><td>u16</td><td>extensions</td><td></td></tr>
 </tbody></table>
-<h3><a class="header" href="#response-1" id="response-1">Response</a></h3>
+<h3 id="response-1"><a class="header" href="#response-1">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
@@ -1016,8 +1016,8 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>i32</td><td>ip</td><td>peer IP</td></tr>
 <tr><td>i16</td><td>port</td><td>peer listening port</td></tr>
 </tbody></table>
-<h2><a class="header" href="#scrape" id="scrape">Scrape</a></h2>
-<h3><a class="header" href="#request-2" id="request-2">Request</a></h3>
+<h2 id="scrape"><a class="header" href="#scrape">Scrape</a></h2>
+<h3 id="request-2"><a class="header" href="#request-2">Request</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
@@ -1027,7 +1027,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>[i8; 20]</td><td>info_hash</td></tr>
 </tbody></table>
-<h3><a class="header" href="#response-2" id="response-2">Response</a></h3>
+<h3 id="response-2"><a class="header" href="#response-2">Response</a></h3>
 <table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
@@ -1038,7 +1038,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>i32</td><td>downloaded</td><td>times torrent has been downloaded</td></tr>
 <tr><td>i32</td><td>incomplete</td><td>peers that have not finished downloading</td></tr>
 </tbody></table>
-<h2><a class="header" href="#extensions" id="extensions">Extensions</a></h2>
+<h2 id="extensions"><a class="header" href="#extensions">Extensions</a></h2>
 <p>The extensions field is a bitmask. The following bits are assigned:</p>
 <table><thead><tr><th>name</th><th>bit</th></tr></thead><tbody>
 <tr><td>authentication</td><td>1</td></tr>
@@ -1048,7 +1048,7 @@ extra padding, which make up any trailing bytes of the message.</p>
 appended to the packet in the order of least significant bit first. For
 instance, if both bit 1 and 2 are set, the extension represented by bit 1 comes
 first, followed by the extension represented by bit 2.</p>
-<h3><a class="header" href="#authentication" id="authentication">Authentication</a></h3>
+<h3 id="authentication"><a class="header" href="#authentication">Authentication</a></h3>
 <p>The packet will have authentication information appended to it.</p>
 <p><code>passwd_hash</code> is the first eight bytes of <code>sha1(packet || sha1(password))</code>,
 where <code>packet</code> is the bytes of the packet, less the final 8 bytes that are
@@ -1058,7 +1058,7 @@ where <code>packet</code> is the bytes of the packet, less the final 8 bytes tha
 <tr><td>[i8; <code>username_length</code></td><td>username</td></tr>
 <tr><td>[u8; 8]</td><td>passwd_hash</td></tr>
 </tbody></table>
-<h3><a class="header" href="#request-string" id="request-string">Request String</a></h3>
+<h3 id="request-string"><a class="header" href="#request-string">Request String</a></h3>
 <p>The request string extension is meant to allow torrent creators pass along
 cookies back to the tracker. This can be useful for authenticating that a
 torrent is allowed to be tracked by a tracker for instance. It could also be
@@ -1073,11 +1073,11 @@ UDP tracker URL. Typically this starts with “/announce” The bittorrent clien
 is not expected to append query string arguments for stats reporting, like
 “uploaded” and “downloaded” since this is already reported in the UDP tracker
 protocol. However, the client is free to add arguments as extensions.|</p>
-<h2><a class="header" href="#credits" id="credits">Credits</a></h2>
+<h2 id="credits"><a class="header" href="#credits">Credits</a></h2>
 <p>Protocol designed by Olaf van der Spek and extended by Arvid Norberg</p>
-<h1><a class="header" href="#references-1" id="references-1">References</a></h1>
+<h1 id="references-1"><a class="header" href="#references-1">References</a></h1>
 <p>This page intentionally left blank.</p>
-<h1><a class="header" href="#bittorrent-1" id="bittorrent-1">BitTorrent</a></h1>
+<h1 id="bittorrent-1"><a class="header" href="#bittorrent-1">BitTorrent</a></h1>
 <ul>
 <li>
 <p><a href="https://github.com/bittorrent/bittorrent.org">https://github.com/bittorrent/bittorrent.org</a> — GitHub repository hosting protocol development discussion and contents of bittorrent.org.</p>
@@ -1098,11 +1098,11 @@ protocol. However, the client is free to add arguments as extensions.|</p>
 <p><a href="https://libtorrent.org/udp_tracker_protocol.html">https://libtorrent.org/udp_tracker_protocol.html</a> — UDP tracker protocol description.</p>
 </li>
 </ul>
-<h1><a class="header" href="#metadata" id="metadata">Metadata</a></h1>
+<h1 id="metadata"><a class="header" href="#metadata">Metadata</a></h1>
 <ul>
 <li><a href="http://www.rssboard.org/media-rss">Media RSS Specification</a> — <em>Media RSS is a new RSS module that supplements the <enclosure> capabilities of RSS 2.0. RSS enclosures are already being used to syndicate audio files and images. Media RSS extends enclosures to handle other media types, such as short films or TV, as well as provide additional metadata with the media. Media RSS enables content publishers and bloggers to syndicate multimedia content such as TV and video clips, movies, images and audio.</em></li>
 </ul>
-<h1><a class="header" href="#cryptography" id="cryptography">Cryptography</a></h1>
+<h1 id="cryptography"><a class="header" href="#cryptography">Cryptography</a></h1>
 <ul>
 <li>
 <p><a href="https://ssbc.github.io/scuttlebutt-protocol-guide/">https://ssbc.github.io/scuttlebutt-protocol-guide/</a> — Secure Scuttlebutt Protocol guide</p>

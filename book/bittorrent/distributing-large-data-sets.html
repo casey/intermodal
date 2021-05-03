@@ -169,7 +169,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#distributing-large-data-sets" id="distributing-large-data-sets">Distributing Large Data Sets</a></h1>
+                        <h1 id="distributing-large-data-sets"><a class="header" href="#distributing-large-data-sets">Distributing Large Data Sets</a></h1>
 <p>Even though BitTorrent is well-suited for distributing large amounts of data,
 very large torrents can still cause problems. Here are some of the problems you
 might encounter, as well as suggestions for how to avoid or ameliorate those
@@ -178,7 +178,7 @@ issues.</p>
 distributing a large data set and hashing time is a problem, please open an
 issue! I’m eager to improve hashing performance, but want to make sure I do it
 in such a way that real workloads benefit.</p>
-<h2><a class="header" href="#background" id="background">Background</a></h2>
+<h2 id="background"><a class="header" href="#background">Background</a></h2>
 <p>In order to support incremental download and verification, as well as
 resumption of partial downloads, the contents of a torrent are broken into
 pieces.</p>
@@ -189,13 +189,13 @@ Very large torrents may use much larger piece lengths, like 16MiB.</p>
 contain a list of those hashes.</p>
 <p>For all the example commands, I’ll be using <code>dir</code> for the directory containing
 the data set you want to share.</p>
-<h2><a class="header" href="#issues" id="issues">Issues</a></h2>
-<h3><a class="header" href="#torrent-file-too-large" id="torrent-file-too-large"><code>.torrent</code> file too large</a></h3>
+<h2 id="issues"><a class="header" href="#issues">Issues</a></h2>
+<h3 id="torrent-file-too-large"><a class="header" href="#torrent-file-too-large"><code>.torrent</code> file too large</a></h3>
 <p>When the amount of data is large, or the piece length is small, the number of
 pieces can make the <code>.torrent</code> file very big.</p>
 <p>To avoid this, you can either break the data into multiple torrents, or make
 the piece length larger, so the <code>.torrent</code> file contains fewer pieces.</p>
-<h4><a class="header" href="#breaking-data-into-multiple-torrents" id="breaking-data-into-multiple-torrents">Breaking data into multiple torrents</a></h4>
+<h4 id="breaking-data-into-multiple-torrents"><a class="header" href="#breaking-data-into-multiple-torrents">Breaking data into multiple torrents</a></h4>
 <p><code>imdl torrent create</code> has a <code>--glob</code> option that can be used to control which
 files are included in a torrent. If your data set is divided into multiple
 files, ideally with a consistent naming scheme, this can be used to easily
@@ -207,7 +207,7 @@ $ imdl torrent create -i dir -o b.torrent --glob 'dir/1*'
 $ imdl torrent create -i dir -o c.torrent --glob 'dir/2*'
 # etc…
 </code></pre>
-<h4><a class="header" href="#making-the-piece-length-larger" id="making-the-piece-length-larger">Making the piece length larger</a></h4>
+<h4 id="making-the-piece-length-larger"><a class="header" href="#making-the-piece-length-larger">Making the piece length larger</a></h4>
 <p><code>imdl</code> has an automatic piece length picker, which should choose a good piece
 length. You can see what choices it makes for different torrent sizes with:</p>
 <pre><code>$ imdl torrrent piece-length
@@ -218,11 +218,11 @@ overridden by specifying <code>--piece-length</code> manually. <code>--piece-len
 SI units, like <code>KiB</code>, <code>MiB</code>, and <code>KiB</code>:</p>
 <pre><code>$ imdl torrent create -i dir --piece-length 128mib
 </code></pre>
-<h3><a class="header" href="#too-many-files" id="too-many-files">Too many files</a></h3>
+<h3 id="too-many-files"><a class="header" href="#too-many-files">Too many files</a></h3>
 <p>Torrents containing a large number of separate files can cause performance
 issues. It’s not clear if these performance issues are due to BitTorrent client
 implementations, host OS file system issues, or both.</p>
-<h4><a class="header" href="#distributing-your-data-set-as-an-iso-image" id="distributing-your-data-set-as-an-iso-image">Distributing your data set as an ISO image</a></h4>
+<h4 id="distributing-your-data-set-as-an-iso-image"><a class="header" href="#distributing-your-data-set-as-an-iso-image">Distributing your data set as an ISO image</a></h4>
 <p>By distributing your data set as an ISO image, all the files in your torrent
 will be packed into a single <code>.iso</code> file. Additionally, recipients of the ISO
 won’t have to decompress the whole data set to browse or extract individual
@@ -257,10 +257,10 @@ $ sudo umount /mnt                     # unmount when finished
 </code></pre>
 <p>On Windows, MacOS, and some Linux desktop environments, ISOs can also be
 mounted by double-clicking the file.</p>
-<h3><a class="header" href="#torrent-client-issues" id="torrent-client-issues">Torrent Client Issues</a></h3>
+<h3 id="torrent-client-issues"><a class="header" href="#torrent-client-issues">Torrent Client Issues</a></h3>
 <p>Some torrent clients don’t do well with torrents with large piece sizes, many
 files, or a large amount of data.</p>
-<h4><a class="header" href="#switch-to-a-libtorrent-based-client" id="switch-to-a-libtorrent-based-client">Switch to a <code>libtorrent</code>-based client</a></h4>
+<h4 id="switch-to-a-libtorrent-based-client"><a class="header" href="#switch-to-a-libtorrent-based-client">Switch to a <code>libtorrent</code>-based client</a></h4>
 <p>If you’re experiencing issues downloading a large data set, switching torrent
 clients may help.</p>
 <p>In my personal experience, torrent clients that use Arvid Norberg’s
@@ -268,7 +268,7 @@ clients may help.</p>
 <p><code>libtorrent</code>‘s <a href="https://en.wikipedia.org/wiki/Libtorrent">Wikipedia page</a> has a
 <a href="https://en.wikipedia.org/wiki/Libtorrent#Applications">list</a> of torrent
 clients that use <code>libtorrent</code>.</p>
-<h2><a class="header" href="#conclusion" id="conclusion">Conclusion</a></h2>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
 <p>If you have suggestions for this guide, please don’t hesitate to open an
 <a href="https://github.com/casey/intermodal/issues">issue</a>.</p>
 <p>In particular, if you’ve found particular torrent clients to be good or bad at
