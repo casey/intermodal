@@ -62,9 +62,9 @@ impl From<Sha1Digest> for Infohash {
   }
 }
 
-impl Into<Sha1Digest> for Infohash {
-  fn into(self) -> Sha1Digest {
-    self.inner
+impl From<Infohash> for Sha1Digest {
+  fn from(infohash: Infohash) -> Sha1Digest {
+    infohash.inner
   }
 }
 

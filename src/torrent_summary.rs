@@ -177,7 +177,7 @@ impl TorrentSummary {
 
   fn torrent_summary_data(&self) -> TorrentSummaryJson {
     let (file_count, files) = match &self.metainfo.info.mode {
-      Mode::Single { .. } => (1, vec![self.metainfo.info.name.to_string()]),
+      Mode::Single { .. } => (1, vec![self.metainfo.info.name.to_owned()]),
       Mode::Multiple { files } => (
         files.len(),
         files
@@ -197,7 +197,7 @@ impl TorrentSummary {
     };
 
     TorrentSummaryJson {
-      name: self.metainfo.info.name.to_string(),
+      name: self.metainfo.info.name.to_owned(),
       comment: self.metainfo.comment.clone(),
       creation_date: self.metainfo.creation_date,
       created_by: self.metainfo.created_by.clone(),

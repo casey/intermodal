@@ -36,17 +36,17 @@ impl<'a> Verifier<'a> {
     base: &'a Path,
     progress_bar: Option<ProgressBar>,
   ) -> Result<Status> {
-    Self::new(metainfo, base, progress_bar)?.verify_metainfo()
+    Ok(Self::new(metainfo, base, progress_bar)?.verify_metainfo())
   }
 
-  fn verify_metainfo(mut self) -> Result<Status> {
+  fn verify_metainfo(mut self) -> Status {
     match &self.metainfo.info.mode {
       Mode::Single { length, md5sum } => {
         self.hash(&self.base).ok();
         let error = FileError::verify(&self.base, *length, *md5sum).err();
 
         let pieces = self.finish();
-        Ok(Status::single(pieces, error))
+        Status::single(pieces, error)
       }
       Mode::Multiple { files } => {
         let mut status = Vec::new();
@@ -65,7 +65,7 @@ impl<'a> Verifier<'a> {
 
         let pieces = self.finish();
 
-        Ok(Status::multiple(pieces, status))
+        Status::multiple(pieces, status)
       }
     }
   }

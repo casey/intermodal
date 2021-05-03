@@ -11,14 +11,12 @@ pub(crate) struct PieceLength {}
 #[allow(clippy::unused_self)]
 impl PieceLength {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
-    let mut rows: Vec<(String, String, String, String)> = Vec::new();
-
-    rows.push((
+    let mut rows: Vec<(String, String, String, String)> = vec![(
       "Content".into(),
       "Piece Length".into(),
       "Count".into(),
       "Piece List Size".into(),
-    ));
+    )];
 
     for i in 14..51 {
       let content_size = Bytes::from(1u64 << i);

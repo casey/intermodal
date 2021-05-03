@@ -462,6 +462,17 @@ mod tests {
 
   #[test]
   fn output_color() -> Result<()> {
+    fn error(path: &str, message: &str) -> String {
+      let style = Style::active();
+      format!(
+        "{}{}:{} {}",
+        style.message().prefix(),
+        path,
+        style.message().suffix(),
+        message,
+      )
+    }
+
     let mut create_env = test_env! {
       args: [
         "torrent",
@@ -518,17 +529,6 @@ mod tests {
     assert_matches!(verify_env.status(), Err(EXIT_FAILURE));
 
     let style = Style::active();
-
-    fn error(path: &str, message: &str) -> String {
-      let style = Style::active();
-      format!(
-        "{}{}:{} {}",
-        style.message().prefix(),
-        path,
-        style.message().suffix(),
-        message,
-      )
-    }
 
     let want = [
       &format!(
@@ -671,10 +671,8 @@ mod tests {
 
     verify_env.assert_ok();
 
-    let want = format!(
-      "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying pieces \
-       from `foo`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
-    );
+    let want = "[1/2] \u{1F4BE} Loading metainfo from standard input…\n[2/2] \u{1F9EE} Verifying \
+                pieces from `foo`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n";
 
     assert_eq!(verify_env.err(), want);
 

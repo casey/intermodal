@@ -44,14 +44,14 @@ impl Shell {
   }
 }
 
-impl Into<clap::Shell> for Shell {
-  fn into(self) -> clap::Shell {
-    match self {
-      Self::Bash => clap::Shell::Bash,
-      Self::Fish => clap::Shell::Fish,
-      Self::Zsh => clap::Shell::Zsh,
-      Self::Powershell => clap::Shell::PowerShell,
-      Self::Elvish => clap::Shell::Elvish,
+impl From<Shell> for clap::Shell {
+  fn from(shell: Shell) -> Self {
+    match shell {
+      Shell::Bash => clap::Shell::Bash,
+      Shell::Fish => clap::Shell::Fish,
+      Shell::Zsh => clap::Shell::Zsh,
+      Shell::Powershell => clap::Shell::PowerShell,
+      Shell::Elvish => clap::Shell::Elvish,
     }
   }
 }

@@ -99,10 +99,7 @@ impl Changelog {
 
   #[throws]
   pub(crate) fn render(&self, book: bool) -> String {
-    let mut lines: Vec<String> = Vec::new();
-
-    lines.push("Changelog".into());
-    lines.push("=========".into());
+    let mut lines: Vec<String> = vec!["Changelog".into(), "=========".into()];
 
     for release in &self.releases {
       lines.push("".into());

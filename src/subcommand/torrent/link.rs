@@ -158,6 +158,8 @@ mod tests {
 
   #[test]
   fn no_announce_flag() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -172,8 +174,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -184,6 +184,8 @@ mod tests {
 
   #[test]
   fn no_announce_positional() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -197,8 +199,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -209,6 +209,8 @@ mod tests {
 
   #[test]
   fn with_announce() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -226,8 +228,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -241,6 +241,8 @@ mod tests {
 
   #[test]
   fn unique_trackers() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -259,8 +261,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -271,8 +271,11 @@ mod tests {
       ),
     );
   }
+
   #[test]
   fn with_peer() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -292,8 +295,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -307,6 +308,8 @@ mod tests {
 
   #[test]
   fn with_indices() {
+    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -328,8 +331,6 @@ mod tests {
 
     env.assert_ok();
 
-    const INFO: &str = "d6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
-
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 
     assert_eq!(
@@ -343,6 +344,8 @@ mod tests {
 
   #[test]
   fn infohash_correct_with_nonstandard_info_dict() {
+    const INFO: &str = "d1:ai0e6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
+
     let mut env = test_env! {
       args: [
         "torrent",
@@ -356,8 +359,6 @@ mod tests {
     };
 
     env.assert_ok();
-
-    const INFO: &str = "d1:ai0e6:lengthi0e4:name3:foo12:piece lengthi1e6:pieces0:e";
 
     let infohash = Sha1Digest::from_data(INFO.as_bytes());
 

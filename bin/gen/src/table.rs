@@ -12,8 +12,7 @@ impl<R: Row> Table<R> {
 
 impl<R: Row> Display for Table<R> {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    let mut rows = Vec::new();
-    rows.push(R::header().to_vec());
+    let mut rows = vec![R::header().to_vec()];
 
     for row in &self.rows {
       rows.push(row.entries());

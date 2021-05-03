@@ -79,13 +79,13 @@ jobs:
         cargo clippy --version
 
     - name: Build
-      run: cargo build --all --verbose
+      run: cargo build --all
 
     - name: Test
-      run: cargo test --all --verbose
+      run: cargo test --all
 
     - name: Clippy
-      run: cargo clippy --all
+      run: cargo clippy --all-targets --all-features
 
     - name: Lint
       if: matrix.os == 'macos-latest'

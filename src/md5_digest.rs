@@ -14,9 +14,9 @@ impl Md5Digest {
 
     let mut bytes: [u8; 16] = [0; 16];
 
-    for n in 0..16 {
+    for (n, byte) in bytes.iter_mut().enumerate() {
       let i = n * 2;
-      bytes[n] = u8::from_str_radix(&hex[i..i + 2], 16).unwrap();
+      *byte = u8::from_str_radix(&hex[i..i + 2], 16).unwrap();
     }
 
     Self { bytes }

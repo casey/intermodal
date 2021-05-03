@@ -86,7 +86,7 @@ impl MagnetLink {
   }
 
   fn parse(text: &str) -> Result<Self, MagnetLinkParseError> {
-    let url = Url::parse(&text).context(magnet_link_parse_error::URL)?;
+    let url = Url::parse(&text).context(magnet_link_parse_error::Url)?;
 
     if url.scheme() != "magnet" {
       return Err(MagnetLinkParseError::Scheme {
@@ -105,7 +105,7 @@ impl MagnetLink {
           }
 
           let buf = hex::decode(infohash).context(magnet_link_parse_error::HexParse {
-            text: infohash.to_string(),
+            text: infohash.to_owned(),
           })?;
 
           link = Some(MagnetLink::with_infohash(
@@ -270,7 +270,7 @@ mod tests {
 
     assert_matches!(e, Error::MagnetLinkParse {
       text,
-      source: MagnetLinkParseError::URL { .. },
+      source: MagnetLinkParseError::Url { .. },
     } if text == link);
   }
 
@@ -307,7 +307,7 @@ mod tests {
       text,
       source: MagnetLinkParseError::HexParse {
         text: ih,
-        source: _,
+        ..
       }} if text == link && infohash == ih);
   }
 
@@ -335,7 +335,7 @@ mod tests {
       text,
       source: MagnetLinkParseError::TrackerAddress {
         text: addr,
-        source: _,
+        ..
       },
     } if text == link && addr == bad_addr);
   }
@@ -352,7 +352,7 @@ mod tests {
         text,
         source: MagnetLinkParseError::PeerAddress {
           text: addr,
-          source: _,
+          ..
         }
       } if text == link && addr == bad_addr
     );

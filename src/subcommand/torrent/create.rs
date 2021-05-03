@@ -387,7 +387,7 @@ impl Create {
 
     let metainfo = Metainfo {
       comment: self.comment,
-      encoding: Some(consts::ENCODING_UTF8.to_string()),
+      encoding: Some(consts::ENCODING_UTF8.to_owned()),
       announce: self.announce.map(|url| url.to_string()),
       announce_list: if announce_list.is_empty() {
         None
@@ -1832,7 +1832,7 @@ Content Size  9 bytes
 
     assert_matches!(
       metainfo.info.mode,
-      Mode::Multiple { files } if files.len() == 0
+      Mode::Multiple { files } if files.is_empty()
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
     Ok(())
@@ -2044,7 +2044,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn skip_hidden_attribute_dir_contents() -> Result<()> {
+  fn skip_hidden_attribute_dir_contents() {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -2065,7 +2065,7 @@ Content Size  9 bytes
     #[cfg(target_os = "windows")]
     {
       env.write("foo/bar/baz", "baz");
-      let path = env.resolve("foo/bar")?;
+      let path = env.resolve("foo/bar").unwrap();
       Command::new("attrib")
         .arg("+h")
         .arg(&path)
@@ -2080,7 +2080,6 @@ Content Size  9 bytes
       Mode::Multiple { files } if files.is_empty()
     );
     assert_eq!(metainfo.info.pieces, PieceList::new());
-    Ok(())
   }
 
   #[test]
@@ -2886,7 +2885,7 @@ Content Size  9 bytes
   }
 
   #[test]
-  fn create_messages_path() -> Result<()> {
+  fn create_messages_path() {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -2901,20 +2900,17 @@ Content Size  9 bytes
       }
     };
 
-    let want = format!(
-      "[1/3] \u{1F9FF} Searching `foo` for files…\n[2/3] \u{1F9EE} Hashing pieces…\n[3/3] \
-       \u{1F4BE} Writing metainfo to `foo.torrent`…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n",
-    );
+    let want = "[1/3] \u{1F9FF} Searching `foo` for files…\n[2/3] \u{1F9EE} Hashing \
+                pieces…\n[3/3] \u{1F4BE} Writing metainfo to `foo.torrent`…\n\u{2728}\u{2728} \
+                Done! \u{2728}\u{2728}\n";
 
     env.assert_ok();
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]
-  fn create_messages_subdir() -> Result<()> {
+  fn create_messages_subdir() {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -2940,12 +2936,10 @@ Content Size  9 bytes
     env.assert_ok();
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]
-  fn create_messages_dot() -> Result<()> {
+  fn create_messages_dot() {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -2975,12 +2969,10 @@ Content Size  9 bytes
     );
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]
-  fn create_messages_dot_dot() -> Result<()> {
+  fn create_messages_dot_dot() {
     let mut env = test_env! {
       args: [
         "torrent",
@@ -3011,12 +3003,10 @@ Content Size  9 bytes
     );
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]
-  fn create_messages_absolute() -> Result<()> {
+  fn create_messages_absolute() {
     let dir = TempDir::new().unwrap();
 
     let input = dir.path().join("foo");
@@ -3051,12 +3041,10 @@ Content Size  9 bytes
     );
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]
-  fn create_messages_stdio() -> Result<()> {
+  fn create_messages_stdio() {
     let dir = TempDir::new().unwrap();
 
     let input = dir.path().join("foo");
@@ -3097,15 +3085,11 @@ Content Size  9 bytes
       }
     );
 
-    let want = format!(
-      "[1/3] \u{1F9FF} Creating single-file torrent from standard input…\n[2/3] \u{1F9EE} Hashing \
-       pieces…\n[3/3] \u{1F4BE} Writing metainfo to standard output…\n\u{2728}\u{2728} Done! \
-       \u{2728}\u{2728}\n",
-    );
+    let want = "[1/3] \u{1F9FF} Creating single-file torrent from standard input…\n[2/3] \
+                \u{1F9EE} Hashing pieces…\n[3/3] \u{1F4BE} Writing metainfo to standard \
+                output…\n\u{2728}\u{2728} Done! \u{2728}\u{2728}\n";
 
     assert_eq!(env.err(), want);
-
-    Ok(())
   }
 
   #[test]

@@ -33,7 +33,7 @@ test:
 	cargo test --all
 
 clippy:
-	cargo clippy --all
+	cargo clippy --all-targets --all-features
 
 fmt:
 	cargo +nightly fmt --all

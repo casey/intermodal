@@ -66,11 +66,10 @@ impl TestEnvBuilder {
 
     let tempdir = self.tempdir.unwrap_or_else(|| tempfile::tempdir().unwrap());
 
-    let current_dir = if let Some(current_dir) = self.current_dir {
-      tempdir.path().join(current_dir)
-    } else {
-      tempdir.path().to_owned()
-    };
+    let current_dir = self.current_dir.map_or_else(
+      || tempdir.path().to_owned(),
+      |current_dir| tempdir.path().join(current_dir),
+    );
 
     let out_stream = OutputStream::new(
       Box::new(out.clone()),

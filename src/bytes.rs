@@ -214,7 +214,7 @@ mod tests {
       ("1kib", KI),
       ("1KiB", KI),
       ("12kib", 12 * KI),
-      ("1.5mib", 1 * MI + 512 * KI),
+      ("1.5mib", MI + 512 * KI),
     ];
 
     for (text, value) in CASES {

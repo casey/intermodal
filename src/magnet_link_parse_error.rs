@@ -28,5 +28,5 @@ pub(crate) enum MagnetLinkParseError {
     source: url::ParseError,
   },
   #[snafu(display("Failed to parse URL: {}", source))]
-  URL { source: url::ParseError },
+  Url { source: url::ParseError },
 }

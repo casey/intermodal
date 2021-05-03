@@ -22,11 +22,11 @@ impl FileError {
     let metadata = match path.metadata() {
       Ok(metadata) => metadata,
       Err(error) => {
-        if error.kind() == io::ErrorKind::NotFound {
-          return Err(FileError::Missing);
+        return Err(if error.kind() == io::ErrorKind::NotFound {
+          FileError::Missing
         } else {
-          return Err(FileError::Io(error));
-        }
+          FileError::Io(error)
+        })
       }
     };
 

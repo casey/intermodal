@@ -1,3 +1,5 @@
+#![allow(clippy::unwrap_used)]
+
 use crate::common::*;
 
 use std::io::BufWriter;
@@ -39,7 +41,7 @@ impl Bench for HasherBench {
 
       while written < TEMPFILE_BYTES {
         rand::thread_rng().fill_bytes(&mut bytes);
-        writer.write(&bytes).unwrap();
+        writer.write_all(&bytes).unwrap();
         written += bytes.len().into_u64();
       }
 
