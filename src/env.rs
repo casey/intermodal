@@ -41,7 +41,7 @@ impl Env {
         .and_then(|width| width.parse::<usize>().ok());
 
       if let Some(width) = width {
-        app = app.set_term_width(width)
+        app = app.set_term_width(width);
       }
 
       app

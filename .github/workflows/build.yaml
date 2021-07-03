@@ -63,14 +63,9 @@ jobs:
           target
         key: cargo-${{ env.CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Install Stable
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        target: ${{matrix.target}}
-        profile: minimal
-        components: clippy, rustfmt
-        override: true
+    - name: Install Rust Toolchain Components
+      run: |
+        rustup component add clippy rustfmt
 
     - name: Info
       run: |

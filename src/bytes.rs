@@ -7,8 +7,8 @@ const TI: u64 = GI << 10;
 const PI: u64 = TI << 10;
 const EI: u64 = PI << 10;
 
-#[serde(transparent)]
 #[derive(Debug, PartialEq, Copy, Clone, PartialOrd, Ord, Eq, Serialize, Deserialize, Default)]
+#[serde(transparent)]
 pub(crate) struct Bytes(pub(crate) u64);
 
 impl Bytes {
@@ -89,7 +89,7 @@ impl FromStr for Bytes {
       _ => {
         return Err(Error::ByteSuffix {
           text: text.to_owned(),
-          suffix: suffix.to_owned(),
+          suffix: suffix.clone(),
         })
       }
     };

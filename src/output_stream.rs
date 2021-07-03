@@ -1,10 +1,10 @@
 use crate::common::*;
 
 pub(crate) struct OutputStream {
+  active: bool,
   stream: Box<dyn Write>,
   style: bool,
   term: bool,
-  active: bool,
 }
 
 impl OutputStream {

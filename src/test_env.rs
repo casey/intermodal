@@ -37,19 +37,19 @@ macro_rules! test_env {
 
 pub(crate) struct TestEnv {
   env: Env,
-  #[allow(unused)]
-  tempdir: TempDir,
   err: Capture,
   out: Capture,
+  #[allow(unused)]
+  tempdir: TempDir,
 }
 
 impl TestEnv {
   pub(crate) fn new(tempdir: TempDir, env: Env, err: Capture, out: Capture) -> TestEnv {
     Self {
-      tempdir,
-      err,
       env,
+      err,
       out,
+      tempdir,
     }
   }
 

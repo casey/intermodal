@@ -1,7 +1,7 @@
 use crate::common::*;
 
-#[serde(transparent)]
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone, Ord, PartialOrd, Eq)]
+#[serde(transparent)]
 pub(crate) struct FilePath {
   components: Vec<String>,
 }

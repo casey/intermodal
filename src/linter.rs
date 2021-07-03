@@ -12,7 +12,7 @@ impl Linter {
   }
 
   pub(crate) fn allow(&mut self, allowed: impl IntoIterator<Item = Lint>) {
-    self.allowed.extend(allowed)
+    self.allowed.extend(allowed);
   }
 
   pub(crate) fn is_allowed(&self, lint: Lint) -> bool {

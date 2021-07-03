@@ -338,9 +338,7 @@ impl Create {
 
     if let OutputTarget::Path(path) = &output {
       if !self.force && path.exists() {
-        return Err(Error::OutputExists {
-          path: path.to_owned(),
-        });
+        return Err(Error::OutputExists { path: path.clone() });
       }
     }
 
@@ -1151,7 +1149,7 @@ mod tests {
         length: Bytes(3),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1182,7 +1180,7 @@ mod tests {
         length: Bytes(4),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1213,7 +1211,7 @@ mod tests {
         length: Bytes(4),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1258,7 +1256,7 @@ mod tests {
           },
         ],
       }
-    )
+    );
   }
 
   #[test]
@@ -1285,7 +1283,7 @@ mod tests {
         length: Bytes(3),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1319,7 +1317,7 @@ mod tests {
         length: Bytes(3),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1346,7 +1344,7 @@ mod tests {
         length: Bytes(0),
         md5sum: None,
       }
-    )
+    );
   }
 
   #[test]
@@ -1367,7 +1365,7 @@ mod tests {
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(metainfo.info.pieces.count(), 0);
-    assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() })
+    assert_eq!(metainfo.info.mode, Mode::Multiple { files: Vec::new() });
   }
 
   #[test]

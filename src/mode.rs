@@ -1,7 +1,7 @@
 use crate::common::*;
 
-#[serde(untagged)]
 #[derive(Deserialize, Serialize, Debug, PartialEq, Clone)]
+#[serde(untagged)]
 pub(crate) enum Mode {
   Single {
     length: Bytes,

@@ -1,7 +1,7 @@
 use crate::common::*;
 
-#[serde(transparent)]
 #[derive(Deserialize, Serialize, Debug, Eq, PartialEq, Copy, Clone)]
+#[serde(transparent)]
 pub(crate) struct Md5Digest {
   #[serde(with = "SerHex::<serde_hex::Strict>")]
   bytes: [u8; 16],

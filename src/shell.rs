@@ -62,6 +62,6 @@ mod tests {
 
   #[test]
   fn variants() {
-    assert_eq!(Shell::VARIANTS, clap::Shell::variants())
+    assert_eq!(Shell::VARIANTS, clap::Shell::variants());
   }
 }
