@@ -127,7 +127,7 @@ impl super::Response for Response {
             .invariant_unwrap("bounds are checked manually above"),
         ),
       },
-      &buf[Self::LENGTH..]
+      &buf[Self::LENGTH..],
     ))
   }
 

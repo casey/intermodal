@@ -131,7 +131,7 @@ impl super::Response for Request {
             .invariant_unwrap("bounds guaranteed OK by type system"),
         ),
       },
-      &buf[Self::LENGTH..]
+      &buf[Self::LENGTH..],
     ))
   }
 
@@ -179,7 +179,7 @@ impl super::Response for Response {
             .invariant_unwrap("bounds are checked manually above"),
         ),
       },
-      &buf[Self::LENGTH..]
+      &buf[Self::LENGTH..],
     ))
   }
 
