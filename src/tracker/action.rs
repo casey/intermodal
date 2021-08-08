@@ -7,9 +7,9 @@ pub enum Action {
   Error,
 }
 
-impl Into<u32> for Action {
-  fn into(self) -> u32 {
-    match self {
+impl From<Action> for u32 {
+  fn from(a: Action) -> Self {
+    match a {
       Action::Connect => 0,
       Action::Announce => 1,
       Action::Scrape => 2,

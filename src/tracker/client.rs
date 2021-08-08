@@ -214,9 +214,9 @@ mod tests {
     let mut req: Vec<u8> = announce::Response {
       action: Action::Announce.into(),
       transaction_id: req.transaction_id,
-      interval: 0x13371337,
-      leechers: 0xcafebabe,
-      seeders: 0xdeadbeef,
+      interval: 0x1337_1337,
+      leechers: 0xcafe_babe,
+      seeders: 0xdead_beef,
     }
     .serialize();
     req.extend_from_slice(&targets);
