@@ -92,7 +92,6 @@ impl Announce {
         Ok(subswarm) => {
           errln!(env, "Successful announce to tracker `{}`.", tracker)?;
           peer_list.extend(subswarm);
-          break;
         }
         Err(err) => errln!(env, "Announce failed with tracker `{}`: {}", tracker, err)?,
       }
