@@ -309,9 +309,7 @@ mod tests {
 
   #[test]
   fn client_end_to_end_announce_timeout() {
-    // client_end_to_end_announce_helper("127.0.0.1:0", true);
-    let server = UdpSocket::bind("127.0.0.1:0").unwrap();
-    let server_local_addr = server.local_addr().unwrap();
+    let _ = UdpSocket::bind("127.0.0.1:0").unwrap();
     let mut metainfo = dummy_metainfo();
     let mut env = test_env! {
       args: [
@@ -323,7 +321,7 @@ mod tests {
       tree: {
       }
     };
-    metainfo.announce = Some("udp://127.0.0.1:0".to_string());
+    metainfo.announce = Some(String::from("udp://127.0.0.1:0"));
     env.write("test.torrent", metainfo.serialize().unwrap());
     env.run().unwrap();
     assert_eq!(
