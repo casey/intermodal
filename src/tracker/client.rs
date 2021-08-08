@@ -309,24 +309,6 @@ mod tests {
 
   #[test]
   fn client_end_to_end_announce_timeout() {
-    let _ = UdpSocket::bind("0.0.0.0:0").unwrap();
-    let mut metainfo = dummy_metainfo();
-    let mut env = test_env! {
-      args: [
-        "torrent",
-        "announce",
-        "--input",
-        "test.torrent",
-      ],
-      tree: {
-      }
-    };
-    metainfo.announce = Some(String::from("udp://127.0.0.1:0"));
-    env.write("test.torrent", metainfo.serialize().unwrap());
-    env.run().unwrap();
-    assert_eq!(
-      env.err(),
-      "Couldn't connect to tracker: Connection to UDP tracker `127.0.0.1:0` timed out.\n",
-    );
+    client_end_to_end_announce_helper("127.0.0.1:0", true)
   }
 }
