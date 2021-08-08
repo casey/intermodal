@@ -309,7 +309,7 @@ mod tests {
 
   #[test]
   fn client_end_to_end_announce_timeout() {
-    let _ = UdpSocket::bind("127.0.0.1:0").unwrap();
+    let _ = UdpSocket::bind("0.0.0.0:0").unwrap();
     let mut metainfo = dummy_metainfo();
     let mut env = test_env! {
       args: [
