@@ -87,12 +87,12 @@ impl<'a> Client {
       port: self.sock.local_addr().context(error::Network)?.port(),
     };
     let mut buf = [0u8; 1024];
-    let (_, len) = self.exchange(&req, &mut buf)?;
+    let (_, payload) = self.exchange(&req, &mut buf)?;
 
-    Client::parse_compact_peer_list(self.is_ipv6, &buf[announce::Response::LENGTH..len])
+    Client::parse_compact_peer_list(self.is_ipv6, payload)
   }
 
-  fn exchange<T: Request>(&self, req: &T, rxbuf: &mut [u8]) -> Result<(T::Response, usize)> {
+  fn exchange<T: Request>(&self, req: &T, rxbuf: &'a mut [u8]) -> Result<(T::Response, &'a [u8])> {
     let msg = req.serialize();
     let mut len_read: usize = 0;
 
@@ -110,12 +110,12 @@ impl<'a> Client {
       });
     }
 
-    let (resp, size) = T::Response::deserialize(&rxbuf[..len_read])?;
+    let (resp, payload) = T::Response::deserialize(&rxbuf[..len_read])?;
     if resp.transaction_id() != req.transaction_id() || resp.action() != req.action() {
       return Err(Error::TrackerResponse);
     }
 
-    Ok((resp, size))
+    Ok((resp, payload))
   }
 
   fn parse_compact_peer_list(is_ipv6: bool, buf: &[u8]) -> Result<Vec<SocketAddr>> {

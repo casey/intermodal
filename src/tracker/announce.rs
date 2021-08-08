@@ -67,7 +67,7 @@ impl super::Request for Request {
 
 impl super::Response for Request {
   #[allow(dead_code)]
-  fn deserialize(buf: &[u8]) -> Result<(Self, usize)> {
+  fn deserialize(buf: &[u8]) -> Result<(Self, &[u8])> {
     if buf.len() < 98 {
       return Err(Error::TrackerResponse);
     }
@@ -131,7 +131,7 @@ impl super::Response for Request {
             .invariant_unwrap("bounds guaranteed OK by type system"),
         ),
       },
-      buf.len(),
+      &buf[Self::LENGTH..]
     ))
   }
 
@@ -145,7 +145,7 @@ impl super::Response for Request {
 }
 
 impl super::Response for Response {
-  fn deserialize(buf: &[u8]) -> Result<(Self, usize)> {
+  fn deserialize(buf: &[u8]) -> Result<(Self, &[u8])> {
     if buf.len() < 4 + 4 + 4 + 4 + 4 {
       // 20
       return Err(Error::TrackerResponse);
@@ -179,7 +179,7 @@ impl super::Response for Response {
             .invariant_unwrap("bounds are checked manually above"),
         ),
       },
-      buf.len(),
+      &buf[Self::LENGTH..]
     ))
   }
 
