@@ -72,12 +72,11 @@ impl Announce {
         continue;
       }
 
-      let hostport = match HostPort::from_url(&tracker) {
-        Some(hostport) => hostport,
-        None => {
-          errln!(env, "Tracker URL `{}` is not well formed.", tracker)?;
-          continue;
-        }
+      let hostport = if let Some(hostport) = HostPort::from_url(&tracker) {
+        hostport
+      } else {
+        errln!(env, "Tracker URL `{}` is not well formed.", tracker)?;
+        continue;
       };
 
       let client = match tracker::Client::connect(&hostport) {
