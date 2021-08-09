@@ -69,7 +69,7 @@ impl From<Infohash> for [u8; 20] {
 }
 
 impl From<Infohash> for Sha1Digest {
-  fn from(infohash: Infohash) -> Self {
+  fn from(infohash: Infohash) -> Sha1Digest {
     infohash.inner
   }
 }
