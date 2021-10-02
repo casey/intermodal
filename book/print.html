@@ -586,12 +586,15 @@ FLAGS:
     -V, --version    Print version number.
 
 OPTIONS:
-    -c, --content &lt;PATH&gt;    Verify torrent content at `PATH` against torrent
-                            metainfo. Defaults to `name` field of torrent info
-                            dictionary.
-    -i, --input &lt;INPUT&gt;     Verify torrent contents against torrent metainfo in
-                            `INPUT`. If `INPUT` is `-`, read metainfo from
-                            standard input.
+    -b, --base-directory &lt;BASE-DIRECTORY&gt;
+            Look for torrent content in `BASE-DIRECTORY`/`NAME`, where `NAME` is
+            the `name` field of the torrent info dictionary.
+    -c, --content &lt;PATH&gt;
+            Verify torrent content at `PATH` against torrent metainfo. Defaults
+            to `name` field of the torrent info dictionary.
+    -i, --input &lt;INPUT&gt;
+            Verify torrent contents against torrent metainfo in `INPUT`. If
+            `INPUT` is `-`, read metainfo from standard input.
 
 ARGS:
     &lt;INPUT&gt;    Verify torrent contents against torrent metainfo in `INPUT`.
