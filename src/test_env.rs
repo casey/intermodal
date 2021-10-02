@@ -77,6 +77,14 @@ impl TestEnv {
     fs::create_dir(self.env.resolve(path).unwrap()).unwrap();
   }
 
+  pub(crate) fn rename(&self, from: impl AsRef<Path>, to: impl AsRef<Path>) {
+    fs::rename(
+      self.env.resolve(from).unwrap(),
+      self.env.resolve(to).unwrap(),
+    )
+    .unwrap();
+  }
+
   pub(crate) fn read_to_string(&self, path: impl AsRef<Path>) -> String {
     fs::read_to_string(self.env.resolve(path).unwrap()).unwrap()
   }

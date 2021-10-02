@@ -16,7 +16,19 @@ const INPUT_FLAG: &str = "input-flag";
   version_message(consts::VERSION_MESSAGE),
   about("Verify files against a .torrent file.")
 )]
+#[cfg_attr(test, structopt(setting = AppSettings::ColorNever))]
 pub(crate) struct Verify {
+  #[structopt(
+    long = "base-directory",
+    short = "b",
+    value_name = "BASE-DIRECTORY",
+    conflicts_with = "content",
+    empty_values(false),
+    parse(from_os_str),
+    help = "Look for torrent content in `BASE-DIRECTORY`/`NAME`, where `NAME` is the `name` field \
+            of the torrent info dictionary."
+  )]
+  base_directory: Option<PathBuf>,
   #[structopt(
     long = "content",
     short = "c",
@@ -24,7 +36,7 @@ pub(crate) struct Verify {
     empty_values(false),
     parse(from_os_str),
     help = "Verify torrent content at `PATH` against torrent metainfo. Defaults to `name` field \
-            of torrent info dictionary."
+            of the torrent info dictionary."
   )]
   content: Option<PathBuf>,
   #[structopt(
@@ -64,13 +76,19 @@ impl Verify {
 
     let metainfo = Metainfo::from_input(&input)?;
 
-    let content = self.content.as_ref().map_or_else(
-      || match target {
+    let content = self
+      .content
+      .as_ref()
+      .cloned()
+      .or_else(|| {
+        self
+          .base_directory
+          .map(|base_directory| base_directory.join(&metainfo.info.name).lexiclean())
+      })
+      .unwrap_or_else(|| match target {
         InputTarget::Path(path) => path.join("..").join(&metainfo.info.name).lexiclean(),
         InputTarget::Stdin => PathBuf::from(&metainfo.info.name),
-      },
-      PathBuf::clone,
-    );
+      });
 
     let progress_bar = if env.err().is_styled_term() && !options.quiet {
       let style = ProgressStyle::default_bar()
@@ -135,6 +153,20 @@ mod tests {
       tree: {},
     };
     assert_matches!(env.run(), Err(Error::Clap { .. }));
+  }
+
+  #[test]
+  fn base_directory_conflicts_with_content() {
+    let mut env = test_env! {
+      args: ["torrent", "verify", "foo.torrent", "--content", "foo", "--base-directory", "dir"],
+      tree: {},
+    };
+    assert_eq!(
+      env.run().unwrap_err().to_string(),
+      "error: The argument '--content <PATH>' cannot be used with '--base-directory \
+       <BASE-DIRECTORY>'\n\nUSAGE:\n    imdl torrent verify <INPUT> --base-directory \
+       <BASE-DIRECTORY> --content <PATH>\n\nFor more information try --help\n"
+    );
   }
 
   #[test]
@@ -315,6 +347,62 @@ mod tests {
        `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
       torrent.display(),
       bar.display(),
+    );
+
+    assert_eq!(verify_env.err(), want);
+    assert_eq!(verify_env.out(), "");
+
+    Ok(())
+  }
+
+  #[test]
+  fn base_directory() -> Result<()> {
+    let mut create_env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--announce",
+        "https://bar",
+      ],
+      tree: {
+        foo: {
+          a: "abc",
+          d: "efg",
+          h: "ijk",
+        },
+      },
+    };
+
+    create_env.assert_ok();
+
+    create_env.create_dir("dir");
+
+    create_env.rename("foo", "dir/foo");
+
+    let torrent = create_env.resolve("foo.torrent")?;
+    let dir = create_env.resolve("dir")?;
+
+    let mut verify_env = test_env! {
+      args: [
+        "torrent",
+        "verify",
+        "--input",
+        &torrent,
+        "--base-directory",
+        &dir,
+      ],
+      tree: {},
+    };
+
+    verify_env.assert_ok();
+
+    let want = format!(
+      "[1/2] \u{1F4BE} Loading metainfo from `{}`…\n[2/2] \u{1F9EE} Verifying pieces from \
+       `{}`…\n\u{2728}\u{2728} Verification succeeded! \u{2728}\u{2728}\n",
+      torrent.display(),
+      dir.join("foo").display(),
     );
 
     assert_eq!(verify_env.err(), want);
