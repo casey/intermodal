@@ -26,8 +26,8 @@ case $os in
     ;;
 esac
 
-export RUSTFLAGS='--deny warnings --codegen target-feature=+crt-static'
-cargo build --bin $bin --target $target --release
+RUSTFLAGS='--deny warnings --codegen target-feature=+crt-static' \
+  cargo build --bin $bin --target $target --release
 executable=target/$target/release/$bin
 
 if [[ $os == windows-2016 ]]; then
