@@ -26,16 +26,13 @@ case $os in
     ;;
 esac
 
-case $os in
-  ubuntu-latest | macos-latest)
-    cargo rustc --bin $bin --target $target --release
-    executable=target/$target/release/$bin
-    ;;
-  windows-latest)
-    cargo rustc --bin $bin --target $target --release -- -C target-feature="+crt-static"
-    executable=target/$target/release/$bin.exe
-    ;;
-esac
+export RUSTFLAGS='--deny warnings --codegen target-feature=+crt-static'
+cargo build --bin $bin --target $target --release
+executable=target/$target/release/$bin
+
+if [[ $os == windows-2016 ]]; then
+  executable=$executable.exe
+fi
 
 echo "Building completions..."
 cargo run --package gen -- --bin $executable completion-scripts
