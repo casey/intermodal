@@ -61,12 +61,17 @@ packages:
   package:          '[intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>'
   command:          '[wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)'
 
+- operating-system: '[macOS](https://en.wikipedia.org/wiki/MacOS)'
+  package-manager:  '[Homebrew](https://brew.sh)]'
+  package:          '[intermodal](https://formulae.brew.sh/formula/intermodal)'
+  command:          '`brew install intermodal`'
+
 - operating-system: '[Void Linux](https://voidlinux.org)'
   package-manager:  '[XBPS](https://docs.voidlinux.org/xbps/index.html)'
   package:          '[intermodal](https://github.com/void-linux/void-packages/blob/master/srcpkgs/intermodal/template)'
   command:          '`xbps-install -S intermodal`'
 
-- operating-system: '[Windows](https://www.microsoft.com/en-us/windows)'
+- operating-system: '[Windows](https://en.wikipedia.org/wiki/Microsoft_Windows)'
   package-manager:  '[Scoop](https://scoop.sh)'
   package:          '[intermodal](https://github.com/ScoopInstaller/Main/blob/master/bucket/intermodal.json)'
   command:          '`scoop install intermodal`'
