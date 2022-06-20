@@ -94,7 +94,7 @@ impl Table {
           }
         }
         Value::Directory { root, files } => {
-          let mut tree = Tree::new(&root);
+          let mut tree = Tree::new(root);
           for file in files {
             tree.insert(file.components());
           }
@@ -273,18 +273,22 @@ mod tests {
       .write_human_readable(&mut cursor, Style::inactive())
       .unwrap();
     let have = String::from_utf8(cursor.into_inner()).unwrap();
-    if have != want {
-      panic!("have != want:\nHAVE:\n{}\nWANT:\n{}", have, want);
-    }
+    assert_eq!(
+      have, want,
+      "have != want:\nHAVE:\n{}\nWANT:\n{}",
+      have, want
+    );
   }
 
   fn tab_delimited(table: &Table, want: &str) {
     let mut cursor = Cursor::new(Vec::new());
     table.write_tab_delimited(&mut cursor).unwrap();
     let have = String::from_utf8(cursor.into_inner()).unwrap();
-    if have != want {
-      panic!("have != want:\nHAVE:\n{}\nWANT:\n{}", have, want);
-    }
+    assert_eq!(
+      have, want,
+      "have != want:\nHAVE:\n{}\nWANT:\n{}",
+      have, want
+    );
   }
 
   #[test]

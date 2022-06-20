@@ -244,9 +244,11 @@ mod tests {
     };
     env.status().ok();
     let err = env.err();
-    if !err.starts_with("error: Failed to parse announce URL:") {
-      panic!("Unexpected standard error output: {}", err);
-    }
+    assert!(
+      err.starts_with("error: Failed to parse announce URL:"),
+      "Unexpected standard error output: {}",
+      err
+    );
 
     assert_eq!(env.out(), "");
   }

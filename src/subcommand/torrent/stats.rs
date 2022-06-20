@@ -56,7 +56,7 @@ impl Stats {
     for result in WalkBuilder::new(path)
       .standard_filters(false)
       .hidden(true)
-      .sort_by_file_name(|a, b| a.cmp(b))
+      .sort_by_file_name(Ord::cmp)
       .build()
     {
       if extractor.torrents >= self.limit.unwrap_or(u64::max_value()) {
@@ -158,7 +158,7 @@ impl Extractor {
 
     self.torrents += 1;
 
-    let contents = if let Ok(contents) = fs::read(&path) {
+    let contents = if let Ok(contents) = fs::read(path) {
       contents
     } else {
       self.io_errors += 1;

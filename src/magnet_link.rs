@@ -57,7 +57,7 @@ impl MagnetLink {
 
     if let Some(name) = &self.name {
       query.push_str("&dn=");
-      query.push_str(&name);
+      query.push_str(name);
     }
 
     for tracker in &self.trackers {
@@ -86,7 +86,7 @@ impl MagnetLink {
   }
 
   fn parse(text: &str) -> Result<Self, MagnetLinkParseError> {
-    let url = Url::parse(&text).context(magnet_link_parse_error::Url)?;
+    let url = Url::parse(text).context(magnet_link_parse_error::Url)?;
 
     if url.scheme() != "magnet" {
       return Err(MagnetLinkParseError::Scheme {
@@ -258,7 +258,7 @@ mod tests {
     link_to.add_peer("foo.com:1337".parse().unwrap());
     link_to.add_peer("bar.net:666".parse().unwrap());
 
-    let link_from = MagnetLink::from_str(&link_to.to_url().to_string()).unwrap();
+    let link_from = MagnetLink::from_str(link_to.to_url().as_ref()).unwrap();
 
     assert_eq!(link_to, link_from);
   }
@@ -314,7 +314,7 @@ mod tests {
   #[test]
   fn link_from_str_topic_missing() {
     let link = "magnet:?";
-    let e = MagnetLink::from_str(&link).unwrap_err();
+    let e = MagnetLink::from_str(link).unwrap_err();
 
     assert_matches!(e,
       Error::MagnetLinkParse {

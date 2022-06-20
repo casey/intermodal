@@ -13,7 +13,7 @@ impl Capture {
   }
 
   pub(crate) fn string(&self) -> String {
-    str::from_utf8(&self.cursor.borrow().get_ref())
+    str::from_utf8(self.cursor.borrow().get_ref())
       .unwrap()
       .to_owned()
   }

@@ -27,7 +27,7 @@ impl Hasher {
 
   pub(crate) fn hash_files(mut self, files: &Files) -> Result<(Mode, PieceList), Error> {
     let mode = if let Some(contents) = files.contents() {
-      let files = self.hash_contents(&files.root(), contents)?;
+      let files = self.hash_contents(files.root(), contents)?;
 
       Mode::Multiple { files }
     } else {

@@ -1,42 +1,15 @@
-#![deny(clippy::all, clippy::pedantic, clippy::restriction)]
+#![deny(clippy::all, clippy::pedantic)]
 #![allow(
-  clippy::blanket_clippy_restriction_lints,
-  clippy::create_dir,
-  clippy::else_if_without_else,
-  clippy::enum_glob_use,
-  clippy::float_arithmetic,
   clippy::float_cmp,
-  clippy::implicit_return,
-  clippy::indexing_slicing,
-  clippy::integer_arithmetic,
-  clippy::integer_division,
-  clippy::large_enum_variant,
-  clippy::map_unwrap_or,
-  clippy::missing_docs_in_private_items,
-  clippy::missing_inline_in_public_items,
-  clippy::module_name_repetitions,
   clippy::needless_lifetimes,
   clippy::needless_pass_by_value,
   clippy::non_ascii_literal,
-  clippy::pattern_type_mismatch,
-  clippy::shadow_reuse,
   clippy::struct_excessive_bools,
   clippy::too_many_lines,
   clippy::unseparated_literal_suffix,
-  clippy::wildcard_enum_match_arm,
-  clippy::wildcard_imports
-)]
-#![cfg_attr(
-  any(test),
-  allow(
-    clippy::blacklisted_name,
-    clippy::expect_fun_call,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::panic_in_result_fn,
-    clippy::unwrap_in_result,
-    clippy::unwrap_used
-  )
+  clippy::wildcard_imports,
+  clippy::large_enum_variant,
+  clippy::module_name_repetitions
 )]
 
 #[cfg(test)]

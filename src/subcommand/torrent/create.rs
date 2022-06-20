@@ -286,7 +286,7 @@ impl Create {
     )?;
 
     let mut linter = Linter::new();
-    linter.allow(self.allowed_lints.iter().cloned());
+    linter.allow(self.allowed_lints.iter().copied());
 
     let mut announce_list = Vec::new();
     for tier in &self.announce_tiers {
@@ -1142,7 +1142,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["123"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["123"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -1173,7 +1173,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["1234"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["1234"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -1204,7 +1204,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["12", "34"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["12", "34"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -1239,7 +1239,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("dir.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["56781234"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["56781234"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Multiple {
@@ -1276,7 +1276,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["bar"]));
     assert_eq!(
       metainfo.info.mode,
       Mode::Single {
@@ -1309,7 +1309,7 @@ mod tests {
     let metainfo = env.load_metainfo("foo.torrent");
     assert_eq!(
       metainfo.info.pieces,
-      PieceList::from_pieces(&["b", "a", "r"])
+      PieceList::from_pieces(["b", "a", "r"])
     );
     assert_eq!(
       metainfo.info.mode,
@@ -1388,7 +1388,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["bar"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -1400,7 +1400,7 @@ mod tests {
           },]
         );
       }
-      _ => panic!("Expected multi-file torrent"),
+      Mode::Single { .. } => panic!("Expected multi-file torrent"),
     }
   }
 
@@ -1423,7 +1423,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["bar"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["bar"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -1435,7 +1435,7 @@ mod tests {
           },]
         );
       }
-      _ => panic!("Expected multi-file torrent"),
+      Mode::Single { .. } => panic!("Expected multi-file torrent"),
     }
   }
 
@@ -1461,7 +1461,7 @@ mod tests {
     };
     env.assert_ok();
     let metainfo = env.load_metainfo("foo.torrent");
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abchijxyz"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["abchijxyz"]));
     match metainfo.info.mode {
       Mode::Multiple { files } => {
         assert_eq!(
@@ -1485,7 +1485,7 @@ mod tests {
           ]
         );
       }
-      _ => panic!("Expected multi-file torrent"),
+      Mode::Single { .. } => panic!("Expected multi-file torrent"),
     }
   }
 
@@ -1792,7 +1792,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["abcabc"]));
   }
 
   #[test]
@@ -1876,7 +1876,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 2
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["abcabc"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["abcabc"]));
     Ok(())
   }
 
@@ -1977,7 +1977,7 @@ Content Size  9 bytes
           ]
         );
       }
-      _ => panic!("Expected multi-file torrent"),
+      Mode::Single { .. } => panic!("Expected multi-file torrent"),
     }
     Ok(())
   }
@@ -2236,7 +2236,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["yyy"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["yyy"]));
   }
 
   #[test]
@@ -2268,7 +2268,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["yyy"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["yyy"]));
   }
 
   #[test]
@@ -2302,7 +2302,7 @@ Content Size  9 bytes
       metainfo.info.mode,
       Mode::Multiple { files } if files.len() == 1
     );
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["a"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["a"]));
   }
 
   #[test]
@@ -2871,7 +2871,7 @@ Content Size  9 bytes
 
     let metainfo = env.load_metainfo("foo.torrent");
 
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["hello"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["hello"]));
 
     assert_eq!(
       metainfo.info.mode,
@@ -3073,7 +3073,7 @@ Content Size  9 bytes
     let bytes = env.out_bytes();
     let metainfo = Metainfo::from_bytes(&bytes);
 
-    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(&["hello"]));
+    assert_eq!(metainfo.info.pieces, PieceList::from_pieces(["hello"]));
 
     assert_eq!(
       metainfo.info.mode,
