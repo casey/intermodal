@@ -64,8 +64,11 @@ jobs:
         key: cargo-${{ env.CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install Rust Toolchain Components
-      run: |
-        rustup component add clippy rustfmt
+      uses: actions-rs/toolchain@v1
+      with:
+        components: clippy, rustfmt
+        override: true
+        toolchain: 1.56.0
 
     - name: Info
       run: |
@@ -88,16 +91,8 @@ jobs:
         brew install ripgrep
         ./bin/lint
 
-    - name: Install Nightly
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: nightly
-        target: ${{matrix.target}}
-        profile: minimal
-        components: rustfmt
-
     - name: Check Formatting
-      run: cargo +nightly fmt --all -- --check
+      run: cargo fmt --all -- --check
 
     - name: Check Generated
       if: matrix.os == 'macos-latest'

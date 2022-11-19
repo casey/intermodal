@@ -32,7 +32,7 @@ impl FromStr for HostPort {
         .invariant_unwrap("Capture group `port` always present")
         .as_str();
 
-      let host = Host::parse(&host_text).context(host_port_parse_error::Host {
+      let host = Host::parse(host_text).context(host_port_parse_error::Host {
         text: text.to_owned(),
       })?;
 
@@ -109,7 +109,9 @@ mod tests {
 
   fn case(host: Host, port: u16, text: &str, bencode: &str) {
     let node = HostPort { host, port };
-    let parsed: HostPort = text.parse().expect(&format!("Failed to parse {}", text));
+    let parsed: HostPort = text
+      .parse()
+      .unwrap_or_else(|_| panic!("Failed to parse {}", text));
     assert_eq!(parsed, node);
     let ser = bendy::serde::to_bytes(&node).unwrap();
     assert_eq!(

@@ -95,7 +95,10 @@ if [ -z ${dst-} ]; then
 fi
 
 if [ -z ${tag-} ]; then
-  tag=$(curl -s "$releases/latest" | cut -d'"' -f2 | rev | cut -d'/' -f1 | rev)
+  tag=$(curl --proto =https --tlsv1.2 -sSf https://api.github.com/repos/casey/intermodal/releases/latest |
+    grep tag_name |
+    cut -d'"' -f4
+  )
 fi
 
 archive="$releases/download/$tag/$crate-$tag-$target.tar.gz"
@@ -108,7 +111,7 @@ say_err "Destination: $dst"
 say_err "Archive:     $archive"
 
 td=$(mktemp -d || mktemp -d -t tmp)
-curl -sL $archive | tar -C $td -xz
+curl --proto =https --tlsv1.2 -sSfL $archive | tar -C $td -xz
 
 if [ -e "$dst/$bin" ] && [ $force = false ]; then
   err "$bin already exists in $dst"

@@ -114,7 +114,7 @@ impl Walker {
       let path = entry.path();
 
       if let Some(s) = &self.spinner {
-        let display_path = path.strip_prefix(&self.root).unwrap_or(&path);
+        let display_path = path.strip_prefix(&self.root).unwrap_or(path);
         s.set_message(&display_path.display().to_string());
         s.tick();
       }
@@ -139,7 +139,7 @@ impl Walker {
         });
       }
 
-      if !self.pattern_filter(&relative) {
+      if !self.pattern_filter(relative) {
         continue;
       }
 

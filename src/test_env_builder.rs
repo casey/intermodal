@@ -49,7 +49,7 @@ impl TestEnvBuilder {
   }
 
   pub(crate) fn arg_slice(mut self, args: &[&str]) -> Self {
-    for arg in args.iter().cloned() {
+    for arg in args.iter().copied() {
       self.args.push(arg.into());
     }
     self
