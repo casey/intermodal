@@ -714,13 +714,13 @@ def piece_length(content_length):
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="bep-support"><a class="header" href="#bep-support">BEP Support</a></h1>
-<table><thead><tr><th style="text-align: center">Symbol</th><th>Meaning</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">Symbol</th><th>Meaning</th></tr></thead><tbody>
 <tr><td style="text-align: center">✅</td><td>Supported</td></tr>
 <tr><td style="text-align: center">❌</td><td>Unsupported (link to issue)</td></tr>
 <tr><td style="text-align: center">➖</td><td>Not Applicable</td></tr>
 </tbody></table>
-<br>
-<table><thead><tr><th style="text-align: center">BEP</th><th style="text-align: center">Status</th><th style="text-align: left">Title</th></tr></thead><tbody>
+</div><br>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">BEP</th><th style="text-align: center">Status</th><th style="text-align: left">Title</th></tr></thead><tbody>
 <tr><td style="text-align: center"><a href="http://bittorrent.org/beps/bep_0000.html">00</a></td><td style="text-align: center">➖</td><td style="text-align: left">Index of BitTorrent Enhancement Proposals</td></tr>
 <tr><td style="text-align: center"><a href="http://bittorrent.org/beps/bep_0001.html">01</a></td><td style="text-align: center">➖</td><td style="text-align: left">The BitTorrent Enhancement Proposal Process</td></tr>
 <tr><td style="text-align: center"><a href="http://bittorrent.org/beps/bep_0002.html">02</a></td><td style="text-align: center">➖</td><td style="text-align: left">Sample reStructured Text BEP Template</td></tr>
@@ -777,8 +777,8 @@ def piece_length(content_length):
 <tr><td style="text-align: center"><a href="http://bittorrent.org/beps/bep_0054.html">54</a></td><td style="text-align: center">➖</td><td style="text-align: left">The lt_donthave extension</td></tr>
 <tr><td style="text-align: center"><a href="http://bittorrent.org/beps/bep_0055.html">55</a></td><td style="text-align: center">➖</td><td style="text-align: left">Holepunch extension</td></tr>
 </tbody></table>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="metainfo-utilities"><a class="header" href="#metainfo-utilities">Metainfo Utilities</a></h1>
-<table><thead><tr><th>Name</th><th>UI</th><th>Language</th><th>Notes</th></tr></thead><tbody>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="metainfo-utilities"><a class="header" href="#metainfo-utilities">Metainfo Utilities</a></h1>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>UI</th><th>Language</th><th>Notes</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rndusr/torf-cli">torf-cli</a></td><td>CLI</td><td>Python</td><td>Highly recommended utility for creating torrents and magnet links, as well as displaying information about and editing existing torrents.</td></tr>
 <tr><td><a href="https://github.com/Rudde/mktorrent">mktorrent</a></td><td>CLI</td><td>C</td><td>Popular but unmaintained torrent file creator.</td></tr>
 <tr><td><a href="https://github.com/xxkfqz/pmktorrent">pmktorrent</a></td><td>CLI</td><td>C</td><td>Maintained fork of mktorrent.</td></tr>
@@ -796,7 +796,7 @@ def piece_length(content_length):
 <tr><td><a href="http://manpages.ubuntu.com/manpages/bionic/man1/buildtorrent.1.html">buildtorrent</a></td><td>CLI</td><td>C</td><td>Torrent file creator packaged for Ubuntu and Debian</td></tr>
 <tr><td><a href="https://github.com/fuchsi/maketorrent">maketorrent</a></td><td>CLI</td><td>Rust</td><td>Torrent file creator.</td></tr>
 </tbody></table>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="distributing-large-data-sets"><a class="header" href="#distributing-large-data-sets">Distributing Large Data Sets</a></h1>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="distributing-large-data-sets"><a class="header" href="#distributing-large-data-sets">Distributing Large Data Sets</a></h1>
 <p>Even though BitTorrent is well-suited for distributing large amounts of data,
 very large torrents can still cause problems. Here are some of the problems you
 might encounter, as well as suggestions for how to avoid or ameliorate those
@@ -924,41 +924,46 @@ extra padding, where <code>NAME</code> is an integer field of the same message.<
 <p>Files with type <code>[T]</code> are zero or more instances of values of type <code>T</code> with no
 extra padding, which make up any trailing bytes of the message.</p>
 <h2 id="actions"><a class="header" href="#actions">Actions</a></h2>
-<table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>connect</td><td>0</td></tr>
 <tr><td>announce</td><td>1</td></tr>
 <tr><td>scrape</td><td>2</td></tr>
 <tr><td>error</td><td>3</td></tr>
 </tbody></table>
+</div>
 <h2 id="events"><a class="header" href="#events">Events</a></h2>
-<table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>name</th><th>value</th></tr></thead><tbody>
 <tr><td>none</td><td>0</td></tr>
 <tr><td>completed</td><td>1</td></tr>
 <tr><td>started</td><td>2</td></tr>
 <tr><td>stopped</td><td>3</td></tr>
 </tbody></table>
+</div>
 <h2 id="error"><a class="header" href="#error">Error</a></h2>
-<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
 <tr><td>[i8]</td><td>error_string</td><td>rest of packet is string describing error</td></tr>
 </tbody></table>
+</div>
 <h2 id="connect"><a class="header" href="#connect">Connect</a></h2>
 <h3 id="request"><a class="header" href="#request">Request</a></h3>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
+</div>
 <h3 id="response"><a class="header" href="#response">Response</a></h3>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 <tr><td>i64</td><td>connection_id</td></tr>
 </tbody></table>
+</div>
 <h2 id="announce"><a class="header" href="#announce">Announce</a></h2>
 <h3 id="request-1"><a class="header" href="#request-1">Request</a></h3>
-<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td><td></td></tr>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
@@ -974,47 +979,55 @@ extra padding, which make up any trailing bytes of the message.</p>
 <tr><td>u16</td><td>port</td><td>listening port</td></tr>
 <tr><td>u16</td><td>extensions</td><td></td></tr>
 </tbody></table>
+</div>
 <h3 id="response-1"><a class="header" href="#response-1">Response</a></h3>
-<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td><td></td></tr>
 <tr><td>i32</td><td>transaction_id</td><td></td></tr>
 <tr><td>i32</td><td>interval</td><td>seconds to wait announcing again</td></tr>
 <tr><td>i32</td><td>leechers</td><td>number of peers in swarm that have not finished downloading</td></tr>
 <tr><td>i32</td><td>seeders</td><td>number of peers in swarm that have finished downloading</td></tr>
 </tbody></table>
+</div>
 <p><em>repeating:</em></p>
-<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>ip</td><td>peer IP</td></tr>
 <tr><td>i16</td><td>port</td><td>peer listening port</td></tr>
 </tbody></table>
+</div>
 <h2 id="scrape"><a class="header" href="#scrape">Scrape</a></h2>
 <h3 id="request-2"><a class="header" href="#request-2">Request</a></h3>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i64</td><td>connection_id</td></tr>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
+</div>
 <p><em>repeating:</em></p>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>[i8; 20]</td><td>info_hash</td></tr>
 </tbody></table>
+</div>
 <h3 id="response-2"><a class="header" href="#response-2">Response</a></h3>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i32</td><td>action</td></tr>
 <tr><td>i32</td><td>transaction_id</td></tr>
 </tbody></table>
+</div>
 <p><em>repeating:</em></p>
-<table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th><th>description</th></tr></thead><tbody>
 <tr><td>i32</td><td>complete</td><td>peers in swarm that have finished downloding</td></tr>
 <tr><td>i32</td><td>downloaded</td><td>times torrent has been downloaded</td></tr>
 <tr><td>i32</td><td>incomplete</td><td>peers that have not finished downloading</td></tr>
 </tbody></table>
+</div>
 <h2 id="extensions"><a class="header" href="#extensions">Extensions</a></h2>
 <p>The extensions field is a bitmask. The following bits are assigned:</p>
-<table><thead><tr><th>name</th><th>bit</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>name</th><th>bit</th></tr></thead><tbody>
 <tr><td>authentication</td><td>1</td></tr>
 <tr><td>request string</td><td>2</td></tr>
 </tbody></table>
+</div>
 <p>If multiple bits are present in the extension field, the extension bodies are
 appended to the packet in the order of least significant bit first. For
 instance, if both bit 1 and 2 are set, the extension represented by bit 1 comes
@@ -1024,21 +1037,23 @@ first, followed by the extension represented by bit 2.</p>
 <p><code>passwd_hash</code> is the first eight bytes of <code>sha1(packet || sha1(password))</code>,
 where <code>packet</code> is the bytes of the packet, less the final 8 bytes that are
 <code>passwd_hash</code>.</p>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i8</td><td>username_length</td></tr>
 <tr><td>[i8; <code>username_length</code></td><td>username</td></tr>
 <tr><td>[u8; 8]</td><td>passwd_hash</td></tr>
 </tbody></table>
+</div>
 <h3 id="request-string"><a class="header" href="#request-string">Request String</a></h3>
 <p>The request string extension is meant to allow torrent creators pass along
 cookies back to the tracker. This can be useful for authenticating that a
 torrent is allowed to be tracked by a tracker for instance. It could also be
 used to authenticate users by generating torrents with unique tokens in the
 tracker URL for each user. The extension body has the following format:</p>
-<table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
+<div class="table-wrapper"><table><thead><tr><th>type</th><th>name</th></tr></thead><tbody>
 <tr><td>i8</td><td>request_length</td></tr>
 <tr><td>[i8; <code>request_length</code>]</td><td>request_string</td></tr>
 </tbody></table>
+</div>
 <p><code>request_string</code> is the string that comes after the hostname and port in the
 UDP tracker URL. Typically this starts with “/announce” The bittorrent client
 is not expected to append query string arguments for stats reporting, like
