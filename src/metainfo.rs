@@ -56,7 +56,7 @@ impl Metainfo {
   }
 
   pub(crate) fn deserialize(source: &InputTarget, data: &[u8]) -> Result<Metainfo, Error> {
-    let metainfo = bendy::serde::de::from_bytes(&data).context(error::MetainfoDeserialize {
+    let metainfo = bendy::serde::de::from_bytes(data).context(error::MetainfoDeserialize {
       input: source.clone(),
     })?;
     Ok(metainfo)
@@ -144,7 +144,7 @@ impl Metainfo {
         piece_length: Bytes(16 * 1024),
         source: Some("SOURCE".into()),
         name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50", "fae50"]),
+        pieces: PieceList::from_pieces(["fae50", "fae50"]),
         mode: Mode::Single {
           length: Bytes(32 * 1024),
           md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
@@ -192,7 +192,7 @@ impl Metainfo {
         piece_length: Bytes(1024),
         source: None,
         name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
+        pieces: PieceList::from_pieces(["fae50"]),
         mode: Mode::Single {
           length: Bytes(5),
           md5sum: None,
@@ -227,7 +227,7 @@ impl Metainfo {
         piece_length: Bytes(1024),
         source: None,
         name: "NAME".into(),
-        pieces: PieceList::from_pieces(&["fae50"]),
+        pieces: PieceList::from_pieces(["fae50"]),
         mode: Mode::Multiple {
           files: vec![FileInfo {
             length: Bytes(1024),
@@ -420,7 +420,7 @@ mod tests {
     fn assert_trackers_eq(metainfo: &Metainfo, want: &[&str]) {
       let want = want
         .iter()
-        .cloned()
+        .copied()
         .map(Url::parse)
         .collect::<Result<Vec<Url>, url::ParseError>>()
         .unwrap();

@@ -503,7 +503,7 @@ mod tests {
       use std::os::unix::fs::PermissionsExt;
       let metadata = create_env.metadata("foo/t");
       let mut permissions = metadata.permissions();
-      permissions.set_mode(0);
+      permissions.set_mode(0o0);
       create_env.set_permissions("foo/t", permissions);
     }
 
@@ -599,7 +599,7 @@ mod tests {
       use std::os::unix::fs::PermissionsExt;
       let metadata = create_env.metadata("foo/t");
       let mut permissions = metadata.permissions();
-      permissions.set_mode(0);
+      permissions.set_mode(0o0);
       create_env.set_permissions("foo/t", permissions);
     }
 

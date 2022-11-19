@@ -5,7 +5,7 @@ use imdl::bench::{Bench, HasherBench};
 fn bench(c: &mut Criterion) {
   let bench = HasherBench::init();
 
-  c.bench_function(&bench.name(), |b| b.iter(|| bench.iter()));
+  c.bench_function(&bench.name(), |b| b.iter(|| bench.iteration()));
 }
 
 criterion_group!(benches, bench);

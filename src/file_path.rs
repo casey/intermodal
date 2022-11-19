@@ -56,7 +56,7 @@ impl FilePath {
 
   #[cfg(test)]
   pub(crate) fn from_components(components: &[&str]) -> FilePath {
-    let components: Vec<String> = components.iter().cloned().map(ToOwned::to_owned).collect();
+    let components: Vec<String> = components.iter().copied().map(ToOwned::to_owned).collect();
     assert!(!components.is_empty());
     FilePath { components }
   }

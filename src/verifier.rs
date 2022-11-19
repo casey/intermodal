@@ -42,8 +42,8 @@ impl<'a> Verifier<'a> {
   fn verify_metainfo(mut self) -> Status {
     match &self.metainfo.info.mode {
       Mode::Single { length, md5sum } => {
-        self.hash(&self.base).ok();
-        let error = FileError::verify(&self.base, *length, *md5sum).err();
+        self.hash(self.base).ok();
+        let error = FileError::verify(self.base, *length, *md5sum).err();
 
         let pieces = self.finish();
         Status::single(pieces, error)

@@ -43,7 +43,6 @@ For more about the project and its goals, check out
 - [Benchmarks](#benchmarks)
 - [Semantic Versioning](#semantic-versioning)
 - [Unstable Features](#unstable-features)
-- [Source Signatures](#source-signatures)
 - [Acknowledgments](#acknowledgments)
 
 ## Installation
@@ -305,14 +304,6 @@ To avoid premature stabilization and excessive version churn, unstable features
 are unavailable unless the `--unstable` / `-u` flag is passed, for example
 `imdl --unstable torrent create .`. Unstable features may be changed or removed
 at any time.
-
-## Source Signatures
-
-All commits to the intermodal master branch signed with Casey Rodarmor's PGP
-key with fingerprint `3259DAEDB29636B0E2025A70556186B153EC6FE0`, which can be
-found
-[on keybase](https://keybase.io/rodarmor/pgp_keys.asc?fingerprint=3259daedb29636b0e2025a70556186b153ec6fe0) and on
-[his homepage](https://rodarmor.com/static/rodarmor.asc).
 
 ## Acknowledgments
 

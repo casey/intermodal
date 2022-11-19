@@ -14,7 +14,7 @@ pub trait Bench {
 
   fn name(&self) -> String;
 
-  fn iter(&self);
+  fn iteration(&self);
 }
 
 pub struct HasherBench {
@@ -51,7 +51,7 @@ impl Bench for HasherBench {
     Self { tempfile }
   }
 
-  fn iter(&self) {
+  fn iteration(&self) {
     let files = Files::file(
       self.tempfile.as_ref().to_owned(),
       Bytes::from(TEMPFILE_BYTES),

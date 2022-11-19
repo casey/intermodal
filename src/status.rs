@@ -38,13 +38,7 @@ impl Status {
   #[cfg(test)]
   pub(crate) fn count_bad(&self) -> usize {
     match self {
-      Self::Single { error, .. } => {
-        if error.is_some() {
-          1
-        } else {
-          0
-        }
-      }
+      Self::Single { error, .. } => error.is_some().into(),
       Self::Multiple { files, .. } => files.iter().filter(|file| file.is_bad()).count(),
     }
   }
