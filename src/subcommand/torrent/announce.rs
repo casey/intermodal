@@ -60,7 +60,7 @@ impl Announce {
         }
       };
 
-      let client = match tracker::Client::from_url(tracker_url) {
+      let client = match tracker::Client::from_url(&tracker_url) {
         Ok(client) => client,
         Err(err) => {
           errln!(env, "Couldn't build tracker client. {}", err)?;
@@ -69,7 +69,7 @@ impl Announce {
       };
 
       usable_trackers += 1;
-      match client.announce_exchange(infohash) {
+      match client.announce_exchange(&infohash) {
         Ok(peer_list) => peers.extend(peer_list),
         Err(err) => errln!(env, "Announce failed: {}", err)?,
       }

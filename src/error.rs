@@ -30,6 +30,8 @@ pub(crate) enum Error {
   Filesystem { source: io::Error, path: PathBuf },
   #[snafu(display("Error searching for files: {}", source))]
   FileSearch { source: ignore::Error },
+  #[snafu(display("Failed to fetch infodict from accessible peers"))]
+  FromLinkNoInfo,
   #[snafu(display("Invalid glob: {}", source))]
   GlobParse { source: globset::Error },
   #[snafu(display("Failed to serialize torrent info dictionary: {}", source))]
@@ -68,6 +70,8 @@ pub(crate) enum Error {
     input: InputTarget,
     source: MetainfoError,
   },
+  #[snafu(display("Network error: {}", source))]
+  Network { source: io::Error },
   #[snafu(display("Failed to invoke opener: {}", source))]
   OpenerInvoke { source: io::Error },
   #[snafu(display("Opener failed: {}", exit_status))]
@@ -114,6 +118,34 @@ pub(crate) enum Error {
     bytes: Bytes,
     source: TryFromIntError,
   },
+  #[snafu(display("Received peer handshake with the wrong infohash"))]
+  PeerHandshakeInfohash,
+  #[snafu(display("Received peer handshake with the wrong protocol header"))]
+  PeerHandshakeHeader,
+  #[snafu(display("Bencoding error: `{}`", source))]
+  PeerMessageBencode { source: bendy::serde::Error },
+  #[snafu(display("Peer extended message payload is malformed"))]
+  PeerMessageExtendedPayload,
+  #[snafu(display("Failed to decode bencoded message: `{}`", source))]
+  PeerMessageFromBencode { source: bendy::serde::Error },
+  #[snafu(display("Peer message payload is too large"))]
+  PeerMessagePayload { source: TryFromIntError },
+  #[snafu(display("Extended handshake has not been received from peer"))]
+  PeerNoExtendedHandshake,
+  #[snafu(display("Received UtMetadata info dict that's failed to deserialize"))]
+  PeerUtMetadataInfoDeserialize { source: bendy::serde::Error },
+  #[snafu(display("Received UtMetadata info dict that's too long"))]
+  PeerUtMetadataInfoLength,
+  #[snafu(display("Received UtMetadata data message that's too long"))]
+  PeerUtMetadataPieceLength,
+  #[snafu(display("Peer doesn't know metadata size"))]
+  PeerUtMetadataMetadataSizeNotKnown,
+  #[snafu(display("Peer doesn't support UtMetadata extension"))]
+  PeerUtMetadataNotSupported,
+  #[snafu(display("Hash of received info dict does not match"))]
+  PeerUtMetadataWrongInfohash,
+  #[snafu(display("Received the wrong UtMetadata piece"))]
+  PeerUtMetadataWrongPiece,
   #[snafu(display("Piece length `{}` is not an even power of two", bytes))]
   PieceLengthUneven { bytes: Bytes },
   #[snafu(display("Piece length must be at least 16 KiB"))]
