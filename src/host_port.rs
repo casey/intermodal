@@ -57,6 +57,42 @@ impl Display for HostPort {
   }
 }
 
+impl TryFrom<&Url> for HostPort {
+  type Error = HostPortParseError;
+
+  fn try_from(url: &Url) -> Result<Self, HostPortParseError> {
+    match (url.host(), url.port()) {
+      (Some(host), Some(port)) => Ok(HostPort {
+        host: host.to_owned(),
+        port,
+      }),
+      (Some(_), None) => Err(HostPortParseError::PortMissing {
+        text: url.as_str().to_owned(),
+      }),
+      (None, Some(_)) => Err(HostPortParseError::HostMissing {
+        text: url.as_str().to_owned(),
+      }),
+      (None, None) => Err(HostPortParseError::HostPortMissing {
+        text: url.as_str().to_owned(),
+      }),
+    }
+  }
+}
+
+impl ToSocketAddrs for HostPort {
+  type Iter = std::vec::IntoIter<SocketAddr>;
+
+  fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
+    let address = match &self.host {
+      Host::Domain(domain) => return (domain.clone(), self.port).to_socket_addrs(),
+      Host::Ipv4(address) => IpAddr::V4(*address),
+      Host::Ipv6(address) => IpAddr::V6(*address),
+    };
+
+    Ok(vec![SocketAddr::new(address, self.port)].into_iter())
+  }
+}
+
 #[derive(Serialize, Deserialize)]
 struct Tuple(String, u16);
 
@@ -155,5 +191,19 @@ mod tests {
       "[1234:5678:9abc:def0:1234:5678:9abc:def0]:65000",
       "l39:1234:5678:9abc:def0:1234:5678:9abc:def0i65000ee",
     );
+  }
+
+  #[test]
+  fn test_from_url() {
+    let url = Url::parse("udp://imdl.io:12345").unwrap();
+    let host_port = HostPort::try_from(&url).unwrap();
+    assert_eq!(host_port.host, Host::Domain("imdl.io".into()));
+    assert_eq!(host_port.port, 12345);
+  }
+
+  #[test]
+  fn test_from_url_no_port() {
+    let url = Url::parse("udp://imdl.io").unwrap();
+    assert!(HostPort::try_from(&url).is_err());
   }
 }

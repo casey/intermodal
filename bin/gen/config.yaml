@@ -11,6 +11,10 @@ examples:
   text:    "BitTorrent metainfo related functionality is under the `torrent` subcommand:"
   code:    "imdl torrent --help"
 
+- command: imdl torrent announce
+  text:    "Announce the infohash to all trackers in the supplied `.torrent` file, and print the peer lists that come back:"
+  code:    "imdl torrent announce --input foo.torrent"
+
 - command: imdl torrent create
   text:    "Intermodal can be used to create `.torrent` files:"
   code:    "imdl torrent create --input foo"
