@@ -12,4 +12,8 @@ pub(crate) enum HostPortParseError {
   Port { text: String, source: ParseIntError },
   #[snafu(display("Port missing: `{}`", text))]
   PortMissing { text: String },
+  #[snafu(display("Host missing: `{}`", text))]
+  HostMissing { text: String },
+  #[snafu(display("Host and port missing: `{}`", text))]
+  HostPortMissing { text: String },
 }
