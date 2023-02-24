@@ -1,5 +1,6 @@
 use crate::common::*;
 
+mod announce;
 mod create;
 mod link;
 mod piece_length;
@@ -14,6 +15,7 @@ mod verify;
   about("Subcommands related to the BitTorrent protocol.")
 )]
 pub(crate) enum Torrent {
+  Announce(announce::Announce),
   Create(create::Create),
   Link(link::Link),
   #[structopt(alias = "piece-size")]
@@ -26,6 +28,7 @@ pub(crate) enum Torrent {
 impl Torrent {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<(), Error> {
     match self {
+      Self::Announce(announce) => announce.run(env),
       Self::Create(create) => create.run(env, options),
       Self::Link(link) => link.run(env),
       Self::PieceLength(piece_length) => piece_length.run(env),

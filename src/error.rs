@@ -54,6 +54,8 @@ pub(crate) enum Error {
     source: bendy::serde::Error,
     input: InputTarget,
   },
+  #[snafu(display("Torrent metainfo does not specify any usable trackers"))]
+  MetainfoMissingTrackers,
   #[snafu(display("Failed to serialize torrent metainfo: {}", source))]
   MetainfoSerialize { source: bendy::serde::Error },
   #[snafu(display("Failed to decode metainfo bencode from {}: {}", input, error))]
@@ -136,6 +138,43 @@ pub(crate) enum Error {
   SymlinkRoot { root: PathBuf },
   #[snafu(display("Failed to retrieve system time: {}", source))]
   SystemTime { source: SystemTimeError },
+  #[snafu(display("Compact peer list is not the expected length"))]
+  TrackerCompactPeerList,
+  #[snafu(display("Tracker exchange to `udp://{}` timed out.", tracker_addr))]
+  TrackerExchange { tracker_addr: SocketAddr },
+  #[snafu(display(
+    "Cannot connect to tracker `{}`: URL does not specify a valid host port",
+    tracker_url
+  ))]
+  TrackerHostPort {
+    source: HostPortParseError,
+    tracker_url: Url,
+  },
+  #[snafu(display("Tracker client cannot announce without a connection id"))]
+  TrackerNoConnectionId,
+  #[snafu(display("Tracker resolved to no useable addresses"))]
+  TrackerNoHosts,
+  #[snafu(display("Malformed response from tracker"))]
+  TrackerResponse,
+  #[snafu(display("Response from tracker has wrong length: got {}; want {}", got, want))]
+  TrackerResponseLength { want: usize, got: usize },
+  #[snafu(display("Tracker failed to send datagram: {}", source))]
+  TrackerSend { source: io::Error },
+  #[snafu(display("Failed to resolve socket addrs: {}", source))]
+  TrackerSocketAddrs { source: io::Error },
+  #[snafu(display(
+    "Cannot connect to tracker `{}`: only UDP trackers are supported",
+    tracker_url
+  ))]
+  TrackerUdpOnly { tracker_url: Url },
+  #[snafu(display("Failed to bind to UDP socket: {}", source))]
+  UdpSocketBind { source: io::Error },
+  #[snafu(display("Failed to connect to `udp://{}`: {}", addr, source))]
+  UdpSocketConnect { addr: SocketAddr, source: io::Error },
+  #[snafu(display("Failed to get local UDP socket address: {}", source))]
+  UdpSocketLocalAddress { source: io::Error },
+  #[snafu(display("Failed to set read timeout: {}", source))]
+  UdpSocketReadTimeout { source: io::Error },
   #[snafu(display(
     "Feature `{}` cannot be used without passing the `--unstable` flag",
     feature
