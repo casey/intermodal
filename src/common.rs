@@ -12,14 +12,14 @@ pub(crate) use std::{
   hash::Hash,
   io::{self, BufRead, BufReader, Cursor, Read, Write},
   iter::{self, Sum},
-  net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, ToSocketAddrs, UdpSocket},
+  net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr, TcpStream, ToSocketAddrs, UdpSocket},
   num::{ParseFloatError, ParseIntError, TryFromIntError},
   ops::{AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
   path::{self, Path, PathBuf},
   process::ExitStatus,
   str::{self, FromStr},
   string::FromUtf8Error,
-  sync::Once,
+  sync::{mpsc::channel, Once},
   time::{Duration, SystemTime, SystemTimeError},
   usize,
 };
@@ -54,7 +54,9 @@ pub(crate) use url::{Host, Url};
 pub(crate) use log::trace;
 
 // modules
-pub(crate) use crate::{consts, error, host_port_parse_error, magnet_link_parse_error, tracker};
+pub(crate) use crate::{
+  consts, error, host_port_parse_error, magnet_link_parse_error, peer, tracker,
+};
 
 // functions
 pub(crate) use crate::xor_args::xor_args;
@@ -88,9 +90,11 @@ mod test {
   // test stdlib types
   pub(crate) use std::{
     cell::RefCell,
+    net::TcpListener,
     ops::{Deref, DerefMut},
     process::Command,
     rc::Rc,
+    thread,
   };
 
   // test dependencies

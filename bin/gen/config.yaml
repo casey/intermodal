@@ -19,6 +19,10 @@ examples:
   text:    "Intermodal can be used to create `.torrent` files:"
   code:    "imdl torrent create --input foo"
 
+- command: imdl torrent from-link
+  text:    "Intermodal can be used to create a `.torrent` file from a magnet link:"
+  code:    "imdl torrent from-link magnet:?foo"
+
 - command: imdl torrent show
   text:    "Print information about existing `.torrent` files:"
   code:    "imdl torrent show --input foo.torrent"

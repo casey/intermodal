@@ -62,6 +62,14 @@ impl From<Sha1Digest> for Infohash {
   }
 }
 
+impl From<[u8; 20]> for Infohash {
+  fn from(bytes: [u8; 20]) -> Self {
+    Infohash {
+      inner: Sha1Digest::from_bytes(bytes),
+    }
+  }
+}
+
 impl From<Infohash> for [u8; 20] {
   fn from(infohash: Infohash) -> Self {
     infohash.inner.bytes()

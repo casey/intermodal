@@ -71,6 +71,7 @@ mod mode;
 mod options;
 mod output_stream;
 mod output_target;
+mod peer;
 mod piece_length_picker;
 mod piece_list;
 mod platform;
