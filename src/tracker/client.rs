@@ -55,11 +55,17 @@ impl Client {
     Ok(sock)
   }
 
-  pub fn from_url(tracker_url: Url) -> Result<Self> {
+  pub fn from_url(tracker_url: &Url) -> Result<Self> {
     if tracker_url.scheme() != "udp" {
-      return Err(Error::TrackerUdpOnly { tracker_url });
+      return Err(Error::TrackerUdpOnly {
+        tracker_url: tracker_url.clone(),
+      });
     }
-    Self::connect(HostPort::try_from(&tracker_url).context(error::TrackerHostPort { tracker_url })?)
+    Self::connect(
+      HostPort::try_from(tracker_url).context(error::TrackerHostPort {
+        tracker_url: tracker_url.clone(),
+      })?,
+    )
   }
 
   fn connect_exchange(&mut self) -> Result<()> {
@@ -70,7 +76,7 @@ impl Client {
     Ok(())
   }
 
-  pub fn announce_exchange(&self, btinh: Infohash) -> Result<Vec<SocketAddr>> {
+  pub fn announce_exchange(&self, btinh: &Infohash) -> Result<Vec<SocketAddr>> {
     let connection_id = match self.connection_id {
       Some(id) => id,
       None => return Err(Error::TrackerNoConnectionId),
@@ -80,7 +86,7 @@ impl Client {
       .sock
       .local_addr()
       .context(error::UdpSocketLocalAddress)?;
-    let req = announce::Request::new(connection_id, btinh, self.peer_id, local_addr.port());
+    let req = announce::Request::new(connection_id, *btinh, self.peer_id, local_addr.port());
     let mut buf = [0u8; Self::RX_BUF_LEN];
     let (_, payload) = self.exchange(&req, &mut buf)?;
 
@@ -148,12 +154,16 @@ impl Client {
 
     Ok(peer_list)
   }
+
+  #[cfg(test)]
+  pub fn local_addr(&self) -> SocketAddr {
+    (Ipv4Addr::LOCALHOST, self.sock.local_addr().unwrap().port()).into()
+  }
 }
 
 #[cfg(test)]
 mod tests {
   use super::*;
-  use std::thread;
 
   struct TestServer {
     sock: UdpSocket,
@@ -232,7 +242,7 @@ mod tests {
   fn client_from_url_no_port() {
     let tracker_url = Url::parse("udp://intermodal.io/announce").unwrap();
     assert_matches!(
-      Client::from_url(tracker_url),
+      Client::from_url(&tracker_url),
       Err(Error::TrackerHostPort { .. })
     );
   }
@@ -241,7 +251,7 @@ mod tests {
   fn client_from_url_no_host() {
     let tracker_url = Url::parse("udp://magnet:?announce=no_host").unwrap();
     assert_matches!(
-      Client::from_url(tracker_url),
+      Client::from_url(&tracker_url),
       Err(Error::TrackerHostPort { .. })
     );
   }
@@ -250,7 +260,7 @@ mod tests {
   fn client_from_url_not_udp() {
     let tracker_url = Url::parse("https://intermodal.io:100/announce").unwrap();
     assert_matches!(
-      Client::from_url(tracker_url),
+      Client::from_url(&tracker_url),
       Err(Error::TrackerUdpOnly { .. })
     );
   }
@@ -296,7 +306,7 @@ mod tests {
     });
 
     let c = Client::connect(addr).unwrap();
-    let addrs = c.announce_exchange(Sha1Digest::from_bytes([0u8; 20]).into());
+    let addrs = c.announce_exchange(&Sha1Digest::from_bytes([0u8; 20]).into());
     assert_matches!(addrs, Err(Error::TrackerExchange { .. }));
   }
 
@@ -308,7 +318,7 @@ mod tests {
     });
 
     let c = Client::connect(addr).unwrap();
-    let addrs = c.announce_exchange(Sha1Digest::from_bytes([0u8; 20]).into());
+    let addrs = c.announce_exchange(&Sha1Digest::from_bytes([0u8; 20]).into());
     assert_matches!(addrs, Err(Error::TrackerExchange { .. }));
   }
 
@@ -322,7 +332,7 @@ mod tests {
 
     let c = Client::connect(addr).unwrap();
     let addrs = c
-      .announce_exchange(Sha1Digest::from_bytes([0u8; 20]).into())
+      .announce_exchange(&Sha1Digest::from_bytes([0u8; 20]).into())
       .unwrap();
     assert_eq!(
       addrs,
@@ -340,7 +350,7 @@ mod tests {
 
     let c = Client::connect(addr).unwrap();
     let addrs = c
-      .announce_exchange(Sha1Digest::from_bytes([0u8; 20]).into())
+      .announce_exchange(&Sha1Digest::from_bytes([0u8; 20]).into())
       .unwrap();
     assert_eq!(
       addrs,

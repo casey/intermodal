@@ -1,12 +1,12 @@
 use crate::common::*;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
-  infohash: Infohash,
-  name: Option<String>,
-  peers: Vec<HostPort>,
-  trackers: Vec<Url>,
-  indices: BTreeSet<u64>,
+  pub(crate) infohash: Infohash,
+  pub(crate) name: Option<String>,
+  pub(crate) peers: Vec<HostPort>,
+  pub(crate) trackers: Vec<Url>,
+  pub(crate) indices: BTreeSet<u64>,
 }
 
 impl MagnetLink {
