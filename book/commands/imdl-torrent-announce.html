@@ -71,10 +71,12 @@
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             var html = document.querySelector('html');
-            var sidebar = 'hidden';
+            var sidebar = null;
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
             }
             html.classList.remove('sidebar-visible');
             html.classList.add("sidebar-" + sidebar);
@@ -82,16 +84,38 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../faq.html"><strong aria-hidden="true">1.</strong> FAQ</a></li><li class="chapter-item expanded "><a href="../commands.html"><strong aria-hidden="true">2.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../commands/imdl.html"><strong aria-hidden="true">2.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="../commands/imdl-completions.html"><strong aria-hidden="true">2.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent.html"><strong aria-hidden="true">2.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-announce.html" class="active"><strong aria-hidden="true">2.4.</strong> imdl torrent announce</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-create.html"><strong aria-hidden="true">2.5.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-link.html"><strong aria-hidden="true">2.6.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">2.7.</strong> imdl torrent piece-length</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-show.html"><strong aria-hidden="true">2.8.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-stats.html"><strong aria-hidden="true">2.9.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-verify.html"><strong aria-hidden="true">2.10.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">3.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/piece-length-selection.html"><strong aria-hidden="true">3.1.</strong> Piece Length Selection</a></li><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">3.2.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/metainfo-utilities.html"><strong aria-hidden="true">3.3.</strong> Metainfo Utilities</a></li><li class="chapter-item expanded "><a href="../bittorrent/distributing-large-data-sets.html"><strong aria-hidden="true">3.4.</strong> Distributing Large Data Sets</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">3.5.</strong> UDP Tracker Protocol</a></li></ol></li><li class="chapter-item expanded "><a href="../references.html"><strong aria-hidden="true">4.</strong> References</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../references/bittorrent.html"><strong aria-hidden="true">4.1.</strong> BitTorrent</a></li><li class="chapter-item expanded "><a href="../references/metadata.html"><strong aria-hidden="true">4.2.</strong> Metadata</a></li><li class="chapter-item expanded "><a href="../references/cryptography.html"><strong aria-hidden="true">4.3.</strong> Cryptography</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../introduction.html">Intermodal</a></li><li class="chapter-item expanded "><a href="../faq.html"><strong aria-hidden="true">1.</strong> FAQ</a></li><li class="chapter-item expanded "><a href="../commands.html"><strong aria-hidden="true">2.</strong> Commands</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../commands/imdl.html"><strong aria-hidden="true">2.1.</strong> imdl</a></li><li class="chapter-item expanded "><a href="../commands/imdl-completions.html"><strong aria-hidden="true">2.2.</strong> imdl completions</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent.html"><strong aria-hidden="true">2.3.</strong> imdl torrent</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-announce.html" class="active"><strong aria-hidden="true">2.4.</strong> imdl torrent announce</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-create.html"><strong aria-hidden="true">2.5.</strong> imdl torrent create</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-from-link.html"><strong aria-hidden="true">2.6.</strong> imdl torrent from-link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-link.html"><strong aria-hidden="true">2.7.</strong> imdl torrent link</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-piece-length.html"><strong aria-hidden="true">2.8.</strong> imdl torrent piece-length</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-show.html"><strong aria-hidden="true">2.9.</strong> imdl torrent show</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-stats.html"><strong aria-hidden="true">2.10.</strong> imdl torrent stats</a></li><li class="chapter-item expanded "><a href="../commands/imdl-torrent-verify.html"><strong aria-hidden="true">2.11.</strong> imdl torrent verify</a></li></ol></li><li class="chapter-item expanded "><a href="../bittorrent.html"><strong aria-hidden="true">3.</strong> Bittorrent</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bittorrent/piece-length-selection.html"><strong aria-hidden="true">3.1.</strong> Piece Length Selection</a></li><li class="chapter-item expanded "><a href="../bittorrent/bep-support.html"><strong aria-hidden="true">3.2.</strong> BEP Support</a></li><li class="chapter-item expanded "><a href="../bittorrent/metainfo-utilities.html"><strong aria-hidden="true">3.3.</strong> Metainfo Utilities</a></li><li class="chapter-item expanded "><a href="../bittorrent/distributing-large-data-sets.html"><strong aria-hidden="true">3.4.</strong> Distributing Large Data Sets</a></li><li class="chapter-item expanded "><a href="../bittorrent/udp-tracker-protocol.html"><strong aria-hidden="true">3.5.</strong> UDP Tracker Protocol</a></li></ol></li><li class="chapter-item expanded "><a href="../references.html"><strong aria-hidden="true">4.</strong> References</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../references/bittorrent.html"><strong aria-hidden="true">4.1.</strong> BitTorrent</a></li><li class="chapter-item expanded "><a href="../references/metadata.html"><strong aria-hidden="true">4.2.</strong> Metadata</a></li><li class="chapter-item expanded "><a href="../references/cryptography.html"><strong aria-hidden="true">4.3.</strong> Cryptography</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
                                 <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky bordered">
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                             <i class="fa fa-bars"></i>
