@@ -37,9 +37,6 @@ fi
 echo "Building completions..."
 cargo run --package gen -- --bin $executable completion-scripts
 
-echo "Generating changelog..."
-cargo run --package gen -- --bin $executable changelog
-
 echo "Generating readme..."
 cargo run --package gen -- --bin $executable readme
 
@@ -56,7 +53,6 @@ cp -r \
 echo "Copying generated files..."
 cp -r \
   target/gen/README.md \
-  target/gen/CHANGELOG.md \
   target/gen/completions \
   $dist
 
