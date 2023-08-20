@@ -68,6 +68,7 @@ jobs:
       with:
         components: clippy, rustfmt
         override: true
+        target: ${{ matrix.target }}
         toolchain: 1.56.0
 
     - name: Info
