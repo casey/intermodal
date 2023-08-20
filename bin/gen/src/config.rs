@@ -4,7 +4,6 @@ const PATH: &str = "bin/gen/config.yaml";
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Config {
-  pub(crate) changelog: BTreeMap<String, Metadata>,
   pub(crate) examples: Vec<Example>,
   pub(crate) packages: Vec<Package>,
   pub(crate) references: Vec<ReferenceSection>,
