@@ -32,11 +32,7 @@ impl Changelog {
 
         let manifest = Manifest::from_slice(&manifest_bytes)?;
 
-        let entry = Entry::new(
-          &current,
-          manifest.package.unwrap().version.as_ref(),
-          &project.config,
-        )?;
+        let entry = Entry::new(&current, manifest.package.unwrap().version.as_ref())?;
 
         entries.push(entry);
       }
@@ -98,13 +94,13 @@ impl Changelog {
   }
 
   #[throws]
-  pub(crate) fn render(&self, book: bool) -> String {
+  pub(crate) fn render(&self) -> String {
     let mut lines: Vec<String> = vec!["Changelog".into(), "=========".into()];
 
     for release in &self.releases {
       lines.push("".into());
       lines.push("".into());
-      release.render(&mut lines, book)?;
+      release.render(&mut lines)?;
     }
 
     let mut text = lines.join("\n");

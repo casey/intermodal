@@ -1,7 +1,3 @@
-changelog:
-  1f8023d13a399e381176c20bbb6a71763b7c352a:
-    type: documentation
-
 examples:
 - command: imdl
   text:    "The binary is called `imdl`:"

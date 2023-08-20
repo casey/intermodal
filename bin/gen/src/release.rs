@@ -8,7 +8,7 @@ pub(crate) struct Release {
 
 impl Release {
   #[throws]
-  pub(crate) fn render(&self, lines: &mut Vec<String>, book: bool) {
+  pub(crate) fn render(&self, lines: &mut Vec<String>) {
     let time = self.time.format("%Y-%m-%d");
 
     let header = match &self.version {
@@ -23,7 +23,7 @@ impl Release {
     lines.push("-".repeat(header.len()));
 
     for entry in &self.entries {
-      entry.render(lines, book)?;
+      entry.render(lines)?;
     }
   }
 }

@@ -16,8 +16,6 @@ mod example;
 mod faq;
 mod faq_entry;
 mod introduction;
-mod kind;
-mod metadata;
 mod options;
 mod package;
 mod project;
