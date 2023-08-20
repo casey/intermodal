@@ -3,21 +3,9 @@ use crate::common::*;
 #[derive(StructOpt)]
 pub(crate) enum Subcommand {
   #[structopt(about("Update all generated docs"))]
-  All {
-    #[structopt(long = "no-changelog", help = "Don't generate the changelog.")]
-    no_changelog: bool,
-  },
+  All,
   #[structopt(about("Generate book"))]
-  Book {
-    #[structopt(long = "no-changelog", help = "Don't generate the changelog.")]
-    no_changelog: bool,
-  },
-  #[structopt(about("Generate the changelog"))]
-  Changelog,
-  #[structopt(about("Print a commit template to standard output"))]
-  CommitTemplate,
-  #[structopt(about("Print possible values for `type` field of commit metadata"))]
-  CommitTypes,
+  Book,
   #[structopt(about("Generate completion scripts"))]
   CompletionScripts,
   #[structopt(about("Diff generated content between commits"))]
@@ -65,43 +53,21 @@ impl Subcommand {
     let project = Project::load(&options)?;
 
     match self {
-      Self::Changelog => Self::changelog(&project)?,
-      Self::CommitTemplate => {
-        println!("{}", Metadata::default().to_string());
-      }
-      Self::CommitTypes => {
-        for kind in Kind::VARIANTS {
-          println!("{}", kind)
-        }
-      }
       Self::CompletionScripts => Self::completion_scripts(&project)?,
       Self::Readme => Self::readme(&project)?,
-      Self::Book { no_changelog } => Self::book(&project, no_changelog)?,
+      Self::Book => Self::book(&project)?,
       Self::Man => Self::man(&project)?,
       Self::Diff => Self::diff(&project)?,
-      Self::All { no_changelog } => Self::all(&project, no_changelog)?,
+      Self::All => Self::all(&project)?,
     }
   }
 
   #[throws]
-  pub(crate) fn all(project: &Project, no_changelog: bool) {
-    if !no_changelog {
-      Self::changelog(&project)?;
-    }
+  pub(crate) fn all(project: &Project) {
     Self::completion_scripts(&project)?;
     Self::readme(&project)?;
-    Self::book(&project, no_changelog)?;
+    Self::book(&project)?;
     Self::man(&project)?;
-  }
-
-  #[throws]
-  pub(crate) fn changelog(project: &Project) {
-    info!("Generating changelog…");
-    let changelog = Changelog::new(&project)?;
-
-    let path = project.gen()?.join("CHANGELOG.md");
-
-    fs::write(&path, changelog.render(false)?).context(error::Filesystem { path })?;
   }
 
   #[throws]
@@ -187,7 +153,7 @@ impl Subcommand {
   }
 
   #[throws]
-  pub(crate) fn book(project: &Project, no_changelog: bool) {
+  pub(crate) fn book(project: &Project) {
     info!("Generating book…");
 
     let gen = project.gen()?;
@@ -222,15 +188,7 @@ impl Subcommand {
 
     Introduction::new(&project.config).render_to(out.join("introduction.md"))?;
 
-    let include_changelog = !no_changelog;
-
-    Summary::new(project, include_changelog).render_to(out.join("SUMMARY.md"))?;
-
-    if !no_changelog {
-      let changelog = Changelog::new(&project)?;
-      let dst = out.join("changelog.md");
-      fs::write(&dst, changelog.render(true)?).context(error::Filesystem { path: dst })?;
-    }
+    Summary::new(project).render_to(out.join("SUMMARY.md"))?;
   }
 
   #[throws]

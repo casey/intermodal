@@ -98,7 +98,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         brew install help2man
-        cargo run --package gen -- --bin target/debug/imdl all --no-changelog
+        cargo run --package gen -- --bin target/debug/imdl all
         git diff --no-ext-diff --exit-code
 
     - name: Install `mdbook`
@@ -110,7 +110,7 @@ jobs:
     - name: Build Book
       if: matrix.os != 'windows-latest'
       run: |
-        cargo run --package gen -- --bin target/debug/imdl book --no-changelog
+        cargo run --package gen -- --bin target/debug/imdl book
         mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
