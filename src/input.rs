@@ -6,10 +6,6 @@ pub(crate) struct Input {
 }
 
 impl Input {
-  pub(crate) fn new(source: InputTarget, data: Vec<u8>) -> Input {
-    Self { source, data }
-  }
-
   #[cfg(test)]
   pub(crate) fn from_path(path: &Path) -> Result<Input> {
     let data = fs::read(path).context(error::Filesystem { path })?;

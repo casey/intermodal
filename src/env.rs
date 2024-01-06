@@ -217,7 +217,7 @@ impl Env {
       }
     };
 
-    Ok(Input::new(source, data))
+    Ok(Input { source, data })
   }
 }
 
