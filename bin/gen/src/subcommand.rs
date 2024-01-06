@@ -31,7 +31,7 @@ fn blank(path: impl AsRef<Path>, title: &str) {
     title
   );
 
-  fs::write(&path, text).context(error::Filesystem { path })?;
+  fs::write(path, text).context(error::Filesystem { path })?;
 }
 
 #[throws]
@@ -64,10 +64,10 @@ impl Subcommand {
 
   #[throws]
   pub(crate) fn all(project: &Project) {
-    Self::completion_scripts(&project)?;
-    Self::readme(&project)?;
-    Self::book(&project)?;
-    Self::man(&project)?;
+    Self::completion_scripts(project)?;
+    Self::readme(project)?;
+    Self::book(project)?;
+    Self::man(project)?;
   }
 
   #[throws]
@@ -178,7 +178,7 @@ impl Subcommand {
       fs::write(&dst, page).context(error::Filesystem { path: dst })?;
     }
 
-    clean_dir(&out.join("references"))?;
+    clean_dir(out.join("references"))?;
 
     for section in &project.config.references {
       section.render_to(out.join(section.path()))?;

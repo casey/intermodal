@@ -8,7 +8,7 @@ pub(crate) trait TemplateExt {
   fn render_to(&self, path: impl AsRef<Path>) {
     let path = path.as_ref();
     let text = self.render_newline()?;
-    fs::write(&path, text).context(error::Filesystem { path })?;
+    fs::write(path, text).context(error::Filesystem { path })?;
   }
 }
 

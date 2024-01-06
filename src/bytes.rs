@@ -221,8 +221,7 @@ mod tests {
       assert_eq!(
         text.parse::<Bytes>().unwrap(),
         Bytes(*value),
-        "text: {}",
-        text
+        "text: {text}",
       );
     }
   }

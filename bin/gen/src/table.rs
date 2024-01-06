@@ -18,8 +18,7 @@ impl<R: Row> Display for Table<R> {
       rows.push(row.entries());
     }
 
-    let mut widths = Vec::new();
-    widths.resize(rows[0].len(), 0);
+    let mut widths = vec![0; rows[0].len()];
 
     for row in &rows {
       for (width, entry) in widths.iter_mut().zip(row) {

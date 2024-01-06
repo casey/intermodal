@@ -246,8 +246,7 @@ mod tests {
     let err = env.err();
     assert!(
       err.starts_with("error: Failed to parse announce URL:"),
-      "Unexpected standard error output: {}",
-      err
+      "Unexpected standard error output: {err}",
     );
 
     assert_eq!(env.out(), "");

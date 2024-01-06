@@ -258,14 +258,12 @@ impl Client {
 
       // Respond to any serviceable ut_metadata request. Ignore errors.
       loop {
-        let msg = match seeder.conn.recv() {
-          Ok(msg) => msg,
-          Err(_) => continue,
+        let Ok(msg) = seeder.conn.recv() else {
+          continue;
         };
 
-        let payload = match msg.parse_extended_payload() {
-          Ok((_, payload)) => payload,
-          Err(_) => continue,
+        let Ok((_, payload)) = msg.parse_extended_payload() else {
+          continue;
         };
 
         let req: extended::UtMetadata = match Message::from_bencode(payload) {

@@ -222,7 +222,7 @@ mod tests {
       tree: {},
     };
     env.assert_ok();
-    assert_eq!(metainfo, env.load_metainfo(format!("{}.torrent", infohash)));
+    assert_eq!(metainfo, env.load_metainfo(format!("{infohash}.torrent")));
   }
 
   #[test]

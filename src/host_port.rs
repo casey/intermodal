@@ -147,7 +147,7 @@ mod tests {
     let node = HostPort { host, port };
     let parsed: HostPort = text
       .parse()
-      .unwrap_or_else(|_| panic!("Failed to parse {}", text));
+      .unwrap_or_else(|_| panic!("Failed to parse {text}"));
     assert_eq!(parsed, node);
     let ser = bendy::serde::to_bytes(&node).unwrap();
     assert_eq!(

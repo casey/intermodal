@@ -273,22 +273,14 @@ mod tests {
       .write_human_readable(&mut cursor, Style::inactive())
       .unwrap();
     let have = String::from_utf8(cursor.into_inner()).unwrap();
-    assert_eq!(
-      have, want,
-      "have != want:\nHAVE:\n{}\nWANT:\n{}",
-      have, want
-    );
+    assert_eq!(have, want, "have != want:\nHAVE:\n{have}\nWANT:\n{want}",);
   }
 
   fn tab_delimited(table: &Table, want: &str) {
     let mut cursor = Cursor::new(Vec::new());
     table.write_tab_delimited(&mut cursor).unwrap();
     let have = String::from_utf8(cursor.into_inner()).unwrap();
-    assert_eq!(
-      have, want,
-      "have != want:\nHAVE:\n{}\nWANT:\n{}",
-      have, want
-    );
+    assert_eq!(have, want, "have != want:\nHAVE:\n{have}\nWANT:\n{want}",);
   }
 
   #[test]

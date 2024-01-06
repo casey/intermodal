@@ -288,7 +288,7 @@ mod tests {
   #[test]
   fn link_from_str_infohash_length_error() {
     let infohash = "123456789abcedf";
-    let link = format!("magnet:?xt=urn:btih:{}", infohash);
+    let link = format!("magnet:?xt=urn:btih:{infohash}");
     let e = MagnetLink::from_str(&link).unwrap_err();
 
     assert_matches!(e, Error::MagnetLinkParse {
@@ -300,7 +300,7 @@ mod tests {
   #[test]
   fn link_from_str_infohash_bad_hex() {
     let infohash = "laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let link = format!("magnet:?xt=urn:btih:{}", infohash);
+    let link = format!("magnet:?xt=urn:btih:{infohash}");
     let e = MagnetLink::from_str(&link).unwrap_err();
 
     assert_matches!(e, Error::MagnetLinkParse {
@@ -327,7 +327,7 @@ mod tests {
   fn link_from_str_tracker_address() {
     let infohash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     let bad_addr = "%imdl.io/announce";
-    let link = format!("magnet:?xt=urn:btih:{}&tr={}", infohash, bad_addr);
+    let link = format!("magnet:?xt=urn:btih:{infohash}&tr={bad_addr}");
     let e = MagnetLink::from_str(&link).unwrap_err();
 
     assert_matches!(e,
@@ -344,7 +344,7 @@ mod tests {
   fn link_from_str_peer_address() {
     let infohash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     let bad_addr = "%imdl.io:13337";
-    let link = format!("magnet:?xt=urn:btih:{}&x.pe={}", infohash, bad_addr);
+    let link = format!("magnet:?xt=urn:btih:{infohash}&x.pe={bad_addr}");
     let e = MagnetLink::from_str(&link).unwrap_err();
 
     assert_matches!(e,
