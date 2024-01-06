@@ -27,7 +27,7 @@ impl<'a> Step for VerifyStep<'a> {
 
   fn write_message(&self, write: &mut dyn Write) -> io::Result<()> {
     match self {
-      Self::Loading { metainfo } => write!(write, "Loading metainfo from {}…", metainfo),
+      Self::Loading { metainfo } => write!(write, "Loading metainfo from {metainfo}…"),
       Self::Verifying { content } => {
         write!(write, "Verifying pieces from `{}`…", content.display())
       }

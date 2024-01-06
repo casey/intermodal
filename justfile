@@ -11,8 +11,8 @@ log := 'warn'
 export RUST_LOG := log
 
 # watch filesystem for changes and rerun tests
-watch +ARGS='':
-	cargo watch --clear --exec 'test {{ARGS}}'
+watch +ARGS='test':
+	cargo watch --clear --exec '{{ARGS}}'
 
 # show stats about torrents at `PATH`
 stats PATH:

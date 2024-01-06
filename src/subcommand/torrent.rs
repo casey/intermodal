@@ -2,6 +2,7 @@ use crate::common::*;
 
 mod announce;
 mod create;
+mod dump;
 mod from_link;
 mod link;
 mod piece_length;
@@ -18,6 +19,7 @@ mod verify;
 pub(crate) enum Torrent {
   Announce(announce::Announce),
   Create(create::Create),
+  Dump(dump::Dump),
   FromLink(from_link::FromLink),
   Link(link::Link),
   #[structopt(alias = "piece-size")]
@@ -32,6 +34,7 @@ impl Torrent {
     match self {
       Self::Announce(announce) => announce.run(env),
       Self::Create(create) => create.run(env, options),
+      Self::Dump(dump) => dump.run(env),
       Self::FromLink(from_link) => from_link.run(env, options),
       Self::Link(link) => link.run(env),
       Self::PieceLength(piece_length) => piece_length.run(env),

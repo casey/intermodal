@@ -77,7 +77,7 @@ mod tests {
   #[test]
   fn created_by() {
     let pattern = Regex::new(
-      r#"(?x)
+      r"(?x)
       imdl/
       [0-9]+.[0-9]+.[0-9]+(-.*)?
       (
@@ -86,14 +86,13 @@ mod tests {
           [0-9a-f]{12}
         \)
       )?
-    "#,
+    ",
     )
     .unwrap();
 
     assert!(
       pattern.is_match(CREATED_BY_DEFAULT),
-      "Bad created by string: `{}`",
-      CREATED_BY_DEFAULT
+      "Bad created by string: `{CREATED_BY_DEFAULT}`",
     );
   }
 }

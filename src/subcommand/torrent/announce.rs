@@ -227,8 +227,7 @@ mod tests {
     assert_eq!(
       env.err(),
       format!(
-        "Couldn't build tracker client. Cannot connect to tracker `{}`: only UDP trackers are supported\n",
-        https_tracker_url
+        "Couldn't build tracker client. Cannot connect to tracker `{https_tracker_url}`: only UDP trackers are supported\n",
       )
     );
   }

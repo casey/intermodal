@@ -103,7 +103,7 @@ impl TestEnv {
     match self.run() {
       Ok(()) => {}
       Err(err) => {
-        eprintln!("Run failed: {}", err);
+        eprintln!("Run failed: {err}");
         eprintln!("Std error:\n{}", self.err());
         eprintln!("Std output:\n{}", self.out());
         panic!();

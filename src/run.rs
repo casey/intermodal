@@ -21,7 +21,7 @@ pub fn run() -> Result<(), i32> {
   let mut env = match Env::main() {
     Ok(env) => env,
     Err(err) => {
-      eprintln!("{}", err);
+      eprintln!("{err}");
       return Err(EXIT_FAILURE);
     }
   };

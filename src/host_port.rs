@@ -128,7 +128,7 @@ impl<'de> Deserialize<'de> for HostPort {
     } else {
       Host::parse(&tuple.0)
     }
-    .map_err(|error| D::Error::custom(format!("Failed to parse node host: {}", error)))?;
+    .map_err(|error| D::Error::custom(format!("Failed to parse node host: {error}")))?;
 
     Ok(HostPort {
       host,
@@ -147,7 +147,7 @@ mod tests {
     let node = HostPort { host, port };
     let parsed: HostPort = text
       .parse()
-      .unwrap_or_else(|_| panic!("Failed to parse {}", text));
+      .unwrap_or_else(|_| panic!("Failed to parse {text}"));
     assert_eq!(parsed, node);
     let ser = bendy::serde::to_bytes(&node).unwrap();
     assert_eq!(
@@ -197,7 +197,7 @@ mod tests {
   fn test_from_url() {
     let url = Url::parse("udp://imdl.io:12345").unwrap();
     let host_port = HostPort::try_from(&url).unwrap();
-    assert_eq!(host_port.host, Host::Domain("imdl.io".into()));
+    assert_eq!(host_port.host, Host::Domain::<String>("imdl.io".into()));
     assert_eq!(host_port.port, 12345);
   }
 

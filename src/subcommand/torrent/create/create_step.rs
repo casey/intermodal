@@ -36,7 +36,7 @@ impl<'a> Step for CreateStep<'a> {
       },
 
       Self::Hashing => write!(write, "Hashing pieces…"),
-      Self::Writing { output } => write!(write, "Writing metainfo to {}…", output),
+      Self::Writing { output } => write!(write, "Writing metainfo to {output}…"),
     }
   }
 }

@@ -74,8 +74,6 @@ pub(crate) enum Error {
   Network { source: io::Error },
   #[snafu(display("Failed to invoke opener: {}", source))]
   OpenerInvoke { source: io::Error },
-  #[snafu(display("Opener failed: {}", exit_status))]
-  OpenerExitStatus { exit_status: ExitStatus },
   #[snafu(display("Output path already exists: `{}`", path.display()))]
   OutputExists { path: PathBuf },
   #[snafu(display("Output target empty"))]

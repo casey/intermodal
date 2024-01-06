@@ -158,9 +158,7 @@ impl Extractor {
 
     self.torrents += 1;
 
-    let contents = if let Ok(contents) = fs::read(path) {
-      contents
-    } else {
+    let Ok(contents) = fs::read(path) else {
       self.io_errors += 1;
       return;
     };
@@ -178,7 +176,7 @@ impl Extractor {
   fn extract(&mut self, value: &Value) {
     let matches = self.regex_set.matches(&self.current_path);
 
-    for i in matches.iter() {
+    for i in matches {
       let pattern = &self.regex_set.patterns()[i];
       if let Some(values) = self.values.get_mut(pattern) {
         values.push(Self::pretty_print(value));
@@ -262,7 +260,7 @@ impl Extractor {
     } else {
       buffer.push('<');
       for byte in string {
-        buffer.push_str(&format!("{:02X}", byte));
+        buffer.push_str(&format!("{byte:02X}"));
       }
       buffer.push('>');
     }

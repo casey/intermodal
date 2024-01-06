@@ -8,8 +8,7 @@ pub(crate) fn xor_args<T: Clone>(
 ) -> Result<T> {
   let target = a.as_ref().xor(b.as_ref()).ok_or_else(|| {
     Error::internal(format!(
-      "Expected exactly one of the arguments `{}` or `{}` to be set",
-      a_name, b_name
+      "Expected exactly one of the arguments `{a_name}` or `{b_name}` to be set",
     ))
   })?;
 

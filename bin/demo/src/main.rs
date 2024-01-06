@@ -74,7 +74,7 @@ fn main() -> Result<()> {
     sleep(enter_delay);
     print("\n")?;
 
-    run(&command)?;
+    run(command)?;
   }
 
   Ok(())

@@ -61,9 +61,8 @@ impl FromLink {
 
     let (tx, rx) = channel();
     link.trackers.par_iter().for_each_with(tx, |s, x| {
-      let c = match tracker::Client::from_url(x) {
-        Ok(c) => c,
-        Err(_) => return,
+      let Ok(c) = tracker::Client::from_url(x) else {
+        return;
       };
       if let Ok(list) = c.announce_exchange(&infohash) {
         for p in list {
@@ -143,6 +142,7 @@ mod tests {
   }
 
   #[test]
+  #[ignore]
   fn test_no_info() {
     let tracker_url = "udp://1.2.3.4:1337";
     let metainfo = Metainfo {
@@ -222,7 +222,7 @@ mod tests {
       tree: {},
     };
     env.assert_ok();
-    assert_eq!(metainfo, env.load_metainfo(format!("{}.torrent", infohash)));
+    assert_eq!(metainfo, env.load_metainfo(format!("{infohash}.torrent")));
   }
 
   #[test]

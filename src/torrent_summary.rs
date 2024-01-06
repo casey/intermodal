@@ -47,7 +47,7 @@ impl TorrentSummary {
   pub(crate) fn from_input(input: &Input) -> Result<Self> {
     let metainfo = Metainfo::from_input(input)?;
     let infohash = Infohash::from_input(input)?;
-    let size = Bytes(input.data().len().into_u64());
+    let size = Bytes(input.data.len().into_u64());
 
     Ok(Self::new(metainfo, infohash, size))
   }
@@ -82,13 +82,15 @@ impl TorrentSummary {
       #[allow(clippy::as_conversions)]
       table.row(
         "Creation Date",
-        Utc.timestamp(
-          creation_date
-            .min(i64::max_value() as u64)
-            .try_into()
-            .invariant_unwrap("min with i64 is always valid i64"),
-          0,
-        ),
+        Utc
+          .timestamp_opt(
+            creation_date
+              .min(i64::max_value() as u64)
+              .try_into()
+              .invariant_unwrap("min with i64 is always valid i64"),
+            0,
+          )
+          .unwrap(),
       );
     }
 

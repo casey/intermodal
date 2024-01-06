@@ -12,6 +12,8 @@
   clippy::module_name_repetitions
 )]
 
+pub use run::run;
+
 #[cfg(test)]
 #[macro_use]
 mod assert_matches;
@@ -39,6 +41,7 @@ mod test_env_builder;
 mod capture;
 
 mod arguments;
+pub mod bench;
 mod bytes;
 mod common;
 mod consts;
@@ -95,8 +98,3 @@ mod use_color;
 mod verifier;
 mod walker;
 mod xor_args;
-
-#[cfg(feature = "bench")]
-pub mod bench;
-
-pub use run::run;

@@ -124,9 +124,9 @@ impl Env {
     if let Err(error) = self.run() {
       if let Error::Clap { source } = error {
         if source.use_stderr() {
-          write!(&mut self.err, "{}", source).ok();
+          write!(&mut self.err, "{source}").ok();
         } else {
-          write!(&mut self.out, "{}", source).ok();
+          write!(&mut self.out, "{source}").ok();
         }
         match source.kind {
           ErrorKind::VersionDisplayed | ErrorKind::HelpDisplayed => Ok(()),
@@ -217,7 +217,7 @@ impl Env {
       }
     };
 
-    Ok(Input::new(source, data))
+    Ok(Input { source, data })
   }
 }
 
@@ -246,8 +246,7 @@ mod tests {
     let err = env.err();
     assert!(
       err.starts_with("error: Failed to parse announce URL:"),
-      "Unexpected standard error output: {}",
-      err
+      "Unexpected standard error output: {err}",
     );
 
     assert_eq!(env.out(), "");

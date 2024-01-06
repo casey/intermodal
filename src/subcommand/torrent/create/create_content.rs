@@ -107,10 +107,7 @@ impl CreateContent {
   }
 
   fn torrent_path(input: &Path, name: &str) -> PathBuf {
-    input
-      .join("..")
-      .lexiclean()
-      .join(format!("{}.torrent", name))
+    input.join("..").lexiclean().join(format!("{name}.torrent"))
   }
 }
 

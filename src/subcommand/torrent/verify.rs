@@ -326,7 +326,7 @@ mod tests {
 
     let bar = create_env.resolve("bar")?;
 
-    fs::rename(&foo, &bar).unwrap();
+    fs::rename(foo, &bar).unwrap();
 
     let mut verify_env = test_env! {
       args: [
@@ -445,7 +445,7 @@ mod tests {
         "--content",
         &content,
       ],
-      input: fs::read(&torrent).unwrap(),
+      input: fs::read(torrent).unwrap(),
       tree: {},
     };
 

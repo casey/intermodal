@@ -26,8 +26,7 @@ impl Readme {
       let slug = text
         .to_lowercase()
         .replace(' ', "-")
-        .replace('.', "")
-        .replace('&', "");
+        .replace(['.', '&'], "");
       lines.push(format!("{}- [{}](#{})", indentation, text, slug));
     }
 

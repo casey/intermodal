@@ -1888,7 +1888,7 @@ Content Size  9 bytes
     fs::create_dir(&dir_src).unwrap();
     fs::write(dir_contents, "baz").unwrap();
 
-    fs::create_dir(&dir).unwrap();
+    fs::create_dir(dir).unwrap();
     fs::write(file_src, "bar").unwrap();
     #[cfg(unix)]
     {
@@ -3047,7 +3047,7 @@ Content Size  9 bytes
 
     let input = dir.path().join("foo");
 
-    fs::write(&input, "").unwrap();
+    fs::write(input, "").unwrap();
 
     let mut env = test_env! {
       args: [

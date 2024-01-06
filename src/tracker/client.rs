@@ -20,9 +20,8 @@ impl Client {
       .context(error::TrackerSocketAddrs)?;
 
     for tracker_addr in addrs {
-      let sock = match Self::new_udp_socket(tracker_addr) {
-        Ok(sock) => sock,
-        Err(_) => continue, // TODO: log these as warnings
+      let Ok(sock) = Self::new_udp_socket(tracker_addr) else {
+        continue; // TODO: log these as warnings
       };
       let mut client = Client {
         peer_id: rand::thread_rng().gen(),
@@ -77,9 +76,8 @@ impl Client {
   }
 
   pub fn announce_exchange(&self, btinh: &Infohash) -> Result<Vec<SocketAddr>> {
-    let connection_id = match self.connection_id {
-      Some(id) => id,
-      None => return Err(Error::TrackerNoConnectionId),
+    let Some(connection_id) = self.connection_id else {
+      return Err(Error::TrackerNoConnectionId);
     };
 
     let local_addr = self

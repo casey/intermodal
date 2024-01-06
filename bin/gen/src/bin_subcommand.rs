@@ -24,7 +24,7 @@ impl BinSubcommand {
       let block = &wide_help[marker + MARKER.len()..];
 
       for line in block.lines() {
-        let name = line.trim().split_whitespace().next().unwrap();
+        let name = line.split_whitespace().next().unwrap();
         subcommands.push(name.into());
       }
     }
@@ -53,7 +53,7 @@ impl BinSubcommand {
 
     info!("Generating man page for `{}`", command_line);
 
-    let name = command_line.replace(" ", "\\ ");
+    let name = command_line.replace(' ', "\\ ");
 
     let help = self.help()?;
 
@@ -125,7 +125,7 @@ impl BinSubcommand {
 
     for name in &self.command {
       slug.push('-');
-      slug.push_str(&name);
+      slug.push_str(name);
     }
 
     slug
@@ -136,7 +136,7 @@ impl BinSubcommand {
 
     for name in &self.command {
       line.push(' ');
-      line.push_str(&name);
+      line.push_str(name);
     }
 
     line

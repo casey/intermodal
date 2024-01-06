@@ -52,7 +52,7 @@ pub(crate) struct Metainfo {
 
 impl Metainfo {
   pub(crate) fn from_input(input: &Input) -> Result<Metainfo> {
-    Self::deserialize(input.source(), input.data())
+    Self::deserialize(&input.source, &input.data)
   }
 
   pub(crate) fn deserialize(source: &InputTarget, data: &[u8]) -> Result<Metainfo, Error> {
@@ -70,7 +70,7 @@ impl Metainfo {
   pub(crate) fn dump(&self, path: impl AsRef<Path>) -> Result<(), Error> {
     let path = path.as_ref();
     let bencode = bendy::serde::ser::to_bytes(&self).context(error::MetainfoSerialize)?;
-    fs::write(path, &bencode).context(error::Filesystem { path })?;
+    fs::write(path, bencode).context(error::Filesystem { path })?;
     Ok(())
   }
 
@@ -276,9 +276,9 @@ mod tests {
       let have = String::from_utf8_lossy(&have);
       assert_eq!(have, want);
       eprintln!("have:");
-      eprintln!("{}", have);
+      eprintln!("{have}");
       eprintln!("want:");
-      eprintln!("{}", want);
+      eprintln!("{want}");
       panic!("Unexpected representation...");
     }
   }
