@@ -32,7 +32,7 @@ impl From<sha1::Digest> for Sha1Digest {
 impl Display for Sha1Digest {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     for byte in &self.bytes {
-      write!(f, "{:02x}", byte)?;
+      write!(f, "{byte:02x}")?;
     }
 
     Ok(())

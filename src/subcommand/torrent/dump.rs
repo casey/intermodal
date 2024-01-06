@@ -57,7 +57,7 @@ impl<'a> Display for Fmt<'a> {
           if i > 0 {
             write!(f, " ,")?;
           }
-          fmt_string(f, &key)?;
+          fmt_string(f, key)?;
           write!(f, ": ")?;
           write!(f, "{}", Fmt(value))?;
         }
@@ -74,7 +74,7 @@ impl<'a> Display for Fmt<'a> {
         }
         write!(f, "]")?;
       }
-      Value::Bytes(bytes) => fmt_string(f, &bytes)?,
+      Value::Bytes(bytes) => fmt_string(f, bytes)?,
     }
 
     Ok(())

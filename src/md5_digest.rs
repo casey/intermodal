@@ -37,7 +37,7 @@ impl From<md5::Digest> for Md5Digest {
 impl Display for Md5Digest {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     for byte in &self.bytes {
-      write!(f, "{:02x}", byte)?;
+      write!(f, "{byte:02x}")?;
     }
 
     Ok(())

@@ -83,11 +83,11 @@ impl Print for FileError {
     }
 
     match self {
-      Self::Io(io_error) => write!(stream, "{}", io_error)?,
+      Self::Io(io_error) => write!(stream, "{io_error}")?,
       Self::Missing => write!(stream, "File missing")?,
       Self::Directory => write!(stream, "Expected file but found directory")?,
-      Self::Surfeit(difference) => write!(stream, "{} too long", difference)?,
-      Self::Dearth(difference) => write!(stream, "{} too short", difference)?,
+      Self::Surfeit(difference) => write!(stream, "{difference} too long")?,
+      Self::Dearth(difference) => write!(stream, "{difference} too short")?,
       Self::Md5 { .. } => {
         return Err(io::Error::new(
           io::ErrorKind::Other,

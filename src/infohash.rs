@@ -25,7 +25,7 @@ impl Infohash {
 
         if let Value::Dict(_) = info {
           let encoded = info.to_bencode().map_err(|error| {
-            Error::internal(format!("Failed to re-encode info dictionary: {}", error))
+            Error::internal(format!("Failed to re-encode info dictionary: {error}"))
           })?;
 
           Ok(Self::from_bencoded_info_dict(&encoded))

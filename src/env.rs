@@ -124,9 +124,9 @@ impl Env {
     if let Err(error) = self.run() {
       if let Error::Clap { source } = error {
         if source.use_stderr() {
-          write!(&mut self.err, "{}", source).ok();
+          write!(&mut self.err, "{source}").ok();
         } else {
-          write!(&mut self.out, "{}", source).ok();
+          write!(&mut self.out, "{source}").ok();
         }
         match source.kind {
           ErrorKind::VersionDisplayed | ErrorKind::HelpDisplayed => Ok(()),

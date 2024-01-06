@@ -128,7 +128,7 @@ impl<'de> Deserialize<'de> for HostPort {
     } else {
       Host::parse(&tuple.0)
     }
-    .map_err(|error| D::Error::custom(format!("Failed to parse node host: {}", error)))?;
+    .map_err(|error| D::Error::custom(format!("Failed to parse node host: {error}")))?;
 
     Ok(HostPort {
       host,

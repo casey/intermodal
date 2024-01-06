@@ -192,9 +192,9 @@ impl Display for Bytes {
       DISPLAY_SUFFIXES[i - 1]
     };
 
-    let formatted = format!("{:.2}", value);
+    let formatted = format!("{value:.2}");
     let trimmed = formatted.trim_end_matches('0').trim_end_matches('.');
-    write!(f, "{} {}", trimmed, suffix)
+    write!(f, "{trimmed} {suffix}")
   }
 }
 
