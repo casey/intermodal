@@ -1,6 +1,6 @@
 use crate::common::*;
 
-const METAINFO_HELP: &str = "Dump unverified torrent metainfo in `<INPUT>`. If  `<INPUT>` is `-`, \
+const METAINFO_HELP: &str = "Dump arbitrary bencode in `<INPUT>`. If  `<INPUT>` is `-`, \
                              read metainfo from standard input.";
 
 const INPUT_POSITIONAL: &str = "<INPUT>";
