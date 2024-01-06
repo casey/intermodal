@@ -55,7 +55,7 @@ impl<'a> Display for Fmt<'a> {
 
         for (i, (key, value)) in dict.iter().enumerate() {
           if i > 0 {
-            write!(f, " ,")?;
+            write!(f, ", ")?;
           }
           fmt_string(f, key)?;
           write!(f, ": ")?;
@@ -170,6 +170,7 @@ mod tests {
 
     case("de", "{}\n");
     case("d1:xi0ee", "{\"x\": 0}\n");
+    case("d1:xi0e1:yi1ee", "{\"x\": 0, \"y\": 1}\n");
     case("d3:xyzd3:abci0eee", "{\"xyz\": {\"abc\": 0}}\n");
   }
 }
