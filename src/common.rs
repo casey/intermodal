@@ -86,6 +86,9 @@ pub(crate) use crate::{
 pub(crate) type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[cfg(test)]
+pub(crate) use test::*;
+
+#[cfg(test)]
 mod test {
   // test stdlib types
   pub(crate) use std::{
@@ -104,6 +107,3 @@ mod test {
   // test structs and enums
   pub(crate) use crate::{capture::Capture, test_env::TestEnv, test_env_builder::TestEnvBuilder};
 }
-
-#[cfg(test)]
-pub(crate) use test::*;
