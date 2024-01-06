@@ -90,7 +90,7 @@ impl Table {
             } else {
               padding(out, name_width + 2)?;
             }
-            writeln!(out, "{}", value)?;
+            writeln!(out, "{value}")?;
           }
         }
         Value::Directory { root, files } => {
@@ -122,11 +122,11 @@ impl Table {
               }
             }
 
-            writeln!(out, "{}", name)?;
+            writeln!(out, "{name}")?;
           }
         }
-        Value::Scalar(scalar) => writeln!(out, "  {}", scalar)?,
-        Value::Size(bytes) => writeln!(out, "  {}", bytes)?,
+        Value::Scalar(scalar) => writeln!(out, "  {scalar}")?,
+        Value::Size(bytes) => writeln!(out, "  {bytes}")?,
         Value::Tiers(tiers) => {
           let tier_name_width = tiers
             .iter()
@@ -142,7 +142,7 @@ impl Table {
             write!(
               out,
               "  {:width$}",
-              format!("{}:", name).as_str(),
+              format!("{name}:").as_str(),
               width = tier_name_width + 1
             )?;
 
@@ -151,7 +151,7 @@ impl Table {
                 padding(out, name_width + 2 + tier_name_width + 1)?;
               }
 
-              writeln!(out, " {}", value)?;
+              writeln!(out, " {value}")?;
             }
           }
         }
@@ -170,7 +170,7 @@ impl Table {
             if i > 0 {
               write!(out, "\t")?;
             }
-            write!(out, "{}", value)?;
+            write!(out, "{value}")?;
           }
           writeln!(out)?;
         }
@@ -179,18 +179,18 @@ impl Table {
             if i > 0 {
               write!(out, "\t")?;
             }
-            write!(out, "{}/{}", root, file)?;
+            write!(out, "{root}/{file}")?;
           }
           writeln!(out)?;
         }
-        Value::Scalar(scalar) => writeln!(out, "{}", scalar)?,
-        Value::Size(Bytes(value)) => writeln!(out, "{}", value)?,
+        Value::Scalar(scalar) => writeln!(out, "{scalar}")?,
+        Value::Size(Bytes(value)) => writeln!(out, "{value}")?,
         Value::Tiers(tiers) => {
           for (i, value) in tiers.iter().flat_map(|(_name, values)| values).enumerate() {
             if i > 0 {
               write!(out, "\t")?;
             }
-            write!(out, "{}", value)?;
+            write!(out, "{value}")?;
           }
           writeln!(out)?;
         }

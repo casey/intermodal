@@ -61,9 +61,8 @@ impl FromLink {
 
     let (tx, rx) = channel();
     link.trackers.par_iter().for_each_with(tx, |s, x| {
-      let c = match tracker::Client::from_url(x) {
-        Ok(c) => c,
-        Err(_) => return,
+      let Ok(c) = tracker::Client::from_url(x) else {
+        return;
       };
       if let Ok(list) = c.announce_exchange(&infohash) {
         for p in list {

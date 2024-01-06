@@ -68,7 +68,7 @@ impl Display for FilePath {
       if i > 0 {
         write!(f, "/")?;
       }
-      write!(f, "{}", component)?;
+      write!(f, "{component}")?;
     }
     Ok(())
   }
