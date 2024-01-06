@@ -7,8 +7,8 @@ pub(crate) struct Infohash {
 
 impl Infohash {
   pub(crate) fn from_input(input: &Input) -> Result<Infohash, Error> {
-    let value = Value::from_bencode(input.data()).map_err(|error| Error::MetainfoDecode {
-      input: input.source().clone(),
+    let value = Value::from_bencode(&input.data).map_err(|error| Error::MetainfoDecode {
+      input: input.source.clone(),
       error,
     })?;
 
@@ -18,7 +18,7 @@ impl Infohash {
           .iter()
           .find(|pair: &(&Cow<[u8]>, &Value)| pair.0.as_ref() == b"info")
           .ok_or_else(|| Error::MetainfoValidate {
-            input: input.source().clone(),
+            input: input.source.clone(),
             source: MetainfoError::InfoMissing,
           })?
           .1;
@@ -31,13 +31,13 @@ impl Infohash {
           Ok(Self::from_bencoded_info_dict(&encoded))
         } else {
           Err(Error::MetainfoValidate {
-            input: input.source().clone(),
+            input: input.source.clone(),
             source: MetainfoError::InfoType,
           })
         }
       }
       _ => Err(Error::MetainfoValidate {
-        input: input.source().clone(),
+        input: input.source.clone(),
         source: MetainfoError::Type,
       }),
     }

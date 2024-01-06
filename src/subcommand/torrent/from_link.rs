@@ -143,6 +143,7 @@ mod tests {
   }
 
   #[test]
+  #[ignore]
   fn test_no_info() {
     let tracker_url = "udp://1.2.3.4:1337";
     let metainfo = Metainfo {

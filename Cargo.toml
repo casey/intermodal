@@ -1,54 +1,54 @@
 [package]
-name        = "imdl"
-version     = "0.1.13"
+name = "imdl"
+version = "0.1.13"
 description = "📦 A 40' shipping container for the internet"
-authors     = ["Casey Rodarmor <casey@rodarmor.com>"]
-license     = "CC0-1.0"
-readme      = "README.md"
-keywords    = ["p2p", "sharing", "bittorrent", "torrent"]
-categories  = ["command-line-utilities"]
-homepage    = "https://github.com/casey/intermodal"
-repository  = "https://github.com/casey/intermodal"
-edition     = "2018"
+authors = ["Casey Rodarmor <casey@rodarmor.com>"]
+license = "CC0-1.0"
+readme = "README.md"
+keywords = ["p2p", "sharing", "bittorrent", "torrent"]
+categories = ["command-line-utilities"]
+homepage = "https://github.com/casey/intermodal"
+repository = "https://github.com/casey/intermodal"
+edition = "2018"
 default-run = "imdl"
 
 [features]
 default = []
-bench   = []
+bench = []
 
 [dependencies]
-ansi_term         = "0.12.0"
-atty              = "0.2.0"
-chrono            = "0.4.1"
-console           = "0.12.0"
-globset           = "0.4.0"
-hex               = "0.4.2"
-ignore            = "0.4.14"
-lazy_static       = "1.4.0"
-lexiclean         = "0.0.1"
-libc              = "0.2.0"
-log               = "0.4.8"
-md5               = "0.7.0"
-rand              = "0.7.3"
-open              = "1.4.0"
+ansi_term = "0.12.0"
+atty = "0.2.0"
+chrono = "0.4.1"
+console = "0.12.0"
+globset = "0.4.0"
+hex = "0.4.2"
+ignore = "0.4.14"
+lazy_static = "1.4.0"
+lexiclean = "0.0.1"
+libc = "0.2.0"
+log = "0.4.8"
+md5 = "0.7.0"
+rand = "0.7.3"
+open = "1.4.0"
 pretty_assertions = "0.6.0"
 pretty_env_logger = "0.4.0"
-rayon             = "<=1.6.0"
-regex             = "1.0.0"
-serde-hex         = "0.1.0"
-serde_bytes       = "0.11.0"
-serde_json        = "1.0.57"
-serde_with        = "1.4.0"
-sha1              = "0.6.0"
-snafu             = "0.6.0"
+rayon = "<=1.6.0"
+regex = "1.0.0"
+serde-hex = "0.1.0"
+serde_bytes = "0.11.0"
+serde_json = "1.0.57"
+serde_with = "1.4.0"
+sha1 = "0.6.0"
+snafu = "0.6.0"
 static_assertions = "1.0.0"
-strum             = "0.19.0"
-strum_macros      = "0.19.0"
-tempfile          = "3.0.0"
-unicode-width     = "0.1.0"
+strum = "0.19.0"
+strum_macros = "0.19.0"
+tempfile = "3.0.0"
+unicode-width = "0.1.0"
 
 [dependencies.bendy]
-version  = "0.3.0"
+version = "0.3.0"
 features = ["serde"]
 
 [dependencies.indicatif]
@@ -56,11 +56,11 @@ version = "0.14.0"
 package = "imdl-indicatif"
 
 [dependencies.serde]
-version  = "1.0.103"
+version = "1.0.103"
 features = ["derive"]
 
 [dependencies.structopt]
-version  = "0.3.0"
+version = "0.3.0"
 features = ["default", "wrap_help"]
 
 [dependencies.url]
@@ -68,8 +68,8 @@ version = "2.1.1"
 features = ["serde"]
 
 [dev-dependencies]
-criterion = "0.3.0"
-temptree  = "0.0.0"
+criterion = "0.5.1"
+temptree = "0.0.0"
 
 [workspace]
 members = [
@@ -81,7 +81,7 @@ members = [
 ]
 
 [[bench]]
-name    = "hasher"
+name = "hasher"
 harness = false
 
 # enable release build link time optimization

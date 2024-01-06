@@ -47,7 +47,7 @@ impl TorrentSummary {
   pub(crate) fn from_input(input: &Input) -> Result<Self> {
     let metainfo = Metainfo::from_input(input)?;
     let infohash = Infohash::from_input(input)?;
-    let size = Bytes(input.data().len().into_u64());
+    let size = Bytes(input.data.len().into_u64());
 
     Ok(Self::new(metainfo, infohash, size))
   }

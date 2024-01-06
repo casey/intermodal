@@ -52,7 +52,7 @@ pub(crate) struct Metainfo {
 
 impl Metainfo {
   pub(crate) fn from_input(input: &Input) -> Result<Metainfo> {
-    Self::deserialize(input.source(), input.data())
+    Self::deserialize(&input.source, &input.data)
   }
 
   pub(crate) fn deserialize(source: &InputTarget, data: &[u8]) -> Result<Metainfo, Error> {

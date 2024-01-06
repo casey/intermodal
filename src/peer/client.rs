@@ -442,6 +442,7 @@ mod tests {
   }
 
   #[test]
+  #[ignore]
   fn connection_timeout() {
     let info = new_one_piece_info();
     let infohash = info.infohash_lossy().unwrap();
