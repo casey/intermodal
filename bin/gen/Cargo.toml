@@ -2,13 +2,13 @@
 name = "gen"
 version = "0.0.0"
 authors = ["Casey Rodarmor <casey@rodarmor.com>"]
-edition = "2018"
+edition = "2021"
 publish = false
 
 [dependencies]
 ansi_term = "0.12.1"
 askama = "0.9.0"
-cargo_toml = "0.8.0"
+cargo_toml = "0.17.0"
 chrono = "0.4.11"
 fehler = "1.0.0"
 fs_extra = "1.1.0"

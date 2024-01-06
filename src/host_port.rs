@@ -197,7 +197,7 @@ mod tests {
   fn test_from_url() {
     let url = Url::parse("udp://imdl.io:12345").unwrap();
     let host_port = HostPort::try_from(&url).unwrap();
-    assert_eq!(host_port.host, Host::Domain("imdl.io".into()));
+    assert_eq!(host_port.host, Host::Domain::<String>("imdl.io".into()));
     assert_eq!(host_port.port, 12345);
   }
 

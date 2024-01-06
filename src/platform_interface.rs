@@ -10,13 +10,7 @@ pub(crate) trait PlatformInterface {
   }
 
   fn open_target(target: &OsStr) -> Result<(), Error> {
-    let exit_status = open::that(target).context(error::OpenerInvoke)?;
-
-    if !exit_status.success() {
-      return Err(Error::OpenerExitStatus { exit_status });
-    }
-
-    Ok(())
+    open::that(target).context(error::OpenerInvoke)
   }
 
   fn hidden(path: &Path) -> Result<bool, Error>;

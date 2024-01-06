@@ -1,4 +1,5 @@
 use crate::common::*;
+use rayon::iter::ParallelIterator;
 use rayon::prelude::*;
 
 const URI_HELP: &str = "Generate a torrent file from a magnet URI";
