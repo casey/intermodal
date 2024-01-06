@@ -58,7 +58,7 @@ MIN = 16 * 1024
 MAX = 16 * 1024 * 1024
 
 def piece_length(content_length):
-  exponent = math.log2(content_length)
+  exponent = math.ceil(math.log2(content_length))
   length = 1 << int((exponent / 2 + 4))
   return min(max(length, MIN), MAX)
 ```
