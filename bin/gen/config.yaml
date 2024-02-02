@@ -40,7 +40,7 @@ examples:
   code:    "imdl torrent link --input foo.torrent"
 
 - command: imdl torrent piece-length
-  text:    "Show infromation about the piece length picker:"
+  text:    "Show information about the piece length picker:"
   code:    "imdl torrent piece-length"
 
 - command: imdl completions
