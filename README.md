@@ -62,7 +62,6 @@ If it does not, please open an issue!
 | [Arch Linux](https://www.archlinux.org)                              | Manual Installation                                | [intermodal](https://aur.archlinux.org/packages/intermodal)<sup>AUR</sup>                         | [wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages) |
 | [Void Linux](https://voidlinux.org)                                  | [XBPS](https://docs.voidlinux.org/xbps/index.html) | [intermodal](https://github.com/void-linux/void-packages/blob/master/srcpkgs/intermodal/template) | `xbps-install -S intermodal`                                                          |
 | [Windows](https://www.microsoft.com/en-us/windows)                   | [Scoop](https://scoop.sh)                          | [intermodal](https://github.com/ScoopInstaller/Main/blob/master/bucket/intermodal.json)           | `scoop install intermodal`                                                            |
-| [Docker](https://www.docker.com/)                   | [Cargo](https://www.rust-lang.org)                          | [intermodal](https://github.com/casey/intermodal/blob/master/Dockerfile)           | `docker pull ghcr.io/casey/intermodal`                                                            |
 
 ### Pre-built binaries
 
