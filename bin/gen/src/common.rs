@@ -6,7 +6,7 @@ pub(crate) use std::{
   fs::{self, File},
   io,
   ops::Deref,
-  path::{Path, PathBuf, StripPrefixError},
+  path::{Path, PathBuf},
   process::{self, Command, ExitStatus, Stdio},
   str,
 };
@@ -14,7 +14,7 @@ pub(crate) use std::{
 pub(crate) use ansi_term::Style;
 pub(crate) use askama::Template;
 pub(crate) use fehler::{throw, throws};
-pub(crate) use git2::{Oid, Repository};
+pub(crate) use git2::Repository;
 pub(crate) use libc::EXIT_FAILURE;
 pub(crate) use log::info;
 pub(crate) use regex::Regex;
