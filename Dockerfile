@@ -1,9 +1,13 @@
-FROM docker.io/library/rust:1.78.0-bookworm as builder
+FROM docker.io/library/rust:1.78.0-bookworm AS builder
 
-WORKDIR /app
+WORKDIR /usr/local/src
+
 COPY . .
+
 RUN cargo build --release
 
-FROM gcr.io/distroless/cc-debian12:nonroot AS runtime
-COPY --from=builder /app/target/release/imdl /usr/local/bin/imdl
+FROM gcr.io/distroless/cc-debian12:nonroot
+
+COPY --from=builder /usr/local/src/target/release/imdl /usr/local/bin/imdl
+
 ENTRYPOINT ["/usr/local/bin/imdl"]
