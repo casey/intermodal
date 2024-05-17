@@ -106,7 +106,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       uses: peaceiris/actions-mdbook@v1
       with:
-        mdbook-version: latest
+        mdbook-version: '0.4.40'
 
     - name: Build Book
       if: matrix.os != 'windows-latest'
