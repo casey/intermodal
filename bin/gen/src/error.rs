@@ -17,23 +17,6 @@ pub(crate) enum Error {
     command: String,
     exit_status: ExitStatus,
   },
-  #[snafu(display(
-    "Failed to deserialize commit metadata: {}\n{}\n{}",
-    source,
-    hash,
-    message
-  ))]
-  CommitMetadataDeserialize {
-    hash: Oid,
-    message: String,
-    source: serde_yaml::Error,
-  },
-  #[snafu(display("Commit missing metadata:\n{}\n{}", hash, message))]
-  CommitMetadataMissing { hash: Oid, message: String },
-  #[snafu(display("Commit has `{}` parents: {}", hash, parents))]
-  CommitParents { hash: Oid, parents: usize },
-  #[snafu(display("Commit has no summery: {}", hash))]
-  CommitSummery { hash: Oid },
   #[snafu(display("Failed to deserialize config from `{}`: {}", path.display(), source))]
   ConfigDeserialize {
     path: PathBuf,
@@ -53,12 +36,6 @@ pub(crate) enum Error {
   #[snafu(display("I/O error at `{}`: {}", path.display(), source))]
   Filesystem { path: PathBuf, source: io::Error },
   #[snafu(display("I/O error copying `{}` to `{}`: {}", src.display(), dst.display(), source))]
-  FilesystemCopy {
-    src: PathBuf,
-    dst: PathBuf,
-    source: io::Error,
-  },
-  #[snafu(display("I/O error copying `{}` to `{}`: {}", src.display(), dst.display(), source))]
   FilesystemRecursiveCopy {
     src: PathBuf,
     dst: PathBuf,
@@ -77,10 +54,6 @@ pub(crate) enum Error {
   Tempdir { source: io::Error },
   #[snafu(display("Failed to render template: {}", source))]
   TemplateRender { source: askama::Error },
-  #[snafu(display("Failed to get workdir for repo at `{}`", repo.display()))]
-  Workdir { repo: PathBuf },
-  #[snafu(display("Failed to strip path prefix: {}", source))]
-  StripPrefix { source: StripPrefixError },
 }
 
 impl From<regex::Error> for Error {

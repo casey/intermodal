@@ -12,6 +12,4 @@ pub(crate) trait PlatformInterface {
   fn open_target(target: &OsStr) -> Result<(), Error> {
     open::that(target).context(error::OpenerInvoke)
   }
-
-  fn hidden(path: &Path) -> Result<bool, Error>;
 }
