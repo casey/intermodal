@@ -78,8 +78,7 @@ impl Verify {
 
     let content = self
       .content
-      .as_ref()
-      .cloned()
+      .clone()
       .or_else(|| {
         self
           .base_directory

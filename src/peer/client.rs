@@ -91,10 +91,9 @@ impl Client {
     if let State::WantInfo(_) = self.state {
       if handshake.metadata_size.is_none() {
         return Err(Error::PeerUtMetadataMetadataSizeNotKnown);
-      } else if handshake
+      } else if !handshake
         .message_ids
-        .get(extended::UtMetadata::NAME)
-        .is_none()
+        .contains_key(extended::UtMetadata::NAME)
       {
         return Err(Error::PeerUtMetadataNotSupported);
       }

@@ -209,12 +209,7 @@ impl TorrentSummary {
       content_size: self.metainfo.content_size().count(),
       private: self.metainfo.info.private.unwrap_or_default(),
       tracker: self.metainfo.announce.clone(),
-      announce_list: self
-        .metainfo
-        .announce_list
-        .as_ref()
-        .map(Clone::clone)
-        .unwrap_or_default(),
+      announce_list: self.metainfo.announce_list.clone().unwrap_or_default(),
       update_url: self
         .metainfo
         .info

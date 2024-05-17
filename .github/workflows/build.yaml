@@ -14,10 +14,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  # Cache issues can sometimes be fixed by incrementing this value.
-  CACHE_KEY: 6
-
 jobs:
   all:
     name: All
@@ -54,15 +50,6 @@ jobs:
         brew install gnu-tar
         echo /usr/local/opt/gnu-tar/libexec/gnubin > $GITHUB_PATH
 
-    - name: Cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: cargo-${{ env.CACHE_KEY }}-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-
     - name: Install Rust Toolchain Components
       uses: actions-rs/toolchain@v1
       with:
@@ -70,6 +57,8 @@ jobs:
         override: true
         target: ${{ matrix.target }}
         toolchain: stable
+
+    - uses: Swatinem/rust-cache@v2
 
     - name: Info
       run: |
@@ -104,9 +93,9 @@ jobs:
 
     - name: Install `mdbook`
       if: matrix.os != 'windows-latest'
-      uses: peaceiris/actions-mdbook@v1
+      uses: peaceiris/actions-mdbook@v2
       with:
-        mdbook-version: latest
+        mdbook-version: 0.4.40
 
     - name: Build Book
       if: matrix.os != 'windows-latest'
