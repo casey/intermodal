@@ -136,5 +136,5 @@ get-beps:
 	git clone git@github.com:bittorrent/bittorrent.org.git tmp/bittorrent.org
 
 build-image:
-  podman build -t imdl:master .
-  podman run imdl:master
+  podman build -t imdl .
+  podman run imdl
