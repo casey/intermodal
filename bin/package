@@ -48,6 +48,7 @@ echo "Generating readme..."
 cargo run --package gen -- --bin $DEBUG_EXECUTABLE readme
 
 echo "Copying static files..."
+mkdir -p $DIST
 cp -r \
   $EXECUTABLE \
   CONTRIBUTING \
