@@ -14,28 +14,50 @@ defaults:
   run:
     shell: bash
 
+env:
+  RUSTFLAGS: --deny warnings
+
 jobs:
   all:
     name: All
 
     strategy:
       matrix:
-        os:
-        - macos-latest
-        - ubuntu-latest
-        - windows-latest
+        target:
+        - aarch64-apple-darwin
+        - aarch64-pc-windows-msvc
+        - aarch64-unknown-linux-musl
+        - arm-unknown-linux-musleabihf
+        - armv7-unknown-linux-musleabihf
+        - x86_64-apple-darwin
+        - x86_64-pc-windows-msvc
+        - x86_64-unknown-linux-musl
         include:
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-musl
-        - os: macos-latest
-          target: x86_64-apple-darwin
-        - os: windows-latest
-          target: x86_64-pc-windows-msvc
+        - target: aarch64-apple-darwin
+          os: macos-latest
+          target_rustflags: ''
+        - target: aarch64-pc-windows-msvc
+          os: windows-latest
+          target_rustflags: ''
+        - target: aarch64-unknown-linux-musl
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=aarch64-linux-gnu-gcc'
+        - target: arm-unknown-linux-musleabihf
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
+        - target: armv7-unknown-linux-musleabihf
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
+        - target: x86_64-apple-darwin
+          os: macos-latest
+          target_rustflags: ''
+        - target: x86_64-pc-windows-msvc
+          os: windows-latest
+        - target: x86_64-unknown-linux-musl
+          os: ubuntu-latest
+          target_rustflags: ''
 
     runs-on: ${{matrix.os}}
-
-    env:
-      RUSTFLAGS: --deny warnings
 
     steps:
     - uses: actions/checkout@v2
@@ -76,7 +98,7 @@ jobs:
       run: cargo clippy --all-targets --all-features
 
     - name: Lint
-      if: matrix.os == 'macos-latest'
+      if: matrix.target == 'x86_64-apple-darwin'
       run: |
         brew install ripgrep
         ./bin/lint
@@ -85,7 +107,7 @@ jobs:
       run: cargo fmt --all -- --check
 
     - name: Check Generated
-      if: matrix.os == 'macos-latest'
+      if: matrix.target == 'x86_64-apple-darwin'
       run: |
         brew install help2man
         cargo run --package gen -- --bin target/debug/imdl all
@@ -104,12 +126,12 @@ jobs:
         mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
-      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
+      if: github.ref == 'refs/heads/master' && matrix.os == 'x86_64-unknown-linux-musl'
       run: git rev-parse --verify HEAD > www/head.txt
 
     - name: Deploy Pages
       uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
+      if: github.ref == 'refs/heads/master' && matrix.os == 'x86_64-unknown-linux-musl'
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         publish_branch: gh-pages
@@ -118,7 +140,12 @@ jobs:
     - name: Package
       id: package
       if: startsWith(github.ref, 'refs/tags/')
-      run: ./bin/package ${{github.ref}} ${{matrix.os}} ${{matrix.target}}
+      env:
+        TARGET: ${{ matrix.target }}
+        REF: ${{ github.ref }}
+        OS: ${{ matrix.os }}
+        TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
+      run: ./bin/package
 
     - name: Publish Release Archive
       uses: softprops/action-gh-release@v1
