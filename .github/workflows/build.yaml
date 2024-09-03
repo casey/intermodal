@@ -91,7 +91,7 @@ jobs:
       run: cargo fmt --all -- --check
 
     - name: Check Generated
-      if: matrix.target == 'x86_64-apple-darwin'
+      if: matrix.target == 'macos-latest'
       run: |
         brew install help2man
         cargo run --package gen -- --bin target/debug/imdl all
