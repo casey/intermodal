@@ -137,6 +137,23 @@ jobs:
         publish_branch: gh-pages
         publish_dir: ./www
 
+    - name: Install AArch64 Toolchain
+      if: ${{ matrix.target == 'aarch64-unknown-linux-musl' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-aarch64-linux-gnu libc6-dev-i386
+
+    - name: Install ARM Toolchain
+      if: ${{ matrix.target == 'arm-unknown-linux-musleabihf' || matrix.target == 'armv7-unknown-linux-musleabihf' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-arm-linux-gnueabihf
+
+    - name: Install AArch64 Toolchain (Windows)
+      if: ${{ matrix.target == 'aarch64-pc-windows-msvc' }}
+      run: |
+        rustup target add aarch64-pc-windows-msvc
+
     - name: Package
       id: package
       if: startsWith(github.ref, 'refs/tags/')
