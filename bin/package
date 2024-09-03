@@ -32,12 +32,17 @@ fi
 
 echo "Building debug build"
 cargo build
+DEBUG_EXECUTABLE=target/debug/imdl
+
+if [[ $OS == windows-2016 ]]; then
+  DEBUG_EXECUTABLE=$DEBUG_EXECUTABLE.exe
+fi
 
 echo "Building completions..."
-cargo run --package gen -- --bin $EXECUTABLE completion-scripts
+cargo run --package gen -- --bin $DEBUG_EXECUTABLE completion-scripts
 
 echo "Generating readme..."
-cargo run --package gen -- --bin $EXECUTABLE readme
+cargo run --package gen -- --bin $DEBUG_EXECUTABLE readme
 
 echo "Copying static files..."
 cp -r \
