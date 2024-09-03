@@ -61,7 +61,7 @@ cp -r \
 
 if [[ $OS != windows-latest ]]; then
   echo "Building man pages..."
-  cargo run --package gen -- --bin $EXECUTABLE man
+  cargo run --package gen -- --bin $DEBUG_EXECUTABLE man
   cp -r target/gen/man $DIST/man
 fi
 
