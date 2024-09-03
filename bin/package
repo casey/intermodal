@@ -30,12 +30,6 @@ if [[ $OS == windows-2016 ]]; then
   EXECUTABLE=$EXECUTABLE.exe
 fi
 
-echo "Building completions..."
-cargo run --package gen -- --bin $EXECUTABLE completion-scripts
-
-echo "Generating readme..."
-cargo run --package gen -- --bin $EXECUTABLE readme
-
 echo "Copying static files..."
 mkdir $DIST
 cp -r \
