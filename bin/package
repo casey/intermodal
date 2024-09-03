@@ -34,10 +34,10 @@ echo "Building debug build"
 cargo build
 
 echo "Building completions..."
-./target/debug/imdl run --package gen -- --bin $EXECUTABLE completion-scripts
+cargo run --package gen -- --bin $EXECUTABLE completion-scripts
 
 echo "Generating readme..."
-./target/debug/imdl run --package gen -- --bin $EXECUTABLE readme
+cargo run --package gen -- --bin $EXECUTABLE readme
 
 echo "Copying static files..."
 cp -r \
