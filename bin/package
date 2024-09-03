@@ -30,6 +30,15 @@ if [[ $OS == windows-2016 ]]; then
   EXECUTABLE=$EXECUTABLE.exe
 fi
 
+echo "Building debug build"
+cargo build
+
+echo "Building completions..."
+./target/debug/imdl run --package gen -- --bin $EXECUTABLE completion-scripts
+
+echo "Generating readme..."
+./target/debug/imdl run --package gen -- --bin $EXECUTABLE readme
+
 echo "Copying static files..."
 cp -r \
   $EXECUTABLE \
