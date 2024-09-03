@@ -31,7 +31,6 @@ if [[ $OS == windows-2016 ]]; then
 fi
 
 echo "Copying static files..."
-mkdir $DIST
 cp -r \
   $EXECUTABLE \
   CONTRIBUTING \
