@@ -64,7 +64,7 @@ case $OS in
   ubuntu-latest | macos-latest)
     ARCHIVE=$DIST/imdl-$VERSION-$TARGET.tar.gz
     tar czf $ARCHIVE *
-    echo "::set-output name=archive::$archive"
+    echo "::set-output name=archive::$ARCHIVE"
     ;;
   windows-latest)
     ARCHIVE=$DIST/imdl-$VERSION-$TARGET.zip
