@@ -64,14 +64,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    # An issue with BSD Tar causes sporadic failures on macOS.
-    # c.f https://github.com/actions/cache/issues/403
-    - name: Install GNU Tar
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install gnu-tar
-        echo /usr/local/opt/gnu-tar/libexec/gnubin > $GITHUB_PATH
-
     - name: Install Rust Toolchain Components
       uses: actions-rs/toolchain@v1
       with:
