@@ -32,7 +32,7 @@ fn main() {
         |captures: &Captures| {
           let pr = captures[1].parse().unwrap();
           let contributor = author(pr);
-          format!("([#{pr}](https://github.com/casey/filepack/pull/{pr}) by [{contributor}](https://github.com/{contributor}))")
+          format!("([#{pr}](https://github.com/casey/intermodal/pull/{pr}) by [{contributor}](https://github.com/{contributor}))")
         },
       ),
   )
