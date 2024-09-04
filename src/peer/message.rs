@@ -51,7 +51,7 @@ impl Message {
   //
   // where prefix is the network byte order encoding of `x + 1` into a u32.
   pub(crate) fn serialize(&self) -> Result<Vec<u8>> {
-    // TODO: find a way to test this without blowing the stack.
+    // find a way to test this without blowing the stack.
     let message_length = self.len().try_into().context(error::PeerMessagePayload)?;
     let mut buf: Vec<u8> = u32::to_be_bytes(message_length).to_vec();
     buf.push(self.flavour.into());

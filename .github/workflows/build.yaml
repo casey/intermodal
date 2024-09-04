@@ -81,11 +81,11 @@ jobs:
     - name: Clippy
       run: cargo clippy --all-targets --all-features
 
-    - name: Lint
+    - name: Check for Forbidden Words
       if: matrix.target == 'x86_64-apple-darwin'
       run: |
         brew install ripgrep
-        ./bin/lint
+        ./bin/forbid
 
     - name: Check Formatting
       run: cargo fmt --all -- --check

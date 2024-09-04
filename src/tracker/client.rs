@@ -16,12 +16,12 @@ impl Client {
 
   pub fn connect<A: ToSocketAddrs>(address: A) -> Result<Self> {
     let addrs = address
-      .to_socket_addrs() // XXX: this may cause DNS look-ups!
+      .to_socket_addrs() // this may cause DNS look-ups!
       .context(error::TrackerSocketAddrs)?;
 
     for tracker_addr in addrs {
       let Ok(sock) = Self::new_udp_socket(tracker_addr) else {
-        continue; // TODO: log these as warnings
+        continue; // log these as warnings
       };
       let mut client = Client {
         peer_id: rand::thread_rng().gen(),
