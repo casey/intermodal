@@ -5,18 +5,18 @@ Changelog
 --------------------------------------------------------------------------------
 
 ### Added
-- Add command to dump bencode ([#530](https://github.com/casey/filepack/pull/530) by [casey](https://github.com/casey))
+- Add command to dump bencode ([#530](https://github.com/casey/intermodal/pull/530) by [casey](https://github.com/casey))
 
 ### Misc
-- Build releases for more targets ([#540](https://github.com/casey/filepack/pull/540) by [casey](https://github.com/casey))
-- Add dockerfile ([#533](https://github.com/casey/filepack/pull/533) by [rare-magma](https://github.com/rare-magma))
-- Fix warnings ([#537](https://github.com/casey/filepack/pull/537) by [casey](https://github.com/casey))
-- Typo: infromation → information ([#532](https://github.com/casey/filepack/pull/532) by [casey](https://github.com/casey))
-- Fix `imdl torrent dump` dictionary formatting ([#531](https://github.com/casey/filepack/pull/531) by [casey](https://github.com/casey))
-- Fix piece selection algorithm in docs ([#524](https://github.com/casey/filepack/pull/524) by [schnerring](https://github.com/schnerring))
-- Un-align metainfo utilities table ([#529](https://github.com/casey/filepack/pull/529) by [casey](https://github.com/casey))
-- Install correct toolchain on CI ([#520](https://github.com/casey/filepack/pull/520) by [casey](https://github.com/casey))
-- Don't auto-generate changelog ([#523](https://github.com/casey/filepack/pull/523) by [casey](https://github.com/casey))
+- Build releases for more targets ([#540](https://github.com/casey/intermodal/pull/540) by [casey](https://github.com/casey))
+- Add dockerfile ([#533](https://github.com/casey/intermodal/pull/533) by [rare-magma](https://github.com/rare-magma))
+- Fix warnings ([#537](https://github.com/casey/intermodal/pull/537) by [casey](https://github.com/casey))
+- Typo: infromation → information ([#532](https://github.com/casey/intermodal/pull/532) by [casey](https://github.com/casey))
+- Fix `imdl torrent dump` dictionary formatting ([#531](https://github.com/casey/intermodal/pull/531) by [casey](https://github.com/casey))
+- Fix piece selection algorithm in docs ([#524](https://github.com/casey/intermodal/pull/524) by [schnerring](https://github.com/schnerring))
+- Un-align metainfo utilities table ([#529](https://github.com/casey/intermodal/pull/529) by [casey](https://github.com/casey))
+- Install correct toolchain on CI ([#520](https://github.com/casey/intermodal/pull/520) by [casey](https://github.com/casey))
+- Don't auto-generate changelog ([#523](https://github.com/casey/intermodal/pull/523) by [casey](https://github.com/casey))
 
 [v0.1.13](https://github.com/casey/intermodal/releases/tag/v0.1.13) - 2023-08-20
 --------------------------------------------------------------------------------
