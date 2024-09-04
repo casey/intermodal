@@ -38,8 +38,8 @@ clippy:
 fmt:
 	cargo +nightly fmt --all
 
-lint:
-	./bin/lint
+forbid:
+	./bin/forbid
 
 preview-readme:
 	grip -b README.md
@@ -64,7 +64,7 @@ gen:
 check-minimal-versions:
 	./bin/check-minimal-versions
 
-check: test clippy lint check-minimal-versions gen
+check: test clippy forbid check-minimal-versions gen
 	git diff --no-ext-diff --quiet --exit-code
 	cargo +nightly fmt --all -- --check
 

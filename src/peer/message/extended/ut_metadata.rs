@@ -75,7 +75,7 @@ mod tests {
     let mut msg = bendy::serde::ser::to_bytes(&req).unwrap();
     let benc = b"d8:msg_typei1e5:piecei1ee";
     assert_eq!(benc, &*msg);
-    msg.extend_from_slice(b"piece data goes here xxxx...");
+    msg.extend_from_slice(b"piece data goes here...");
     let req2 = bendy::serde::de::from_bytes(&msg).unwrap();
     assert_eq!(req, req2);
   }
