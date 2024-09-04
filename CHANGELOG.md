@@ -1,14 +1,30 @@
 Changelog
 =========
 
+[v0.1.14](https://github.com/casey/intermodal/releases/tag/v0.1.14) - 2024-09-03
+--------------------------------------------------------------------------------
+
+### Added
+- Add command to dump bencode ([#530](https://github.com/casey/filepack/pull/530) by [casey](https://github.com/casey))
+
+### Misc
+- Build releases for more targets ([#540](https://github.com/casey/filepack/pull/540) by [casey](https://github.com/casey))
+- Add dockerfile ([#533](https://github.com/casey/filepack/pull/533) by [rare-magma](https://github.com/rare-magma))
+- Fix warnings ([#537](https://github.com/casey/filepack/pull/537) by [casey](https://github.com/casey))
+- Typo: infromation → information ([#532](https://github.com/casey/filepack/pull/532) by [casey](https://github.com/casey))
+- Fix `imdl torrent dump` dictionary formatting ([#531](https://github.com/casey/filepack/pull/531) by [casey](https://github.com/casey))
+- Fix piece selection algorithm in docs ([#524](https://github.com/casey/filepack/pull/524) by [schnerring](https://github.com/schnerring))
+- Un-align metainfo utilities table ([#529](https://github.com/casey/filepack/pull/529) by [casey](https://github.com/casey))
+- Install correct toolchain on CI ([#520](https://github.com/casey/filepack/pull/520) by [casey](https://github.com/casey))
+- Don't auto-generate changelog ([#523](https://github.com/casey/filepack/pull/523) by [casey](https://github.com/casey))
 
 [v0.1.13](https://github.com/casey/intermodal/releases/tag/v0.1.13) - 2023-08-20
 --------------------------------------------------------------------------------
-- :bookmark: [`800d082ac9e3`](https://github.com/casey/intermodal/commit/800d082ac9e3699d15425f36b6d2680744eff2c6) Release v0.1.13 (#518) - _[atomgardner](mailto:tom@faff.stream)_
-- :sparkles: [`a88f0eed688a`](https://github.com/casey/intermodal/commit/a88f0eed688a8b7fc5b599ea6bcc7beef5bc9c8c) Add a `torrent from-link` subcommand (#511) - _[atomgardner](mailto:tom@faff.stream)_
-- :sparkles: [`50d5a9352dd0`](https://github.com/casey/intermodal/commit/50d5a9352dd03ce329a9e7a238fc15321e6c8bdb) Add a `torrent announce` subcommand (#510) - _[atomgardner](mailto:tmg@fastmail.com)_
-- :bug: [`660c63101cd0`](https://github.com/casey/intermodal/commit/660c63101cd0857931c9434b101379b058255801) Update dependency (openssl-sys) (#514) - _[atomgardner](mailto:tmg@fastmail.com)_
-- :package: [`9b434039e1af`](https://github.com/casey/intermodal/commit/9b434039e1af378b137cc7c3632a358892fb1c00) Fix install script (#509) - _[Casey Rodarmor](mailto:casey@rodarmor.com)_
+- :bookmark: [`800d082ac9e3`](https://github.com/casey/intermodal/commit/800d082ac9e3699d15425f36b6d2680744eff2c6) Release v0.1.13 - _[atomgardner](mailto:tom@faff.stream)_
+- :sparkles: [`a88f0eed688a`](https://github.com/casey/intermodal/commit/a88f0eed688a8b7fc5b599ea6bcc7beef5bc9c8c) Add a `torrent from-link` subcommand - _[atomgardner](mailto:tom@faff.stream)_
+- :sparkles: [`50d5a9352dd0`](https://github.com/casey/intermodal/commit/50d5a9352dd03ce329a9e7a238fc15321e6c8bdb) Add a `torrent announce` subcommand - _[atomgardner](mailto:tmg@fastmail.com)_
+- :bug: [`660c63101cd0`](https://github.com/casey/intermodal/commit/660c63101cd0857931c9434b101379b058255801) Update dependency (openssl-sys) - _[atomgardner](mailto:tmg@fastmail.com)_
+- :package: [`9b434039e1af`](https://github.com/casey/intermodal/commit/9b434039e1af378b137cc7c3632a358892fb1c00) Fix install script - _[Casey Rodarmor](mailto:casey@rodarmor.com)_
 - :bug: [`984543fcb9ad`](https://github.com/casey/intermodal/commit/984543fcb9ad9a461e041e7a2667436fe4440dca) Don't export rustflags - _[Casey Rodarmor](mailto:casey@rodarmor.com)_
 - :bug: [`6c4805890b49`](https://github.com/casey/intermodal/commit/6c4805890b49b524974d00b29bcf27fe4498b5e6) Pass rustflags consistently - _[Casey Rodarmor](mailto:casey@rodarmor.com)_
 - :sparkles: [`b82ccf1882a4`](https://github.com/casey/intermodal/commit/b82ccf1882a470972e6842ed02436867727ac758) Add `--base-directory` to `imdl torrent verify` - _[Casey Rodarmor](mailto:casey@rodarmor.com)_

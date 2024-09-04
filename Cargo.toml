@@ -1,6 +1,6 @@
 [package]
 name = "imdl"
-version = "0.1.13"
+version = "0.1.14"
 description = "📦 A 40' shipping container for the internet"
 authors = ["Casey Rodarmor <casey@rodarmor.com>"]
 license = "CC0-1.0"
@@ -77,6 +77,9 @@ members = [
 
   # run commands for demo animation
   "bin/demo",
+
+  # update changelog contributor credits
+  "bin/update-contributors",
 ]
 
 [[bench]]

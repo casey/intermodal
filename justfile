@@ -144,3 +144,20 @@ test-release:
   -git push origin :test-release
   git tag test-release
   git push origin test-release
+
+outdated:
+  cargo outdated --workspace --root-deps-only
+
+unused:
+  cargo +nightly udeps --workspace
+
+coverage:
+  cargo llvm-cov --html
+  open target/llvm-cov/html/index.html
+
+update-changelog:
+  echo >> CHANGELOG.md
+  git log --pretty='format:- %s' >> CHANGELOG.md
+
+update-contributors:
+  cargo run --release --package update-contributors
