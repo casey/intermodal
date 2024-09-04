@@ -102,7 +102,7 @@ pub(crate) enum Error {
   #[snafu(display(
     "Piece length `{}` too large. The maximum supported piece length is {}.",
     bytes,
-    Bytes(u32::max_value().into())
+    Bytes(u32::MAX.into())
   ))]
   PieceLengthTooLarge {
     bytes: Bytes,

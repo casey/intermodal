@@ -14,49 +14,55 @@ defaults:
   run:
     shell: bash
 
+env:
+  RUSTFLAGS: --deny warnings
+
 jobs:
   all:
     name: All
 
     strategy:
       matrix:
-        os:
-        - macos-latest
-        - ubuntu-latest
-        - windows-latest
+        target:
+        - aarch64-apple-darwin
+        - aarch64-pc-windows-msvc
+        - aarch64-unknown-linux-musl
+        - arm-unknown-linux-musleabihf
+        - armv7-unknown-linux-musleabihf
+        - x86_64-apple-darwin
+        - x86_64-pc-windows-msvc
+        - x86_64-unknown-linux-musl
         include:
-        - os: ubuntu-latest
-          target: x86_64-unknown-linux-musl
-        - os: macos-latest
-          target: x86_64-apple-darwin
-        - os: windows-latest
-          target: x86_64-pc-windows-msvc
+        - target: aarch64-apple-darwin
+          os: macos-latest
+          target_rustflags: ''
+        - target: aarch64-pc-windows-msvc
+          os: windows-latest
+          target_rustflags: ''
+        - target: aarch64-unknown-linux-musl
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=aarch64-linux-gnu-gcc'
+        - target: arm-unknown-linux-musleabihf
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
+        - target: armv7-unknown-linux-musleabihf
+          os: ubuntu-latest
+          target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
+        - target: x86_64-apple-darwin
+          os: macos-latest
+          target_rustflags: ''
+        - target: x86_64-pc-windows-msvc
+          os: windows-latest
+        - target: x86_64-unknown-linux-musl
+          os: ubuntu-latest
+          target_rustflags: ''
 
     runs-on: ${{matrix.os}}
 
-    env:
-      RUSTFLAGS: --deny warnings
-
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-
-    # An issue with BSD Tar causes sporadic failures on macOS.
-    # c.f https://github.com/actions/cache/issues/403
-    - name: Install GNU Tar
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install gnu-tar
-        echo /usr/local/opt/gnu-tar/libexec/gnubin > $GITHUB_PATH
-
-    - name: Install Rust Toolchain Components
-      uses: actions-rs/toolchain@v1
-      with:
-        components: clippy, rustfmt
-        override: true
-        target: ${{ matrix.target }}
-        toolchain: stable
 
     - uses: Swatinem/rust-cache@v2
 
@@ -76,7 +82,7 @@ jobs:
       run: cargo clippy --all-targets --all-features
 
     - name: Lint
-      if: matrix.os == 'macos-latest'
+      if: matrix.target == 'x86_64-apple-darwin'
       run: |
         brew install ripgrep
         ./bin/lint
@@ -104,28 +110,59 @@ jobs:
         mdbook build book --dest-dir ../www/book
 
     - name: Record Git Revision
-      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
+      if: github.ref == 'refs/heads/master' && matrix.os == 'x86_64-unknown-linux-musl'
       run: git rev-parse --verify HEAD > www/head.txt
 
     - name: Deploy Pages
       uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-latest'
+      if: github.ref == 'refs/heads/master' && matrix.os == 'x86_64-unknown-linux-musl'
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
         publish_branch: gh-pages
         publish_dir: ./www
 
+    - name: Install AArch64 Toolchain
+      if: ${{ matrix.target == 'aarch64-unknown-linux-musl' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-aarch64-linux-gnu libc6-dev-i386
+
+    - name: Install ARM Toolchain
+      if: ${{ matrix.target == 'arm-unknown-linux-musleabihf' || matrix.target == 'armv7-unknown-linux-musleabihf' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-arm-linux-gnueabihf
+
+    - name: Install AArch64 Toolchain (Windows)
+      if: ${{ matrix.target == 'aarch64-pc-windows-msvc' }}
+      run: |
+        rustup target add aarch64-pc-windows-msvc
+
+    - name: Release Type
+      id: release-type
+      run: |
+        if [[ ${{ github.ref }} =~ ^refs/tags/v[0-9]+[.][0-9]+[.][0-9]+$ ]]; then
+            echo value=release >> $GITHUB_OUTPUT
+        else
+            echo value=prerelease >> $GITHUB_OUTPUT
+        fi
+
     - name: Package
       id: package
       if: startsWith(github.ref, 'refs/tags/')
-      run: ./bin/package ${{github.ref}} ${{matrix.os}} ${{matrix.target}}
+      env:
+        TARGET: ${{ matrix.target }}
+        REF: ${{ github.ref }}
+        OS: ${{ matrix.os }}
+        TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
+      run: ./bin/package
 
     - name: Publish Release Archive
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2.0.8
       if: startsWith(github.ref, 'refs/tags/')
       with:
         draft: false
         files: ${{steps.package.outputs.archive}}
-        prerelease: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
+        prerelease: ${{ steps.release-type.outputs.value == 'prerelease' }}
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

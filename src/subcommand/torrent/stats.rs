@@ -59,7 +59,7 @@ impl Stats {
       .sort_by_file_name(Ord::cmp)
       .build()
     {
-      if extractor.torrents >= self.limit.unwrap_or(u64::max_value()) {
+      if extractor.torrents >= self.limit.unwrap_or(u64::MAX) {
         break;
       }
 

@@ -138,3 +138,9 @@ get-beps:
 build-image:
   podman build -t imdl .
   podman run imdl
+
+test-release:
+  -git tag -d test-release
+  -git push origin :test-release
+  git tag test-release
+  git push origin test-release

@@ -85,7 +85,7 @@ impl TorrentSummary {
         Utc
           .timestamp_opt(
             creation_date
-              .min(i64::max_value() as u64)
+              .min(i64::MAX as u64)
               .try_into()
               .invariant_unwrap("min with i64 is always valid i64"),
             0,

@@ -20,7 +20,6 @@ pub(crate) use std::{
   string::FromUtf8Error,
   sync::{mpsc::channel, Once},
   time::{Duration, SystemTime, SystemTimeError},
-  usize,
 };
 
 // dependencies
