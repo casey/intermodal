@@ -82,7 +82,7 @@ publish:
   cd tmp/release
   cargo build
   cargo run --package gen -- --bin target/debug/imdl all
-  VERSION=`sed -En 's/version[[:space:]]*=[[:space:]]*"([^"]+)"/\1/p' Cargo.toml | head -1`
+  VERSION=v`sed -En 's/version[[:space:]]*=[[:space:]]*"([^"]+)"/\1/p' Cargo.toml | head -1`
   git tag -a $VERSION -m "Release $VERSION"
   git push origin $VERSION
   cargo publish
