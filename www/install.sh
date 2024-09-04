@@ -17,26 +17,6 @@ Options:
 EOF
 }
 
-git=casey/intermodal
-crate=imdl
-bin=imdl
-url=https://github.com/casey/intermodal
-releases=$url/releases
-
-case `uname -s` in
-  Darwin) target=x86_64-apple-darwin;;
-  Linux)  target=x86_64-unknown-linux-musl;;
-  *)      target=x86_64-pc-windows-msvc;;
-esac
-
-say() {
-  echo "install: $1"
-}
-
-say_err() {
-  say "$1" >&2
-}
-
 err() {
   if [ ! -z ${td-} ]; then
     rm -rf $td
@@ -51,6 +31,38 @@ need() {
     err "need $1 (command not found)"
   fi
 }
+
+say() {
+  echo "install: $1"
+}
+
+say_err() {
+  say "$1" >&2
+}
+
+need cut
+need uname
+
+# bash compiled with MINGW (e.g. git-bash, used in github windows runners),
+# unhelpfully includes a version suffix in `uname -s` output, so handle that.
+# e.g. MINGW64_NT-10-0.19044
+kernel=$(uname -s | cut -d- -f1)
+uname_target="$(uname -m)-$kernel"
+
+case $uname_target in
+  aarch64-Linux) target=aarch64-unknown-linux-musl;;
+  arm64-Darwin) target=aarch64-apple-darwin;;
+  armv6l-Linux) target=arm-unknown-linux-musleabihf;;
+  armv7l-Linux) target=armv7-unknown-linux-musleabihf;;
+  x86_64-Darwin) target=x86_64-apple-darwin;;
+  x86_64-Linux) target=x86_64-unknown-linux-musl;;
+  x86_64-MINGW64_NT) target=x86_64-pc-windows-msvc;;
+  x86_64-Windows_NT) target=x86_64-pc-windows-msvc;;
+  *)
+    # shellcheck disable=SC2016
+    err 'Could not determine target from output of `uname -m`-`uname -s`, please use `--target`:' "$uname_target"
+  ;;
+esac
 
 force=false
 while test $# -gt 0; do
@@ -86,7 +98,6 @@ need tar
 
 # Optional dependencies
 if [ -z ${tag-} ]; then
-  need cut
   need rev
 fi
 
@@ -101,10 +112,10 @@ if [ -z ${tag-} ]; then
   )
 fi
 
-archive="$releases/download/$tag/$crate-$tag-$target.tar.gz"
+archive="https://github.com/casey/intermodal/releases/download/$tag/imdl-$tag-$target.tar.gz"
 
-say_err "Repository:  $url"
-say_err "Crate:       $crate"
+say_err "Repository:  https://github.com/casey/intermodal"
+say_err "Crate:       imdl"
 say_err "Tag:         $tag"
 say_err "Target:      $target"
 say_err "Destination: $dst"
@@ -113,11 +124,11 @@ say_err "Archive:     $archive"
 td=$(mktemp -d || mktemp -d -t tmp)
 curl --proto =https --tlsv1.2 -sSfL $archive | tar -C $td -xz
 
-if [ -e "$dst/$bin" ] && [ $force = false ]; then
-  err "$bin already exists in $dst"
+if [ -e "$dst/imdl" ] && [ $force = false ]; then
+  err "imdl already exists in $dst"
 else
   mkdir -p $dst
-  install -m 755 $td/$bin $dst
+  install -m 755 $td/imdl $dst
 fi
 
 rm -rf $td

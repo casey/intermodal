@@ -280,6 +280,22 @@ are unavailable unless the `--unstable` / `-u` flag is passed, for example
 `imdl --unstable torrent create .`. Unstable features may be changed or removed
 at any time.
 
+## New Releases
+
+New releases of `imdl` are made frequently so that users quickly get access to
+new features.
+
+Release commit messages use the following template:
+
+```
+Release x.y.z
+
+- Bump version: x.y.z → x.y.z
+- Update changelog
+- Update changelog contributor credits
+- Update dependencies
+```
+
 ## Acknowledgments
 
 The formatting of `imdl torrent show` is entirely copied from
