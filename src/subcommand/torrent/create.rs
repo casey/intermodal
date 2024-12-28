@@ -1015,6 +1015,28 @@ mod tests {
   }
 
   #[test]
+  fn destination_dir() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--output",
+        "bar",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+        bar: {},
+      },
+    };
+    env.assert_ok();
+    env.load_metainfo("bar/foo.torrent");
+  }
+
+  #[test]
   fn created_by_default() {
     let mut env = test_env! {
       args: [
