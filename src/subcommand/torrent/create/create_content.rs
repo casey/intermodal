@@ -66,7 +66,9 @@ impl CreateContent {
           .clone()
           .unwrap_or_else(|| OutputTarget::Path(Self::torrent_path(path, &name)));
 
-        if let OutputTarget::Path(path) = &output {
+        let resolved = output.resolve(env)?;
+
+        if let OutputTarget::Path(path) = &resolved {
           if path.is_dir() {
             output = OutputTarget::Path(path.join(format!("{name}.torrent")));
           }
