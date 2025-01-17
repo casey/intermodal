@@ -49,9 +49,9 @@ impl Completions {
     if self.shell_flag.is_some() || self.shell_positional.is_some() {
       let shell = xor_args(
         "shell_flag",
-        &self.shell_flag,
+        self.shell_flag.as_ref(),
         "shell_positional",
-        &self.shell_positional,
+        self.shell_positional.as_ref(),
       )?;
 
       if let Some(dir) = self.dir {

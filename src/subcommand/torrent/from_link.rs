@@ -48,9 +48,9 @@ impl FromLink {
   pub(crate) fn run(self, env: &mut Env, options: &Options) -> Result<()> {
     let link = xor_args(
       "input_flag",
-      &self.input_flag,
+      self.input_flag.as_ref(),
       "input_positional",
-      &self.input_positional,
+      self.input_positional.as_ref(),
     )?;
 
     let infohash = link.infohash;
