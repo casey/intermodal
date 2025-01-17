@@ -53,9 +53,9 @@ impl Show {
   pub(crate) fn run(self, env: &mut Env) -> Result<(), Error> {
     let target = xor_args(
       "input_flag",
-      &self.input_flag,
+      self.input_flag.as_ref(),
       "input_positional",
-      &self.input_positional,
+      self.input_positional.as_ref(),
     )?;
 
     let input = env.read(target)?;
