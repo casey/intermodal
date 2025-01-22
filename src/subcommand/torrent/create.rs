@@ -319,7 +319,7 @@ impl Create {
 
     let content = CreateContent::from_create(&self, &input, env)?;
 
-    let output = content.output.resolve(env)?;
+    let mut output = content.output.resolve(env)?;
 
     if content.piece_length.count() == 0 {
       return Err(Error::PieceLengthZero);
@@ -336,7 +336,11 @@ impl Create {
       return Err(Error::PieceLengthSmall);
     }
 
-    if let OutputTarget::Path(path) = &output {
+    if let OutputTarget::Path(path) = &mut output {
+      if path.is_dir() {
+        path.push(format!("{}.torrent", content.name));
+      }
+
       if !self.force && path.exists() {
         return Err(Error::OutputExists { path: path.clone() });
       }
@@ -1012,6 +1016,28 @@ mod tests {
     };
     env.assert_ok();
     env.load_metainfo("x.torrent");
+  }
+
+  #[test]
+  fn destination_dir() {
+    let mut env = test_env! {
+      args: [
+        "torrent",
+        "create",
+        "--input",
+        "foo",
+        "--output",
+        "bar",
+        "--announce",
+        "http://bar",
+      ],
+      tree: {
+        foo: "",
+        bar: {},
+      },
+    };
+    env.assert_ok();
+    env.load_metainfo("bar/foo.torrent");
   }
 
   #[test]
