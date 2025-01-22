@@ -61,18 +61,10 @@ impl CreateContent {
             .to_owned(),
         };
 
-        let mut output = create
+        let output = create
           .output
           .clone()
           .unwrap_or_else(|| OutputTarget::Path(Self::torrent_path(path, &name)));
-
-        let resolved = output.resolve(env)?;
-
-        if let OutputTarget::Path(path) = &resolved {
-          if path.is_dir() {
-            output = OutputTarget::Path(path.join(format!("{name}.torrent")));
-          }
-        }
 
         Ok(Self {
           files: Some(files),
