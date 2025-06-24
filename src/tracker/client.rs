@@ -284,13 +284,13 @@ mod tests {
   #[test]
   fn client_connect_timeout_ipv4() {
     let (_, addr, _) = TestServer::new_ipv4();
-    assert_matches!(Client::connect(addr), Err(Error::TrackerNoHosts { .. }));
+    assert_matches!(Client::connect(addr), Err(Error::TrackerNoHosts));
   }
 
   #[test]
   fn client_connect_timeout_ipv6() {
     let (_, addr, _) = TestServer::new_ipv6();
-    assert_matches!(Client::connect(addr), Err(Error::TrackerNoHosts { .. }));
+    assert_matches!(Client::connect(addr), Err(Error::TrackerNoHosts));
   }
 
   #[test]

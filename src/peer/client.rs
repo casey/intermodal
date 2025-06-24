@@ -97,7 +97,7 @@ impl Client {
       {
         return Err(Error::PeerUtMetadataNotSupported);
       }
-    };
+    }
 
     self.extension_handshake.replace(handshake);
 
@@ -117,7 +117,7 @@ impl Client {
       extended::ut_metadata::MsgType::Request | extended::ut_metadata::MsgType::Reject => {
         return Ok(())
       }
-    };
+    }
 
     if let State::WantInfo(info_buf) = &mut self.state {
       let piece = info_buf.len() / extended::UtMetadata::PIECE_LENGTH;
@@ -667,7 +667,7 @@ mod tests {
 
     assert_matches!(
       join_handle.join().unwrap(),
-      Err(Error::PeerUtMetadataInfoLength { .. })
+      Err(Error::PeerUtMetadataInfoLength)
     );
   }
 }

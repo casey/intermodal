@@ -70,6 +70,16 @@ features = ["serde"]
 criterion = "0.5.1"
 temptree = "0.2.0"
 
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+float_cmp = "allow"
+large_enum_variant = "allow"
+needless_pass_by_value = "allow"
+pedantic = { level = "deny", priority = -1 }
+struct_excessive_bools = "allow"
+too_many_lines = "allow"
+wildcard_imports = "allow"
+
 [workspace]
 members = [
   # generate documentation

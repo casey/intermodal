@@ -46,7 +46,7 @@ fn fmt_string(f: &mut Formatter, string: &[u8]) -> fmt::Result {
   Ok(())
 }
 
-impl<'a> Display for Fmt<'a> {
+impl Display for Fmt<'_> {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
     match &self.0 {
       Value::Integer(integer) => write!(f, "{integer}")?,

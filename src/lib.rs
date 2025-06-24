@@ -1,17 +1,3 @@
-#![deny(clippy::all, clippy::pedantic)]
-#![allow(
-  clippy::float_cmp,
-  clippy::needless_lifetimes,
-  clippy::needless_pass_by_value,
-  clippy::non_ascii_literal,
-  clippy::struct_excessive_bools,
-  clippy::too_many_lines,
-  clippy::unseparated_literal_suffix,
-  clippy::wildcard_imports,
-  clippy::large_enum_variant,
-  clippy::module_name_repetitions
-)]
-
 pub use run::run;
 
 #[cfg(test)]

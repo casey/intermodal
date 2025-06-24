@@ -7,7 +7,7 @@ pub(crate) enum CreateStep<'a> {
   Writing { output: &'a OutputTarget },
 }
 
-impl<'a> Step for CreateStep<'a> {
+impl Step for CreateStep<'_> {
   fn n(&self) -> usize {
     match self {
       Self::Searching { .. } => 1,

@@ -99,7 +99,7 @@ impl Metainfo {
     self.info.content_size()
   }
 
-  pub(crate) fn trackers<'a>(&'a self) -> impl Iterator<Item = Result<Url>> + 'a {
+  pub(crate) fn trackers(&self) -> impl Iterator<Item = Result<Url>> + '_ {
     let mut seen = HashSet::new();
     iter::once(&self.announce)
       .flatten()

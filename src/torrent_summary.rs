@@ -165,7 +165,7 @@ impl TorrentSummary {
             .collect(),
         );
       }
-    };
+    }
 
     table
   }
