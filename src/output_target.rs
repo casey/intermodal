@@ -27,7 +27,7 @@ impl TryFrom<&OsStr> for OutputTarget {
   fn try_from(text: &OsStr) -> Result<Self, Self::Error> {
     if text.is_empty() {
       return Err(Error::OutputTargetEmpty);
-    };
+    }
 
     if text == OsStr::new("-") {
       Ok(Self::Stdout)

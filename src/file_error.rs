@@ -89,8 +89,7 @@ impl Print for FileError {
       Self::Surfeit(difference) => write!(stream, "{difference} too long")?,
       Self::Dearth(difference) => write!(stream, "{difference} too short")?,
       Self::Md5 { .. } => {
-        return Err(io::Error::new(
-          io::ErrorKind::Other,
+        return Err(io::Error::other(
           Error::internal("Reached unreachable branch").to_string(),
         ))
       }

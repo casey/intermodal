@@ -20,7 +20,7 @@ impl TryFrom<&OsStr> for InputTarget {
   fn try_from(text: &OsStr) -> Result<Self, Self::Error> {
     if text.is_empty() {
       return Err(Error::InputTargetEmpty);
-    };
+    }
 
     if text == OsStr::new("-") {
       Ok(Self::Stdin)
