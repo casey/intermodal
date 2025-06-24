@@ -260,7 +260,8 @@ impl Extractor {
     } else {
       buffer.push('<');
       for byte in string {
-        buffer.push_str(&format!("{byte:02X}"));
+        use std::fmt::Write;
+        write!(buffer, "{byte:02X}").unwrap();
       }
       buffer.push('>');
     }

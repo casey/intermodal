@@ -1,5 +1,5 @@
 use std::{
-  io::{self, Error, ErrorKind},
+  io::{self, Error},
   process::Command,
 };
 
@@ -13,7 +13,7 @@ fn is_inside_git_work_tree() -> bool {
 }
 
 fn error(message: String) -> io::Error {
-  Error::new(ErrorKind::Other, message)
+  Error::other(message)
 }
 
 fn commit_hash() -> io::Result<String> {
@@ -33,8 +33,7 @@ fn commit_hash() -> io::Result<String> {
 
   if !hash.chars().all(|c| "0123456789abcdef".contains(c)) {
     return Err(error(format!(
-      "Invalid hash from `git rev-parse HEAD`: {}",
-      hash
+      "Invalid hash from `git rev-parse HEAD`: {hash}",
     )));
   }
 
@@ -47,7 +46,7 @@ fn main() -> io::Result<()> {
     println!("cargo:rustc-env=GIT_HEAD_PARTIAL_HASH= ({})", &hash[0..12]);
   } else {
     println!("cargo:rustc-env=GIT_HEAD_PARTIAL_HASH=");
-  };
+  }
 
   Ok(())
 }

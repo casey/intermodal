@@ -6,7 +6,7 @@ pub(crate) enum VerifyStep<'a> {
   Verifying { content: &'a Path },
 }
 
-impl<'a> Step for VerifyStep<'a> {
+impl Step for VerifyStep<'_> {
   fn n(&self) -> usize {
     match self {
       Self::Loading { .. } => 1,
