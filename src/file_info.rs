@@ -9,5 +9,11 @@ pub(crate) struct FileInfo {
     default,
     with = "unwrap_or_skip"
   )]
+  pub(crate) mtime: Option<SystemTime>,
+  #[serde(
+    skip_serializing_if = "Option::is_none",
+    default,
+    with = "unwrap_or_skip"
+  )]
   pub(crate) md5sum: Option<Md5Digest>,
 }

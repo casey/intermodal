@@ -25,6 +25,7 @@ impl SortSpec {
     let ordering = match self.key {
       SortKey::Path => a.path.cmp(&b.path),
       SortKey::Size => a.length.cmp(&b.length),
+      SortKey::Mtime => a.mtime.cmp(&b.mtime),
     };
 
     match self.order {

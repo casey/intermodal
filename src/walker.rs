@@ -155,6 +155,7 @@ impl Walker {
       file_infos.push(FileInfo {
         path: file_path,
         length: Bytes(len),
+        mtime: metadata.modified().ok(),
         md5sum: None,
       });
     }
