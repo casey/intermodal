@@ -251,7 +251,10 @@ impl Client {
       seeder.handle_msg(&msg).unwrap();
 
       let mut pieces = info_dict.len() / extended::UtMetadata::PIECE_LENGTH;
-      if info_dict.len() % extended::UtMetadata::PIECE_LENGTH > 0 {
+      if !info_dict
+        .len()
+        .is_multiple_of(extended::UtMetadata::PIECE_LENGTH)
+      {
         pieces += 1;
       }
 

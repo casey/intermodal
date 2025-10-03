@@ -152,7 +152,7 @@ impl Extractor {
       return;
     }
 
-    if self.torrents % 10000 == 0 {
+    if self.torrents.is_multiple_of(10000) {
       eprintln!("Processing torrent {}...", self.torrents);
     }
 
