@@ -73,6 +73,7 @@ temptree = "0.2.0"
 [lints.clippy]
 all = { level = "deny", priority = -1 }
 float_cmp = "allow"
+ignore_without_reason = "allow"
 large_enum_variant = "allow"
 needless_pass_by_value = "allow"
 pedantic = { level = "deny", priority = -1 }
