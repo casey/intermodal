@@ -62,6 +62,8 @@ pub(crate) enum Error {
     input: InputTarget,
     source: MetainfoError,
   },
+  #[snafu(display("Modification time invalid/missing"))]
+  ModificationTimeMissing,
   #[snafu(display("Network error: {}", source))]
   Network { source: io::Error },
   #[snafu(display("Failed to invoke opener: {}", source))]
