@@ -1,8 +1,9 @@
 use crate::common::*;
 
-#[derive(Clone, Copy, Debug, PartialEq, IntoStaticStr, EnumString)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, IntoStaticStr, EnumString)]
 #[strum(serialize_all = "kebab-case")]
 pub(crate) enum SortOrder {
+  #[default]
   Ascending,
   Descending,
 }
@@ -10,11 +11,5 @@ pub(crate) enum SortOrder {
 impl SortOrder {
   pub(crate) fn name(self) -> &'static str {
     self.into()
-  }
-}
-
-impl Default for SortOrder {
-  fn default() -> Self {
-    Self::Ascending
   }
 }
