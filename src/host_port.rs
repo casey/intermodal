@@ -99,7 +99,7 @@ struct Tuple(String, u16);
 impl From<&HostPort> for Tuple {
   fn from(node: &HostPort) -> Self {
     let host = match &node.host {
-      Host::Domain(domain) => domain.to_string(),
+      Host::Domain(domain) => domain.clone(),
       Host::Ipv4(ipv4) => ipv4.to_string(),
       Host::Ipv6(ipv6) => ipv6.to_string(),
     };
