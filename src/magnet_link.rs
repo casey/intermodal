@@ -1,10 +1,15 @@
 use crate::common::*;
+use url::form_urlencoded::byte_serialize as urlencode;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
   pub(crate) infohash: Infohash,
   pub(crate) name: Option<String>,
   pub(crate) peers: Vec<HostPort>,
+  /// Trackers contained in magnet `tr` fields.
+  ///
+  /// URLs here are url-decoded into human-readable URLs, but are automatically
+  /// re-encoded in [`MagnetLink::to_url`] and in the [Display] implementation.
   pub(crate) trackers: Vec<Url>,
   pub(crate) indices: BTreeSet<u64>,
 }
@@ -50,6 +55,13 @@ impl MagnetLink {
     self.indices.insert(index);
   }
 
+  /// Produce a parsed URL from the magnet.
+  ///
+  /// We are not naively URL-encoding the data because `xt=urn:btih:INFOHASH`
+  /// is not url-encoded, despite being a query param.
+  ///
+  /// We are not naively string-pushing the data because `tr=TRACKER_URL`
+  /// has to be properly url-encoded.
   pub(crate) fn to_url(&self) -> Url {
     let mut url = Url::parse("magnet:").invariant_unwrap("`magnet:` is valid URL");
 
@@ -62,7 +74,9 @@ impl MagnetLink {
 
     for tracker in &self.trackers {
       query.push_str("&tr=");
-      query.push_str(tracker.as_str());
+      for part in urlencode(tracker.as_str().as_bytes()) {
+        query.push_str(part);
+      }
     }
 
     for peer in &self.peers {
@@ -210,7 +224,7 @@ mod tests {
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http%3A%2F%2Ffoo.com%2Fannounce"
     );
   }
 
@@ -240,8 +254,8 @@ mod tests {
       concat!(
         "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
         "&dn=foo",
-        "&tr=http://foo.com/announce",
-        "&tr=http://bar.net/announce",
+        "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+        "&tr=http%3A%2F%2Fbar.net%2Fannounce",
         "&x.pe=foo.com:1337",
         "&x.pe=bar.net:666",
       ),
@@ -261,6 +275,38 @@ mod tests {
     let link_from = MagnetLink::from_str(link_to.to_url().as_ref()).unwrap();
 
     assert_eq!(link_to, link_from);
+  }
+
+  #[test]
+  fn link_from_str_tracker_round_trip() {
+    let magnet_str = concat!(
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "&dn=foo",
+      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+      "&tr=http%3A%2F%2Fbar.net%2Fannounce"
+    );
+
+    let link_from = MagnetLink::from_str(magnet_str).unwrap();
+    let link_roundtripped = MagnetLink::from_str(&link_from.to_string()).unwrap();
+    assert_eq!(link_from, link_roundtripped,);
+  }
+
+  #[test]
+  fn link_from_str_tracker_urlencoding() {
+    let magnet_str = concat!(
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "&dn=foo",
+      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+    );
+
+    let link_from = MagnetLink::from_str(magnet_str).unwrap();
+    let tracker_url = link_from.trackers.first().unwrap();
+
+    // Url is properly url-decoded
+    assert_eq!(tracker_url, &Url::parse("http://foo.com/announce").unwrap(),);
+
+    // When human-printing the URL, it's not reencoded
+    assert_eq!(tracker_url.as_str(), "http://foo.com/announce",);
   }
 
   #[test]
