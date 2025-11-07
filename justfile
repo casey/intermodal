@@ -68,12 +68,6 @@ check: test clippy forbid check-minimal-versions gen
   git diff --no-ext-diff --quiet --exit-code
   cargo +nightly fmt --all -- --check
 
-draft: push
-  hub pull-request -o --draft
-
-pr: check push
-  hub pull-request -o
-
 publish:
   #!/usr/bin/env bash
   set -euxo pipefail
