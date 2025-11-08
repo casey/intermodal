@@ -1,4 +1,4 @@
-use crate::common::*;
+use {crate::common::*, url::form_urlencoded::byte_serialize as urlencode};
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
@@ -62,7 +62,9 @@ impl MagnetLink {
 
     for tracker in &self.trackers {
       query.push_str("&tr=");
-      query.push_str(tracker.as_str());
+      for part in urlencode(tracker.as_str().as_bytes()) {
+        query.push_str(part);
+      }
     }
 
     for peer in &self.peers {
@@ -210,7 +212,7 @@ mod tests {
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http%3A%2F%2Ffoo.com%2Fannounce"
     );
   }
 
@@ -240,8 +242,8 @@ mod tests {
       concat!(
         "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
         "&dn=foo",
-        "&tr=http://foo.com/announce",
-        "&tr=http://bar.net/announce",
+        "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+        "&tr=http%3A%2F%2Fbar.net%2Fannounce",
         "&x.pe=foo.com:1337",
         "&x.pe=bar.net:666",
       ),
@@ -261,6 +263,37 @@ mod tests {
     let link_from = MagnetLink::from_str(link_to.to_url().as_ref()).unwrap();
 
     assert_eq!(link_to, link_from);
+  }
+
+  #[test]
+  fn link_from_str_tracker_round_trip() {
+    let magnet_str = concat!(
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "&dn=foo",
+      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+      "&tr=http%3A%2F%2Fbar.net%2Fannounce"
+    );
+
+    let link_from = MagnetLink::from_str(magnet_str).unwrap();
+    let link_roundtripped = MagnetLink::from_str(&link_from.to_string()).unwrap();
+    assert_eq!(link_from, link_roundtripped,);
+  }
+
+  #[test]
+  fn link_from_str_tracker_urlencoding() {
+    let magnet_str = concat!(
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "&dn=foo",
+      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+    );
+
+    let link_from = MagnetLink::from_str(magnet_str).unwrap();
+    let tracker_url = link_from.trackers.first().unwrap();
+
+    assert_eq!(
+      tracker_url,
+      &"http://foo.com/announce".parse::<Url>().unwrap(),
+    );
   }
 
   #[test]
