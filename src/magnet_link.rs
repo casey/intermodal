@@ -1,7 +1,7 @@
 use crate::common::*;
 
 fn percent_encode_query_param(s: &str) -> String {
-  const QUERY: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+  const ENCODE: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
     .add(b' ')
     .add(b'"')
     .add(b'#')
@@ -18,7 +18,7 @@ fn percent_encode_query_param(s: &str) -> String {
     .add(b'{')
     .add(b'|')
     .add(b'}');
-  percent_encoding::utf8_percent_encode(s, QUERY).to_string()
+  percent_encoding::utf8_percent_encode(s, ENCODE).to_string()
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -235,7 +235,7 @@ mod tests {
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http%3A%2F%2Ffoo.com%2Fannounce"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
     );
   }
 
@@ -265,8 +265,8 @@ mod tests {
       concat!(
         "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
         "&dn=foo",
-        "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
-        "&tr=http%3A%2F%2Fbar.net%2Fannounce",
+        "&tr=http://foo.com/announce",
+        "&tr=http://bar.net/announce",
         "&x.pe=foo.com:1337",
         "&x.pe=bar.net:666",
       ),
@@ -293,8 +293,8 @@ mod tests {
     let magnet_str = concat!(
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
       "&dn=foo",
-      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
-      "&tr=http%3A%2F%2Fbar.net%2Fannounce"
+      "&tr=http://foo.com/announce",
+      "&tr=http://bar.net/announce"
     );
 
     let link_from = MagnetLink::from_str(magnet_str).unwrap();
@@ -307,7 +307,7 @@ mod tests {
     let magnet_str = concat!(
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
       "&dn=foo",
-      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+      "&tr=http://foo.com/announce",
     );
 
     let link_from = MagnetLink::from_str(magnet_str).unwrap();
@@ -453,14 +453,17 @@ mod tests {
       assert_eq!(percent_encode_query_param(&s), s);
     }
 
-    for c in '\x00'..='\x7F' {
+    for c in '\u{0}'..='\u{80}' {
       let s = c.to_string();
       if safe.contains(c) {
         assert_eq!(percent_encode_query_param(&s), s);
       } else {
         assert_eq!(
           percent_encode_query_param(&s),
-          format!("%{:02X}", u8::try_from(c).unwrap()),
+          s.bytes()
+            .map(|byte| format!("%{byte:02X}"))
+            .collect::<Vec<String>>()
+            .join(""),
         );
       }
     }

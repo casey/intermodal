@@ -233,7 +233,7 @@ mod tests {
     assert_eq!(
       env.out(),
       format!(
-        "magnet:?xt=urn:btih:{}&dn=foo&tr=https%3A%2F%2Ffoo.com%2Fannounce\n",
+        "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce\n",
         infohash
       ),
     );
@@ -266,7 +266,7 @@ mod tests {
     assert_eq!(
       env.out(),
       format!(
-        "magnet:?xt=urn:btih:{}&dn=foo&tr=https%3A%2F%2Ffoo.com%2Fannounce&tr=https%3A%2F%2Fbar.com%2Fannounce\n",
+        "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce&tr=https://bar.com/announce\n",
         infohash
       ),
     );
@@ -300,7 +300,7 @@ mod tests {
     assert_eq!(
       env.out(),
       format!(
-        "magnet:?xt=urn:btih:{}&dn=foo&tr=https%3A%2F%2Ffoo.com%2Fannounce&x.pe=foo.com:1337\n",
+        "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce&x.pe=foo.com:1337\n",
         infohash
       ),
     );
@@ -336,7 +336,7 @@ mod tests {
     assert_eq!(
       env.out(),
       format!(
-        "magnet:?xt=urn:btih:{}&dn=foo&tr=https%3A%2F%2Ffoo.com%2Fannounce&so=2,4,6\n",
+        "magnet:?xt=urn:btih:{}&dn=foo&tr=https://foo.com/announce&so=2,4,6\n",
         infohash
       ),
     );
