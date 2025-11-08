@@ -1,26 +1,5 @@
 use crate::common::*;
 
-fn percent_encode_query_param(s: &str) -> String {
-  const ENCODE: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
-    .add(b' ')
-    .add(b'"')
-    .add(b'#')
-    .add(b'%')
-    .add(b'&')
-    .add(b'<')
-    .add(b'=')
-    .add(b'>')
-    .add(b'[')
-    .add(b'\\')
-    .add(b']')
-    .add(b'^')
-    .add(b'`')
-    .add(b'{')
-    .add(b'|')
-    .add(b'}');
-  percent_encoding::utf8_percent_encode(s, ENCODE).to_string()
-}
-
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
   pub(crate) indices: BTreeSet<u64>,
@@ -79,7 +58,7 @@ impl MagnetLink {
       query.push('&');
       query.push_str(key);
       query.push('=');
-      query.push_str(&percent_encode_query_param(value));
+      query.push_str(&Self::percent_encode_query_param(value));
     };
 
     if let Some(name) = &self.name {
@@ -167,6 +146,27 @@ impl MagnetLink {
     }
 
     Ok(link)
+  }
+
+  fn percent_encode_query_param(s: &str) -> String {
+    const ENCODE: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+      .add(b' ')
+      .add(b'"')
+      .add(b'#')
+      .add(b'%')
+      .add(b'&')
+      .add(b'<')
+      .add(b'=')
+      .add(b'>')
+      .add(b'[')
+      .add(b'\\')
+      .add(b']')
+      .add(b'^')
+      .add(b'`')
+      .add(b'{')
+      .add(b'|')
+      .add(b'}');
+    percent_encoding::utf8_percent_encode(s, ENCODE).to_string()
   }
 }
 
@@ -468,18 +468,13 @@ mod tests {
     // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
     safe.push_str("!$'()*+,;");
 
-    for c in safe.chars() {
-      let s = c.to_string();
-      assert_eq!(percent_encode_query_param(&s), s);
-    }
-
     for c in '\u{0}'..='\u{80}' {
       let s = c.to_string();
       if safe.contains(c) {
-        assert_eq!(percent_encode_query_param(&s), s);
+        assert_eq!(MagnetLink::percent_encode_query_param(&s), s);
       } else {
         assert_eq!(
-          percent_encode_query_param(&s),
+          MagnetLink::percent_encode_query_param(&s),
           s.bytes()
             .map(|byte| format!("%{byte:02X}"))
             .collect::<String>(),
