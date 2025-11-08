@@ -1,15 +1,10 @@
-use crate::common::*;
-use url::form_urlencoded::byte_serialize as urlencode;
+use {crate::common::*, url::form_urlencoded::byte_serialize as urlencode};
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
   pub(crate) infohash: Infohash,
   pub(crate) name: Option<String>,
   pub(crate) peers: Vec<HostPort>,
-  /// Trackers contained in magnet `tr` fields.
-  ///
-  /// URLs here are url-decoded into human-readable URLs, but are automatically
-  /// re-encoded in [`MagnetLink::to_url`] and in the [Display] implementation.
   pub(crate) trackers: Vec<Url>,
   pub(crate) indices: BTreeSet<u64>,
 }
@@ -55,13 +50,6 @@ impl MagnetLink {
     self.indices.insert(index);
   }
 
-  /// Produce a parsed URL from the magnet.
-  ///
-  /// We are not naively URL-encoding the data because `xt=urn:btih:INFOHASH`
-  /// is not url-encoded, despite being a query param.
-  ///
-  /// We are not naively string-pushing the data because `tr=TRACKER_URL`
-  /// has to be properly url-encoded.
   pub(crate) fn to_url(&self) -> Url {
     let mut url = Url::parse("magnet:").invariant_unwrap("`magnet:` is valid URL");
 
@@ -302,11 +290,10 @@ mod tests {
     let link_from = MagnetLink::from_str(magnet_str).unwrap();
     let tracker_url = link_from.trackers.first().unwrap();
 
-    // Url is properly url-decoded
-    assert_eq!(tracker_url, &Url::parse("http://foo.com/announce").unwrap(),);
-
-    // When human-printing the URL, it's not reencoded
-    assert_eq!(tracker_url.as_str(), "http://foo.com/announce",);
+    assert_eq!(
+      tracker_url,
+      &"http://foo.com/announce".parse::<Url>().unwrap(),
+    );
   }
 
   #[test]
