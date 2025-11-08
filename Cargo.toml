@@ -2,15 +2,16 @@
 name = "imdl"
 version = "0.1.15"
 description = "📦 A 40' shipping container for the internet"
-readme = "README.md"
-keywords = ["p2p", "sharing", "bittorrent", "torrent"]
-categories = ["command-line-utilities"]
-homepage = "https://github.com/casey/intermodal"
-repository = "https://github.com/casey/intermodal"
-default-run = "imdl"
 authors.workspace = true
+categories = ["command-line-utilities"]
+default-run = "imdl"
 edition.workspace = true
+exclude = ["/book", "/www"]
+homepage = "https://github.com/casey/intermodal"
+keywords = ["p2p", "sharing", "bittorrent", "torrent"]
 license.workspace = true
+readme = "README.md"
+repository = "https://github.com/casey/intermodal"
 
 [workspace.package]
 edition = "2021"
