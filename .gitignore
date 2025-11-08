@@ -1,5 +1,2 @@
-**/*.rs.bk
-/book/book
 /target
-/wiki
 /www/book
