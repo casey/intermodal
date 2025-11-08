@@ -40,7 +40,7 @@ impl Serialize for PieceList {
   where
     S: Serializer,
   {
-    let mut bytes = Vec::with_capacity(self.piece_hashes.len() * sha1::DIGEST_LENGTH);
+    let mut bytes = Vec::with_capacity(self.piece_hashes.len() * sha1_smol::DIGEST_LENGTH);
 
     for piece in &self.piece_hashes {
       bytes.extend_from_slice(&piece.bytes());
@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for PieceList {
       return Err(D::Error::custom(format!(
         "buffer length {} is not a multiple of {}",
         bytes.len(),
-        sha1::DIGEST_LENGTH
+        sha1_smol::DIGEST_LENGTH
       )));
     }
 

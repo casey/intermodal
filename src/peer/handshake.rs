@@ -16,7 +16,7 @@ impl Handshake {
 
   pub(crate) fn new(infohash: Infohash) -> Self {
     Handshake {
-      peer_id: rand::thread_rng().gen(),
+      peer_id: rand::rng().random(),
       infohash: infohash.into(),
       reserved: IMDL_RESERVED_BYTES,
     }

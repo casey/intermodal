@@ -2,7 +2,7 @@ use crate::common::*;
 
 use structopt::clap;
 
-#[derive(Copy, Clone, EnumVariantNames, IntoStaticStr, EnumString, EnumIter, Debug)]
+#[derive(Copy, Clone, VariantNames, IntoStaticStr, EnumString, EnumIter, Debug)]
 #[strum(serialize_all = "kebab-case")]
 pub(crate) enum Shell {
   Zsh,

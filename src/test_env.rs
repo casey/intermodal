@@ -99,6 +99,7 @@ impl TestEnv {
     fs::set_permissions(self.env.resolve(path).unwrap(), permissions).unwrap();
   }
 
+  #[track_caller]
   pub(crate) fn assert_ok(&mut self) {
     match self.run() {
       Ok(()) => {}

@@ -50,7 +50,7 @@ impl FileError {
       let mut reader = File::open(path)?;
       let mut context = md5::Context::new();
       io::copy(&mut reader, &mut context)?;
-      let actual = context.compute().into();
+      let actual = context.finalize().into();
 
       if actual != expected {
         return Err(FileError::Md5 { actual, expected });

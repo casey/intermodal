@@ -132,7 +132,7 @@ impl Hasher {
     self.length += bytes_hashed.into_u64();
 
     Ok((
-      md5.map(|context| context.compute().into()),
+      md5.map(|context| context.finalize().into()),
       Bytes::from(bytes_hashed.into_u64()),
     ))
   }

@@ -55,7 +55,7 @@ impl Message {
     let message_length = self.len().try_into().context(error::PeerMessagePayload)?;
     let mut buf: Vec<u8> = u32::to_be_bytes(message_length).to_vec();
     buf.push(self.flavour.into());
-    if let Some(ref p) = &self.payload {
+    if let Some(p) = &self.payload {
       buf.extend(p);
     }
 

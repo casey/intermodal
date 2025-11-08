@@ -21,8 +21,8 @@ impl Sha1Digest {
   }
 }
 
-impl From<sha1::Digest> for Sha1Digest {
-  fn from(digest: sha1::Digest) -> Self {
+impl From<sha1_smol::Digest> for Sha1Digest {
+  fn from(digest: sha1_smol::Digest) -> Self {
     Self {
       bytes: digest.bytes(),
     }

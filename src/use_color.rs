@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Copy, Clone, Debug, PartialEq, EnumVariantNames, EnumString, IntoStaticStr)]
+#[derive(Copy, Clone, Debug, PartialEq, VariantNames, EnumString, IntoStaticStr)]
 #[strum(serialize_all = "kebab-case")]
 pub(crate) enum UseColor {
   Auto,

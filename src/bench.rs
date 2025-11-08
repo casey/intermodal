@@ -40,7 +40,7 @@ impl Bench for HasherBench {
       let mut writer = BufWriter::new(&mut tempfile);
 
       while written < TEMPFILE_BYTES {
-        rand::thread_rng().fill_bytes(&mut bytes);
+        rand::rng().fill_bytes(&mut bytes);
         writer.write_all(&bytes).unwrap();
         written += bytes.len().into_u64();
       }

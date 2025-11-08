@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[derive(Debug, Snafu)]
-#[snafu(visibility(pub(crate)))]
+#[snafu(context(suffix(false)), visibility(pub(crate)))]
 pub(crate) enum MagnetLinkParseError {
   #[snafu(display("Failed to parse hex string `{}`: {}", text, source))]
   HexParse {

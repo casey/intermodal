@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[derive(Debug, Snafu)]
-#[snafu(visibility(pub(crate)))]
+#[snafu(context(suffix(false)), visibility(pub(crate)))]
 pub(crate) enum HostPortParseError {
   #[snafu(display("Failed to parse host `{}`: {}", text, source))]
   Host {

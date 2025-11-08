@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[derive(Debug, Snafu)]
-#[snafu(visibility(pub(crate)))]
+#[snafu(context(suffix(false)), visibility(pub(crate)))]
 pub(crate) enum Error {
   #[snafu(display("Failed to deserialize `Cargo.toml`: {}", source))]
   CargoToml { source: cargo_toml::Error },

@@ -24,7 +24,7 @@ impl Client {
         continue; // log these as warnings
       };
       let mut client = Client {
-        peer_id: rand::thread_rng().gen(),
+        peer_id: rand::rng().random(),
         tracker_addr,
         sock,
         connection_id: None,
@@ -184,7 +184,7 @@ mod tests {
       let server_addr = sock.local_addr().unwrap();
       let stride = if server_addr.is_ipv6() { 18 } else { 6 };
       let peer_list: Vec<u8> = (0..10 * stride)
-        .map(|_| rand::thread_rng().gen::<u8>())
+        .map(|_| rand::rng().random::<u8>())
         .collect::<Vec<_>>();
 
       let local_addr = if server_addr.is_ipv6() {
@@ -205,14 +205,14 @@ mod tests {
 
     fn connect_exchange(&self) {
       let mut buf = [0u8; 8192];
-      let mut rng = rand::thread_rng();
+      let mut rng = rand::rng();
 
       let (n, peer) = self.sock.recv_from(&mut buf).unwrap();
       let (req, _) = connect::Request::deserialize(buf[..n].try_into().unwrap()).unwrap();
       let req = connect::Response {
         action: Action::Connect.into(),
         transaction_id: req.transaction_id,
-        connection_id: rng.gen(),
+        connection_id: rng.random(),
       }
       .serialize();
       self.sock.send_to(&req, peer).unwrap();
