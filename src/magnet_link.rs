@@ -54,7 +54,6 @@ impl MagnetLink {
     }
   }
 
-  #[allow(dead_code)]
   pub(crate) fn set_name(&mut self, name: impl Into<String>) {
     self.name = Some(name.into());
   }
@@ -80,7 +79,7 @@ impl MagnetLink {
       query.push('&');
       query.push_str(key);
       query.push('=');
-      query.push_str(&percent_encode_query_param(&value));
+      query.push_str(&percent_encode_query_param(value));
     };
 
     if let Some(name) = &self.name {
@@ -99,7 +98,7 @@ impl MagnetLink {
       let indices = self
         .indices
         .iter()
-        .map(|index| index.to_string())
+        .map(ToString::to_string)
         .collect::<Vec<String>>()
         .join(",");
       append("so", &indices);
@@ -415,6 +414,14 @@ mod tests {
   }
 
   #[test]
+  fn magnet_link_query_params_are_percent_encoded() {
+    // test:
+    // - name
+    // - tracker
+    // - peer
+  }
+
+  #[test]
   fn percent_encode() {
     // Build a string containing all safe characters to test against using the
     // `query` grammar from the URL RFC:
@@ -462,8 +469,7 @@ mod tests {
           percent_encode_query_param(&s),
           s.bytes()
             .map(|byte| format!("%{byte:02X}"))
-            .collect::<Vec<String>>()
-            .join(""),
+            .collect::<String>(),
         );
       }
     }
