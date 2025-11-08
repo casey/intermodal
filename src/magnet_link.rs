@@ -460,7 +460,7 @@ mod tests {
       } else {
         assert_eq!(
           percent_encode_query_param(&s),
-          format!("%{:02X}", u8::try_from(c).unwrap())
+          format!("%{:02X}", u8::try_from(c).unwrap()),
         );
       }
     }
