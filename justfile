@@ -29,6 +29,10 @@ done BRANCH=`git rev-parse --abbrev-ref HEAD`:
   git rebase github/master master
   git branch -d {{BRANCH}}
 
+ci: clippy forbid test
+  cargo fmt -- --check
+  cargo test --all -- --ignored
+
 test:
   cargo test --all
 

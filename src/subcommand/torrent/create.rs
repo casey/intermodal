@@ -2593,7 +2593,7 @@ Content Size  9 bytes
       "magnet:\
       ?xt=urn:btih:516735f4b80f2b5487eed5f226075bdcde33a54e\
       &dn=foo\
-      &tr=http%3A%2F%2Ffoo.com%2Fannounce\n"
+      &tr=http://foo.com/announce\n"
     );
   }
 

@@ -1,12 +1,12 @@
-use {crate::common::*, url::form_urlencoded::byte_serialize as urlencode};
+use crate::common::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
+  pub(crate) indices: BTreeSet<u64>,
   pub(crate) infohash: Infohash,
   pub(crate) name: Option<String>,
   pub(crate) peers: Vec<HostPort>,
   pub(crate) trackers: Vec<Url>,
-  pub(crate) indices: BTreeSet<u64>,
 }
 
 impl MagnetLink {
@@ -33,7 +33,6 @@ impl MagnetLink {
     }
   }
 
-  #[allow(dead_code)]
   pub(crate) fn set_name(&mut self, name: impl Into<String>) {
     self.name = Some(name.into());
   }
@@ -55,31 +54,33 @@ impl MagnetLink {
 
     let mut query = format!("xt=urn:btih:{}", self.infohash);
 
+    let mut append = |key: &str, value: &str| {
+      query.push('&');
+      query.push_str(key);
+      query.push('=');
+      query.push_str(&Self::percent_encode_query_param(value));
+    };
+
     if let Some(name) = &self.name {
-      query.push_str("&dn=");
-      query.push_str(name);
+      append("dn", name);
     }
 
     for tracker in &self.trackers {
-      query.push_str("&tr=");
-      for part in urlencode(tracker.as_str().as_bytes()) {
-        query.push_str(part);
-      }
+      append("tr", tracker.as_str());
     }
 
     for peer in &self.peers {
-      query.push_str("&x.pe=");
-      query.push_str(&peer.to_string());
+      append("x.pe", &peer.to_string());
     }
 
     if !self.indices.is_empty() {
-      query.push_str("&so=");
-      for (i, selection_index) in self.indices.iter().enumerate() {
-        if i > 0 {
-          query.push(',');
-        }
-        query.push_str(&selection_index.to_string());
-      }
+      let indices = self
+        .indices
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<String>>()
+        .join(",");
+      append("so", &indices);
     }
 
     url.set_query(Some(&query));
@@ -145,6 +146,27 @@ impl MagnetLink {
     }
 
     Ok(link)
+  }
+
+  fn percent_encode_query_param(s: &str) -> String {
+    const ENCODE: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+      .add(b' ')
+      .add(b'"')
+      .add(b'#')
+      .add(b'%')
+      .add(b'&')
+      .add(b'<')
+      .add(b'=')
+      .add(b'>')
+      .add(b'[')
+      .add(b'\\')
+      .add(b']')
+      .add(b'^')
+      .add(b'`')
+      .add(b'{')
+      .add(b'|')
+      .add(b'}');
+    percent_encoding::utf8_percent_encode(s, ENCODE).to_string()
   }
 }
 
@@ -212,7 +234,7 @@ mod tests {
     link.add_tracker(Url::parse("http://foo.com/announce").unwrap());
     assert_eq!(
       link.to_url().as_str(),
-      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http%3A%2F%2Ffoo.com%2Fannounce"
+      "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709&tr=http://foo.com/announce"
     );
   }
 
@@ -242,8 +264,8 @@ mod tests {
       concat!(
         "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
         "&dn=foo",
-        "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
-        "&tr=http%3A%2F%2Fbar.net%2Fannounce",
+        "&tr=http://foo.com/announce",
+        "&tr=http://bar.net/announce",
         "&x.pe=foo.com:1337",
         "&x.pe=bar.net:666",
       ),
@@ -270,8 +292,8 @@ mod tests {
     let magnet_str = concat!(
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
       "&dn=foo",
-      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
-      "&tr=http%3A%2F%2Fbar.net%2Fannounce"
+      "&tr=http://foo.com/announce",
+      "&tr=http://bar.net/announce"
     );
 
     let link_from = MagnetLink::from_str(magnet_str).unwrap();
@@ -284,7 +306,7 @@ mod tests {
     let magnet_str = concat!(
       "magnet:?xt=urn:btih:da39a3ee5e6b4b0d3255bfef95601890afd80709",
       "&dn=foo",
-      "&tr=http%3A%2F%2Ffoo.com%2Fannounce",
+      "&tr=http://foo.com/announce",
     );
 
     let link_from = MagnetLink::from_str(magnet_str).unwrap();
@@ -389,5 +411,75 @@ mod tests {
         }
       } if text == link && addr == bad_addr
     );
+  }
+
+  #[test]
+  fn magnet_link_query_params_are_percent_encoded() {
+    let mut e = "magnet:?xt=urn:btih:0000000000000000000000000000000000000000"
+      .parse::<MagnetLink>()
+      .unwrap();
+    e.set_name("foo bar");
+    e.add_tracker("http://[::]".parse().unwrap());
+    e.add_peer("[::]:0".parse().unwrap());
+
+    assert_eq!(
+      e.to_url().as_str(),
+      concat!(
+        "magnet:",
+        "?xt=urn:btih:0000000000000000000000000000000000000000",
+        "&dn=foo%20bar",
+        "&tr=http://%5B::%5D/",
+        "&x.pe=%5B::%5D:0",
+      ),
+    );
+  }
+
+  #[test]
+  fn percent_encode() {
+    // Build a string containing all safe characters to test against using the
+    // `query` grammar from the URL RFC:
+    //
+    // https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+    //
+    // `&` and `=` are omitted since they are used to delimit query parameter
+    // keys and values
+
+    // query = *( pchar / "/" / "?" )
+    let mut safe = "/?".to_string();
+
+    // pchar = unreserved / pct-encoded / sub-delims / ":" / "@"
+    safe.push_str(":@");
+
+    // unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    for c in 'a'..='z' {
+      safe.push(c);
+    }
+
+    for c in 'A'..='Z' {
+      safe.push(c);
+    }
+
+    for c in '0'..='9' {
+      safe.push(c);
+    }
+
+    safe.push_str("-._~");
+
+    // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+    safe.push_str("!$'()*+,;");
+
+    for c in '\u{0}'..='\u{80}' {
+      let s = c.to_string();
+      if safe.contains(c) {
+        assert_eq!(MagnetLink::percent_encode_query_param(&s), s);
+      } else {
+        assert_eq!(
+          MagnetLink::percent_encode_query_param(&s),
+          s.bytes()
+            .map(|byte| format!("%{byte:02X}"))
+            .collect::<String>(),
+        );
+      }
+    }
   }
 }
