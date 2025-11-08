@@ -16,7 +16,7 @@ impl Request {
     Self {
       protocol_id: Self::UDP_TRACKER_MAGIC,
       action: tracker::Action::Connect.into(),
-      transaction_id: rand::thread_rng().gen(),
+      transaction_id: rand::rng().random(),
     }
   }
 }

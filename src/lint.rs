@@ -1,7 +1,7 @@
 use crate::common::*;
 
 #[derive(
-  Eq, PartialEq, Debug, Copy, Clone, Ord, PartialOrd, EnumVariantNames, IntoStaticStr, EnumString,
+  Eq, PartialEq, Debug, Copy, Clone, Ord, PartialOrd, VariantNames, IntoStaticStr, EnumString,
 )]
 #[strum(serialize_all = "kebab-case")]
 pub(crate) enum Lint {

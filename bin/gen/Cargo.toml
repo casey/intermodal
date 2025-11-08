@@ -1,34 +1,27 @@
 [package]
 name = "gen"
 version = "0.0.0"
-authors = ["Casey Rodarmor <casey@rodarmor.com>"]
-edition = "2021"
+authors.workspace = true
+edition.workspace = true
 publish = false
 
 [dependencies]
-ansi_term = "0.12.1"
-askama = "0.9.0"
-cargo_toml = "0.17.0"
-chrono = "0.4.11"
+ansi_term.workspace = true
+askama = "0.14.0"
+cargo_toml = "0.22.3"
+chrono.workspace = true
 fehler = "1.0.0"
 fs_extra = "1.1.0"
-git2 = "0.13.1"
-globset = "0.4.5"
-libc = "0.2.69"
-log = "0.4.8"
-pretty_env_logger = "0.4.0"
-regex = "1.3.6"
-serde_yaml = "0.8.11"
-snafu = "0.6.0"
-structopt = "0.3.12"
-strum = "0.18.0"
-strum_macros = "0.18.0"
-tempfile = "3.1.0"
-
-[dependencies.serde]
-version = "1.0.106"
-features = ["derive"]
-
-[dependencies.url]
-version = "2.1.1"
-features = ["serde"]
+git2 = "0.20.2"
+globset.workspace = true
+libc.workspace = true
+log.workspace = true
+pretty_env_logger.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_yaml = "0.9.34"
+snafu.workspace = true
+structopt.workspace = true
+strum.workspace = true
+tempfile.workspace = true
+url.workspace = true

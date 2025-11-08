@@ -20,11 +20,11 @@ impl Request {
   pub(crate) const LENGTH: usize = 98;
 
   pub(crate) fn new(connection_id: u64, btinh: Infohash, peer_id: [u8; 20], port: u16) -> Self {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     Self {
       connection_id,
       action: tracker::Action::Announce.into(),
-      transaction_id: rng.gen(),
+      transaction_id: rng.random(),
       infohash: btinh.into(),
       peer_id,
       downloaded: 0x0000,

@@ -1,6 +1,26 @@
 Changelog
 =========
 
+[v0.1.15](https://github.com/casey/intermodal/releases/tag/v0.1.15) - 2025-11-08
+--------------------------------------------------------------------------------
+
+### Added
+- Allow `--output` to be directory ([#546](https://github.com/casey/intermodal/pull/546) by [shreyasminocha](https://github.com/shreyasminocha))
+
+### Fixed
+- Percent encode all magnet link query parameters ([#556](https://github.com/casey/intermodal/pull/556) by [casey](https://github.com/casey))
+- Percent encode tracker URLs in magnet links ([#554](https://github.com/casey/intermodal/pull/554) by [angrynode](https://github.com/angrynode))
+
+### Misc
+- Fix clippy lints ([#555](https://github.com/casey/intermodal/pull/555) by [casey](https://github.com/casey))
+- Fix clippy lints ([#551](https://github.com/casey/intermodal/pull/551) by [casey](https://github.com/casey))
+- Add Homebrew package to readme ([#548](https://github.com/casey/intermodal/pull/548) by [jaredledvina](https://github.com/jaredledvina))
+- Fix clippy lints ([#549](https://github.com/casey/intermodal/pull/549) by [casey](https://github.com/casey))
+- Fix clippy lint ([#547](https://github.com/casey/intermodal/pull/547) by [casey](https://github.com/casey))
+- Update publish recipe ([#543](https://github.com/casey/intermodal/pull/543) by [casey](https://github.com/casey))
+- Fix changelog links to point to correct repository ([#544](https://github.com/casey/intermodal/pull/544) by [casey](https://github.com/casey))
+- Update forbid script ([#542](https://github.com/casey/intermodal/pull/542) by [casey](https://github.com/casey))
+
 [v0.1.14](https://github.com/casey/intermodal/releases/tag/v0.1.14) - 2024-09-03
 --------------------------------------------------------------------------------
 

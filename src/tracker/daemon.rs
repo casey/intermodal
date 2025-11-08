@@ -26,7 +26,7 @@ impl Daemon {
   }
 
   fn run(&mut self) {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let mut buf = [0u8; 8192];
     loop {
       if let Ok((n, peer)) = self.sock.recv_from(&mut buf) {
@@ -34,7 +34,7 @@ impl Daemon {
           let resp = connect::Response {
             action: Action::Connect.into(),
             transaction_id: req.transaction_id,
-            connection_id: rng.gen(),
+            connection_id: rng.random(),
           }
           .serialize();
           self.sock.send_to(&resp, peer).unwrap();
@@ -117,8 +117,8 @@ mod tests {
     let a1 = c1.local_addr();
     let a2 = c2.local_addr();
 
-    let infohash1 = Infohash::from(rand::thread_rng().gen::<[u8; 20]>());
-    let infohash2 = Infohash::from(rand::thread_rng().gen::<[u8; 20]>());
+    let infohash1 = Infohash::from(rand::rng().random::<[u8; 20]>());
+    let infohash2 = Infohash::from(rand::rng().random::<[u8; 20]>());
     let resp1 = c1.announce_exchange(&infohash1).unwrap();
     let resp2 = c2.announce_exchange(&infohash2).unwrap();
     assert_eq!(resp2.len(), 0);
@@ -135,7 +135,7 @@ mod tests {
   #[test]
   fn reannounce() {
     let (_, addr) = Daemon::spawn();
-    let infohash = Infohash::from(rand::thread_rng().gen::<[u8; 20]>());
+    let infohash = Infohash::from(rand::rng().random::<[u8; 20]>());
     let c1 = Client::connect(addr).unwrap();
     let c2 = Client::connect(addr).unwrap();
     let a1 = c1.local_addr();

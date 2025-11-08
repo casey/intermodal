@@ -1,8 +1,9 @@
 [package]
 name = "update-contributors"
 version = "0.0.0"
-edition = "2021"
+authors.workspace = true
+edition.workspace = true
 publish = false
 
 [dependencies]
-regex = "1.5.4"
+regex.workspace = true
