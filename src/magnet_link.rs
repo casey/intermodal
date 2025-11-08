@@ -415,10 +415,23 @@ mod tests {
 
   #[test]
   fn magnet_link_query_params_are_percent_encoded() {
-    // test:
-    // - name
-    // - tracker
-    // - peer
+    let mut e =
+      MagnetLink::from_str(&"magnet:?xt=urn:btih:0000000000000000000000000000000000000000")
+        .unwrap();
+    e.set_name("foo bar");
+    e.add_tracker("http://[::]".parse().unwrap());
+    e.add_peer("[::]:0".parse().unwrap());
+
+    assert_eq!(
+      e.to_url().as_str(),
+      concat!(
+        "magnet:",
+        "?xt=urn:btih:0000000000000000000000000000000000000000",
+        "&dn=foo%20bar",
+        "&tr=http://%5B::%5D/",
+        "&x.pe=%5B::%5D:0",
+      ),
+    );
   }
 
   #[test]
