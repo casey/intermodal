@@ -415,9 +415,9 @@ mod tests {
 
   #[test]
   fn magnet_link_query_params_are_percent_encoded() {
-    let mut e =
-      MagnetLink::from_str(&"magnet:?xt=urn:btih:0000000000000000000000000000000000000000")
-        .unwrap();
+    let mut e = "magnet:?xt=urn:btih:0000000000000000000000000000000000000000"
+      .parse::<MagnetLink>()
+      .unwrap();
     e.set_name("foo bar");
     e.add_tracker("http://[::]".parse().unwrap());
     e.add_peer("[::]:0".parse().unwrap());
