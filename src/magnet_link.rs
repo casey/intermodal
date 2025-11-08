@@ -458,7 +458,10 @@ mod tests {
       if safe.contains(c) {
         assert_eq!(percent_encode_query_param(&s), s);
       } else {
-        assert_eq!(percent_encode_query_param(&s), format!("%{:02X}", c as u8));
+        assert_eq!(
+          percent_encode_query_param(&s),
+          format!("%{:02X}", u8::try_from(c).unwrap())
+        );
       }
     }
   }
