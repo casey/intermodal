@@ -1,12 +1,33 @@
-use {crate::common::*, url::form_urlencoded::byte_serialize as urlencode};
+use crate::common::*;
+
+fn percent_encode_query_param(s: &str) -> String {
+  const QUERY: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+    .add(b' ')
+    .add(b'"')
+    .add(b'#')
+    .add(b'%')
+    .add(b'&')
+    .add(b'<')
+    .add(b'=')
+    .add(b'>')
+    .add(b'[')
+    .add(b'\\')
+    .add(b']')
+    .add(b'^')
+    .add(b'`')
+    .add(b'{')
+    .add(b'|')
+    .add(b'}');
+  percent_encoding::utf8_percent_encode(s, QUERY).to_string()
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct MagnetLink {
+  pub(crate) indices: BTreeSet<u64>,
   pub(crate) infohash: Infohash,
   pub(crate) name: Option<String>,
   pub(crate) peers: Vec<HostPort>,
   pub(crate) trackers: Vec<Url>,
-  pub(crate) indices: BTreeSet<u64>,
 }
 
 impl MagnetLink {
@@ -55,31 +76,33 @@ impl MagnetLink {
 
     let mut query = format!("xt=urn:btih:{}", self.infohash);
 
+    let mut append = |key: &str, value: &str| {
+      query.push('&');
+      query.push_str(key);
+      query.push('=');
+      query.push_str(&percent_encode_query_param(&value));
+    };
+
     if let Some(name) = &self.name {
-      query.push_str("&dn=");
-      query.push_str(name);
+      append("dn", name);
     }
 
     for tracker in &self.trackers {
-      query.push_str("&tr=");
-      for part in urlencode(tracker.as_str().as_bytes()) {
-        query.push_str(part);
-      }
+      append("tr", tracker.as_str());
     }
 
     for peer in &self.peers {
-      query.push_str("&x.pe=");
-      query.push_str(&peer.to_string());
+      append("x.pe", &peer.to_string());
     }
 
     if !self.indices.is_empty() {
-      query.push_str("&so=");
-      for (i, selection_index) in self.indices.iter().enumerate() {
-        if i > 0 {
-          query.push(',');
-        }
-        query.push_str(&selection_index.to_string());
-      }
+      let indices = self
+        .indices
+        .iter()
+        .map(|index| index.to_string())
+        .collect::<Vec<String>>()
+        .join(",");
+      append("so", &indices);
     }
 
     url.set_query(Some(&query));
@@ -389,5 +412,56 @@ mod tests {
         }
       } if text == link && addr == bad_addr
     );
+  }
+
+  #[test]
+  fn percent_encode() {
+    // Build a string containing all safe characters to test against using the
+    // `query` grammar from the URL RFC:
+    //
+    // https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
+    //
+    // `%` is omitted since it is used to introduce percent encoded characters
+    // `&` and `=` are omitted since they are used to delimit query parameter keys and values
+
+    // query = *( pchar / "/" / "?" )
+    let mut safe = "/?".to_string();
+
+    // pchar = unreserved / pct-encoded / sub-delims / ":" / "@"
+    safe.push_str(":@");
+
+    // unreserved  = ALPHA / DIGIT / "-" / "." / "_" / "~"
+    for c in 'a'..='z' {
+      safe.push(c);
+    }
+
+    for c in 'A'..='Z' {
+      safe.push(c);
+    }
+
+    for c in '0'..='9' {
+      safe.push(c);
+    }
+
+    safe.push_str("-._~");
+
+    // pct-encoded = "%" HEXDIG HEXDIG
+
+    // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+    safe.push_str("!$'()*+,;");
+
+    for c in safe.chars() {
+      let s = c.to_string();
+      assert_eq!(percent_encode_query_param(&s), s);
+    }
+
+    for c in '\x00'..='\x7F' {
+      let s = c.to_string();
+      if safe.contains(c) {
+        assert_eq!(percent_encode_query_param(&s), s);
+      } else {
+        assert_eq!(percent_encode_query_param(&s), format!("%{:02X}", c as u8));
+      }
+    }
   }
 }
