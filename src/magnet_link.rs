@@ -421,8 +421,8 @@ mod tests {
     //
     // https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
     //
-    // `%` is omitted since it is used to introduce percent encoded characters
-    // `&` and `=` are omitted since they are used to delimit query parameter keys and values
+    // `&` and `=` are omitted since they are used to delimit query parameter
+    // keys and values
 
     // query = *( pchar / "/" / "?" )
     let mut safe = "/?".to_string();
@@ -444,8 +444,6 @@ mod tests {
     }
 
     safe.push_str("-._~");
-
-    // pct-encoded = "%" HEXDIG HEXDIG
 
     // sub-delims  = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
     safe.push_str("!$'()*+,;");
