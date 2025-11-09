@@ -5,6 +5,7 @@ use crate::common::*;
 pub(crate) enum SortKey {
   Path,
   Size,
+  Mtime,
 }
 
 impl SortKey {

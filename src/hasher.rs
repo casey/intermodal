@@ -73,6 +73,7 @@ impl Hasher {
 
       files.push(FileInfo {
         path: file_path.clone(),
+        mtime: None,
         md5sum,
         length,
       });
