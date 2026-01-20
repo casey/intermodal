@@ -152,3 +152,6 @@ update-changelog:
 
 update-contributors:
   cargo run --release --package update-contributors
+
+profile:
+  cargo flamegraph --profile dev --package imdl --unit-test --unit-test-kind lib
