@@ -82,6 +82,7 @@ impl Hasher {
   }
 
   fn hash_file(&mut self, path: &Path) -> Result<(Option<Md5Digest>, Bytes), Error> {
+    log::trace!("Hashing: {}", path.display());
     let file = File::open(path).context(error::Filesystem { path })?;
 
     self

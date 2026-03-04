@@ -31,8 +31,6 @@ impl Env {
     #[cfg(windows)]
     ansi_term::enable_ansi_support().ok();
 
-    Self::initialize_logging();
-
     let app = {
       let mut app = Arguments::clap();
 
@@ -50,6 +48,12 @@ impl Env {
     let matches = app.get_matches_from_safe(&self.args)?;
 
     let args = Arguments::from_clap(&matches);
+
+    if args.options().verbose {
+      env::set_var("RUST_LOG", "trace");
+    }
+
+    Self::initialize_logging();
 
     let use_color = args.options().use_color;
     self.err.set_use_color(use_color);

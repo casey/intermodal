@@ -301,6 +301,10 @@ impl Create {
       announce_list.push(tier);
     }
 
+    if let Some(ref announce) = self.announce {
+      log::info!("Announce URL: {}", announce);
+    }
+
     if linter.is_denied(Lint::PrivateTrackerless) && self.private && self.announce.is_none() {
       return Err(Error::PrivateTrackerless);
     }
@@ -319,7 +323,11 @@ impl Create {
 
     let content = CreateContent::from_create(&self, &input, env)?;
 
+    log::info!("Piece length: {}", content.piece_length);
+
     let mut output = content.output.resolve(env)?;
+
+    log::info!("Output: {}", content.output);
 
     if content.piece_length.count() == 0 {
       return Err(Error::PieceLengthZero);
@@ -372,6 +380,8 @@ impl Create {
       hasher.hash_stdin(&mut env.input())?
     };
 
+    log::info!("Pieces: {}", pieces.count());
+
     CreateStep::Writing {
       output: &content.output,
     }
@@ -407,6 +417,10 @@ impl Create {
     };
 
     let bytes = metainfo.serialize()?;
+
+    if let Ok(infohash) = metainfo.infohash_lossy() {
+      log::info!("Infohash: {}", infohash);
+    }
 
     if !self.dry_run {
       match &output {

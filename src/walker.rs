@@ -146,8 +146,11 @@ impl Walker {
       let file_path = FilePath::from_relative_path(relative)?;
 
       if !self.include_junk && JUNK.contains(&file_path.name()) {
+        log::trace!("Skipping junk file: {}", file_path.name());
         continue;
       }
+
+      log::trace!("Including: {}", relative.display());
 
       let len = metadata.len();
       total_size += len;

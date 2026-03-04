@@ -5,6 +5,13 @@ pub(crate) struct Options {
   #[structopt(long = "quiet", short = "q", help = "Suppress normal output.")]
   pub(crate) quiet: bool,
   #[structopt(
+    long = "verbose",
+    short = "v",
+    conflicts_with = "quiet",
+    help = "Enable verbose logging output."
+  )]
+  pub(crate) verbose: bool,
+  #[structopt(
     long = "unstable",
     short = "u",
     help = "Enable unstable features. To avoid premature stabilization and excessive version \
