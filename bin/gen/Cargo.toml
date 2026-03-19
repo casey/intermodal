@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 ansi_term.workspace = true
-askama = "0.14.0"
+askama = "0.15.0"
 cargo_toml = "0.22.3"
 chrono.workspace = true
 fehler = "1.0.0"

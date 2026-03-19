@@ -1,6 +1,6 @@
 [package]
 name = "imdl"
-version = "0.1.15"
+version = "0.1.16"
 description = "📦 A 40' shipping container for the internet"
 authors.workspace = true
 categories = ["command-line-utilities"]
@@ -55,7 +55,7 @@ open = "5.0.1"
 percent-encoding = "2.3.2"
 pretty_assertions = "1.4.0"
 pretty_env_logger.workspace = true
-rand = "0.9.2"
+rand = "0.10.0"
 rayon = "1.8.0"
 regex.workspace = true
 serde-hex = "0.1.0"
@@ -73,7 +73,7 @@ unicode-width = "0.2.2"
 url.workspace = true
 
 [dev-dependencies]
-criterion = "0.7.0"
+criterion = "0.8.0"
 temptree = "0.2.0"
 
 [lints.clippy]
