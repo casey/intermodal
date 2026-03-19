@@ -23,7 +23,7 @@ pub(crate) use {
   indicatif::{ProgressBar, ProgressStyle},
   lexiclean::Lexiclean,
   libc::EXIT_FAILURE,
-  rand::Rng,
+  rand::{Rng, RngExt},
   regex::{Regex, RegexSet},
   serde::{de::Error as _, Deserialize, Deserializer, Serialize, Serializer},
   serde_hex::SerHex,

@@ -76,7 +76,7 @@ publish:
   #!/usr/bin/env bash
   set -euxo pipefail
   rm -rf tmp/release
-  git clone git@github.com:casey/intermodal.git tmp/release
+  git clone --depth 1 git@github.com:casey/intermodal.git tmp/release
   cd tmp/release
   cargo build
   cargo run --package gen -- --bin target/debug/imdl all

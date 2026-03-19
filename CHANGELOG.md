@@ -1,6 +1,16 @@
 Changelog
 =========
 
+[v0.1.16](https://github.com/casey/intermodal/releases/tag/v0.1.16) - 2026-03-18
+--------------------------------------------------------------------------------
+
+### Added
+- Allow passing arguments to `run()` ([#562](https://github.com/casey/intermodal/pull/562) by [casey](https://github.com/casey))
+
+### Misc
+- Add profile recipe ([#560](https://github.com/casey/intermodal/pull/560) by [casey](https://github.com/casey))
+- Exclude unnecessary files from crate ([#558](https://github.com/casey/intermodal/pull/558) by [casey](https://github.com/casey))
+
 [v0.1.15](https://github.com/casey/intermodal/releases/tag/v0.1.15) - 2025-11-08
 --------------------------------------------------------------------------------
 

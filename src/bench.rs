@@ -4,7 +4,6 @@ use crate::common::*;
 
 use std::io::BufWriter;
 
-use rand::RngCore;
 use tempfile::{Builder, NamedTempFile};
 
 pub const TEMPFILE_BYTES: u64 = 256 << 10;
