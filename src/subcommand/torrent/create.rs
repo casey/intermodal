@@ -187,7 +187,7 @@ Examples:
     long = "sort-by",
     value_name = "SPEC",
     help = "Set the order of files within a torrent. `SPEC` should be of the form `KEY:ORDER`, \
-            with `KEY` being one of `path` or `size`, and `ORDER` being `ascending` or \
+            with `KEY` being one of `path`, `size` or `mtime`, and `ORDER` being `ascending` or \
             `descending`. `:ORDER` defaults to `ascending` if omitted. The `--sort-by` flag may \
             be given more than once, with later values being used to break ties. Ties that remain \
             are broken in ascending path order.
@@ -1274,11 +1274,13 @@ mod tests {
             path: FilePath::from_components(&["bar"]),
             length: Bytes(4),
             md5sum: Some(Md5Digest::from_data("5678")),
+            mtime: None,
           },
           FileInfo {
             path: FilePath::from_components(&["foo"]),
             length: Bytes(4),
             md5sum: Some(Md5Digest::from_data("1234")),
+            mtime: None,
           },
         ],
       }
@@ -1422,6 +1424,7 @@ mod tests {
           &[FileInfo {
             length: Bytes(3),
             md5sum: Some(Md5Digest::from_hex("37b51d194a7513e45b56f6524f2d51f2")),
+            mtime: None,
             path: FilePath::from_components(&["bar"]),
           },]
         );
@@ -1457,6 +1460,7 @@ mod tests {
           &[FileInfo {
             length: Bytes(3),
             md5sum: None,
+            mtime: None,
             path: FilePath::from_components(&["bar"]),
           },]
         );
@@ -1495,16 +1499,19 @@ mod tests {
           &[
             FileInfo {
               length: Bytes(3),
+              mtime: None,
               md5sum: Some(Md5Digest::from_hex("900150983cd24fb0d6963f7d28e17f72")),
               path: FilePath::from_components(&["a"]),
             },
             FileInfo {
               length: Bytes(3),
+              mtime: None,
               md5sum: Some(Md5Digest::from_hex("857c4402ad934005eae4638a93812bf7")),
               path: FilePath::from_components(&["h"]),
             },
             FileInfo {
               length: Bytes(3),
+              mtime: None,
               md5sum: Some(Md5Digest::from_hex("d16fb36f0911f878998c136191af705e")),
               path: FilePath::from_components(&["x"]),
             },
@@ -1993,11 +2000,13 @@ Content Size  9 bytes
             FileInfo {
               length: Bytes(3),
               md5sum: Some(Md5Digest::from_hex("37b51d194a7513e45b56f6524f2d51f2")),
+              mtime: None,
               path: FilePath::from_components(&["bar"]),
             },
             FileInfo {
               length: Bytes(3),
               md5sum: Some(Md5Digest::from_hex("73feffa4b7f6bb68e44cf984c85f6e88")),
+              mtime: None,
               path: FilePath::from_components(&["dir", "baz"]),
             },
           ]

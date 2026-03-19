@@ -171,6 +171,7 @@ impl Metainfo {
       files: vec![FileInfo {
         length: Bytes(32 * 1024),
         path: FilePath::from_components(&["DIR", "FILE"]),
+        mtime: None,
         md5sum: Some(Md5Digest::from_hex("000102030405060708090a0b0c0d0e0f")),
       }],
     };
@@ -231,6 +232,7 @@ impl Metainfo {
         mode: Mode::Multiple {
           files: vec![FileInfo {
             length: Bytes(1024),
+            mtime: None,
             md5sum: None,
             path: FilePath::from_components(&["a", "b"]),
           }],
