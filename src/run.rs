@@ -1,3 +1,9 @@
+//! `intermodal` is primarily used as a command-line binary, but does provide a
+//! limited public library interface.
+//!
+//! Please keep in mind that there are no semantic version guarantees for the
+//! library interface. It may break or change at any time.
+
 use crate::common::*;
 
 /// Entry point into the IMDL binary.
@@ -17,8 +23,8 @@ use crate::common::*;
 /// In case of an error, a nonzero status code is returned. This status code can
 /// be passed to `std::process::exit`, to exit the process and report its
 /// failure to the system.
-pub fn run() -> Result<(), i32> {
-  let mut env = match Env::main() {
+pub fn run(args: impl Iterator<Item = impl Into<OsString>>) -> Result<(), i32> {
+  let mut env = match Env::main(args) {
     Ok(env) => env,
     Err(err) => {
       eprintln!("{err}");

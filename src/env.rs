@@ -9,7 +9,7 @@ pub(crate) struct Env {
 }
 
 impl Env {
-  pub(crate) fn main() -> Result<Self> {
+  pub(crate) fn main(args: impl Iterator<Item = impl Into<OsString>>) -> Result<Self> {
     let dir = env::current_dir().context(error::CurrentDirectoryGet)?;
 
     let style = env::var_os("NO_COLOR").is_none()
@@ -20,7 +20,7 @@ impl Env {
 
     Ok(Self::new(
       dir,
-      env::args(),
+      args,
       Box::new(io::stdin()),
       out_stream,
       err_stream,
