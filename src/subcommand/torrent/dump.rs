@@ -35,12 +35,13 @@ struct Fmt<'a>(&'a Value<'a>);
 
 fn fmt_string(f: &mut Formatter, string: &[u8]) -> fmt::Result {
   if let Ok(string) = str::from_utf8(string) {
-    write!(f, "\"{string}\"")?;
+    write!(f, "{}", serde_json::to_string(string).unwrap())?;
   } else {
-    write!(f, "0x")?;
+    write!(f, "\"0x")?;
     for byte in string {
       write!(f, "{byte:02x}")?;
     }
+    write!(f, "\"")?;
   }
 
   Ok(())
@@ -138,7 +139,7 @@ mod tests {
   fn hex_string() {
     assert_eq!(
       Fmt(&Value::Bytes(b"\x80\x81".to_vec().into())).to_string(),
-      "0x8081",
+      "\"0x8081\"",
     );
   }
 
@@ -155,10 +156,13 @@ mod tests {
       env.assert_ok();
 
       assert_eq!(env.out(), output);
+
+      serde_json::from_str::<serde_json::Value>(&env.out()).unwrap();
     }
 
     case("0:", "\"\"\n");
     case("1:x", "\"x\"\n");
+    case("1:\"", "\"\\\"\"\n");
 
     case("i-123e", "-123\n");
     case("i-1e", "-1\n");
