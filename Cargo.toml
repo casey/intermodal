@@ -12,6 +12,7 @@ keywords = ["p2p", "sharing", "bittorrent", "torrent"]
 license.workspace = true
 readme = "README.md"
 repository = "https://github.com/casey/intermodal"
+rust-version = "1.89.0"
 
 [workspace.package]
 edition = "2021"
