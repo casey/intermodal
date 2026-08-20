@@ -8,8 +8,7 @@ fn is_inside_git_work_tree() -> bool {
     .arg("rev-parse")
     .arg("--is-inside-work-tree")
     .output()
-    .map(|output| String::from_utf8_lossy(&output.stdout).trim() == "true")
-    .unwrap_or(false)
+    .is_ok_and(|output| String::from_utf8_lossy(&output.stdout).trim() == "true")
 }
 
 fn error(message: String) -> io::Error {
