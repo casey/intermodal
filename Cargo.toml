@@ -12,12 +12,13 @@ keywords = ["p2p", "sharing", "bittorrent", "torrent"]
 license.workspace = true
 readme = "README.md"
 repository = "https://github.com/casey/intermodal"
-rust-version = "1.89.0"
+rust-version.workspace = true
 
 [workspace.package]
 edition = "2021"
 license = "CC0-1.0"
 authors = ["Casey Rodarmor <casey@rodarmor.com>"]
+rust-version = "1.89.0"
 
 [features]
 default = []
