@@ -57,23 +57,19 @@ impl<'de> Deserialize<'de> for PieceList {
   {
     let bytes = serde_bytes::ByteBuf::deserialize(deserializer)?.into_vec();
 
-    if bytes.len() % Sha1Digest::LENGTH != 0 {
+    let (chunks, remainder) = bytes.as_chunks::<{ Sha1Digest::LENGTH }>();
+
+    if !remainder.is_empty() {
       return Err(D::Error::custom(format!(
         "buffer length {} is not a multiple of {}",
         bytes.len(),
-        sha1_smol::DIGEST_LENGTH
+        Sha1Digest::LENGTH,
       )));
     }
 
-    let piece_hashes = bytes
-      .chunks_exact(Sha1Digest::LENGTH)
-      .map(|chunk| {
-        Sha1Digest::from_bytes(
-          chunk
-            .try_into()
-            .invariant_unwrap("chunks are all Sha1Digest::LENGTH"),
-        )
-      })
+    let piece_hashes = chunks
+      .iter()
+      .map(|chunk| Sha1Digest::from_bytes(*chunk))
       .collect();
 
     Ok(Self { piece_hashes })
